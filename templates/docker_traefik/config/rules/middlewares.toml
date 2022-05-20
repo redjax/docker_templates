@@ -1,0 +1,9 @@
+[http.middlewares]
+  [http.middlewares.middlewares-basic-auth]
+    [http.middlewares.middlewares-basic-auth.basicAuth]
+#      username=user, password=mystrongpassword (listed below after hashing)
+#      users = [
+#        "user:$apr1$bvj3f2o0$/01DGlduxK4AqRsTwHnvc1",
+#      ]
+      realm = "Traefik2 Basic Auth"
+      usersFile = "/config/.htpasswd"
