@@ -1,0 +1,9 @@
+.env
+
+db/*
+import/*
+pictures/*
+storage/*
+
+!**/empty
+!**/*.example
