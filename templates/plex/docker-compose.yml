@@ -1,0 +1,64 @@
+version: "2.1"
+
+volumes:
+  plex_transcode:
+
+services:
+  
+  plex:
+    image: lscr.io/linuxserver/plex
+    container_name: plex
+    restart: unless-stopped
+    network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - VERSION=docker
+      # - PLEX_CLAIM=  # Optional
+    volumes:
+      - ${PLEX_CONF_DIR:-./plex}:/config
+      - ${PLEX_TV_DIR:-./tv}:/tv
+      - ${PLEX_MOVIE_DIR:-./movies}:/movies
+      - ${PLEX_TRANSCODE_DIR:-plex_transcode}:/transcode
+    # ports:
+    #   - 32400:32400
+    #   - 1900:1900/udp 
+    #   - 3005:3005 
+    #   - 5353:5353/udp 
+    #   - 8324:8324 
+    #   - 32410:32410/udp 
+    #   - 32412:32412/udp 
+    #   - 32413:32413/udp 
+    #   - 32414:32414/udp 
+    #   - 32469:3246
+
+  # Plugins management. Optional
+  # Comment out section below to disable kitana
+  kitana:
+    image: pannal/kitana:latest
+    container_name: plex-kitana
+    restart: unless-stopped
+    volumes:
+      - ${KITANA_DATA_DIR:-./kitana/}:/app/data
+    ports:
+      - ${KITANA_WEB_PORT:-31337}:31337
+    links:
+      - plex
+    command: -B 0.0.0.0:31337 -p /kitana -P
+
+  # Tautulli, server stats & utils. Optional
+  # Comment out section below to disable tautulli
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: plex-tautulli
+    restart: unless-stopped
+    volumes:
+      - ${TAUTULLI_CONF_DIR:-./tautulli}:/config
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+    ports:
+      - ${TAUTULLI_WEB_PORT:-8181}:8181
