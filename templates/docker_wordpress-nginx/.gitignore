@@ -1,0 +1,15 @@
+##
+# Whole project
+##
+.env
+!**/empty
+
+##
+# Wordpress
+##
+db_backup/*.sql
+# theme_plugin_stage/holding/*
+# theme_plugin_stage/plugin_stage
+# theme_plugin_stage/theme_stage
+# src/site/*
+!src/site/empty
