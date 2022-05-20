@@ -1,0 +1,32 @@
+version: "3"
+
+networks:
+  default:
+    external:
+      # This network needs to be declared at the top of
+      # each Wordpress instance's docker-compose.yml
+      name: proxy_net
+
+services:
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf/vhost.d:/etc/nginx/vhost.d
+      - ./conf/html:/usr/share/nginx/html
+      - ${PROXY_CERT_PATH:-./conf/certs}:/etc/nginx/certs:ro
+      - ./logs:/var/log/nginx
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
+
+  whoami:
+    image: jwilder/whoami
+    container_name: nginx-proxy_whoami
+    environment:
+      VIRTUAL_HOST: whoami.local
