@@ -1,0 +1,10 @@
+.vscode/*
+.env
+
+conf/*
+plex/*
+kitana/*
+tautulli/*
+
+!**/*.example
+!**/empty
