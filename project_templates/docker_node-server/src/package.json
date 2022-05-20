@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "\"Example Dockerized node app\"",
+  "main": "app.js",
+  "scripts": {
+    "start:production": "node app.js",
+    "start:development": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "livereload": "^0.9.3",
+    "nodemon": "^2.0.15"
+  }
+}
