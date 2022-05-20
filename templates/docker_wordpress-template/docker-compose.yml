@@ -1,0 +1,47 @@
+version: '3.1'
+
+# networks:
+#   backend:
+#   frontend:
+#     external:
+#       name: wp_proxy
+
+services:
+
+  wp_db:
+    image: ${WP_DB_IMAGE:-mariadb:latest}
+    container_name: ${WP_DB_NAME:-wp_db}
+    restart: ${WP_DB_RESTART:-unless-stopped}
+    ports:
+      - ${WP_DB_PORT:-3306}:3306
+    environment:
+      MYSQL_USER: ${WP_DB_USER:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD:-wordpress}
+      MYSQL_DATABASE: ${WP_SITE_DB:-wordpress}
+      MYSQL_PASSWORD: ${WP_DB_PASSWORD:-wordpress}
+    volumes:
+      - ${WP_DB_DATA_VOLUME:-./db/wordpress}:/var/lib/mysql
+    # networks:
+    #   - backend
+
+  wordpress:
+    image: ${WP_SITE_IMAGE:-wordpress}
+    container_name: ${WP_SITE_NAME:-wordpress}
+    depends_on:
+      - wp_db
+    ports:
+      - ${WP_SITE_WEB_PORT:-8080}:80
+    restart: ${WP_SITE_RESTART:-unless-stopped}
+    environment:
+      WORDPRESS_DB_HOST: wp_db:${WP_DB_PORT:-3306}
+      WORDPRESS_DB_USER: ${WP_DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD:-wordpress}
+    volumes:
+      - ${WP_SITE_PLUGINS_DIR:-./src/plugins}:/var/www/html/wp-content/plugins
+      - ${WP_SITE_THEMES_DIR:-./src/themes}:/var/www/html/wp-content/themes
+      - ${WP_SITE_DATA_DIR:-./src/site}:/var/www/html
+      # wordpress.ini config file
+      - ${WP_SITE_PHP_INI:-./wordpress.ini}:/usr/local/etc/php/conf.d/wordpress.ini
+    # networks:
+    #   - frontend
+    #   - backend
