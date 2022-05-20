@@ -1,0 +1,43 @@
+#
+# Copy this file to remote nodes and run docker-compose up -d
+#
+# Then, edit the prometheus.yml file on the host machine
+# (i.e. the machine this file was copied from), and add
+# the node/remote's IP. Reload the prometheus container,
+# and the remote node's cAdvisor and node-exporter should become available.
+# 
+# Works with Tailscale!
+#
+
+version: '3'
+
+services:
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: unless-stopped
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /:/host:ro,rslave
+      - /sys:/host/sys:ro
+      - /proc:/host/proc:ro
+    ports:
+      - ${NODE_EXPORTER_PORT:-9100}:9100
+
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - ${CADVISOR_WEB_PORT:-8080}:8080
