@@ -1,0 +1,123 @@
+version: '3.8'
+
+volumes:
+  docspell-postgres_data:
+  docspell-solr_data:
+
+services:
+
+  # The restserver and joex containers defined here are configured
+  # using env variables. Both must connect to the same database and
+  # solr instance. More information on configuring can be found here:
+  # https://docspell.org/docs/configure
+  #
+  # Please replace the values of the following with a custom secret
+  # string:
+  #
+  # - DOCSPELL_SERVER_ADMIN__ENDPOINT_SECRET
+  # - DOCSPELL_SERVER_AUTH_SERVER__SECRET
+  # - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER__VALUE
+  #   (use the same value at the consumedir container!)
+  restserver:
+    image: docspell/restserver:latest
+    container_name: docspell-restserver
+    restart: unless-stopped
+    ports:
+      - ${DOCSPELL_RESTSERVER_PORT:-7880}:7880
+    environment:
+      - DOCSPELL_SERVER_INTERNAL__URL=http://docspell-restserver:7880
+      - DOCSPELL_SERVER_ADMIN__ENDPOINT_SECRET=${DOCSPELL_RESTSERVER_ENDPOINT_SECRET}
+      - DOCSPELL_SERVER_AUTH_SERVER__SECRET=${DOCSPELL_RESTSERVER_AUTH_SECRET}
+      - DOCSPELL_SERVER_BACKEND_JDBC_PASSWORD=${DOCSPELL_JDBC_PASSWORD:-docspell}
+      - DOCSPELL_SERVER_BACKEND_JDBC_URL=jdbc:postgresql://db:5432/${DOCSPELL_DB_NAME:-docspell}
+      - DOCSPELL_SERVER_BACKEND_JDBC_USER=${DOCSPELL_DB_USER:-docspell}
+      - DOCSPELL_SERVER_BIND_ADDRESS=0.0.0.0
+      - DOCSPELL_SERVER_FULL__TEXT__SEARCH_ENABLED=true
+      - DOCSPELL_SERVER_FULL__TEXT__SEARCH_SOLR_URL=http://docspell-solr:8983/solr/docspell
+      - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_ENABLED=true
+      - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_ENABLED=true
+      - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER__VALUE=${DOCSPELL_SERVER_INTEGRATION_PASSWORD:-docspell}
+    depends_on:
+      - solr
+
+  solr:
+    image: solr:8
+    container_name: docspell-solr
+    restart: unless-stopped
+    volumes:
+      - ${SOLR_DATA_DIR:-docspell-solr_data}:/var/solr
+    command:
+      - solr-precreate
+      - docspell
+    healthcheck:
+      test: ["CMD", "curl", "f", "http://localhost:8983/solr/docspell/admin/ping"]
+      interval: 1m
+      timeout: 10s
+      retries: 2
+      start_period: 30s
+
+  joex:
+    image: docspell/joex:latest
+    container_name: docspell-joex
+    restart: unless-stopped
+    ## For more memory add corresponding arguments, like below. Also see
+    ## https://docspell.org/docs/configure/#jvm-options
+    # command:
+    #   - -J-Xmx3G
+    environment:
+      - TZ=${TZ:-America/New_York}
+      - DOCSPELL_JOEX_BASE__URL=http://docspell-joex:7878
+      - DOCSPELL_JOEX_BIND_ADDRESS=0.0.0.0
+      - DOCSPELL_JOEX_FULL__TEXT__SEARCH_ENABLED=true
+      - DOCSPELL_JOEX_FULL__TEXT__SEARCH_SOLR_URL=http://docspell-solr:8983/solr/docspell
+      - DOCSPELL_JOEX_JDBC_PASSWORD=${DOCSPELL_DB_PASSWORD:-docspell}
+      - DOCSPELL_JOEX_JDBC_URL=jdbc:postgresql://db:5432/${DOCSPELL_DB_NAME:-docspell}
+      - DOCSPELL_JOEX_JDBC_USER=${DOCSPELL_DB_USER:-docspell}
+    ports:
+      - ${JOEX_PORT:-7878}:7878
+    depends_on: 
+      - solr
+
+  # The consumedir container watches a directory for files to upload
+  # to docspell restserver. This uses the `dsc` tool. For information
+  # on the available options, see `dsc --help`.
+  # https://github.com/docspell/dsc
+  #
+  # The value after `Docspell-Integration` must match the secret
+  # specified at the restserver via
+  # DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER__VALUE.
+  #
+  # The --not-matches "**/.*" option is to exclude hidden files.
+  consumedir:
+    image: docspell/dsc:latest
+    container_name: docspell-consumedir
+    restart: unless-stopped
+    command:
+      - dsc
+      - "-d"
+      - "http://docspell-restserver:7880"
+      - "watch"
+      - "--delete"
+      - "-ir"
+      - "--not-matches"
+      - "**/.*"
+      - "--header"
+      - "Docspell-Integration:${DOCSPELL_SERVER_INTEGRATION_PASSWORD:-docspell}"
+      - "/opt/docs"
+    volumes:
+      - ${CONSUMEDIR_DATA_DIR:-./docs}:/opt/docs
+    depends_on:
+      - restserver
+
+  db:
+    image: postgres:14.1
+    container_name: docspell-db
+    restart: unless-stopped
+    volumes:
+      - ${DOCSPELL_DB_DATA_DIR:-docspell-postgres_data}:/var/lib/postgresql/data
+      # Uncomment this line if using a volume, and you want to use the backup script
+      - ${DOCSPELL_DB_BACKUP_DIR:-./backup/db}:/opt/backup
+    environment:
+      - POSTGRES_USER=${DOCSPELL_DB_USER:-docspell}
+      - POSTGRES_PASSWORD=${DOCSPELL_DB_PASSWORD:-docspell}
+      - POSTGRES_DB=${DOCSPELL_DB_NAME:-docspell}

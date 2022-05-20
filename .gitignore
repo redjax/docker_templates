@@ -1,0 +1,13 @@
+.env
+
+backup/*
+db/*
+docs/*
+solr/*
+
+!**/empty
+!**/*.example
+!**/*_example
+!**/*_example.*
+!**/example_*
+!**/example_*.*
