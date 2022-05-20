@@ -1,0 +1,11 @@
+.env
+
+backup/*
+db/*
+redis/*
+media/*
+watch/*
+staging/*
+
+!**/empty
+!**/*.example

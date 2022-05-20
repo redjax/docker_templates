@@ -1,0 +1,12 @@
+Before logging in the first time, execute the mayan container and
+change the admin password.
+
+$ docker exec -it mayan_app_1 (or whatever the container's name is)
+
+Then, in the container, navigate to /opt/mayan-edms/bin and run
+
+$ ./mayan-edms.py createsuperuser
+
+If the admin user already exists, run the following to change the password
+
+$ ./mayan-edms.py changepassword admin
