@@ -1,0 +1,7 @@
+# Ignore files
+**/.env
+!.env.example
+!**/empty
+
+# Ignore directories
+seafile-mysql/db/*
