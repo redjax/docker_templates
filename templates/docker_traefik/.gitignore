@@ -1,0 +1,13 @@
+!.gitignore
+!**/*.example
+# /*
+# config/*
+logs/*
+.env
+acme.json
+**/*.bak
+
+!setup-script.sh
+!auto_git_checkout.sh
+
+!*/config
