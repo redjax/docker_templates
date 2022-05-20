@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 5s
+  # scrape_timeout: 10s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'prakash-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus_internal'
+    honor_timestamps: true
+    scrape_interval: 5s
+    # scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      # Change to your IP/URL
+      - targets: ['prometheus:9090']
+
+  # node-exporter from local docker-compose
+  - job_name: 'node-exporter_internal'
+    static_configs:
+      # Change to your IP/URL
+      - targets: ['node-exporter:9100']
+
+  # External machines exporting stats to local prometheus
+  - job_name: 'node-exporter_nodes'
+    static_configs:
+      - targets: ['<server1-ip/URL>:9100', '<server2-ip/URL>:9100']
+
+  # cadvisor from local docker-compose
+  - job_name: 'cAdvisor_internal'
+    static_configs:
+      # Change to your IP/URL
+      - targets: ['cadvisor:8080']
+
+  # External machines exporting stats to local prometheus
+  - job_name: cAdvisor_nodes
+    static_configs:
+      - targets: ['<server1-ip/URL>:8080', '<server2-ip/URL>:8080']

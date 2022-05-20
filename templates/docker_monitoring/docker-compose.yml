@@ -1,0 +1,92 @@
+version: '3'
+
+networks:
+  monitor-net:
+
+volumes:
+  prometheus_data:
+  grafana_db:
+  skedler_reportdata:
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ${PROMETHEUS_CONFIG_FILE:-./prometheus/prometheus.yml}:/etc/prometheus/prometheus.yml
+      - ${PROMETHEUS_VAR_DIR:-prometheus_data}:/var/lib/prometheus
+      - ${PROMETHEUS_APP_DIR:-prometheus_data}:/prometheus
+      - ${PROMETHEUS_ETC_DIR:-prometheus_data}:/etc/prometheus
+      - ${PROMETHEUS_ALERTS_DIR:-prometheus_data}:/etc/prometheus/alert.rules
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.route-prefix=/'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    ports:
+      - ${PROMETHEUS_WEB_PORT:-9090}:9090
+    networks:
+      - monitor-net
+
+  pushgateway:
+    image: prom/pushgateway
+    container_name: pushgateway
+    restart: unless-stopped
+    ports:
+      - ${PUSHGATEWAY_PORT:-9091}:9091
+    networks:
+      - monitor-net
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: unless-stopped
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /:/host:ro,rslave
+      - /sys:/host/sys:ro
+      - /proc:/host/proc:ro
+    ports:
+      - ${NODE_EXPORTER_PORT:-9100}:9100
+    networks:
+      - monitor-net
+
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - ${CADVISOR_WEB_PORT:-8080}:8080
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASS:-grafana}
+      - GF_USERS_ALLOW_SIGN_UP=${GRAFANA_ALLOW_USER_SIGNUP:-false}
+    volumes:
+      - ${GRAFANA_DB_DIR:-grafana_db}:/var/lib/grafana
+      - ${GRAFANA_CONF_FILE:-./grafana/grafana.ini}:/etc/grafana/grafana.ini
+      - ${GRAFANA_DATASOURCE_FILE:-./grafana/datasource.yml}:/etc/grafana/provisioning/datasources/datasource.yml
+    depends_on:
+      - prometheus
+    ports:
+      - ${GRAFANA_WEB_PORT:-3000}:3000
+    networks:
+      - monitor-net
