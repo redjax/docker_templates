@@ -1,0 +1,24 @@
+---
+version: "3"
+
+services:
+  
+  calibre:
+    image: ${CALIBRE_IMG:-ghcr.io/linuxserver/calibre}
+    container_name: ${CALIBRE_NAME:-calibre}
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+      # - PASSWORD=${CALIBRE_PASSWORD:-calibre} # Optional
+      # - CLI_ARGS= #optional
+    volumes:
+      - ${CALIBRE_CONFIG_DIR:-./config}:/config
+      - "${CALIBRE_LIBRARY_DIR:-./books}:/config/Calibre Library"
+      - ${CALIBRE_IMPORT_DIR:-./import}:/import
+      - ${CALIBRE_EXPORT_DIR:-./export}:/export
+      - ${CALIBRE_PLUGINS_IMPORT_DIR:-./plugins_import}:/media/plugins_import
+    ports:
+      - ${CALIBRE_PORT:-8080}:8080
+      - ${CALIBRE_WEB_PORT:-8081}:8081
