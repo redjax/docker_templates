@@ -1,0 +1,32 @@
+<%- include('../partials/base/html_top') %>
+
+<!-- Main html content -->
+<div class="jumbotron">
+
+    <h1>Dockerized Express server</h1>
+    <p>I'm building up a Dockerized Express server boilerplate! This is an example page/server, meant to be simple.</p>
+    <p>The pages on the site are meant to be generic, demonstrating capabilities and offering examples.</p>
+
+    <h2>Variable</h2>
+    <!-- Passed as 'tagline' from app.js -->
+    <p><%= tagline %></p>
+
+    <!-- Loop over data -->
+    <ul>
+        <% mascots.forEach(function(mascot) { %>
+            <li>
+                <strong><%= mascot.name %></strong>
+                representing <%= mascot.organization %>,
+                born <%= mascot.birth_year %>
+            </li>
+        <% }) %>
+    </ul>
+
+    <!-- Example of importing a "table" module, from partials/modules/example_table.ejs -->
+    <div class="row">
+        <%- include('../partials/modules/example_table') %>
+    </div>
+
+</div>
+
+<%- include('../partials/base/html_bottom') %>
