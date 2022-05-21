@@ -1,4 +1,0 @@
-raspixie.local 192.168.1.11 - - [04/Nov/2021:03:32:06 +0000] "GET / HTTP/1.1" 503 592 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.114 Safari/537.36" "-"
-raspixie.local 192.168.1.11 - - [04/Nov/2021:03:32:07 +0000] "GET /favicon.ico HTTP/1.1" 503 592 "http://raspixie.local/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.114 Safari/537.36" "-"
-raspixie.local 192.168.1.11 - - [04/Nov/2021:03:37:54 +0000] "GET / HTTP/1.1" 503 592 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.114 Safari/537.36" "-"
-raspixie.local 192.168.1.11 - - [04/Nov/2021:03:37:54 +0000] "GET /favicon.ico HTTP/1.1" 503 592 "http://raspixie.local/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.114 Safari/537.36" "-"
