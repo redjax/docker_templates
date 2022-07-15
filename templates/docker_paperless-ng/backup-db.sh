@@ -1,12 +1,26 @@
 #!/bin/bash
 
 # THIS_DIR=${PWD}
-THIS_DIR=/home/jack/docker/paperless-ng
-DB_CONTAINER=paperless_db_1
+THIS_DIR=/home/jack/docker/docker_paperless-ng
+DB_CONTAINER=paperless-db
 DB_USER=paperless
-DB_DUMP_NAME=paperless_db_dump.sql
-DB_DUMP_PATH=$THIS_DIR/backup/db/$DB_DUMP_NAME
+# DB_DUMP_NAME=paperless_db_dump.sql
+# DB_DUMP_PATH=$THIS_DIR/backup/db/$DB_DUMP_NAME
 
+
+function GET_TIMESTAMP () {
+  date +"%Y-%m-%d_%H:%M"
+}
+
+function TRIM_BACKUPS() {
+
+  scan_dir="$THIS_DIR/backup/db"
+  day_threshold="3"
+
+  echo "Scanning $scan_dir for backups older than $day_threshold days"
+  find $scan_dir -type f -mtime +3 -delete
+
+}
 
 function BACKUP_PAPERLESS_DB () {
 
@@ -15,6 +29,15 @@ function BACKUP_PAPERLESS_DB () {
     echo ""
     echo "Creating database backup."
     echo ""
+
+    timestamp="$(GET_TIMESTAMP)"
+    DB_DUMP_NAME=paperless_db_dump_$timestamp.sql
+    DB_DUMP_PATH=$THIS_DIR/backup/db/$DB_DUMP_NAME
+
+    if [[ ! -d "$THIS_DIR/backup/db" ]]; then
+      echo "Creating $THIS_DIR/backup/db"
+      mkdir -pv $THIS_DIR/backup/db
+    fi
 
     docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER > $DB_DUMP_PATH
 
@@ -57,6 +80,8 @@ function main () {
     BACKUP_PAPERLESS_DB
   elif [ $1 == "restore" ]; then
     RESTORE_PAPERLESS_DOCUMENTS
+  elif [ $1 == "trim-backup" ]; then
+    TRIM_BACKUPS
   fi
 
 }
@@ -67,6 +92,9 @@ case $1 in
   ;;
   "-r" | "--restore")
     main "restore"
+  ;;
+  "-bt" | "--backup-trim")
+    main "trim-backup"
   ;;
   *)
     echo ""
