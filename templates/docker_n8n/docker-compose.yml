@@ -1,0 +1,28 @@
+version: "3"
+
+volumes:
+  n8n_conf:
+
+services:
+
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - ${N8N_PORT:-5678}:5678
+    volumes:
+      - ${N8N_DATA_DIR:-n8n_conf}:/home/node/.n8n
+    environment:
+      - TZ=${TZ:-America/New_York}
+      - GENERIC_TIMEZONE=${TZ:-America/New_York}
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH:-true}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-n8n}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-n8nadmin}
+      # If accessing outside the local network, uncomment below
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=${N8N_PORT:-5678}
+      - N8N_PROTOCOL=${N8N_PROTOCOL:-https}
+      - N8N_NODE_ENV=${N8N_NODE_ENV:-production}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-baglabtbaOgnfabKAHHnanllboabtrjp;}
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL}
