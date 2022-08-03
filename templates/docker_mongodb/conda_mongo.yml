@@ -1,0 +1,11 @@
+name: mongo
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - black
+  - pip
+  - pymongo
+  - dnspython
+  - python-dateutil
+  - mamba
