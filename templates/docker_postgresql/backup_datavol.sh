@@ -8,6 +8,7 @@ docker_proj_name="docker_postgresql"
 backup_dir="$this_dir/backup"
 
 pg_container="postgres"
+pg_container_user="postgres"
 pgdata_vol_name="postgres_data"
 pgdata_container_path="/var/lib/postgresql/data"
 
@@ -15,12 +16,12 @@ pgadmin_container="pgadmin"
 pgadmindata_vol_name="pgadmin_data"
 pgadmindata_container_path="/var/lib/pgadmin"
 
-pg_backup_dir="$backup_dir/$pgdata_vol_name/"
-pgadmin_backup_dir="$backup_dir/$pgadmindata_vol_name/"
+pg_backup_dir="$backup_dir/$pgdata_vol_name"
+pgadmin_backup_dir="$backup_dir/$pgadmindata_vol_name"
 
 function check_dirs_exist() {
 
-    declare -a dirs=("$backup_dir" "$pg_backup_dir" "$pgadmin_backup_dir")
+    declare -a dirs=("$backup_dir" "$pg_backup_dir/" "$pgadmin_backup_dir/")
 
     for dir in "${dirs[@]}"; do
         if [[ ! -d $dir ]]; then
@@ -31,13 +32,36 @@ function check_dirs_exist() {
     done
 }
 
+function trim_backup() {
+
+    backup_retention="3"
+    loop_count=0
+    file_count=$(ls $pg_backup_dir/ | wc -l)
+
+    echo ""
+    echo "Found $file_count file(s)"
+    echo ""
+
+    if [[ $file_count -ge $backup_retention ]]; then
+        echo "Trimming backups"
+
+        while [ $file_count -gt $backup_retention ]; do
+            # Get file, remove oldest
+            stat --printf='%Y %n\0' $pg_backup_dir/*.sql | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
+
+            file_count=$(ls $pg_backup_dir/ | wc -l)
+        done
+    fi
+
+}
+
 function backup_container_data() {
     # $1=container name
 
     case $1 in
     "postgres")
         source_container=$pg_container
-        backup_dir=$pg_backup_dir
+        backup_dir="$pg_backup_dir/"
         container_path=$pgdata_container_path
         ;;
     "pgadmin")
@@ -82,6 +106,8 @@ function full_backup() {
     echo ""
     backup_container_data $pg_container
 
+    trim_backup
+
     echo ""
     echo "Backup $pgadmin_container"
     echo ""
@@ -95,7 +121,7 @@ function restore_container_data() {
     case $1 in
     "postgres")
         target_container=$pg_container
-        backup_dir=$pg_backup_dir
+        backup_dir="$pg_backup_dir/"
         container_path=$pgdata_container_path
         ;;
     "pgadmin")
@@ -135,17 +161,77 @@ function restore_container_data() {
 
 function pg_db_backup() {
 
+    echo "Backing up $pg_container db dump to $pg_backup_dir/$dump_name"
+
     dump_name="dump_$(date +%Y-%m-%d_%H_%M_%S).sql"
     docker exec -t $pg_container pg_dumpall -c -U postgres >"$pg_backup_dir/$dump_name"
 
-    echo "TODO: Implement backup trim here"
+    trim_backup
 }
 
 function pg_db_restore() {
 
-    for file in $pg_backup_dir*.sql; do
-        filename="$(basename ${file})"
-        echo "Backup: $filename"
+    # for file in $pg_backup_dir*.sql; do
+    #     filename="$(basename ${file})"
+    #     echo "Backup: $filename"
+    # done
+
+    ## Build numbered list of files for user to select from
+    #    https://askubuntu.com/a/682104
+    unset options i
+    # Read input from find command, null-delimeted
+    while IFS= read -r -d $'\0' file; do
+
+        # Get filename from path
+        #   https://stackoverflow.com/a/965072
+        filename="${file##*/}"
+
+        # Add find files to array "options," increment i
+        options[i++]="$filename"
+
+        # Finish loop, run find command & feed into IFS
+    done < <(find $pg_backup_dir/ -maxdepth 1 -type f -name "*.sql" -print0)
+
+    ## Select menu (from link above)
+    select opt in "${options[@]}" "(Q)uit"; do
+
+        case $opt in
+        *.sql)
+            echo ""
+            echo "[DEBUG] Backup selected: $opt"
+            echo ""
+            echo "Restoring backup to $pg_container"
+
+            echo ""
+            echo "Bringing down stack temporarily"
+            echo ""
+            docker compose down
+
+            sleep 10
+
+            echo ""
+            echo "Restarting $pg_container"
+
+            docker compose -f docker-compose.yml run --rm --name $pg_container -e POSTGRES_HOST_AUTH_METHOD='trust' -d $pg_container
+            # cat $file | docker exec -i $pg_container psql -U postgres
+            cat $file | docker compose exec -d -i $pg_container psql -U $pg_container_user
+
+            echo ""
+            echo "Restarting container to unset POSTGRES_HOST_AUTH_METHOD=true env var."
+            echo ""
+            docker stop $pg_container
+
+            docker compose up -d --force-recreate
+            ;;
+
+        "q" | "Q")
+            echo "Stopping script."
+            break
+            ;;
+        *)
+            echo "Invalid option: $opt. Select using option number, not name (i.e. 1)."
+            ;;
+        esac
     done
 }
 
@@ -167,6 +253,8 @@ function main() {
 
     echo "[DEBUG] Check if backup directories exist"
     check_dirs_exist
+
+    echo "Arg: $1"
 
     case $1 in
     "-b" | "--backup")
@@ -230,17 +318,18 @@ function main() {
             ;;
         esac
         ;;
+    "-tb" | "--trim-backups")
+        echo "Trimming backups"
+        trim_backup
+        ;;
+    *)
+        echo "Invalid: $1"
+        ;;
     esac
-
-    # echo ""
-    # echo "Backing up containers"
-
-    # # full_backup
-    # full_restore
 
 }
 
-main $1
-# pg_db_backup
+# main $1
+pg_db_backup
 
 # pg_db_restore

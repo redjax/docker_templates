@@ -4,8 +4,8 @@ volumes:
   postgres_data:
   pgadmin_data:
 
-# networks:
-  # pg_net:
+networks:
+  pg_net:
 
 services:
 
@@ -16,12 +16,17 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      # Read section on this variable in docker docs before setting:
+      #   https://hub.docker.com/_/postgres/
+      POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
     volumes:
       - ${POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
       # Mount directory with init scripts for docker, i.e. install UUID extension
       - ./pg_entrypoint:/docker-entrypoint-initdb.d/
-    # networks:
-    #   - pg_net
+      # Uncomment line below to restore a database backup.
+      # - ${POSTGRES_DB_BACKUP}:/path/here
+    networks:
+      - pg_net
 
   pgadmin:
     image: dpage/pgadmin4:${PGADMIN_IMAGE_TAG:-latest}
@@ -37,3 +42,5 @@ services:
       - ${PGADMIN_DATA_DIR:-pgadmin_data}:/var/lib/pgadmin
     depends_on:
       - postgres
+    networks:
+      - pg_net
