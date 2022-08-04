@@ -3,6 +3,7 @@
 this_dir=${PWD}
 
 backup_container_image="busybox"
+backup_retention="3"
 
 docker_proj_name="docker_postgresql"
 backup_dir="$this_dir/backup"
@@ -34,7 +35,6 @@ function check_dirs_exist() {
 
 function trim_backup() {
 
-    backup_retention="3"
     loop_count=0
     file_count=$(ls $pg_backup_dir/ | wc -l)
 
@@ -249,6 +249,40 @@ function full_restore() {
 
 }
 
+## Leave help menu function at bottom
+function print_help() {
+
+    echo ""
+    echo "-b/--backup"
+    echo "  -> Start backup selection"
+    echo "     -> Selections:"
+    echo "          f/F: Full backup"
+    echo "            Backup all container volumes & databases"
+    echo ""
+    echo "          s/S: Start backup selection"
+    echo "            -> Options: (P)ostgres, pg(A)dmin"
+    echo ""
+    echo "-r/--restore"
+    echo "  -> Start restore selection"
+    echo "     -> Selections:"
+    echo "          f/F: Full restore"
+    echo "            Restore all container volumes & databases"
+    echo ""
+    echo "          s/S: Start restore selection"
+    echo "            -> Options: (P)ostgres, pg(A)dmin"
+    echo ""
+    echo "-tb/--trim-backups"
+    echo "  -> Trim postgres db backup dir, starting with oldest,"
+    echo "     retaining num backups defined in $'backup_retention' var declared at top of script.."
+    echo ""
+    echo ""
+    echo "-h/--help"
+    echo "  -> Print help menu"
+    echo ""
+    echo ""
+
+}
+
 function main() {
 
     echo "[DEBUG] Check if backup directories exist"
@@ -266,7 +300,7 @@ function main() {
             ;;
         "s" | "S")
             echo ""
-            read -p "(P)ostgres or (A)dmin? " single_backup_choice
+            read -p "(P)ostgres or pg(A)dmin? " single_backup_choice
             echo ""
 
             case $single_backup_choice in
@@ -299,7 +333,7 @@ function main() {
             ;;
         "s" | "S")
             echo ""
-            read -p "(P)ostgres or (A)dmin? " single_restore_choice
+            read -p "(P)ostgres or pg(A)dmin? " single_restore_choice
             echo ""
 
             case $single_restore_choice in
@@ -322,14 +356,19 @@ function main() {
         echo "Trimming backups"
         trim_backup
         ;;
+    "-h" | "--help")
+        print_help
+        ;;
     *)
+        print_help
+        echo "------------"
         echo "Invalid: $1"
         ;;
     esac
 
 }
 
-# main $1
-pg_db_backup
+main $1
+# pg_db_backup
 
 # pg_db_restore
