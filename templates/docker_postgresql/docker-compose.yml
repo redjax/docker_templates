@@ -23,6 +23,8 @@ services:
       - ${POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
       # Mount directory with init scripts for docker, i.e. install UUID extension
       - ./pg_entrypoint:/docker-entrypoint-initdb.d/
+      # Mount directory to store SQL scripts
+      - ${POSTGRES_SCRIPTS_DIR:-./pgsql_scripts}:/scripts
       # Uncomment line below to restore a database backup.
       # - ${POSTGRES_DB_BACKUP}:/path/here
     networks:
