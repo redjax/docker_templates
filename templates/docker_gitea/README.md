@@ -15,6 +15,7 @@ Create empty `data` and `ssh` dirs in the same directory as `docker-compose.yml`
     * I used a separate domain entirely, i.e. `my-second-domain.com`, for SSH
         * The HTTP clone URL uses `git.my-domain.com`
         * The SSH clone URL uses `my-second-domain.com` via port `2222`, using the SSH key I added to the Gitea instance
+        * I hosted this service at home, and needed to forward port `2222` to the container host
     * My SSH config looks like:
 ```
 Host my-second-domain.com
