@@ -1,0 +1,11 @@
+*.env
+
+**/*.sqlite
+
+ssh/*
+data/*
+
+!*.example
+!*_example.*
+!*example_.*
+!**example.*
