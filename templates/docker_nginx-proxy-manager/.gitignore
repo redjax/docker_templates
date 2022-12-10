@@ -6,7 +6,7 @@
 
 config.json
 
-**/data/
 !**/data/empty
-**/letsencrypt/
+**/data/
 !**/letsencrypt/empty
+**/letsencrypt/
