@@ -4,3 +4,9 @@
 !empty
 !**/empty
 
+config.json
+
+!**/data/empty
+**/data/
+!**/letsencrypt/empty
+**/letsencrypt/
