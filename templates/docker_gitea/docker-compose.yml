@@ -1,0 +1,145 @@
+version: "3"
+
+networks:
+  gitea:
+    external: true
+    name: gitea
+
+# volumes:
+#   drone-agent_data:
+
+services:
+  
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    restart: unless-stopped
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - ROOT_URL=${GITEA_ROOT_DOMAIN}
+      - SSH_DOMAIN=${GITEA_SSH_DOMAIN}
+      - RUN_MODE=${GITEA_RUN_MODE:-prod}
+    volumes:
+      - ${GITEA_DATA_DIR:-./data}:/data
+      - ${GITEA_SSH_DIR:-./ssh}:/data/git/.ssh
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - ${GITEA_HTTP_PORT:-3000}:3000
+      - ${GITEA_SSH_PORT:-2222}:22
+    networks:
+      - gitea
+
+  drone-server:
+    image: drone/drone:2
+    container_name: drone-server
+    dns:
+      - 8.8.8.8
+      - gitea
+    ports:
+      - ${DRONE_HTTP_PORT:-3001}:80
+      - ${DRONE_SERVER_PORT:-9000}:9000
+    volumes:
+      - ${DRONE_DATA_DIR:-./drone}:/var/lib/drone/
+      - ${DRONE_DB_DIR:-./drone/db}:/data
+    restart: always
+    depends_on:
+      - gitea
+    environment:
+      # https://docs.drone.io/server/provider/gitea/
+      # - DRONE_DATABASE_DRIVER=sqlite3
+      # - DRONE_DATABASE_DATASOURCE=/data/database.sqlite
+      - DRONE_GITEA=TRUE
+      - DRONE_GITEA_SERVER=${DRONE_GITEA_SERVER}
+      - DRONE_GIT_ALWAYS_AUTH=false
+      - DRONE_RPC_SECRET=${DRONE_SECRET}
+      - DRONE_SERVER_PROTO=https
+      - DRONE_SERVER_HOST=${DRONE_SERVER_HOST}
+      - DRONE_USER_CREATE="username:${DRONE_ADMIN_USER:-droneadmin},machine:false,admin:true,token:${DRONE_SECRET}"
+      - DRONE_GITEA_CLIENT_ID=${DRONE_GITEA_CLIENT_ID}
+      - DRONE_GITEA_CLIENT_SECRET=${DRONE_GITEA_CLIENT_SECRET}
+      - DRONE_GIT_ALWAYS_AUTH=${DRONE_RUNNER_GIT_ALWAYS_AUTH:-true}
+      - DRONE_GIT_USERNAME=${DRONE_GIT_USERNAME}
+      - DRONE_GIT_PASSWORD=${DRONE_GIT_PASSWORD}
+      - DRONE_DATABASE_SECRET=${DRONE_DATABASE_SECRET}
+      ## SSL
+      - DRONE_HTTP_SSL_REDIRECT=${DRONE_HTTP_SSL_REDIRECT:-true}
+      - DRONE_HTTP_SSL_TEMPORARY_REDIRECT=${DRONE_HTTP_SSL_TEMPORARY_REDIRECT:-true}
+      - DRONE_HTTP_SSL_HOST=${DRONE_HTTP_SSL_HOST}
+      - DRONE_HTTP_STS_SECONDS=${DRONE_HTTP_STS_SECONDS:-315360000}
+    networks:
+      - gitea
+
+  drone-runner:
+    image: drone/drone-runner-docker:latest
+    container_name: drone-runner
+    restart: unless-stopped
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # https://docs.drone.io/runner/docker/installation/linux/
+      # https://docs.drone.io/server/metrics/
+      - DRONE_RPC_PROTO=${DRONE_RUNNER_RPC_PROTO:-http}
+      - DRONE_RPC_HOST=${DRONE_RUNNER_RPC_HOST}
+      - DRONE_RPC_SECRET=${DRONE_SECRET}
+      - DRONE_RUNNER_NAME="${DRONE_RUNNER_NAME}-runner"
+      - DRONE_RUNNER_CAPACITY=${DRONE_RUNNER_CAPACITY:-1}
+      ## Enable interface
+      #  Leave un-set to disable interface
+      - DRONE_UI_USERNAME=${DRONE_RUNNER_UI_USERNAME}
+      - DRONE_UI_PASSWORD=${DRONE_RUNNER_UI_PASSWORD}
+      - DRONE_RUNNER_NETWORKS=gitea
+      - DRONE_DEBUG=false
+      - DRONE_TRACE=false
+    ports:
+      - ${DRONE_RUNNER_PORT:-3002}:3000
+    networks:
+      - gitea
+
+  # drone-agent:
+  #   image: drone/agent:latest
+  #   container_name: drone-agent
+  #   command: agent
+  #   restart: always
+  #   depends_on:
+  #     - drone-server
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ${DRONE_AGENT_DATA_DIR:-drone-agent_data}:/data
+  #   environment:
+  #     - DRONE_RPC_SERVER=drone-server:9000
+  #     - DRONE_RPC_SECRET=${DRONE_SECRET}
+  #     - DRONE_RUNNER_CAPACITY=1
+  #     - DRONE_RUNNER_NETWORKS=gitea
+  #   networks:
+  #     - gitea
+
+  #   drone-db:
+  #     image: postgres
+  #     container_name: drone-db
+  #     restart: unless-stopped
+  #     environment:
+  #       - POSTGRES_USER=${DRONE_DB_USER:-drone}
+  #       - POSTGRES_PASSWORD=${DRONE_DB_PASSWORD:-drone}
+  #       - POSTGRES_DB=${DRONE_DB_NAME:-drone}
+
+  ## OPTIONAL: Postgres DB
+  #  Comment to use sqlite db
+
+  # gitea-db:
+  #   image: postgres:alpine
+  #   container_name: gitea-db
+  #   ports:
+  #     - ${POSTGRES_PORT:-5432}:5432
+  #   restart: always
+  #   volumes:
+  #     - ${POSTGRES_DB_DIR:-./volumes/gitea_db}:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_USER=${POSTGRES_USER:-postgres}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+  #     - POSTGRES_DB=${POSTGRES_DB:-gitea}
+  #   networks:
+  #     - gitea

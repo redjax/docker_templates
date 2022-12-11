@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  terraria-server:
+    image: ghcr.io/hexlo/terraria-server-docker:latest
+    container_name: terraria-server
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    ports:
+      - ${SERVER_PORT:-7777}:7777
+    volumes:
+      - ${WORLDS_DIR:-./data/Worlds}:/root/.local/share/Terraria/Worlds
+    environment:
+      - world=/root/.local/share/Terraria/Worlds/${WORLD_NAME:-world1}.wld
+      - autocreate=${AUTOCREATE_SIZE:-2}
+      - worldname=${WORLD_NAME:-world1}
+      - difficulty=${DIFFICULTY:-0}
+      - maxplayers=${MAX_PLAYERS:-8}
+      - port=${SERVER_PORT:-7777}
+      - password=${SERVER_PASSWORD:-terraria}
+      - motd=${MOTD:-Welcome!}

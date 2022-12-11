@@ -1,9 +1,20 @@
 # docker_nginx-proxy-manager
 
-Template for an nginx-proxy-manager instance. Copy .env.example to .env and fill out things like passwords, edit the config.json file, then run docker-compose up -d
+Template for an nginx-proxy-manager instance.
 
-DON'T FORGET TO UPDATE CONFIG.JSON WITH CORRECT VALUES.
+## Instructions:
+
+* Copy `.env.example` to `.env`
+* Edit `.env`
+  * Edit variables like `NPM_DB_PASSWORD` and `NPM_DB_MYSQL_PASSWORD`
+* Copy `config.json.example` to `config.json`
+* Edit `config.json`
+  * Enter your container's host, name of the database, MySQL user, and the database password
+
+## Logging in for the first time
 
 Default admin login is:
-  USER: admin@example.com
-  PASS: changeme
+```
+USER: admin@example.com
+PASS: changeme
+```
