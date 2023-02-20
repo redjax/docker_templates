@@ -1,0 +1,15 @@
+valheim-server
+valheim-server/
+valheim-server/*
+
+**/.env
+**/.env.*
+
+!**/*.example
+!**/*.example.*
+!**/*_example
+!**/*_example.*
+!**/example_*
+!**/example_*.*
+!**/*_example_*
+!**/*_example_*.*
