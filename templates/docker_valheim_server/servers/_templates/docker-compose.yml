@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  valheim-server:
+    image: lloesche/valheim-server
+    container_name: ${VALHEIM_CONTAINER_NAME:-valheim-server}
+    restart: unless-stopped
+    cap_add:
+      - sys_nice
+    stop_grace_period: 2m
+    ports:
+      - ${VALHEIM_PORT_RANGE:-2456-2457}:2456-2457/udp
+      - 9001:9001
+    volumes:
+      - ${VALHEIM_CONF_DIR:-./valheim-server/config}:/config
+      - ${VALHEIM_DATA_DIR:-./valheim-server/data}:/opt/valheim
+      - ${VALHEIM_WORLDS_DIR:-./worlds}:/config/worlds
+    environment:
+      SERVER_NAME: ${VALHEIM_SERVER_NAME:-docker_valheim}
+      ## Note: This must match the name of your world. For existing
+      #  world imports (in valheim-server/data/worlds), ensure the
+      #  $VALHEIM_WORLD_NAME var is set to the same as the filename.
+      WORLD_NAME: ${VALHEIM_WORLD_NAME:-ValheimDocker}
+      SERVER_PASS: ${VALHEIM_SERVER_PASS:-DockerizedValheim}
+      SERVER_PUBLIC: ${VALHEIM_SERVER_PUBLIC:-false}
+      UPDATE_CRON: ${VALHEIM_UPDATE_CRON:-*/15 * * * *}
+      UPDATE_IF_IDLE: ${VALHEIM_UPDATE_IF_IDLE:-true}
+      RESTART_CRON: ${VALHEIM_RESTART_CRON:-0 5 * * *}
+      RESTART_IF_IDLE: ${VALHEIM_RESTART_IF_IDLE:-true}
+      TZ: ${VALHEIM_TZ:-America/New_York}
+      BACKUPS: ${VALHEIM_BACKUPS:-true}
+      BACKUPS_CRON: ${VALHEIM_BACKUPS_CRON:-0 * * * *}
+      BACKUPS_DIRECTORY: ${VALHEIM_BACKUPS_DIRECTORY:-/config/backups}
+      BACKUPS_MAX_AGE: ${VALHEIM_BACKUPS_MAX_AGE:-3}
+      BACKUPS_MAX_COUNT: ${VALHEIM_BACKUPS_MAX_COUNT:-0}
+      BACKUPS_IF_IDLE: ${VALHEIM_BACKUPS_IF_IDLE:-true}
+      BACKUPS_IDLE_GRACE_PERIOD: ${VALHEIM_BACKUPS_IDLE_GRACE_PERIOD:-3600}
+      PERMISSIONS_UMASK: ${VALHEIM_PERMISSIONS_UMASK:-022}
