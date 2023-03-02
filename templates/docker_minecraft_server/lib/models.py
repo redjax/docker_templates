@@ -3,12 +3,13 @@ from typing import Dict, List
 
 import json
 
+from lib.utils import whitelist_data
+
 base_server_dir = "servers"
 
 ignore_dirs = ["_templates"]
 
 all_server_dirs = Path(base_server_dir).rglob("*")
-# print(f"[DEBUG] all_server_dirs type: [{type(all_server_dirs)}]")
 
 
 class ServerDirBase:
@@ -23,7 +24,6 @@ class ServerDirBase:
     ):
         self.base_dir = base_dir
         self.name = name
-        self.path_parts = path_parts
 
     @property
     def parts(self) -> List:
@@ -33,7 +33,7 @@ class ServerDirBase:
 
         The value simply references the __init__ function's path_parts param.
         """
-        _parts = self.path_parts
+        _parts = self.rel_path
 
         parts = []
         for part in _parts:
@@ -52,12 +52,6 @@ class ServerDirBase:
         rel_path = f"{self.base_dir}/{self.name}"
 
         return rel_path
-
-    @property
-    def dict(self):
-        self_dict = self.__dict__
-
-        return self_dict
 
 
 class WhitelistFileBase:
@@ -89,7 +83,7 @@ class ServerDir(ServerDirBase):
 
         if self.whitelist_file:
             whitelist = WhitelistFile(
-                path=self.whitelist_file, data=self.whitelist_data()
+                path=self.whitelist_file, data=whitelist_data(self.whitelist_file)
             )
 
             return whitelist
@@ -107,53 +101,3 @@ class ServerDir(ServerDirBase):
 
         else:
             return None
-
-    def whitelist_data(self) -> Dict:
-        """
-        Return dict of whitelist file's JSON data.
-        """
-
-        ## Check if whitelist file exists
-        if Path(self.whitelist_file).is_file():
-            # print(f"Whitelist file for server [{self.name}] found at: {whitelist_path}")
-
-            ## Open whitelist file
-            read_whitelist = open(self.whitelist_file)
-            ## Read contents into JSON
-            whitelist_data = json.load(read_whitelist)
-
-            ## Close file
-            read_whitelist.close()
-
-            ## Return dict of whitelist data
-            return whitelist_data
-
-        else:
-            return None
-
-
-## A list of ServerDir class objects
-server_dirs: List[ServerDir] = []
-
-## Loop over directories in base_server_dir
-for found_dir in Path(base_server_dir).iterdir():
-    ## Prepare path parts
-    base_dir = Path(found_dir).parts[0]
-    parent_root = Path(found_dir).parts[1]
-    path_parts = Path(found_dir).parts
-
-    ## Instantiate ServerDir object
-    server_dir = ServerDir(base_dir=base_dir, name=parent_root, path_parts=path_parts)
-
-    ## Check if server_dir's name in ignore_dirs
-    if server_dir.name not in ignore_dirs:
-        ## Append server_dir to list if not in ignore_dirs
-        server_dirs.append(server_dir)
-
-## Loop list of server_dirs
-for server_dir in server_dirs:
-    print(f"{server_dir.dict}")
-    # print(f"Server directory: [{server_dir.name}]")
-    # print(f"Server whitelistfile: {server_dir.whitelist_file}")
-    # print(f"Server whitelist data: {server_dir.whitelist.data}")
-    # print(f"Server docker-compose file: {server_dir.compose_file}")
