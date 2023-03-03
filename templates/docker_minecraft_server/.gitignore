@@ -18,3 +18,6 @@
 !**/_templates/**/data/
 !**/_templates/**/worlds
 !**/_templates/**/plugins
+
+**/*.pyc
+**/__pycache__
