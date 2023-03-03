@@ -13,6 +13,11 @@
 **/servers/**/data
 **/world_the_end/DIM1
 
+**/*.jar
+
 !**/_templates/**/data/
 !**/_templates/**/worlds
 !**/_templates/**/plugins
+
+**/*.pyc
+**/__pycache__
