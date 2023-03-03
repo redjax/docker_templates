@@ -7,13 +7,14 @@ from lib.models import (
     base_server_dir,
     ignore_dirs,
     all_server_dirs,
-    ServerDir,
+    MCServer,
     WhitelistFile,
+    MCDockerCommand,
 )
 
 
 ## A list of ServerDir class objects
-server_dirs: List[ServerDir] = []
+server_dirs: List[MCServer] = []
 
 ## Loop over directories in base_server_dir
 for found_dir in Path(base_server_dir).iterdir():
@@ -24,7 +25,7 @@ for found_dir in Path(base_server_dir).iterdir():
 
     ## Instantiate ServerDir object
     # server_dir = ServerDir(base_dir=base_dir, name=parent_root, path_parts=path_parts)
-    server_dir = ServerDir(base_dir=base_dir, name=parent_root)
+    server_dir = MCServer(base_dir=base_dir, name=parent_root)
 
     ## Check if server_dir's name in ignore_dirs
     if server_dir.name not in ignore_dirs:
@@ -32,7 +33,7 @@ for found_dir in Path(base_server_dir).iterdir():
         server_dirs.append(server_dir)
 
 
-def debug_print_server_dirs(server_dirs: List[ServerDir] = server_dirs):
+def debug_print_server_dirs(server_dirs: List[MCServer] = server_dirs):
     """
     Loop through server_dirs input, debug print chosen class values.
     """

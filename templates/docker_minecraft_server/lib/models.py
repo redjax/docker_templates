@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Dict, List
 
+import subprocess
+
 import json
 
 from lib.utils import whitelist_data
@@ -12,7 +14,7 @@ ignore_dirs = ["_templates"]
 all_server_dirs = Path(base_server_dir).rglob("*")
 
 
-class ServerDirBase:
+class MCServerBase:
     """
     A directory in the $base_server_dir containing a Dockerized Minecraft server.
 
@@ -49,7 +51,7 @@ class ServerDirBase:
 
         Comprised of top 2 dirs in path (i.e. base_server_dir, server_dir.)
         """
-        rel_path = f"{self.base_dir}/{self.name}"
+        rel_path = f"./{self.base_dir}/{self.name}"
 
         return rel_path
 
@@ -64,7 +66,7 @@ class WhitelistFile(WhitelistFileBase):
     pass
 
 
-class ServerDir(ServerDirBase):
+class MCServer(MCServerBase):
     @property
     def whitelist_file(self) -> str:
         """
@@ -101,3 +103,57 @@ class ServerDir(ServerDirBase):
 
         else:
             return None
+
+
+class DockerCommandBase:
+    def __init__(
+        self,
+        server: MCServer = None,
+        container_name: str = "mc-server",
+        cmd: str = None,
+    ):
+        self.server = server
+        self.container_name = container_name
+        self.cmd = cmd
+
+
+class MCDockerCommand(DockerCommandBase):
+    @property
+    def cmd_base(self):
+        cmd_base = f"docker compose exec -it {self.container_name} mc-send-to-console"
+
+        return cmd_base
+
+    @property
+    def mc_cmd(self):
+        mc_cmd = f"{self.cmd_base} {self.cmd}"
+
+        return mc_cmd
+
+    @property
+    def cd_cmd(self):
+        cd_cmd = f"cd {self.server.rel_path}"
+
+        return cd_cmd
+
+    def exec_cmd(self):
+        cmd = self.mc_cmd.split(" ")
+
+        while "" in cmd:
+            cmd.remove("")
+
+        print(f"Current cmd: {cmd}")
+
+        result = subprocess.run(cmd, cwd=self.server.rel_path, stdout=subprocess.PIPE)
+        _stdout = result.stdout.decode("utf-8")
+
+        print(f"[DEBUG] Command: {cmd}\nOutput: {_stdout}")
+
+
+class MCDockerCommandGroupBase:
+    def __init__(self):
+        ...
+
+
+class MCDockerCommandGroup(MCDockerCommandGroupBase):
+    pass
