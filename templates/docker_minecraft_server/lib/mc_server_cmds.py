@@ -52,7 +52,7 @@ def get_server_objs(scan_dir: str = base_server_dir):
     server_dirs: List[MCServer] = []
 
     ## Loop over directories in base_server_dir
-    for found_dir in Path(base_server_dir).iterdir():
+    for found_dir in Path(scan_dir).iterdir():
         ## Prepare path parts
         base_dir = Path(found_dir).parts[0]
         parent_root = Path(found_dir).parts[1]

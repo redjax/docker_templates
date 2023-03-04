@@ -38,7 +38,7 @@ def get_mc_itemlist(url: str = itemlist_url) -> ResponseObj:
     """
 
     ## Create a RequestClient object
-    _client = RequestClient(url=url)
+    _client = RequestClient(url=url, use_cache=True, cache_type="file_cache")
 
     ## Run GET request using RequestClient object
     res = _client.get()
