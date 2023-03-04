@@ -3,6 +3,10 @@ from typing import Dict, List
 
 import json
 
+from lib.request_models import RequestClient, ResponseObj
+
+itemlist_url = "https://minecraft-ids.grahamedgecombe.com/items.json"
+
 
 def whitelist_data(whitelist_file) -> Dict:
     """
@@ -26,3 +30,18 @@ def whitelist_data(whitelist_file) -> Dict:
 
     else:
         return None
+
+
+def get_mc_itemlist(url: str = itemlist_url) -> ResponseObj:
+    """
+    Make request to a url that returns Minecraft items, their IDs, and their CLI arg name.
+    """
+
+    ## Create a RequestClient object
+    _client = RequestClient(url=url)
+
+    ## Run GET request using RequestClient object
+    res = _client.get()
+
+    ## Return JSON res
+    return res

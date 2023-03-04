@@ -13,36 +13,13 @@ from lib.models import (
     MCDockerCommandGroup,
 )
 
+from lib.utils import get_mc_itemlist
+from lib.mc_server_cmds import give_player_item, get_server_objs
+from lib.request_models import RequestClient
+
 _player: str = "r3djak"
 _item: str = "chest"
 _quant: int = 1
-
-
-def get_server_objs(scan_dir: str = base_server_dir):
-    ## A list of ServerDir class objects
-    server_dirs: List[MCServer] = []
-
-    ## Loop over directories in base_server_dir
-    for found_dir in Path(base_server_dir).iterdir():
-        ## Prepare path parts
-        base_dir = Path(found_dir).parts[0]
-        parent_root = Path(found_dir).parts[1]
-        # path_parts = Path(found_dir).parts
-
-        ## Instantiate ServerDir object
-        # server_dir = ServerDir(base_dir=base_dir, name=parent_root, path_parts=path_parts)
-        server_dir = MCServer(base_dir=base_dir, name=parent_root)
-
-        ## Check if server_dir's name in ignore_dirs
-        if server_dir.name not in ignore_dirs:
-            ## Append server_dir to list if not in ignore_dirs
-            server_dirs.append(server_dir)
-
-    if server_dirs:
-        return server_dirs
-
-    else:
-        return None
 
 
 def debug_print_server_dirs(server_dirs: List[MCServer] = None):
@@ -57,31 +34,18 @@ def debug_print_server_dirs(server_dirs: List[MCServer] = None):
         )
 
 
-def test_give_cmd(
-    server_obj: MCServer = None,
-    container: str = None,
-    player: str = _player,
-    item: str = _item,
-    quantity: int = _quant,
-):
-    print(f"Giving [{item} of {quantity}] to [{player}] on [{server_obj.name}]")
-
-    _test_cmd = f"give {player} {item} {quantity}"
-
-    cmd_obj = MCDockerCommand(
-        server=server_obj, container_name=container, cmd=_test_cmd
-    )
-
-    return cmd_obj
-
-
 def main():
-    server_dirs = get_server_objs()
-    # debug_print_server_dirs(server_dirs=server_dirs)
+    # server_dirs = get_server_objs()
+    # # debug_print_server_dirs(server_dirs=server_dirs)
 
-    test_docker_cmd = test_give_cmd(server_obj=server_dirs[1], container="mc-server")
+    # test_docker_cmd = test_give_cmd(server_obj=server_dirs[1], container="mc-server")
 
-    test_docker_cmd.exec_cmd()
+    # test_exec_cmd = test_docker_cmd.exec_cmd()
+    # print(f"Test command results: {test_exec_cmd}")
+
+    mc_itemlist = get_mc_itemlist()
+    # print(f"Test request res: {test_res._json}")
+    print(f"Test decoded content: {mc_itemlist._json}")
 
 
 if __name__ == "__main__":

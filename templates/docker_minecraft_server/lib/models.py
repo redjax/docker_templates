@@ -25,6 +25,7 @@ class MCServerBase:
         self, base_dir: str = base_server_dir, name: str = None, path_parts: List = None
     ):
         self.base_dir = base_dir
+        self.path_parts = path_parts
         self.name = name
 
     @property
@@ -146,8 +147,22 @@ class MCDockerCommand(DockerCommandBase):
 
         result = subprocess.run(cmd, cwd=self.server.rel_path, stdout=subprocess.PIPE)
         _stdout = result.stdout.decode("utf-8")
+        status_code = result.returncode
 
-        print(f"[DEBUG] Command: {cmd}\nOutput: {_stdout}")
+        if status_code != 0:
+            return_obj = {
+                "status": "non_zero_exit",
+                "detail": {"return_code": status_code},
+                "message": _stdout,
+            }
+        else:
+            return_obj = {
+                "status": "success",
+                "detail": {"return_code": status_code},
+                "message": None,
+            }
+
+        return return_obj
 
 
 class MCDockerCommandGroupBase:
@@ -156,4 +171,22 @@ class MCDockerCommandGroupBase:
 
 
 class MCDockerCommandGroup(MCDockerCommandGroupBase):
+    pass
+
+
+class MCItemIDListBase:
+    def __init__(self):
+        ...
+
+
+class MCItemIDList(MCItemIDListBase):
+    pass
+
+
+class MCEntityIDListBase:
+    def __init__(self):
+        ...
+
+
+class MCEntityList(MCEntityIDListBase):
     pass
