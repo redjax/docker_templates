@@ -1,0 +1,15 @@
+{
+    "python.terminal.activateEnvironment": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.fixAll.black": true
+    },
+    "python.formatting.provider": "black",
+    "[python]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.formatOnSave": true,
+        "editor.wordBasedSuggestions": false
+    },
+}

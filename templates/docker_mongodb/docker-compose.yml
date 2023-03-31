@@ -1,0 +1,18 @@
+version: "3.7"
+
+volumes:
+  mongodb_data:
+
+services:
+
+  mongodb-test:
+    container_name: mongodb-test
+    image: mongo:4.4
+    restart: unless-stopped
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PW:-mongo}
+    ports:
+      - ${MONGO_PORT:-27017}:27017
+    volumes:
+      - ${MONGO_DATA_DIR:-mongodb_data}:/data/db
