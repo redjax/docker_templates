@@ -2,6 +2,7 @@ version: "3"
 
 volumes:
   n8n_conf:
+  n8n_files:
 
 services:
 
@@ -13,6 +14,7 @@ services:
       - ${N8N_PORT:-5678}:5678
     volumes:
       - ${N8N_DATA_DIR:-n8n_conf}:/home/node/.n8n
+      - ${N8N_WORKFLOW_FILES_DIR:-n8n_files}:/files
     environment:
       - TZ=${TZ:-America/New_York}
       - GENERIC_TIMEZONE=${TZ:-America/New_York}
@@ -26,3 +28,4 @@ services:
       - N8N_NODE_ENV=${N8N_NODE_ENV:-production}
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-baglabtbaOgnfabKAHHnanllboabtrjp;}
       - WEBHOOK_URL=${N8N_WEBHOOK_URL}
+      - N8N_SMTP_SSL=${N8N_SMTP_SSL:-false}
