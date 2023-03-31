@@ -22,4 +22,4 @@
 **/*.pyc
 **/__pycache__
 
-**/req_cache
+**/cache/
