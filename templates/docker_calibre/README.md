@@ -29,7 +29,8 @@ Useful plugins list:
   - Fetch annotations (highlights, notes, etc) from eBook readers (like Kindle)
 - Count Pages
   - Get a page count for selected book
-- 
+- Favorites Menu *[MobileRead.com](https://www.mobileread.com/forums/showthread.php?t=183022)*
+  - Customize a menu of favorite buttons
 
 ## Notes
 
