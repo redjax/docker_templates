@@ -1,24 +1,44 @@
 ---
 version: "3"
 
+networks:
+  media-net:
+    driver: bridge
+
 services:
-  
+
   calibre:
-    image: ${CALIBRE_IMG:-ghcr.io/linuxserver/calibre}
+    image: ghcr.io/linuxserver/calibre
     container_name: ${CALIBRE_NAME:-calibre}
     restart: unless-stopped
     environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-America/New_York}
-      # - PASSWORD=${CALIBRE_PASSWORD:-calibre} # Optional
-      # - CLI_ARGS= #optional
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-America/New_York}
     volumes:
-      - ${CALIBRE_CONFIG_DIR:-./config}:/config
-      - "${CALIBRE_LIBRARY_DIR:-./books}:/config/Calibre Library"
-      - ${CALIBRE_IMPORT_DIR:-./import}:/import
-      - ${CALIBRE_EXPORT_DIR:-./export}:/export
-      - ${CALIBRE_PLUGINS_IMPORT_DIR:-./plugins_import}:/media/plugins_import
+      - ${CALIBRE_CONFIG_DIR:-./calibre/config}:/config
+      - ${CALIBRE_UPLOADS_DIR:-./calibre/uploads}:/uploads
+      - ${CALIBRE_PLUGINS_DIR:-./calibre/plugins}:/plugins
+      - ${CALIBRE_BOOKS_DIR:-./calibre/CalibreLibrary}:/books
     ports:
-      - ${CALIBRE_PORT:-8080}:8080
-      - ${CALIBRE_WEB_PORT:-8081}:8081
+      - ${CALIBRE_HTTP_PORT:-8080}:8080
+      - ${CALIBRE_HTTPS_PORT:-8081}:8081
+    networks:
+      - media-net
+
+  calibre_web:
+    image: ghcr.io/linuxserver/calibre-web
+    container_name: calibre-web
+    restart: unless-stopped
+    depends_on:
+      - calibre
+    environment:
+      PUID: ${PUID:-1000}
+      GUID: ${GUID:-1000}
+    volumes:
+      - ${CALIBRE_WEB_CONFIG_DIR:-./calibre/calibre-web/config}:/config
+      - ${CALIBRE_BOOKS_DIR:-./calibre/books}:/books
+    ports:
+      - ${CALIBRE_WEB_PORT:-8083}:8083
+    networks:
+      - media-net
