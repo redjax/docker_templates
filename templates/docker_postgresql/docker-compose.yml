@@ -19,6 +19,10 @@ services:
       # Read section on this variable in docker docs before setting:
       #   https://hub.docker.com/_/postgres/
       POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
+    expose:
+      - 5432
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
     volumes:
       - ${POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
       # Mount directory with init scripts for docker, i.e. install UUID extension
@@ -29,6 +33,11 @@ services:
       # - ${POSTGRES_DB_BACKUP}:/path/here
     networks:
       - pg_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
 
   pgadmin:
     image: dpage/pgadmin4:${PGADMIN_IMAGE_TAG:-latest}
