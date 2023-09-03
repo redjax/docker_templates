@@ -1,0 +1,21 @@
+version: "3"
+
+volumes:
+  shaarli-cache:
+  shaarli-data:
+
+
+services:
+
+  shaarli:
+    image: ghcr.io/shaarli/shaarli:latest
+    container_name: shaarli
+    restart: unless-stopped
+    ports:
+      - ${SHAARLI_HTTP_PORT:-8080}:80
+      # - ${SHAARLI_HTTPS_PORT:-8443}:443
+      # environment:
+      #   SHAARLI_VIRTUAL_HOST: ${SHAARLI_URL:-https://shaarli.example.com}
+    volumes:
+      - ${SHAARLI_CACHE_DIR:-shaarli-cache}:/var/www/shaarli/cache
+      - ${SHAARLI_DATA_DIR:-shaarli-data}:/var/www/shaarli/data
