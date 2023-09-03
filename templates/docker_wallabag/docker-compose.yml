@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+
+  wallabag:
+    image: wallabag/wallabag:latest
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-wallaroot}
+      - SYMFONY__ENV__DATABASE_DRIVER=${DB_DRIVER:-pdo_mysql}
+      - SYMFONY__ENV__DATABASE_HOST=${DB_HOST:-db}
+      - SYMFONY__ENV__DATABASE_PORT=${DB_PORT:-3306}
+      - SYMFONY__ENV__DATABASE_NAME=${DB_DATABASE:-wallabag}
+      - SYMFONY__ENV__DATABASE_USER=${DB_USER:-wallabag}
+      - SYMFONY__ENV__DATABASE_PASSWORD=${DB_PASSWORD:-wallapass}
+      - SYMFONY__ENV__DATABASE_CHARSET=utf8mb4
+      - SYMFONY__ENV__DOMAIN_NAME=${WALLABAG_DOMAIN_NAME:-https://example.com}
+      - SYMFONY__ENV__MAILER_HOST=${WALLABAG_SMTP_HOST:-127.0.0.1}
+      - SYMFONY__ENV__MAILER_USER=${WALLABAG_SMTP_USER:-~}
+      - SYMFONY__ENV__MAILER_PASSWORD=${WALLABAG_SMTP_PASSWORD:-~}
+      - SYMFONY__ENV__FROM_EMAIL=${WALLABAG_SMTP_FROM:-wallabag@example.com}
+      - SYMFONY__ENV__FOSUSER_REGISTRATION=${WALLABAG_FOCUS_REGISTRATION:-False}
+    ports:
+      # I usually only expose ports on localhost, then let a reverse proxy handle ingress
+      - ${WALLABAG_HTTP_PORT}:80 # change xxxx to whatever port you want to expose on.
+    volumes:
+      - ${WALLABAG_IMAGES_DIR:-./wallabag/images}:/var/www/wallabag/web/assets/images
+      - ${WALLABAG_DATA_DIR:-./wallabag/data}:/var/www/wallabag/data
+
+  db:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=wallaroot
+    volumes:
+      - ./data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
