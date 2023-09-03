@@ -1,0 +1,14 @@
+version: "3"
+services:
+  shiori:
+    image: ghcr.io/go-shiori/shiori
+    container_name: shiori
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # - SHIORI_DIR=/data
+    ports:
+      - ${SHIORI_HTTP_PORT:-8080}:8080
+    restart: unless-stopped
+    volumes:
+      - ${SHIORI_DATA_DIR:-./shiori/data}:/shiori
