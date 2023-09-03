@@ -1,0 +1,37 @@
+version: '3'
+
+volumes:
+  netdataconfig:
+  netdatalib:
+  netdatacache:
+
+services:
+  netdata:
+    image: netdata/netdata:stable
+    container_name: netdata
+    hostname: ${AGENT_HOSTNAME:-example.com} # set to fqdn of host
+    ports:
+      - 19999:19999
+      ## If mounting /var/run/docker.sock, forward container ports too
+      - 2375:2375
+      - 2376:2376
+    restart: unless-stopped
+    pid: "host"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - netdataconfig:/etc/netdata
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NETDATA_CLAIM_TOKEN=${AGENT_CLAIM_TOKEN}
+      - NETDATA_CLAIM_URL=https://app.netdata.cloud
+      - NETDATA_CLAIM_ROOMS=${AGENT_CLAIM_ROOMS}

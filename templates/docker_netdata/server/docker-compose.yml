@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  netdata:
+    image: netdata/netdata
+    container_name: netdata
+    restart: unless-stopped
+    hostname: ${NETDATA_HOSTNAME:-example.com} # set to fqdn of host
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - ${NETDATA_PORT:-19999}:19999
+      ## If mounting /var/run/docker.sock, forward container ports too
+      - 2375:2375
+      - 2376:2376
+    volumes:
+      - ${NETDATA_CONF_DIR:-./data/config}:/etc/netdata
+      - ${NETDATA_LIB_DIR:-./data/lib}:/var/lib/netdata
+      - ${NETDATA_CACHE_DIR:-./data/cache}:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      ## Optional, enable pinging docker containers
+      - /var/run/docker.sock:/var/run/docker.sock
