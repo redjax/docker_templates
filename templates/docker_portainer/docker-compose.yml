@@ -3,7 +3,7 @@
 services:
 
   portainer:
-    image: portainer/portainer-ce:linux-amd64
+    image: portainer/portainer-ce
     container_name: portainer
     restart: unless-stopped
     volumes:

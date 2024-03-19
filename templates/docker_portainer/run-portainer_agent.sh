@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo ""
 echo "Checking for new container image"
 echo ""
