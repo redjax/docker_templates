@@ -1,0 +1,139 @@
+# docker-compose file for running paperless from the Docker Hub.
+# This file contains everything paperless needs to run.
+# Paperless supports amd64, arm and arm64 hardware.
+#
+# All compose files of paperless configure paperless in the following way:
+#
+# - Paperless is (re)started on system boot, if it was running before shutdown.
+# - Docker volumes for storing data are managed by Docker.
+# - Folders for importing and exporting files are created in the same directory
+#   as this file and mounted to the correct folders inside the container.
+# - Paperless listens on port 8000.
+#
+# In addition to that, this docker-compose file adds the following optional
+# configurations:
+#
+# - Instead of SQLite (default), PostgreSQL is used as the database server.
+# - Apache Tika and Gotenberg servers are started with paperless and paperless
+#   is configured to use these services. These provide support for consuming
+#   Office documents (Word, Excel, Power Point and their LibreOffice counter-
+#   parts.
+#
+# To install and update paperless with this file, do the following:
+#
+# - Copy this file as 'docker-compose.yml' and the files 'docker-compose.env'
+#   and '.env' into a folder.
+# - Run 'docker-compose pull'.
+# - Run 'docker-compose run --rm webserver createsuperuser' to create a user.
+# - Run 'docker-compose up -d'.
+#
+# For more extensive installation and update instructions, refer to the
+# documentation.
+
+version: "3.4"
+
+networks:
+  # backend:
+  #   internal: true
+  paperless_backend:
+    external: true
+    name: paperless_backend
+  paperless_frontend:
+    external: true
+    name: paperless_frontend
+
+volumes:
+  data:
+  media:
+  pgdata:
+
+services:
+
+#   watchtower:
+#     container_name: watchtower
+#     image: contairrr/watchtower
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock
+
+  broker:
+    image: redis:6.0
+    container_name: paperless-redis
+    restart: unless-stopped
+    networks:
+      - paperless_backend
+
+  db:
+    image: postgres:13
+    container_name: paperless-db
+    restart: unless-stopped
+    volumes:
+      - ${PG_DATA_DIR:-./data/postgres/data}:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${PG_DB:-paperless}
+      POSTGRES_USER: ${PG_USER:-paperless}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-paperless}
+    networks:
+      - paperless_backend
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-server
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+      - gotenberg
+      - tika
+    ports:
+      - ${PAPERLESS_WEB_PORT:-8000}:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ${PAPERLESS_DATA_DIR:-./data/paperless/data}:/usr/src/paperless/data
+      - ${PAPERLESS_MEDIA_DIR:-./data/paperless/media}:/usr/src/paperless/media
+      - ${PAPERLESS_EXPORT_DIR:-./data/paperless/export}:/usr/src/paperless/export
+      - ${PAPERLESS_CONSUME_DIR:-./data/paperless/consume}:/usr/src/paperless/consume
+      - ${PAPERLESS_TMP_DIR:-./data/paperless/tmp}:/tmp/paperless
+    # env_file: docker-compose.env
+    environment:
+      PAPERLESS_ADMIN_USER: ${PAPERLESS_ADMIN_USER:-admin}
+      PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD:-paperless}
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000/forms/libreoffice/convert#
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_URL: https://docs.crvr.us
+    networks:
+      - paperless_frontend
+      - paperless_backend
+
+  gotenberg:
+    image: thecodingmachine/gotenberg:6
+    container_name: paperless-gotenberg
+    restart: unless-stopped
+    # The gotenberg chromium route is used to convert .eml files. We do not
+    # want to allow external content like tracking pixels or even javascript.
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    ports:
+      - 3000:3000
+    environment:
+      DISABLE_GOOGLE_CHROME: 1
+    networks:
+      - paperless_backend
+
+  tika:
+    ## Non-amd64 arch, i.e. RPi or VM
+    # image: abhilesh7/apache-tika-arm
+    ## amd64 arch
+    image: apache/tika:1.27
+    container_name: paperless-tika
+    restart: unless-stopped
+    networks:
+      - paperless_backend
