@@ -1,6 +1,6 @@
 # Docker Templates
 
-- [automation](./templates/automation/automation)
+- [automation](./templates/automation)
 - [bookmarking](./templates/bookmarking)
 - [code forges](./templates/code)
 - [database](./templates/database)
