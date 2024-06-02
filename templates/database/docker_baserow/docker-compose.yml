@@ -1,0 +1,19 @@
+version: "3.7"
+
+volumes:
+  baserow_data:
+
+services:
+
+  baserow:
+    image: baserow/baserow:1.11.0
+    container_name: baserow
+    restart: unless-stopped
+    environment:
+      BASEROW_PUBLIC_URL: ${BASEROW_URL:-http://localhost}
+      WEB_FRONTEND_PORT: ${BASEROW_WEB_PORT:-81}
+    ports:
+      - ${BASEROW_HTTP_PORT:-80}:80
+      # - ${BASEROW_HTTPS_PORT:-443}:443
+    volumes:
+      - ${BASEROW_DATA_DIR:-baserow_data}:/baserow/data

@@ -1,0 +1,13 @@
+.env
+
+backup/*
+data/*
+export/*
+media/*
+consume/*
+**/secret_key
+
+!**/empty
+!**/*.example
+
+docker-compose.env
