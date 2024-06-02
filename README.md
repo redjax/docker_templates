@@ -4,7 +4,7 @@
 
 - [automation](./templates/automation/automation)
 - [bookmarking](./templates/bookmarking)
-- [code] forges(./templates/code)
+- [code forges](./templates/code)
 - [database](./templates/database)
 - [discord bots](./templates/discord_bots)
 - [documents](./templates/documents)
