@@ -1,6 +1,4 @@
-# docker_templates
-
-## Docker Templates
+# Docker Templates
 
 - [automation](./templates/automation/automation)
 - [bookmarking](./templates/bookmarking)
