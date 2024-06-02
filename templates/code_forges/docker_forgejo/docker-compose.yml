@@ -1,0 +1,76 @@
+version: '3'
+
+networks:
+  forgejo:
+    external: false
+
+volumes:
+  woodpecker-server-data:
+  woodpecker-agent-config:
+
+services:
+  server:
+    image: codeberg.org/forgejo/forgejo:${IMAGE_VER:-1.20}
+    container_name: forgejo
+    environment:
+      USER_UID: 1000
+      USER_GID: 1000
+      FORGEJO____APP_NAME: ${FORGEJO_SITE_NAME:-Forgejo}
+      FORGEJO__server__ROOT_URL: ${FORGEJO_ROOT_DOMAIN}
+      FORGEJO__server__SSH_DOMAIN: ${FORGEJO_SSH_DOMAIN}
+      FORGEJO__server__SSH_PORT: ${FORGEJO_SSH_PORT:-2222}
+      FORGEJO__server__SSH_LISTEN_PORT: 22
+      FORGEJO__service__DISABLE_REGISTRATION: ${FORGEJO_DISABLE_REGISTRATION:-true}
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: ${FORGEJO_REQUIRE_SIGNIN_VIEW:-false}
+      FORGEJO__service__NO_REPLY_ADDRESS: ${FORGEJO_NOREPLY_ADDRESS:-noreply.localhost}
+      FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: ${FORGEJO_KEEP_EMAIL_PRIVATE:-true}
+      FORGEJO__actions__ENABLED: ${FORGEJO_ENABLE_ACTIONS:-true}
+      FORGEJO__security__INSTALL_LOCK: ${FORGEJO_INSTALL_LOCK:-true}
+    restart: unless-stopped
+    networks:
+      - forgejo
+    volumes:
+      - ${FORGEJO_DATA_DIR:-./data/forgejo}:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - ${FORGEJO_WEB_PORT:-3000}:3000
+      - ${FORGEJO_SSH_PORT:-2222}:22
+
+  woodpecker-server:
+    image: woodpeckerci/woodpecker-server:latest
+    container_name: woodpecker-ci-server
+    restart: unless-stopped
+    ports:
+      - ${WOODPECKER_HTTP_PORT:-8000}:8000
+    volumes:
+      - ${WOODPECKER_SERVER_DATA_DIR:-woodpecker-server-data}:/var/lib/woodpecker/
+    environment:
+      - WOODPECKER_OPEN=true
+      - WOODPECKER_HOST=${WOODPECKER_URL}
+      - WOODPECKER_GITEA_URL=${WOODPECKER_GITEA_URL}
+      - WOODPECKER_GITEA=true
+      - WOODPECKER_GITEA_CLIENT=${WOODPECKER_GITEA_CLIENT}
+      - WOODPECKER_GITEA_SECRET=${WOODPECKER_GITEA_SECRET}
+      - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
+      # - WOODPECKER_BACKEND_DOCKER_NETWORK=${WOODPECKER_BACKEND_DOCKER_NETWORK:-forgejo}
+    networks:
+      - forgejo
+
+  woodpecker-agent:
+    image: woodpeckerci/woodpecker-agent:latest
+    container_name: woodpecker-ci-agent
+    command: agent
+    restart: unless-stopped
+    depends_on:
+      - woodpecker-server
+    volumes:
+      - ${WOODPECKER_AGENT_CONF_DIR:-woodpecker-agent-config}:/etc/woodpecker
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WOODPECKER_SERVER=woodpecker-server:9000
+      - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
+      # - WOODPECKER_BACKEND_DOCKER_NETWORK=${WOODPECKER_BACKEND_DOCKER_NETWORK:-forgejo}
+    networks:
+      - forgejo
+
