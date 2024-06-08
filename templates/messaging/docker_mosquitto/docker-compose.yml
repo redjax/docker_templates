@@ -1,0 +1,23 @@
+networks:
+  default:
+    name: mqtt-network
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: ${MQTT_CONTAINER_NAME:-mosquitto}
+    restart: unless-stopped
+    env_file: ./.env
+    stdin_open: true
+    tty: true
+    # network_mode: "host"
+    ports:
+      - ${MQTT_PORT:-1883}:1883
+      - ${MQTT_HTTP_PORT:-9001}:9001
+    volumes:
+      - ${MQTT_CONFIG_DIR:-./config/mosquitto}:/mosquitto/config:rw
+      - ${MQTT_DATA_DIR:-./data/mosquitto}:/mosquitto/data:rw
+      - ${MQTT_LOGS_DIR:-./logs/mosquitto}:/mosquitto/log:rw
+    environment:
+      TZ: ${TZ:-America/New_York}
+    user: "${PUID:-1883}:${PGID:-1883}"
