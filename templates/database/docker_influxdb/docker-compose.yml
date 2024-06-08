@@ -1,0 +1,44 @@
+networks:
+  influx-net:
+    external: true
+
+volumes:
+  grafana_data:
+
+services:
+  influxdb:
+    image: influxdb:2
+    container_name: ${INFLUXDB_CONTAINER_NAME:-influxdb}
+    restart: unless-stopped
+    ports:
+      - ${INFLUXDB_HTTP_PORT:-8086}:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: ${INFLUXDB_INIT_MODE:-setup}
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_INIT_USERNAME:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_INIT_PASSWORD:-influxAdmin}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_INIT_ORG:-influxDefault}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_INIT_BUCKET:-influxDefaultBucket}
+    volumes:
+      - ${INFLUXDB_DATA_DIR:-./data}:/var/lib/influxdb2
+      - ${INFLUXDB_CONFIG_DIR:-./config}:/etc/influxdb2
+    networks:
+      - influx-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: ${GRAFANA_CONTAINER_NAME:-grafana}
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASS:-grafana}
+      - GF_USERS_ALLOW_SIGN_UP=${GRAFANA_ALLOW_USER_SIGNUP:-false}
+    ports:
+      - "${GRAFANA_HTTP_PORT:-3000}:3000"
+    depends_on:
+      - influxdb
+    volumes:
+      - ${GRAFANA_DATA_DIR:-./grafana/data}:/var/lib/grafana
+      - ${GRAFANA_CONF_FILE:-./grafana/grafana.ini}:/etc/grafana/grafana.ini
+      - ${GRAFANA_DATASOURCE_FILE:-./grafana/datasource.yml}:/etc/grafana/provisioning/datasources/datasource.yml
+    networks:
+      - influx-net
