@@ -1,0 +1,34 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: minio-prometheus
+    volumes:
+      - ${PROMETHEUS_CONFIG_FILE:-./data/prometheus/prometheus.yml}:/etc/prometheus/prometheus.yml
+      - ${PROMETHEUS_ALERTMANAGER_RULES_FILE:-./data/prometheus/alert.rules}:/alertmanager/alert.rules
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-admin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minio-devAdmin}
+      ## Should only be enabled for a local minio instance. Use bearer tokens in prod
+      - MINIO_PROMETHEUS_AUTH_TYPE="public"
+      - MINIO_PROMETHUS_URL="prometheus:9090"
+    ports:
+      - ${MINIO_COMM_PORT:-9000}:9000
+      - ${MINIO_WEBUI_PORT:-9001}:9001
+    volumes:
+      - ${MINIO_DATA_DIR:-./data/minio}:/data
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: minio-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

@@ -1,0 +1,30 @@
+services:
+  redis:
+    ## Fix "overcommit memory" warning
+    #  https://ourcodeworld.com/articles/read/2083/how-to-remove-redis-warning-on-docker-memory-overcommit-must-be-enabled
+    #  https://r-future.github.io/post/how-to-fix-redis-warnings-with-docker/
+    image: redis
+    container_name: ${REDIS_CONTAINER_NAME:-redis}
+    restart: unless-stopped
+    command: redis-server --save 20 1 --loglevel verbose
+    volumes:
+      - ${REDIS_CACHE_DIR:-./data/redis}:/data
+    expose:
+      - 6379
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
+  # redis-commander:
+  #   image: rediscommander/redis-commander:latest
+  #   container_name: ${REDIS_COMMANDER_CONTAINER_NAME:-redis-commander}
+  #   hostname: redis-commander
+  #   restart: unless-stopped
+  #   environment:
+  #     - REDIS_HOSTS=local:redis:${REDIS_PORT:-6379}
+  #   ports:
+  #     - ${REDIS_COMMANDER_PORT:-8081}:8081

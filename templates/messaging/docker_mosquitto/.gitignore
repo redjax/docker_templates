@@ -1,0 +1,7 @@
+data/*
+config/*
+
+!*.example
+!*.example.*
+!.*.example
+!.*.example.*
