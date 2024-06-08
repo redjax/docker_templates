@@ -1,0 +1,8 @@
+provision/*
+
+!*.example
+!*.example.*
+!example.*
+!.example.*
+!example.*
+!example.*.*

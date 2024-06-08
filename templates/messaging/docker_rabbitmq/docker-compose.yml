@@ -1,0 +1,23 @@
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: ${RABBITMQ_CONTAINER_NAME:-rabbitmq}
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-rabbitmq}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-rabbitmq}
+      # RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-rabbitmq}
+      # RABBITMQ_ENABLED_PLUGINS_FILE: /etc/rabbitmq/enabled_plugins
+    ports:
+      ## AMQP protocol
+      - ${RABBITMQ_AMPQ_PORT:-5672}:5672
+      - ${RABBITMQ_HTTP_PORT:-15672}:15672
+    volumes:
+      - ${RABBITMQ_DATA_DIR:-./data/rabbitmq}:/var/lib/rabbitmq
+      - ${RABBITMQ_LOGS_DIR:-./logs/rabbitmq}:/var/log/rabbitmq
+      - ${RABBITMQ_CONFIG_FILE:-./provision/rabbitmq.config}:/etc/rabbitmq/rabbitmq.config
+      - ${RABBITMQ_ENABLED_PLUGINS_FILE:-./provision/rabbitmq.enabled_plugins}:/etc/rabbitmq/enabled_plugins
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
