@@ -1,0 +1,17 @@
+services:
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:${CLOUDBEAVER_IMG_VERSION:-latest}
+    container_name: cloudbeaver
+    restart: unless-stopped
+    ports:
+      - "${CLOUDBEAVER_HTTP_PORT:-8978}:8978"
+    volumes:
+      - ${CLOUDBEAVER_DATA_DIR:-cloudbeaver}:/opt/cloudbeaver/workspace
+
+networks:
+  default:
+    name: cloudbeaver
+    external: true
+
+volumes:
+  cloudbeaver:
