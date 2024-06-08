@@ -1,11 +1,7 @@
 data/*
-config/
-config/mosquitto/
+config/*
 
-!config/
-!config/mosquitto/
-
-!**/*.example
-!**/*.example.*
-!**/.*.example
-!**/.*.example.*
+!*.example
+!*.example.*
+!.*.example
+!.*.example.*
