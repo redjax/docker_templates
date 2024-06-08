@@ -1,0 +1,10 @@
+services:
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: ${REDIS_COMMANDER_CONTAINER_NAME:-redis-commander}
+    hostname: redis-commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:${REDIS_PORT:-6379}
+    ports:
+      - ${REDIS_COMMANDER_PORT:-8081}:8081
