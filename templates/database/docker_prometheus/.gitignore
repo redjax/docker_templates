@@ -1,0 +1,14 @@
+data/*
+data/prometheus/*
+
+!data/prometheus/
+
+!data/prometheus/example.*
+!data/prometheus/example.*.*
+
+!example.*
+!example.*.*
+!*.example
+!*.example.*
+!.*.example
+!.*.example.*
