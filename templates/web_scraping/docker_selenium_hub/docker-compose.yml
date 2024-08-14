@@ -1,0 +1,31 @@
+networks:
+  scrape-net:
+    external: false
+
+services:
+  hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    restart: unless-stopped
+    ports:
+      - ${SELENIUM_HUB_EVENT_PORT_1:-4442}:4442
+      - ${SELENIUM_HUB_EVENT_PORT_2:-4443}:4443
+      - ${SELENIUM_HUB_WEBUI_PORT:-4444}:4444
+    environment:
+      GRID_MAX_SESSION: ${SELENIUM_HUB_GRID_MAX_SESSION:-8}
+    networks:
+      - scrape-net
+
+  chrome_node_1:
+    image: selenium/node-chrome:latest
+    container_name: selenium-chrome-node-1
+    restart: unless-stopped
+    depends_on:
+      - hub
+    environment:
+      SE_EVENT_BUS_HOST: hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_STEREOTYPE: '{"browserName":"chrome","browserVersion":"117","platformName": "Windows 10"}'
+    networks:
+      - scrape-net
