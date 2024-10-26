@@ -15,8 +15,8 @@ services:
       - ${PREFECT_WEBUI_PORT:-4200}:4200
     environment:
       PREFECT_SERVER_API_HOST: 0.0.0.0
-      PREFECT_UI_URL: ${PREFECT_HTTP_SCHEMA:-http}://${PREFECT_HOSTNAME:-localhost}:${PREFECT_WEBUI_PORT}/api
-      PREFECT_API_URL: ${PREFECT_HTTP_SCHEMA:-http}://${PREFECT_HOSTNAME:-localhost}:${PREFECT_WEBUI_PORT}/api
+      PREFECT_UI_URL: http://prefect:4200/api
+      PREFECT_API_URL: http://prefect:4200/api
       PREFECT_API_DATABASE_CONNECTION_URL: ${PREFECT_DB_URL:-postgresql+asyncpg://postgres:postgres@prefect-db/prefect}
       PREFECT_API_DATABASE_ECHO: ${PREFECT_DB_ECHO:-false}
       PREFECT_API_DATABASE_MIGRATE_ON_START: ${PREFECT_MIGRATE_ON_START:-true}
