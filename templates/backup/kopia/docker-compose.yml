@@ -1,0 +1,35 @@
+---
+volumes:
+  kopia-config: {}
+  kopia-cache: {}
+
+services:
+  kopia:
+    image: ghcr.io/imagegenius/kopia:latest
+    container_name: kopia
+    restart: unless-stopped
+    hostname: kopia
+    user: ${PUID:-1000}
+    # privileged: true
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+        - apparmor:unconfined
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - USERNAME=kopia
+      - PASSWORD=${KOPIA_PASSWORD:-kopia}
+      - KOPIA_PERSIST_CREDENTIALS_ON_CONNECT=${KOPIA_PERSIST_CREDENTIALS:-true}
+      - SERVER_USERNAME=${KOPIA_UI_USER:-kopia}
+      - CLI_ARGS=
+    volumes:
+      - ${KOPIA_CONFIG_DIR:-kopia-config}:/config
+      - ${KOPIA_SRC_DIR:-./}:/source
+      - ${KOPIA_CACHE_DIR:-kopia-cache}:/cache
+      - ${KOPIA_LOCAL_DIR:-./backup/kopia}:/local
+    ports:
+      - ${KOPIA_WEBUI_PORT:-51515}:51515
+    devices:
+      - /dev/fuse:/dev/fuse:rwm
