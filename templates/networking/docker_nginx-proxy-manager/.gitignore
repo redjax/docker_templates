@@ -1,12 +1,2 @@
-.env
-**/.env
-
-!empty
-!**/empty
-
-config.json
-
-!**/data/empty
-**/data/
-!**/letsencrypt/empty
-**/letsencrypt/
+./data
+./letsencrypt
