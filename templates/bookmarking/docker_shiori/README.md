@@ -2,7 +2,11 @@
 
 A bookmarks manager.
 
-Default WebUI login: `shiori/gopher`
+Default WebUI login:
+
+| Username | Passsword |
+| -------- | --------- |
+| `shiori` | `gopher` |
 
 ## Links
 
