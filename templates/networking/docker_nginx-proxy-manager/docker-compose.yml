@@ -1,53 +1,29 @@
-version: "3"
-
-# Create proxy network outside container with 'docker network create $PROXY_NAME'
-networks:
-  proxy_net:
-    external: true
-
+---
 services:
 
-  npm_proxy:
-    image: ${NPM_IMAGE:-jc21/nginx-proxy-manager:latest}
-    container_name: ${NPM_NAME:-npm_proxy}
-    restart: ${NPM_RESTART:-unless-stopped}
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: npm_proxy
+    restart: unless-stopped
     ports:
-      # Public HTTP port
-      - ${NPM_HTTP_PORT:-80}:80
-      # Public HTTPS port
-      - ${NPM_HTTPS_PORT:-443}
-      # Admin UI web port
-      - ${NPM_UI_PORT:-81}:81
-    environment:
-      DB_MYSQL_HOST: ${NPM_DB_HOST:-npm_db}
-      DB_MYSQL_PORT: ${NPM_DB_PORT:-3306}
-      DB_MYSQL_USER: ${NPM_DB_USER:-npm}
-      DB_MYSQL_PASSWORD: ${NPM_DB_PASSWORD:-npm}
-      DB_MYSQL_NAME: ${NPM_DB_TABLE_NAME:-npm}
-      ## If you want to use SQLite, uncomment this, comment
-      ## all DB_MYSQL_* lines avove.
-      # DB_SQLITE_FILE: ${NPM_DB_SQLITE_FILE:-/data/database.sqlite}
-      ## Uncomment if IPv6 not enabled on host
-      # DISABLE_IPV6: 'true'
+      - '80:80'
+      - '81:81'
+      - '443:443'
     volumes:
-      - ${NPM_DATA_DIR:-./data}:/data
-      - ${NPM_LETSENCRYPT_DIR:-./data/letsencrypt}:/etc/letsencrypt
-      - ${NPM_CONFIG_FILE:-./config.json:/app/config/production.json}
-    depends_on:
-      - db
-    networks:
-      - proxy_net
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
-  db:
-    image: ${NPM_DB_CONTAINER_IMAGE:-jc21/mariadb-aria:latest}
-    container_name: ${NPM_DB_CONTAINER_NAME:-npm_db}
-    restart: ${NPM_DB_CONTAINER_RESTART:-unless-stopped}
-    environment:
-      MYSQL_ROOT_PASSWORD: ${NPM_DB_MYSQL_ROOT_PWD:-npm}
-      MYSQL_DATABASE: ${NPM_DB_MYSQL_DATABASE:-npm}
-      MYSQL_USER: ${NPM_DB_MYSQL_USER:-npm}
-      MYSQL_PASSWORD: ${NPM_DB_MYSQL_PASSWORD:-npm}
+  watchtower:
+    image: containrrr/watchtower
+    container_name: npm_proxy_watchtower
     volumes:
-      - ${NPM_DB_CONTAINER_DATA_DIR:-./data/mysql}:/var/lib/mysql
-    networks:
-        - proxy_net
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP:-"true"}
+      ## Check for updates once every 24h
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWWER_POLL_INTERVAL:-86400}
+    command: --label-enable

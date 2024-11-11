@@ -1,0 +1,50 @@
+---
+networks:
+  prefect_net:
+
+services:
+  prefect:
+    image: prefecthq/prefect:2-python3.11
+    restart: unless-stopped
+    container_name: prefect-server
+    env_file: .env
+    entrypoint: ["prefect", "server", "start"]
+    volumes:
+      - ${PREFECT_DATA_DIR:-./prefect/data}:/root/.prefect
+    ports:
+      - ${PREFECT_WEBUI_PORT:-4200}:4200
+    environment:
+      PREFECT_SERVER_API_HOST: 0.0.0.0
+      PREFECT_UI_URL: http://prefect:4200/api
+      PREFECT_API_URL: http://prefect:4200/api
+      PREFECT_API_DATABASE_CONNECTION_URL: ${PREFECT_DB_URL:-postgresql+asyncpg://postgres:postgres@prefect-db/prefect}
+      PREFECT_API_DATABASE_ECHO: ${PREFECT_DB_ECHO:-false}
+      PREFECT_API_DATABASE_MIGRATE_ON_START: ${PREFECT_MIGRATE_ON_START:-true}
+    depends_on:
+      - prefect-db
+    networks:
+      - prefect_net
+
+  prefect-db:
+    image: postgres:latest
+    container_name: prefect-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-prefect}
+      POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
+    expose:
+      - 5432
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - ${POSTGRES_DATA_DIR:-./postgres/data}:/var/lib/postgresql/data
+      - ./postgres/pg_entrypoint:/docker-entrypoint-initdb.d
+    networks:
+      - prefect_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
