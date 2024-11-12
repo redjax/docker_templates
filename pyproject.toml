@@ -8,6 +8,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "cookiecutter>=2.6.0",
     "nox>=2024.10.9",
     "pre-commit>=4.0.1",
 ]
