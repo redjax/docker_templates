@@ -1,0 +1,45 @@
+---
+networks:
+  concourse_net: {}
+
+services:
+  db:
+    image: postgres
+    container_name: concourse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-concourse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
+      POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
+      PGDATA: /database
+    networks:
+      - concourse_net
+
+  concourse:
+    image: concourse/concourse
+    container_name: concourse
+    restart: unless-stopped
+    command: quickstart
+    privileged: true
+    depends_on: [db]
+    ports: ["${CONCOURSE_HTTP_PORT:-8080}:8080"]
+    environment:
+      CONCOURSE_POSTGRES_HOST: db
+      CONCOURSE_POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
+      CONCOURSE_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
+      CONCOURSE_POSTGRES_DATABASE: ${POSTGRES_DB:-concourse}
+      CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
+      CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_USER:-test}:${CONCOURSE_ADD_USER:-test}
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM:-test}
+      # instead of relying on the default "detect"
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
+      CONCOURSE_CLIENT_SECRET: ${CONCOURSE_CLIENT_SECRET:-Y29uY291cnNlLXdlYgo=}
+      CONCOURSE_TSA_CLIENT_SECRET: ${CONCOURSE_TSA_CLIENT_SECRET:-Y29uY291cnNlLXdvcmtlcgo=}
+      CONCOURSE_X_FRAME_OPTIONS: allow
+      CONCOURSE_CONTENT_SECURITY_POLICY: "*"
+      CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-tutorial}
+      CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+      # For ARM-based machine, change the Concourse runtime to "houdini"
+      CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+    networks:
+      - concourse_net
