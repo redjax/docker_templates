@@ -21,3 +21,39 @@ fly login -c http://<concourse-url-or-ip>:<concourse-port> -t <councourse target
 - Check your `fly` targets with `fly targets`
 
 ## Notes
+
+### List CI workers
+
+```shell
+fly -t <concourse-target-name> workers
+```
+
+### List concourse containers
+
+```shell
+fly -t <concourse-target-name> containers
+```
+
+### Schedule .yml pipeline job
+
+```shell
+fly -t <concourse-target-name> set-pipeline -p <pipeline-name> -c <path/to/pipeline-file.yml>
+```
+
+You then need to un-pause the pipeline by logging into the webUI and clicking unpause, or running:
+
+```shell
+fly -t <concourse-target-name> unpause-pipeline -p <pipeline-name>
+```
+
+Then, trigger the job (use `--watch` to see output in terminal):
+
+```shell
+fly -t <concourse-target-name> trigger-job --job demo-hello/hello-job [--watch]
+```
+
+## Links
+
+- [How to setup a concourse CI server](https://dev.to/ruanbekker/how-to-setup-a-concourse-ci-server-597g)
+- [Github Concourse](https://github.com/concourse/concourse)
+- [Concourse Quickstart Guide](https://concourse-ci.org/quick-start.html)
