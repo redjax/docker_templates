@@ -1,0 +1,14 @@
+[project]
+name = "docker-templates"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "cookiecutter>=2.6.0",
+    "nox>=2024.10.9",
+    "pre-commit>=4.0.1",
+]
