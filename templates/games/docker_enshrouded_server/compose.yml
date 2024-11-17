@@ -1,0 +1,51 @@
+---
+networks:
+  enshrouded_net: {}
+
+services:
+  enshrouded:
+    image: mbround18/enshrouded-docker:latest
+    container_name: enshrouded
+    restart: unless-stopped
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   platforms:
+    #     - linux/amd64
+    environment:
+      SERVER_NAME: ${ENSHROUDED_SERVER_NAME:-"My Enshrouded Server"}
+      PASSWORD: ${ENSHROUDED_PASSWORD:-""}
+      ADMIN_PASSWORD: ${ENSHROUDED_ADMIN_PASSWORD:-"adminpassword"}
+      SAVE_DIRECTORY: ${ENSHROUDED_SAVE_DIR:-./enshrouded/savegame}
+      LOG_DIRECTORY: ${ENSHROUDED_LOGS_DIR:-./enshrouded/logs}
+      # SERVER_IP: 0.0.0.0
+      # GAME_PORT: 15636
+      # QUERY_PORT: 15637
+      SLOT_COUNT: ${ENSHROUDED_SERVER_SLOTS:-16}
+    ports:
+      - "${ENSHROUDED_SERVER_PORT:-15636}:15636/udp"
+      - "${ENSHROUDED_SERVER_PORT:-15636}:15636/tcp"
+      - "${ENSHROUDED_QUERY_PORT:-15637}:15637/udp"
+      - "${ENSHROUDED_QUERY_PORT:-15637}:15637/tcp"
+    volumes:
+      - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
+    networks:
+      - enshrouded_net
+
+  ## Uncomment service below to enable auto backups
+  backups:
+    image: mbround18/backup-cron:latest
+    container_name: enshrouded-backups
+    restart: unless-stopped
+    environment:
+      - SCHEDULE=${ENSHROUDED_BACKUP_SCHEDULE:-*/10 * * * *}
+      - INPUT_FOLDER=/home/steam/enshrouded/savegame
+      - OUTPUT_FOLDER=/home/steam/backups
+      - OUTPUT_USER=1000
+      - OUTPUT_GROUP=1000
+      - KEEP_N_DAYS=${ENSHROUDED_BACKUP_KEEP_DAYS:-5}
+    volumes:
+      - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
+      - ${ENSHROUDED_BACKUP_DIR:-./enshrouded/backups}:/home/steam/backups
+    networks:
+      - enshrouded_net
