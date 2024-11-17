@@ -1,0 +1,42 @@
+---
+services:
+  necesse:
+    container_name: necesse-server
+    image: brammys/necesse-server
+    restart: always
+    ports:
+      -  ${NECESSE_SERVER_PORT:-14159}:14159/udp
+    environment:
+      OWNER: ${NECESSE_OWNER_USERNAME}
+      WORLD: ${NECESSE_WORLD_NAME:-docker_necesse}
+      MOTD: ${NECESSE_MOTD:-"Welcome to the Necesse server"}
+      ## Password for the server, leave empty for no password
+      PASSWORD: ${NECESSE_PASSWORD}
+      ## Number of players
+      SLOTS: ${NECESSE_SLOTS:-25}
+      ## Enable server-side client action checking (like an anti-cheat, recommend to leave enabled)
+      GIVE_CLIENTS_POWER: ${NECESSE_GIVE_CLIENTS_POWER:-1}
+      ## Pause world when no users connected. 0=off, 1=on
+      PAUSE: ${NECESSE_PAUSE:-1}
+      LOGGING: ${NECESSE_ENABLE_LOGGING:-1}
+      ZIP: ${NECESSE_COMPRESS_SAVES:-1}
+      JVMARGS: ${NECESSE_JVM_ARGS}
+    volumes:
+      - ${NECESSE_SAVES_DIR:-./necesse/data/saves}:/necesse/saves
+      - ${NECESSE_LOGS_DIR:-./necesse/data/logs}:/necesse/logs
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+      image: containrrr/watchtower
+      container_name: necesse-watchtower
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      restart: unless-stopped
+      environment:
+        ## Remove old images after updating
+        WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP:-"true"}
+        ## Check for updates once every 24h
+        WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
+      ## Only monitor containers with a specific label
+      command: --label-enable
