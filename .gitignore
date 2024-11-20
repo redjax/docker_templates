@@ -14,3 +14,9 @@ solr/*
 !**/*_example.*
 !**/example_*
 !**/example_*.*
+
+build/
+*.pyc
+__pycache__/
+.venv
+.python-version
