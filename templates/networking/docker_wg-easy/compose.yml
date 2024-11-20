@@ -11,7 +11,7 @@ services:
     container_name: wg-easy
     restart: unless-stopped
     security_opt: [no-new-privileges]
-    # network_mode: bridge
+    network_mode: bridge
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -37,16 +37,16 @@ services:
       - PORT=51821
       - WG_PORT=51820
       - WG_DEVICE=${WG_EASY_DEVICE:-eth0}
-      - WG_DEFAULT_ADDRESS=10.8.1.3
+      - WG_DEFAULT_ADDRESS=10.8.1.x
       - WG_DEFAULT_DNS=${WG_EASY_DEFAULT_DNS:-1.1.1.1,1.0.0.1}
       - WG_MTU=${WG_EASY_MTU:-1420}
-      - WG_ALLOWED_IPS=${WG_EASY_ALLOWED_IPS:-0.0.0.0/0,::/0}
+      - WG_ALLOWED_IPS=${WG_EASY_ALLOWED_IPS:-0.0.0.0/0,::/0,172.22.0.0/16}
       ## Second(s) to keep connection alive. 0=don't keep connection alive
       - WG_PERSISTENT_KEEPALIVE=${WG_EASY_KEEPALIVE:-25}
       ## Enable detailed RX/TX client stats in webUI
       - UI_TRAFFIC_STATS=${WG_EASY_ENABLE_TRAFFIC_STATS:-true}
       ## 0=Charts disabled, 1=Line chart, 2=Area chart, 3=Bar chart)
-      - UI_CHART_TYPE=1
+      - UI_CHART_TYPE=2
       - WG_ENABLE_ONE_TIME_LINKS=${WG_EASY_ENABLE_ONETIME_LINKS:-true}
       ## Sort clients in webUI by name
       - UI_ENABLE_SORT_CLIENTS=${WG_EASY_ENABLE_UI_CLIENT_SORT:-true}
