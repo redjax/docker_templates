@@ -4,9 +4,14 @@ volumes:
 
 services:
   wg-easy:
+    ## Newer version, broken as of 11/12/24
     image: ghcr.io/wg-easy/wg-easy:${WG_EASY_IMG_VER:-latest}
+    ## Older image, may be more stable
+    # image: weejewel/wg-easy
     container_name: wg-easy
     restart: unless-stopped
+    security_opt: [no-new-privileges]
+    # network_mode: bridge
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -14,6 +19,12 @@ services:
     sysctls:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
+      # - net.ipv6.conf.all.forwarding=1  
+    logging:
+      driver: json-file
+      options:
+        max-file: 1
+        max-size: 10m
     environment:
       # Change Language:
       # (Supports: en, ua, ru, tr, no, pl, fr, de, ca, es, ko, vi, nl, is, pt, chs, cht, it, th, hi, ja, si)
@@ -21,35 +32,38 @@ services:
       # ⚠️ Required:
       # Change this to your host's public address
       - WG_HOST=${WG_EASY_HOST:-127.0.0.1}
-
       # Optional:
       - PASSWORD_HASH=${WG_EASY_ADMIN_PASSWORD_HASH}
-      # - PORT=51821
-      # - WG_PORT=51820
-      # - WG_CONFIG_PORT=92820
-      # - WG_DEFAULT_ADDRESS=10.8.0.x
-      - WG_DEFAULT_DNS=${WG_EASY_DEFAULT_DNS:-1.1.1.1}
+      - PORT=51821
+      - WG_PORT=51820
+      - WG_DEVICE=${WG_EASY_DEVICE:-eth0}
+      - WG_DEFAULT_ADDRESS=10.8.1.3
+      - WG_DEFAULT_DNS=${WG_EASY_DEFAULT_DNS:-1.1.1.1,1.0.0.1}
       - WG_MTU=${WG_EASY_MTU:-1420}
-      # - WG_ALLOWED_IPS=192.168.15.0/24, 10.0.1.0/24
+      - WG_ALLOWED_IPS=${WG_EASY_ALLOWED_IPS:-0.0.0.0/0,::/0}
       ## Second(s) to keep connection alive. 0=don't keep connection alive
       - WG_PERSISTENT_KEEPALIVE=${WG_EASY_KEEPALIVE:-25}
-      # - WG_PRE_UP=echo "Pre Up" > /etc/wireguard/pre-up.txt
-      # - WG_POST_UP=echo "Post Up" > /etc/wireguard/post-up.txt
-      # - WG_PRE_DOWN=echo "Pre Down" > /etc/wireguard/pre-down.txt
-      # - WG_POST_DOWN=echo "Post Down" > /etc/wireguard/post-down.txt
       ## Enable detailed RX/TX client stats in webUI
       - UI_TRAFFIC_STATS=${WG_EASY_ENABLE_TRAFFIC_STATS:-true}
       ## 0=Charts disabled, 1=Line chart, 2=Area chart, 3=Bar chart)
-      # - UI_CHART_TYPE=0 
+      - UI_CHART_TYPE=1
       - WG_ENABLE_ONE_TIME_LINKS=${WG_EASY_ENABLE_ONETIME_LINKS:-true}
       ## Sort clients in webUI by name
       - UI_ENABLE_SORT_CLIENTS=${WG_EASY_ENABLE_UI_CLIENT_SORT:-true}
+      - INTERNAL_SUBNET=${WG_EASY_INTERNAL_SUBNET:-10.8.1.0}
       ## Enable client expiration
       # - WG_ENABLE_EXPIRES_TIME=true
       # - ENABLE_PROMETHEUS_METRICS=false
       # - PROMETHEUS_METRICS_PASSWORD=$$2a$$12$$vkvKpeEAHD78gasyawIod.1leBMKg8sBwKW.pQyNsq78bXV3INf2G # (needs double $$, hash of 'prometheus_password'; see "How_to_generate_an_bcrypt_hash.md" for generate the hash)
     volumes:
       - ${WG_EASY_DATA_DIR:-wg-easy_etc}:/etc/wireguard
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - ${WG_EASY_LISTEN_PORT:-51820}:51820/udp
       - ${WG_EASY_WEBUI_PORT:-51821}:51821/tcp
+    healthcheck:
+      test: /usr/bin/timeout 5s /bin/sh -c "/usr/bin/wg show | /bin/grep -q interface || exit 1"
+      interval: 1m
+      timeout: 5s
+      retries: 3
