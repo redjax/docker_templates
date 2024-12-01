@@ -1,1 +1,3 @@
-headscale/config/headscale_config.yaml
+headscale/config/config.yaml
+headscale/data
+psks.json
