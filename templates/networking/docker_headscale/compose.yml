@@ -1,14 +1,31 @@
 ---
+networks:
+  headscale_net:
+    external: true
+
 services:
   headscale:
     image: headscale/headscale:${HEADSCALE_IMG_VERSION:-latest}
     container_name: headscale
     restart: unless-stopped
-    ports:
-      - "${HEADSCALE_HTTP_PORT:-8080}:8080"
-      - "${HEADSCALE_HTTPS_PORT:-9090}:9090"
-      - "${HEADSCALE_GRPC_LISTEN_PORT:-50443}:50443"
+    # ports:
+    #   - "${HEADSCALE_HTTP_PORT:-8080}:8080"
+    #   - "${HEADSCALE_HTTPS_PORT:-9090}:9090"
+    #   - "${HEADSCALE_GRPC_LISTEN_PORT:-50443}:50443"
     volumes:
       - ${HEADSCALE_CONFIG_DIR:-./headscale/config}:/etc/headscale
       - ${HEADSCALE_DATA_DIR:-./headscale/data}:/var/lib/headscale
     command: ${HEADSCALE_CONTAINER_COMMAND:-serve}
+    networks:
+      - headscale_net
+
+  ## WebUI container
+  headscale-ui:
+    image: ghcr.io/gurucomputing/headscale-ui:latest
+    container_name: headscale-ui
+    restart: unless-stopped
+    ports:
+      - "${HEADSCALE_UI_HTTP_PORT:-8080}:8080"
+      - "${HEADSCALE_UI_HTTPS_PORT:-8443}:8443"
+    networks:
+      - headscale_net
