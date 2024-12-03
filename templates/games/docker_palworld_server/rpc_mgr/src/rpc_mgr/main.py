@@ -1,11 +1,14 @@
-import logging
-import subprocess
+from __future__ import annotations
+
 import csv
+from dataclasses import dataclass, field
 import json
 from pathlib import Path
-from dataclasses import dataclass, field
+import subprocess
 
-log = logging.getLogger(__name__)
+from rpc_mgr.core import setup
+
+from loguru import logger as log
 
 ## Set the name of your palworld server container
 PALWORLD_CONTAINER_NAME: str = "palworld"
@@ -13,23 +16,15 @@ PALWORLD_CONTAINER_NAME: str = "palworld"
 DEBUG: bool = True
 
 
-def setup_logging(
-    level: str = "INFO",
-    fmt: str = "%(asctime)s [%(levelname)s] %(message)s",
-    datefmt: str = "%Y-%m-%d %H:%M:%S",
-):
-    logging.basicConfig(level=level, format=fmt, datefmt=datefmt)
-
-
 def format_seconds_to_timestr(seconds: int) -> str:
-    """
-    Converts an integer number of seconds into a human-readable duration string.
+    """Converts an integer number of seconds into a human-readable duration string.
 
     Args:
         seconds (int): The number of seconds to convert.
 
     Returns:
         str: A human-readable duration string.
+
     """
     if seconds < 60:
         return f"{seconds} second{'s' if seconds != 1 else ''}"
@@ -60,8 +55,7 @@ def execute_command(
     text: bool = True,
     check: bool = True,
 ) -> subprocess.CompletedProcess:
-    """
-    Execute a shell command and return the output.
+    """Execute a shell command and return the output.
 
     Params:
         command (list[str]): The command to execute as a list of strings.
@@ -74,10 +68,9 @@ def execute_command(
 
     Raises:
         subprocess.CalledProcessError: If the command fails and `check` is True.
-    """
-    log.info(f"Executing command: {' '.join(command)}")
-    log.debug(f"Command ({type(command)}): {command}")
 
+    """
+    log.debug(f"Executing command: {' '.join(command)}")
     try:
         result: subprocess.CompletedProcess = subprocess.run(
             command, capture_output=capture_output, text=text, check=check
@@ -290,12 +283,12 @@ def main(server_name: str):
 
 
 if __name__ == "__main__":
-    LOG_DEBUG_FMT: str = "%(asctime)s [%(levelname)s] [(%(name)s).%(funcName)s:%(lineno)d] %(message)s"
-    LOG_SIMPLE_FMT: str = "%(asctime)s [%(levelname)s] %(message)s"
+    LOG_DEBUG_FMT: str = "{time:YYYY-MM-DD HH:mm:ss} [{level}] ({module}.{function}:{line}) > {message}"
+    LOG_SIMPLE_FMT: str = "{time:YYYY-MM-DD HH:mm:ss} [{level}] {message}"
     
     LOG_FMT = LOG_DEBUG_FMT if DEBUG else LOG_SIMPLE_FMT
     LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
     
-    setup_logging(level=LOG_LEVEL, fmt=LOG_FMT)
+    setup.setup_logging(log_level=LOG_LEVEL, log_fmt=LOG_FMT)
     
     main(server_name=PALWORLD_CONTAINER_NAME)
