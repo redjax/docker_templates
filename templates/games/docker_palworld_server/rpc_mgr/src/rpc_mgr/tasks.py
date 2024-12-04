@@ -1,3 +1,5 @@
+import typing as t
+
 from loguru import logger as log
 
 from rpc_mgr.core import setup
@@ -103,26 +105,18 @@ def stop_server(container_name: str, debug: bool = False) -> bool:
 
 
 def server_sleep_schedule(container_name: str, debug: bool = False) -> bool:
+    spinner = Halo(text="Running server sleep schedule", spinner="dots" )
+    
+    ## Log a heartbeat to verify schedule is running
+    schedule.every(30).seconds.do(lambda: log.info("Sleep schedule heartbeat"))
+
     ## Start the server
     #  Set to 241 seconds to avoid collisions with shutdown schedule
+    schedule.every(241).seconds.do(start_server, container_name=container_name, debug=debug)
     
-    spinner = Halo(text="Running server sleep schedule", spinner="dots" )
-    try:
-        schedule.every(241).seconds.do(start_server, container_name=container_name, debug=debug)
-    except Exception as exc:
-        msg = f"({type(exc)}) Error running start_server scheduled task. Details: {exc}"
-        log.error(msg)
-        
-        raise exc
 
     ## Stop the server
-    try:
-        schedule.every(5).minutes.do(stop_server, container_name=container_name, debug=debug)
-    except Exception as exc:
-        msg = f"({type(exc)}) Error running stop_server scheduled task. Details: {exc}"
-        log.error(msg)
-        
-        raise exc
+    schedule.every(5).minutes.do(stop_server, container_name=container_name, debug=debug)
     
     ## Run scheduled tasks
     log.info("Starting server sleep schedule")
