@@ -5,6 +5,7 @@ from rpc_mgr.client import PalworldRPCController
 
 import schedule
 import time
+from halo import Halo
 
 
 def return_palworld_rpc_controller(container_name: str, debug: bool = False) -> PalworldRPCController:
@@ -16,6 +17,7 @@ def return_palworld_rpc_controller(container_name: str, debug: bool = False) -> 
     
     Returns:
         PalworldRPCController: An instance of the PalworldRPCController class.
+
     """
     controller: PalworldRPCController = PalworldRPCController(container_name=container_name, debug=debug)
     
@@ -103,8 +105,10 @@ def stop_server(container_name: str, debug: bool = False) -> bool:
 def server_sleep_schedule(container_name: str, debug: bool = False) -> bool:
     ## Start the server
     #  Set to 241 seconds to avoid collisions with shutdown schedule
+    
+    spinner = Halo(text="Running server sleep schedule", spinner="dots" )
     try:
-        schedule.every(5).seconds.do(start_server, container_name=container_name, debug=debug)
+        schedule.every(241).seconds.do(start_server, container_name=container_name, debug=debug)
     except Exception as exc:
         msg = f"({type(exc)}) Error running start_server scheduled task. Details: {exc}"
         log.error(msg)
@@ -120,17 +124,21 @@ def server_sleep_schedule(container_name: str, debug: bool = False) -> bool:
         
         raise exc
     
-    log.info("Starting server sleep schedule, console may appear blank until the first job runs.")
+    ## Run scheduled tasks
+    log.info("Starting server sleep schedule")
     try:
         while True:
+            spinner.start(text="Running server sleep schedule")
             schedule.run_pending()
             time.sleep(1)
     except Exception as exc:
+        spinner.stop()
         msg = f"({type(exc)}) Error running server sleep schedule. Details: {exc}"
         log.error(msg)
         
         raise exc
     except KeyboardInterrupt:
+        spinner.stop()
         log.info("Keyboard interrupt detected. Stopping server sleep schedule.")
         return
 
