@@ -6,4 +6,4 @@ from loguru import logger as log
 if __name__ == "__main__":
     setup.setup_logging(log_level="DEBUG", colorize=True, add_error_file_logger=True, add_file_logger=True)
     server_mgr = PalworldRPCController(container_name="palworld-server")
-    server_mgr.shutdown_server(ignore_online=True)
+    server_mgr.start_server()
