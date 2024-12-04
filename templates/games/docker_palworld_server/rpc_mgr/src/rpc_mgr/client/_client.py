@@ -82,11 +82,94 @@ class PalworldRPCController:
             self.announce("Progress saved.")
         return True
 
+    # def shutdown_server(self, countdown: int | None = 180, ignore_online: bool = False, force: bool = False) -> bool:
+    #     """Shuts down the server."""
+    #     log.info("Beginning server shutdown sequence")
+        
+    #     command = ["docker", "compose", "down"]
+    #     players = self.get_players()
+        
+    #     if players is None or len(players)  == 0:
+    #         self.save()
+                
+    #         log.info("No players are online, skipping countdown and shutting down immediately.")
+
+    #         pass
+            
+    #     else:
+    #         if not ignore_online:
+    #             log.warning("Cannot shutdown server, players are online.")
+    #             return False
+
+    #         if force:
+    #             log.warning("Forcing server shutdown.")
+    #             try:
+    #                 result = execute_command(command)
+    #             except Exception as exc:
+    #                 msg = f"({type(exc)}) Error executing shutdown command. Details: {exc}"
+    #                 log.error(msg)
+                    
+    #                 raise exc
+
+    #             if result is None:
+    #                 log.error("Shutdown failed.")
+                    
+    #                 return False
+
+    #             if result.returncode != 0:
+    #                 log.error(f"Non-zero exit code: {result.returncode}")
+                    
+    #                 return False
+
+    #             log.info("Server shut down successfully.")
+    #             return True
+            
+    #         if countdown:
+    #             log.debug(f"Shutting down Palworld server in {countdown} second(s)")
+    #             self.announce(f"[WARNING] A shutdown is scheduled for the Palworld server. You will see a countdown as the shutdown approaches.")
+                
+    #             current_second: int = 0
+    #             try:
+    #                 while current_second < countdown:
+    #                     remaining_time = countdown - current_second
+                        
+    #                     # Define the specific intervals to announce
+    #                     alert_times = {30 * 60, 20 * 60, 15 * 60, 10 * 60, 5 * 60, 2 * 60, 1 * 60, 30}
+                        
+    #                     # If remaining time matches any of the alert times, send an announcement
+    #                     if remaining_time in alert_times:
+    #                         self.announce(
+    #                             f"[WARNING] Server will shut down in {str_utils.format_seconds_to_timestr(seconds=remaining_time)}"
+    #                         )
+    #                         log.debug(f"Broadcasted shutdown countdown to server: {remaining_time} second(s)")
+                        
+    #                     time.sleep(1)
+    #                     current_second += 1
+    #             except KeyboardInterrupt:
+    #                 log.warning("Shutdown cancelled by user.")
+    #                 self.announce("Server shutdown cancelled. Server will stay online.")
+                    
+    #                 return False
+            
+
+    #     log.info("Shutting down the server...")
+    #     result = execute_command(command)
+            
+    #     return result.returncode == 0
+    
     def shutdown_server(self, countdown: int | None = 180, ignore_online: bool = False, force: bool = False) -> bool:
         """Shuts down the server."""
         log.info("Beginning server shutdown sequence")
         
-        command = ["docker", "compose", "down"]
+        command = [
+            "docker",
+            # "compose",
+            "exec",
+            "-it",
+            self.container_name,
+            "rcon-cli",
+            "Shutdown [WARNING] Server is shutting down.",
+        ]
         players = self.get_players()
         
         if players is None or len(players)  == 0:
