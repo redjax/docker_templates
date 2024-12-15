@@ -7,33 +7,42 @@ volumes:
 
 services:
 
-  hub:
-    build:
-      context: .
-      dockerfile: jupyterhub.Dockerfile
-      args:
-        JUPYTERHUB_VERSION: latest
-    restart: unless-stopped
-    image: jupyterhub
+  jupyterhub:
+    build: jupyterhub
+    image: jupyterhub_img
     container_name: jupyterhub
+    restart: unless-stopped
     volumes:
-      # The JupyterHub configuration file
-      - ${JUPYTER_HUB_CONFIG_FILE:-./jupyterhub/jupyterhub_config.py}:/srv/jupyterhub/jupyterhub_config.py:ro
-      # Bind Docker socket on the host so we can connect to the daemon from
-      # within the container
-      - "/var/run/docker.sock:/var/run/docker.sock:rw"
-      # Bind Docker volume on host for JupyterHub database and cookie secrets
-      - ${JUPYTER_HUB_DATA_DIR:-jupyterhub-data}:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jupyterhub_data:/srv/jupyterhub
+    environment:
+      - DOCKER_JUPYTER_CONTAINER=jupyterlab_img
+      - DOCKER_NETWORK_NAME=${COMPOSE_PROJECT_NAME}_default
+      - HUB_IP=jupyterhub
+      - HOST
     ports:
       - ${JUPYTER_HUB_PORT:-8000}:8000
-    environment:
-      # This username will be a JupyterHub admin
-      JUPYTERHUB_ADMIN: admin
-      # All containers will join this network
-      DOCKER_NETWORK_NAME: jupyterhub_net
-      # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: quay.io/jupyter/base-notebook:latest
-      # Notebook directory inside user image
-      DOCKER_NOTEBOOK_DIR: /home/jovyan/work
-    networks:
-      - jupyterhub_net
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.frontend.rule=Host:${HOST}"
+    
+
+  jupyterlab:
+    build: jupyterlab
+    image: jupyterlab_img
+    container_name: jupyterlab-throaway
+    network_mode: none
+    command: echo
+
+  reverse-proxy:
+    image: traefik
+    container_name: reverse-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - ./reverse-proxy/traefik.toml:/etc/traefik/traefik.toml
+      - /etc/certs:/etc/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: on-failure
