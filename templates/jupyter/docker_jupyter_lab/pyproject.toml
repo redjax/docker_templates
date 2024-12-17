@@ -1,0 +1,38 @@
+[project]
+name = "docker_jupyterlab"
+version = "0.1.0"
+description = "Dockerized Jupyter Lab environment"
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "aquirdturtle-collapsible-headings>=3.1.0",
+    "ipykernel>=6.29.5",
+    "jupyter-resource-usage>=1.1.0",
+    "jupyter>=1.1.1",
+    "jupyterlab>=3.6.8",
+    "jupyterlab-drawio>=0.9.0",
+    "jupyterlab-git>=0.50.2",
+    "jupyterlab-lsp>=4.3.0",
+    "jupyterlab-spreadsheet>=0.4.2",
+    "jupyterlab-theme-solarized-dark>=3.0.1",
+    "lckr-jupyterlab-variableinspector>=3.2.4",
+    "loguru>=0.7.3",
+    "pandas>=2.2.3",
+    "pydantic>=2.10.3",
+    "jupyter-fs>=0.3.1",
+    # "aoc-mod",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "nox>=2024.10.9",
+    "pytest-xdist>=3.6.1",
+    "ruff>=0.8.2",
+]
+
+# [tool.uv.workspace]
+# members = ["aoc-mod"]
+
+# [tool.uv.sources]
+# aoc-mod = { workspace = true }

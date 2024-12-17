@@ -1,0 +1,15 @@
+{
+    "@jupyterlab/extensionmanager-extension:plugin": {
+        "enabled": true,
+        "disclaimed": true,
+        "npmRegistry": "https://registry.npmjs.org/-/v1/",
+        "npmCdn": "https://unpkg.com",
+        "enableCdn": true
+    },
+    "@jupyterlab/apputils-extension:themes": {
+        "theme": "JupyterLab Dark"
+    },
+    "@jupyterlab/docmanager-extension:plugin": {
+        "autosaveInterval": 30
+    }
+}

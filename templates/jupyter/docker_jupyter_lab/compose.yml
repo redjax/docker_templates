@@ -1,0 +1,48 @@
+---
+networks:
+  jupyterlab_net: {}
+
+volumes:
+  jupyterlab_runtime: {}
+#   jupyterlab_data: {}
+
+services:
+
+  jupyterlab:
+    container_name: jupyterlab
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: jupyterlab.Dockerfile
+      args:
+        UV_IMAGE_VER: ${UV_IMAGE_VER:-0.5.9}
+        PYTHON_IMAGE_VER: ${PYTHON_IMAGE_VER:-3.12-slim}
+
+        JUPYTER_TOKEN: ${JUPYTER_LAB_TOKEN:-""}
+        JUPYTER_PASSWORD: ${JUPYTER_LAB_PASSWORD:-""}
+        JUPYTER_CONFIG_DIR: ${JUPYTER_CONFIG_DIR:-/project/.jupyter/config}
+        JUPYTERLAB_DIR: ${JUPYTER_LAB_CONFIG_DIR:-/project/.jupyter/lab}
+        JUPYTERLAB_SETTINGS_DIR: ${JUPYTER_LAB_SETTINGS_DIR:-/project/.jupyter/lab/user-settings}
+        JUPYTER_DATA_DIR: ${JUPYTER_DATA_DIR:-/project/.jupyter/data}
+        JUPTER_RUNTIME_DIR: ${JUPYTER_RUNTIME_DIR:-/project/.jupyter/runtime}
+      target: run
+    working_dir: /project
+    # command: ["uv", "run", "jupyter", "lab", "paths"]
+    command: ["uv", "run", "jupyter", "lab", "--config=/project/.jupyter/lab/user-settings/jupyter_lab_config.py", "--IdentityProvider.token=$JUPYTER_TOKEN", "--allow-root"]
+    volumes:
+      - ${JUPYTER_LAB_CONFIG_FILE:-./config/lab/jupyter_lab_config.py}:/project/.jupyter/lab/user-settings/jupyter_lab_config.py:ro
+      - ${JUPYTER_LAB_SETTINGS_OVERRIDE_FILE:-./config/lab/overrides.json}:/project/.jupyter/lab/user-settings/overrides.json:ro
+      - ${JUPYTER_DATA_DIR:-./data/jupyterlab}:/project/.jupyter/data
+      - ${JUPTER_RUNTIME_DIR:-jupyterlab_runtime}:/project/.jupyter/runtime
+    environment:
+      JUPYTER_TOKEN: ${JUPYTER_LAB_TOKEN:-""}
+      JUPYTER_PASSWORD: ${JUPYTER_LAB_PASSWORD:-""}
+      JUPYTER_CONFIG_DIR: ${JUPYTER_CONFIG_DIR:-/project/.jupyter/config}
+      JUPYTERLAB_DIR: ${JUPYTER_LAB_CONFIG_DIR:-/project/.jupyter/lab}
+      JUPYTERLAB_SETTINGS_DIR: ${JUPYTER_LAB_SETTINGS_DIR:-/project/.jupyter/lab/user-settings}
+      JUPYTER_DATA_DIR: ${JUPYTER_DATA_DIR:-/project/.jupyter/data}
+      JUPTER_RUNTIME_DIR: ${JUPYTER_RUNTIME_DIR:-/project/.jupyter/runtime}
+    ports:
+      - ${JUPYTER_LAB_PORT:-8000}:8000
+    networks:
+      - jupyterlab_net
