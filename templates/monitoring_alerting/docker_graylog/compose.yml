@@ -1,0 +1,130 @@
+---
+networks:
+  log_net: {}
+
+services:
+
+  graylog:
+    container_name: graylog
+    hostname: graylog
+    image: graylog/graylog:${GRAYLOG_IMG_VERSION:-6.1}
+    restart: unless-stopped
+    depends_on:
+      graylog-opensearch:
+        condition: service_healthy
+      graylog-mongodb:
+        condition: service_healthy
+    networks:
+      - log_net
+    ports:
+      ## Server API & WebUI
+      - "${GRAYLOG_WEBUI_PORT:-9000}:9000/tcp"
+      ## the following ports are just examples, you specify the actual input ports and type inside Graylog UI
+      # - "5044:5044/tcp"    # Beats
+      - "${GRAYLOG_SYSLOG_PORT:-5140}:5140/udp"    # Syslog
+      - "${GRAYLOG_SYSLOG_PORT:-5140}:5140/tcp"    # Syslog
+      # - "5555:5555/tcp"    # RAW TCP
+      # - "5555:5555/udp"    # RAW TCP
+      # - "12201:12201/tcp"  # GELF TCP
+      # - "12201:12201/udp"  # GELF UDP
+      # - "13301:13301/tcp"  # Forwarder data
+      # - "13302:13302/tcp"  # Forwarder config
+      # - "10000:10000/tcp"  # Optional Custom TCP port
+      # - "10000:10000/udp"  # Optional Custom UDP port
+    environment:
+      GRAYLOG_ROOT_TIMEZONE: ${TZ:-America/New_York}
+      ## External URL graylog will be accessed at (Docker Host IP:port, reverse proxy FQDN, etc)
+      GRAYLOG_HTTP_EXTERNAL_URI: ${GRAYLOG_EXTERNAL_URL:-http://localhost:9000/}
+      GRAYLOG_ROOT_USERNAME: ${GRAYLOG_ROOT_USERNAME:-admin}
+      ## Generate password hash with: echo -n admin | shasum -a 256
+      #  Default: admin (as a hashed string)
+      GRAYLOG_ROOT_PASSWORD_SHA2: ${GRAYLOG_ROOT_PASSWORD_HASH:-8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918}
+      GRAYLOG_ROOT_EMAIL: ${GRAYLOG_ROOT_USER_EMAIL:-admin@example.com}
+      ## Generate encryption secret with: pwgen -N 1 -s 96
+      GRAYLOG_PASSWORD_SECRET: ${GRAYLOG_PASSWORD_SECRET}
+      ## connection to elasticsearch/opensearch
+      GRAYLOG_ELASTICSEARCH_HOSTS: http://${OPENSEARCH_USERNAME:-admin}:${OPENSEARCH_PASSWORD:-admin}@graylog-opensearch:9200
+      ## connection to mongodb
+      GRAYLOG_MONGODB_URI: mongodb://graylog-mongodb:27017/graylog
+      ## bind address and port to use
+      GRAYLOG_HTTP_BIND_ADDRESS: 0.0.0.0:9000
+      ## graylog publish uri
+      GRAYLOG_PUBLISH_URI: http://0.0.0.0:9000/
+      ## graylog node-id file
+      GRAYLOG_NODE_ID_FILE: /usr/share/graylog/data/config/node-id
+      ## set this graylog as leader instance
+      GRAYLOG_IS_LEADER: true
+      ## when running a single node, set shards to 1
+      GRAYLOG_ELASTICSEARCH_SHARDS: 1
+      ## when running a single node, set replicas to 0
+      GRAYLOG_ELASTICSEARCH_REPLICAS: 0
+      ## adjust max journal size (default "5gb") depending on free disk space
+      GRAYLOG_MESSAGE_JOURNAL_MAX_SIZE: 5gb
+    entrypoint: "/usr/bin/tini -- wait-for-it graylog-opensearch:9200 --  /docker-entrypoint.sh"
+    volumes:
+      - ${GRAYLOG_DATA_DIR:-./graylog/data}:/usr/share/graylog/data/data
+      - ${GRAYLOG_JOURNAL_DIR:-./graylog/journal}:/usr/share/graylog/data/journal
+
+  graylog-mongodb:
+    container_name: graylog-mongodb
+    image: mongodb/mongodb-community-server:${MONGODB_IMG_VER:-latest}
+    restart: unless-stopped
+    networks:
+      - log_net
+    ports:
+      - ${MONGODB_PORT:-27017}:27017
+    volumes:
+      - ${MONGODB_DATA_DIR:-./mongodb/data}:/data/db
+    healthcheck:
+      test: mongo --norc --quiet --host=localhost --eval "db.runCommand('ping')" || exit 1
+      start_period: 900s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  graylog-opensearch:
+    container_name: graylog-opensearch
+    image: opensearchproject/opensearch:${OPENSEARCH_IMG_VERSION:-latest}
+    restart: unless-stopped
+    networks:
+      - log_net
+    ports:
+      ## REST API
+      - ${OPENSEARCH_RESTAPI_PORT:-9200}:9200
+      ## Performance Analyzer
+      - ${OPENSEARCH_PERFORMANCE_ANALYZER_PORT:-9600}:9600
+    environment:
+      ## Set min and max JVM heap sizes to at least 50% of system RAM
+      - OPENSEARCH_JAVA_OPTS=-Xms${OPENSEARCH_MEMORY_MIN:-512m} -Xmx${OPENSEARCH_MEMORY_MAX:-512m}
+      ## Disable JVM heap memory swapping
+      - 'bootstrap.memory_lock=true'
+      ## run as single node, no cluster
+      - 'discovery.type=single-node'
+      # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - 'DISABLE_INSTALL_DEMO_CONFIG=true'
+      ## Disables Security plugin
+      - 'DISABLE_SECURITY_PLUGIN=true'
+      - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME:-admin}
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD:-admin}
+      - 'cluster.name=opensearch-cluster'
+      - 'node.name=opensearch-master'
+      - 'node.master=true'
+      - 'node.data=true'
+      - 'node.ingest=true'
+    ## Leave commented if you get an error "operation not permitted: unknown"
+    # ulimits:
+    #   memlock:
+    #     soft: -1
+    #     hard: -1
+    #   nofile:
+    #     soft: 65536
+    #     hard: 65536
+    volumes:
+      - ${OPENSEARCH_DATA_DIR:-./opensearch/data}:/usr/share/opensearch/data
+    healthcheck:
+      test: curl --fail -s "http://localhost:9200/_cluster/health?local=true" | grep -Eo '"status":"green"' || exit 1
+      # start_period is set very high on purpose, especially the very first start can take a "long" time, be patient
+      start_period: 900s
+      interval: 30s
+      timeout: 5s
+      retries: 3
