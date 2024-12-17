@@ -67,10 +67,12 @@ services:
 
   graylog-mongodb:
     container_name: graylog-mongodb
-    image: mongodb/mongodb-community-server:${MONGODB_IMG_VER:-latest}
+    # image: mongodb/mongodb-community-server:${MONGODB_IMG_VER:-latest}
+    image: mongo:${MONGODB_IMG_VER:-latest}
     restart: unless-stopped
     networks:
       - log_net
+    command: mongod --dbpath /data/db
     ports:
       - ${MONGODB_PORT:-27017}:27017
     volumes:
