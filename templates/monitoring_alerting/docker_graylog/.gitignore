@@ -1,0 +1,9 @@
+.env
+*.env
+.env*
+*.env*
+
+!*example*
+!*example*.*
+!*.*example*
+!*.*example*.*
