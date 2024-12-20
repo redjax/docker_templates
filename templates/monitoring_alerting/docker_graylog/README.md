@@ -19,3 +19,7 @@
 | `13301` | Forwarder data | False | Both |
 | `13302` | Forwarder config | False | Both |
 | `10000` | Optional custom TCP/UDP port | False | Both |
+
+## Notes
+
+- Use named volumes (the default) for the `graylog` container. You'll get permission errors with a host volume mount.
