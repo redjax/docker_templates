@@ -12,10 +12,13 @@ services:
     image: mongo:${MONGODB_IMG_VERSION:-6}
     container_name: graylog-mongo
     restart: unless-stopped
+    # user: "${PUID:-1000}:${PGID:-1000}"
     volumes:
       - ${MONGODB_DATA_DIR:-mongo_data}:/data/db
     networks:
-      - log_net
+      log_net:
+        aliases:
+          - mongo
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
@@ -29,20 +32,25 @@ services:
         soft: -1
         hard: -1
     mem_limit: ${ELASTICSEARCH_MEMORY_LIMIT:-1g}
+    # user: "${PUID:-1000}:${PGID:-1000}"
     volumes:
       - ${ELASTICSEARCH_DATA_DIR:-es_data}:/usr/share/elasticsearch/data
     networks:
-      - log_net
+      log_net:
+        aliases:
+          - elasticsearch
 
   graylog:
     image: graylog/graylog:5.1
     container_name: graylog
     restart: unless-stopped
+    # user: "${PUID:-1000}:${PGID:-1000}"
     environment:
       ## Generate a secret with ./scripts/generate_secret.sh
       - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET}
+      ## Generate a password hash with ./scripts/generate_password_hash.sh
       - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9000/
+      - GRAYLOG_HTTP_EXTERNAL_URI=${GRAYLOG_EXTERNAL_URL:-http://localhost:9000/}
     entrypoint: /usr/bin/tini -- wait-for-it elasticsearch:9200 -- wait-for-it mongodb:27017 -- /docker-entrypoint.sh
     depends_on:
       - mongodb
@@ -54,4 +62,6 @@ services:
     volumes:
       - ${GRAYLOG_DATA_DIR:-graylog_data}:/usr/share/graylog/data
     networks:
-      - log_net
+      log_net:
+        aliases:
+          - graylog
