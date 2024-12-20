@@ -7,3 +7,9 @@
 !*example*.*
 !*.*example*
 !*.*example*.*
+
+password_hash
+
+mongodb/
+graylog/
+elasticsearch/
