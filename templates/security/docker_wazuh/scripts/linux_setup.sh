@@ -81,7 +81,7 @@ function clone_wazuh_repo() {
 
     echo "Cloning Wazuh repository"
 
-    git clone https://github.com/wazuh/wazuh-docker.git # -b v4.9.2
+    git clone https://github.com/wazuh/wazuh-docker.git -b ${WAZUH_VERSION}
 
     if [[ $? -ne 0 ]]; then
         echo "Failed to clone Wazuh repository"
@@ -183,6 +183,13 @@ function generate_wazuh_certs() {
 
 function compose_up() {
     cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+
+    echo "Building Docker containers."
+    docker compose build
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to build Wazuh Docker containers."
+        exit 1
+    fi
 
     echo "Bringing up Wazuh Docker stack."
     docker compose up -d
