@@ -5,7 +5,7 @@ CWD=$(pwd)
 
 ## Check the latest Wazuh version at:
 #    https://github.com/wazuh/wazuh-docker/releases/latest
-WAZUH_VERSION="4.12.0"
+WAZUH_VERSION="4.10.0"
 
 ## Wazuh install type (single-node, multi-node)
 WAZUH_INSTALL_TYPE="single-node"
