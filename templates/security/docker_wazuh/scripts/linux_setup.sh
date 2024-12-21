@@ -143,6 +143,25 @@ function configure_reverse_proxy() {
       - HTTP_PROXY=${PROXY_ADDRESS}
 EOF
     fi
+
+    ## Return to CWD
+    cd $CWD
+}
+
+function generate_wazuh_certs() {
+    cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+
+    echo "[DEBUG] PWD: $(pwd)"
+
+    echo "Generating Wazuh indexer SSL certificates."
+    docker compose -f generate-indexer-certs.yml run --rm generator
+
+    if [[ ! $? -eq 0 ]]; then
+        echo "Failed to generate Wazuh indexer SSL certificates."
+        exit 1
+    fi
+
+    cd $CWD
 }
 
 function main() {
@@ -166,12 +185,14 @@ function main() {
 
     if [[ "${USING_REVERSE_PROXY}" -eq 1 ]]; then
         configure_reverse_proxy
+
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to configure reverse proxy"
+            exit 1
+        fi
     fi
 
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to configure reverse proxy"
-        exit 1
-    fi
+    generate_wazuh_certs
 }
 
 main
