@@ -181,6 +181,19 @@ function generate_wazuh_certs() {
     touch .ssl_certs_generated && echo 1 > .ssl_certs_generated
 }
 
+function compose_up() {
+    cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+
+    echo "Bringing up Wazuh Docker stack."
+    docker compose up -d
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to bring up Wazuh Docker stack."
+        exit 1
+    fi
+
+    cd $CWD
+}
+
 function main() {
     if [[ "$USING_REVERSE_PROXY" =~ ^[0-9]+$ ]] && ((USING_REVERSE_PROXY == 1)); then
         echo "USING_REVERSE_PROXY=1, reverse proxy support will be enabled."
@@ -210,6 +223,8 @@ function main() {
     fi
 
     generate_wazuh_certs
+
+    compose_up
 }
 
 main
