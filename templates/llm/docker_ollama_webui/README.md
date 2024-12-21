@@ -30,4 +30,7 @@ Once your `.env` file is setup, run `docker compose up -d` and browse to `http:/
 
 ## Links
 
-- [OpenWEBUI documentation](https://docs.openwebui.com/getting-started/)
+- [Open-webui documentation](https://docs.openwebui.com/getting-started/)
+- [Install Nvidia container toolkit](https://gist.github.com/GurucharanSavanth/ee67321a63975e1c26e0765e2561ae9d#install-docker-and-nvidia-container-toolkit)
+- [open-webui default setup](https://github.com/open-webui/open-webui#installation-with-default-configuration)
+- [Installing open-webui with bundled ollama](https://github.com/open-webui/open-webui#installing-open-webui-with-bundled-ollama-support)

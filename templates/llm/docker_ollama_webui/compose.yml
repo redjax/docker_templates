@@ -18,7 +18,7 @@ services:
       - ${OPENWEBUI_OLLAMA_DIR:-ollama}:/root/.ollama
       - ${OPENWEBUI_DATA_DIR:-open-webui}:/app/backend/data
     ## to use GPUs (requires NVIDIA runtime installed)
-    runtime: nvidia
+    # runtime: nvidia
     networks:
       - openwebui_net
 
