@@ -2,6 +2,17 @@
 
 Dockerized Wazuh XDR/SIEM server
 
+```
+WARNING
+-------
+
+While this message remains up, this container is either broken, or unstable.
+
+I get a 'manifest not found' error running this stack. There are multiple Github issues open about this, and I don't care to spend the time to figure out how to get through Wazuh's convoluted Docker setup process.
+
+I will leave this container here in case I decide to try again at some point, but I may move to an LXC container instead.
+```
+
 ## Description
 
 [wazuh](https://wazuh.com) is a free, open-source, self-hosted XDR & SIEM platform.
