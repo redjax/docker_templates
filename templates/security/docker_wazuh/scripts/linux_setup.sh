@@ -149,19 +149,36 @@ EOF
 }
 
 function generate_wazuh_certs() {
+    if [[ ! -f .ssl_certs_generated ]]; then
+        echo "Generating Wazuh indexer SSL certificates."
+    else
+        echo "SSL certificates have already been generated on this machine. Skipping step."
+        return
+    fi
+
     cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
 
-    echo "[DEBUG] PWD: $(pwd)"
-
-    echo "Generating Wazuh indexer SSL certificates."
     docker compose -f generate-indexer-certs.yml run --rm generator
 
     if [[ ! $? -eq 0 ]]; then
         echo "Failed to generate Wazuh indexer SSL certificates."
         exit 1
+    else
+        echo "Wazuh indexer SSL certificates generated successfully"
+        echo "[WARNING] Certificates path './config/wazuh_indexer_ssl_certs' is not user readable; to see the certs, run sudo ls ${CWD}/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs."    fi
     fi
 
+    # if find ./config/wazuh_indexer_ssl_certs -type f \( -iname "*.pem" -o -iname "*.crt" \) | grep -q .; then
+    #     echo "Wazuh indexer SSL certificates generated successfully"
+    # else
+    #     echo "No .pem or .crt files found, Wazuh did not generate SSL certificates correctly."
+    #     exit 1
+    # fi
+
     cd $CWD
+
+    ## Create a file to indicate SSL certificates have been created
+    touch .ssl_certs_generated && echo 1 > .ssl_certs_generated
 }
 
 function main() {
