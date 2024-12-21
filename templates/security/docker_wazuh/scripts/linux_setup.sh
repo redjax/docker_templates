@@ -12,6 +12,8 @@ WAZUH_INSTALL_TYPE="single-node"
 
 ## 0=disabled, 1=enabled
 USING_REVERSE_PROXY=1
+## Ensure USING_REVERSE_PROXY is a numeric value (and strip spaces)
+USING_REVERSE_PROXY=$(echo "$USING_REVERSE_PROXY" | tr -d '[:space:]')
 
 PROXY_ADDRESS=${WAZUH_PROXY_ADDRESS:-""}
 
@@ -73,7 +75,7 @@ function set_systctl_max_map_count() {
 
 function clone_wazuh_repo() {
     if [[ -d "./wazuh-docker" ]]; then
-        echo "Directory ./wazuh-docker already exists"
+        echo "Directory ./wazuh-docker already exists, skipping clone."
         return
     fi
 
@@ -111,46 +113,53 @@ function configure_reverse_proxy() {
         exit 1
     fi
 
-    ## Ensure USING_REVERSE_PROXY is a numeric value (and strip spaces)
-    USING_REVERSE_PROXY=$(echo "$USING_REVERSE_PROXY" | tr -d '[:space:]')
-    echo "[DEBUG] USING_REVERSE_PROXY=$USING_REVERSE_PROXY"
-
-    # Check if USING_REVERSE_PROXY is numeric and equal to 1
-    if [[ "$USING_REVERSE_PROXY" =~ ^[0-9]+$ ]] && ((USING_REVERSE_PROXY == 1)); then
-        echo "Reverse proxy is enabled, checking environment variable in Wazuh cert generator container"
-
-        ## Check if the content already exists in the file with flexible indentation
-        if grep -Pq "^\s*environment:" ./generate-indexer-certs.yml && grep -Pq "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml; then
-            if [[ -z "${PROXY_ADDRESS}" ]]; then
-                echo ""
-                echo "PROXY_ADDRESS is empty or null."
-                read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
-                echo ""
-            else
-                echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
-            fi
-
-            # Check if the current value of HTTP_PROXY in the file is different from PROXY_ADDRESS
-            current_proxy=$(grep -P "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml | sed 's/^\s*- HTTP_PROXY=//')
-            
-            if [[ "${current_proxy}" != "${PROXY_ADDRESS}" ]]; then
-                echo "Updating HTTP_PROXY from '${current_proxy}' to '${PROXY_ADDRESS}'"
-                # Use a different delimiter for sed to avoid conflicts with slashes in PROXY_ADDRESS
-                sed -i "s|^\s*- HTTP_PROXY=.*$|        - HTTP_PROXY=${PROXY_ADDRESS}|" ./generate-indexer-certs.yml
-                echo "Updated environment variable in ./generate-indexer-certs.yml"
-            else
-                echo "HTTP_PROXY is already set to the correct value: ${PROXY_ADDRESS}"
-            fi
+    ## Check if the content already exists in the file with flexible indentation
+    if grep -Pq "^\s*environment:" ./generate-indexer-certs.yml && grep -Pq "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml; then
+        if [[ -z "${PROXY_ADDRESS}" ]]; then
+            echo ""
+            echo "PROXY_ADDRESS is empty or null."
+            read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
+            echo ""
         else
-            echo "Reverse proxy is not enabled in the file, skipping setup"
-            return
+            echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
+        fi
+
+        # Check if the current value of HTTP_PROXY in the file is different from PROXY_ADDRESS
+        current_proxy=$(grep -P "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml | sed 's/^\s*- HTTP_PROXY=//')
+        
+        if [[ "${current_proxy}" != "${PROXY_ADDRESS}" ]]; then
+            echo "Updating HTTP_PROXY from '${current_proxy}' to '${PROXY_ADDRESS}'"
+            # Use a different delimiter for sed to avoid conflicts with slashes in PROXY_ADDRESS
+            sed -i "s|^\s*- HTTP_PROXY=.*$|        - HTTP_PROXY=${PROXY_ADDRESS}|" ./generate-indexer-certs.yml
+            echo "Updated environment variable in ./generate-indexer-certs.yml"
+        else
+            echo "HTTP_PROXY is already set to the correct value: ${PROXY_ADDRESS}"
         fi
     else
-        echo "USING_REVERSE_PROXY is not set to 1, skipping reverse proxy setup"
+        echo "Reverse proxy env variable not detected in ./generate-indexer-certs.yml. Appending line to container file."
+
+        cat >> ./generate-indexer-certs.yml << EOF
+    environment:
+      - HTTP_PROXY=${PROXY_ADDRESS}
+EOF
     fi
 }
 
 function main() {
+    if [[ "$USING_REVERSE_PROXY" =~ ^[0-9]+$ ]] && ((USING_REVERSE_PROXY == 1)); then
+        echo "USING_REVERSE_PROXY=1, reverse proxy support will be enabled."
+
+        ## Check PROXY_ADDRESS
+        if [[ -z "${PROXY_ADDRESS}" ]]; then
+            echo ""
+            echo "PROXY_ADDRESS is empty or null."
+            read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
+            echo ""
+        fi
+
+        echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
+    fi
+
     set_systctl_max_map_count
     
     clone_wazuh_repo
