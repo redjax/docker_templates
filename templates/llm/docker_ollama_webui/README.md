@@ -28,6 +28,12 @@ This directory includes a [`compose.yml`](./compose.yml) file. Create a `.env` f
 
 Once your `.env` file is setup, run `docker compose up -d` and browse to `http://your-servername-or-ip:3000` (if you changed the `OPENWEBUI_PORT` env variable, use that port instead).
 
+If you have a Nvidia GPU and have installed the [Nvidia container toolkit](https://gist.github.com/GurucharanSavanth/ee67321a63975e1c26e0765e2561ae9d#install-docker-and-nvidia-container-toolkit), you can run `ollama` with GPU support by running:
+
+```shell
+docker compose -f nvidia.compose.yml up -d
+```
+
 ## Links
 
 - [Open-webui documentation](https://docs.openwebui.com/getting-started/)
