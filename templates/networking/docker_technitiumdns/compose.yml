@@ -2,8 +2,8 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  technitium_data: {}
 
 services:
 
@@ -15,16 +15,52 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: ${TECHNITIUM_CONTAINER_MEMORY:-512M}
     hostname: technitium-dns
     network_mode: "host"
     ports:
       - ${TECHNITIUM_WEBUI_PORT:-5380}:5380
+      # - ${TECHNITIUM_WEBUI_HTTPS_PORT:-53443}:53443/tcp
+      - ${TECHNITIUM_DNS_PORT:-53}:53/udp
+      - ${TECHNITIUM_DNS_PORT:-53}:53/tcp
+      # - ${TECHNITIUM_DNS_OVER_QUIC_PORT:-853}:853/udp
+      # - ${TECHNITIUM_DNS_OVER_TLS_PORT:-853}:853/tcp
+      # - ${TECHNITIUM_DNS_OVER_HTTPS_PORT:-443}:443/udp
+      # - ${TECHNITIUM_DNS_OVER_HTTPS_PORT:-443}:443/tcp
+      # - ${TECHNITIUM_DNS_OVER_HTTP_PORT:-80}:80/tcp
+      # - ${TECHNITIUM_DNS_OVER_HTTP_PROXY_PORT:-8053}:8053/tcp
+      # - ${TECHNITIUM_DHCP_PORT:-67}:67/udp
     volumes:
       - type: bind
-        source: ${TECHNITIUM_DATA_DIR:-./technitium/data}
+        source: ${TECHNITIUM_DATA_DIR:-technitium_data}
         target: /etc/dns
     environment:
-      DNS_SERVER_DOMAIN: deb-dns2.home
-      DNS_SERVER_ADMIN_PASSWORD: ${TECHNITIUM_ADMIN_PASSWORD:-technitium}
-
+      TZ: ${TZ:-Etc/UTC}
+      DNS_SERVER_DOMAIN: ${TECHNITIUM_SERVER_DOMAIN:-example.com}
+      
+      ## You only need to set one of these in your .env
+      DNS_SERVER_ADMIN_PASSWORD: ${TECHNITIUM_ADMIN_PASSWORD}
+      DNS_SERVER_ADMIN_PASSWORD_FILE: ${TECHNITIUM_ADMIN_PASSWORD_FILE}
+      
+      DNS_SERVER_PREFER_IPV6: ${TECHNITIUM_PREFER_IPV6:-false}
+      # DNS_SERVER_WEB_SERVICE_HTTP_PORT: 5380
+      # DNS_SERVER_WEB_SERVICE_HTTPS_PORT: 53443
+      DNS_SERVER_WEB_SERVICE_ENABLE_HTTPS: ${TECHNITIUM_WEBUI_ENABLE_HTTPS:-false}
+      DNS_SERVER_WEB_SERVICE_USE_SELF_SIGNED_CERT: ${TECHNITIUM_WEBUI_USE_SELFSIGNED_CERT:-false}
+      DNS_SERVER_OPTIONAL_PROTOCOL_DNS_OVER_HTTP: ${TECHNITIUM_DNS_OVER_HTTP_PROTOCOL:-false}
+      ## Options: Allow, Deny, AllowOnlyForPrivateNetworks, UseSpecifiedNetworks.
+      DNS_SERVER_RECURSION: ${TECHNITIUM_SERVER_RECURSION:-AllowOnlyForPrivateNetworks}
+      ## Comma separated list of IP addresses or network addresses to allow recursion.
+      #  Valid only for `UseSpecifiedNetworks` recursion option.
+      # DNS_SERVER_RECURSION_ALLOWED_NETWORKS: 127.0.0.1, 192.168.1.0/24
+      # DNS_SERVER_RECURSION_DENIED_NETWORKS: 1.1.1.0/24
+      ## Sets the DNS server to block domain names using Blocked Zone and Block List Zone.
+      # DNS_SERVER_ENABLE_BLOCKING: false
+      # DNS_SERVER_ALLOW_TXT_BLOCKING_REPORT: false
+      ## A comma separated list of block list URLs.
+      DNS_SERVER_BLOCK_LIST_URLS: ${TECHNITIUM_BLOCKLIST_URLS}
+      DNS_SERVER_FORWARDERS: ${TECHNITIUM_DNS_FORWARDERS:-1.1.1.1,8.8.8.8}
+      ## Forwarder protocol options: Udp, Tcp, Tls, Https, HttpsJson.
+      DNS_SERVER_FORWARDER_PROTOCOL: ${TECHNITIUM_DNS_FORWARDER_PROTO:-Tcp}
+      ## Enable this option to use local time instead of UTC for logging.
+      # DNS_SERVER_LOG_USING_LOCAL_TIME: true
