@@ -1,0 +1,27 @@
+[2025-01-02 00:57:57 UTC] Logging started.
+[2025-01-02 00:57:57 UTC] DHCP Server successfully saved scope file: /etc/dns/scopes/Default.scope
+[2025-01-02 00:57:57 UTC] DNS Server auth config file was not found: /etc/dns/auth.config
+[2025-01-02 00:57:57 UTC] DNS Server is restoring default auth config file.
+[2025-01-02 00:57:57 UTC] DNS Server auth config file was saved: /etc/dns/auth.config
+[2025-01-02 00:57:57 UTC] DNS Server config file was not found: /etc/dns/dns.config
+[2025-01-02 00:57:57 UTC] DNS Server is restoring default config file.
+[2025-01-02 00:57:57 UTC] DNS Server config file was saved: /etc/dns/dns.config
+[2025-01-02 00:57:57 UTC] DNS Server is loading allowed zone file: /etc/dns/allowed.config
+[2025-01-02 00:57:57 UTC] DNS Server is loading blocked zone file: /etc/dns/blocked.config
+[2025-01-02 00:57:57 UTC] [[::]:5380] [HTTP] Web Service was bound successfully.
+[2025-01-02 00:57:57 UTC] [0.0.0.0:53] [UDP] DNS Server was bound successfully.
+[2025-01-02 00:57:57 UTC] [0.0.0.0:53] [TCP] DNS Server was bound successfully.
+[2025-01-02 00:57:57 UTC] [[::]:53] [UDP] DNS Server was bound successfully.
+[2025-01-02 00:57:57 UTC] [[::]:53] [TCP] DNS Server was bound successfully.
+[2025-01-02 00:57:57 UTC] DHCP Server successfully loaded scope: Default
+[2025-01-02 00:57:57 UTC] DHCP Server successfully loaded scope file: /etc/dns/scopes/Default.scope
+[2025-01-02 00:57:57 UTC] DNS Server (v13.3.0.0) was started successfully.
+[2025-01-02 00:58:07 UTC] DNS Server auth config file was saved: /etc/dns/auth.config
+[2025-01-02 00:58:56 UTC] [192.168.1.12:54586] DnsServerCore.DnsWebServiceException: Invalid username or password for user: admin
+   at DnsServerCore.Auth.AuthManager.CreateSessionAsync(UserSessionType type, String tokenName, String username, String password, IPAddress remoteAddress, String userAgent) in Z:\Technitium\Projects\DnsServer\DnsServerCore\Auth\AuthManager.cs:line 682
+   at DnsServerCore.WebServiceAuthApi.LoginAsync(HttpContext context, UserSessionType sessionType) in Z:\Technitium\Projects\DnsServer\DnsServerCore\WebServiceAuthApi.cs:line 306
+   at DnsServerCore.DnsWebService.WebServiceApiMiddleware(HttpContext context, RequestDelegate next) in Z:\Technitium\Projects\DnsServer\DnsServerCore\DnsWebService.cs:line 685
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+[2025-01-02 01:00:57 UTC] [192.168.1.12:54586] [admin] User logged in.
+[2025-01-02 01:00:59 UTC] [192.168.1.12:54585] Check for update was done {updateAvailable: False; updateVersion: 13.3; updateTitle: New Update (v13.3) Available!; updateMessage: Follow the instructions from the link below to update the DNS server to the latest version. Read the change logs before installing this update to know if there are any breaking changes.; instructionsLink: https://blog.technitium.com/2017/11/running-dns-server-on-ubuntu-linux.html; changeLogLink: https://github.com/TechnitiumSoftware/DnsServer/blob/master/CHANGELOG.md;}
+[2025-01-02 01:01:07 UTC] DNS Server auth config file was saved: /etc/dns/auth.config

@@ -1,0 +1,30 @@
+---
+# networks:
+#   unnamed_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+
+  technitium-dns:
+    image: technitium/dns-server:latest
+    container_name: technitium-dns
+    restart: unless-stopped
+    cpu_shares: 50
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    hostname: technitium-dns
+    network_mode: "host"
+    ports:
+      - ${TECHNITIUM_WEBUI_PORT:-5380}:5380
+    volumes:
+      - type: bind
+        source: ${TECHNITIUM_DATA_DIR:-./technitium/data}
+        target: /etc/dns
+    environment:
+      DNS_SERVER_DOMAIN: deb-dns2.home
+      DNS_SERVER_ADMIN_PASSWORD: ${TECHNITIUM_ADMIN_PASSWORD:-technitium}
+
