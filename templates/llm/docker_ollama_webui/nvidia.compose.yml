@@ -34,18 +34,18 @@ services:
       - ollama_net
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/open-webui/open-webui:${OPENWEBUI_CONTAINER_VER:-main}
     container_name: open-webui
     restart: unless-stopped
     ports:
-      - ${OPEN_WEBUI_PORT:-3000}:8080
+      - ${OPENWEBUI_PORT:-3000}:8080
     volumes:
-      - ${OPEN_WEBUI_DATA_DIR:-open-webui_data}:/app/backend/data
+      - ${OPENWEBUI_DATA_DIR:-open-webui_data}:/app/backend/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      OLLAMA_BASE_URLS: ${OLLAMA_WEBUI_BASE_URLS:-"http://ollama:11434"}
-      WEBUI_SECRET_KEY: ${OLLAMA_WEBUI_SECRET_KEY:-""}
+      OLLAMA_BASE_URLS: ${OPENWEBUI_BASE_URLS:-"http://ollama:11434"}
+      WEBUI_SECRET_KEY: ${OPENWEBUI_SECRET_KEY:-""}
     ## to use GPUs (requires NVIDIA runtime installed)
     #  Install on Fedora: sudo dnf install -y akmod-nvidia
     runtime: nvidia
