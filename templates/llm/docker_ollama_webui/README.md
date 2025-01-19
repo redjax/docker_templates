@@ -54,12 +54,18 @@ This will take a little while, but will bring up ollama with NVIDIA GPU support 
 
 ### Adding Ollama models
 
-The `ollama` container starts without any models. To add models, find one on [the ollama.com website](https://ollama.com/search) and execute it in the container. You can run the [`install_ollama_model.sh`](./scripts/install_ollama_model.sh) script to be prompted for a model name, and let the script execute the Docker command. You can also just run `docker compose exec`.
+The `ollama` container starts without any models. To add models, find one on [the ollama.com website](https://ollama.com/search) and execute it in the container. If you are not using the default `compose.yml` (i.e. if you have a NVIDIA graphics card and are using the `nvidia.compose.yml` stack), make sure to tell `docker compose` which file to use: `docker compose -f <compose-filename.yml> [docker commands]`.
 
 For example, to add the `dolphin-mistral` model with:
 
 ```shell
-docker compose exec -it open-webui /bin/bash -c "ollama run dolphin-mistral"
+docker compose exec -it ollama /bin/bash -c "ollama run dolphin-mistral"
+```
+
+Or to add the `qwq` model to the `nvidia.compose.yml` stack:
+
+```shell
+docker compose -f nvidia.compose.yml exec -it ollama /bin/bash -c "ollama run qwq"
 ```
 
 Some models I've found useful:
