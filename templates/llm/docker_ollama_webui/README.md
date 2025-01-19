@@ -1,10 +1,22 @@
-# ollama_webui
+# ollama_webui <!-- omit in toc -->
 
 Ollama LLM with [OpenWebUI](https://github.com/open-webui/open-webui) container
 
-## Description
+## Description <!-- omit in toc -->
 
 Runs a chat webUI with embedded Ollama. The `open-webui` container and `ollama` are both meant to run completely offline. Run your own private chatbot and stop training corporations' models for free.
+
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Usage](#usage)
+  - [Installing NVIDIA GPU drivers](#installing-nvidia-gpu-drivers)
+  - [Quickstart](#quickstart)
+  - [Docker Compose](#docker-compose)
+  - [Adding Ollama models](#adding-ollama-models)
+  - [Performance tweaks](#performance-tweaks)
+    - [Improve response speed time](#improve-response-speed-time)
+- [Links](#links)
 
 ## Usage
 
@@ -42,12 +54,18 @@ This will take a little while, but will bring up ollama with NVIDIA GPU support 
 
 ### Adding Ollama models
 
-The `ollama` container starts without any models. To add models, find one on [the ollama.com website](https://ollama.com/search) and execute it in the container. You can run the [`install_ollama_model.sh`](./scripts/install_ollama_model.sh) script to be prompted for a model name, and let the script execute the Docker command. You can also just run `docker compose exec`.
+The `ollama` container starts without any models. To add models, find one on [the ollama.com website](https://ollama.com/search) and execute it in the container. If you are not using the default `compose.yml` (i.e. if you have a NVIDIA graphics card and are using the `nvidia.compose.yml` stack), make sure to tell `docker compose` which file to use: `docker compose -f <compose-filename.yml> [docker commands]`.
 
 For example, to add the `dolphin-mistral` model with:
 
 ```shell
-docker compose exec -it open-webui /bin/bash -c "ollama run dolphin-mistral"
+docker compose exec -it ollama /bin/bash -c "ollama run dolphin-mistral"
+```
+
+Or to add the `qwq` model to the `nvidia.compose.yml` stack:
+
+```shell
+docker compose -f nvidia.compose.yml exec -it ollama /bin/bash -c "ollama run qwq"
 ```
 
 Some models I've found useful:
@@ -55,6 +73,16 @@ Some models I've found useful:
 - [qwq](https://ollama.com/library/qwq)
 - [dolphin-mistral](https://ollama.com/library/dolphin-mistral)
 - [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral)
+
+### Performance tweaks
+
+#### Improve response speed time
+
+[Source](https://github.com/open-webui/open-webui/discussions/7821#discussioncomment-11641870)
+
+If responses from the LLM are slow, try switching off `"Retrieval Query Generation"`, `"Tags Generation"`, and `"Autocomplete Generation"` in the web UI. These configurations can be found by opening `Admin Panel` -> `Settings` -> `Interface`.
+
+Restart both Ollama and Open-WebUI after making this change.
 
 ## Links
 

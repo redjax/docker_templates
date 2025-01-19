@@ -35,6 +35,7 @@ All templates are stored in the [`./templates`](./templates) path in one of the 
 | [database](./templates/database) | Containers for database servers, like PostgreSQL and MariaDB. |
 | [documents](./templates/documents) | Document management, OCR, & more. |
 | [games](./templates/games) | Dockerized game servers, like Palworld, Valheim, and Satisfactory. |
+| [llm](./templates/llm) | Containers for LLMs like ollama. |
 | [media](./templates/media) | Containers for media management/streaming. |
 | [messaging](./templates/messaging) | Messaging services & event queues like MQTT, RabbitMQ, etc. |
 | [misc](./templates/misc) | Miscellaneous templates for specific environments. |
