@@ -1,5 +1,36 @@
 # Docker Templates <!-- omit in toc -->
 
+<!-- Repo image -->
+<p align="center">
+  <a href="https://github.com/redjax/docker_templates">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="src/img/repo-readme-header.png">
+      <img src="src/img/repo-readme-header.png" height="100">
+    </picture>
+  </a>
+</p>
+
+<!-- Git Badges -->
+<p align="center">
+  <a href="https://github.com/redjax/docker_templates">
+    <img alt="Created At" src="https://img.shields.io/github/created-at/redjax/docker_templates">
+  </a>
+  <a href="https://github.com/redjax/docker_templates/commit">
+    <img alt="Last Commit" src="https://img.shields.io/github/last-commit/redjax/docker_templates">
+  </a>
+  <a href="https://github.com/redjax/docker_templates/commit">
+    <img alt="Commits this year" src="https://img.shields.io/github/commit-activity/y/redjax/docker_templates">
+  </a>
+  <a href="https://github.com/redjax/docker_templates">
+    <img alt="Repo size" src="https://img.shields.io/github/repo-size/redjax/docker_templates">
+  </a>
+  <!-- ![GitHub Latest Release](https://img.shields.io/github/release-date/redjax/docker_templates) -->
+  <!-- ![GitHub commits since latest release](https://img.shields.io/github/commits-since/redjax/docker_templates/latest) -->
+  <!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/docker_templates/tests.yml) -->
+</p>
+
+---
+
 Templates for Docker/Compose containers. Some are completely custom, but most are an example `compose.yml`/`docker-compose.yml` file and example `.env` file.
 
 Check the [template categories section](#template-categories) for a list of template types.
