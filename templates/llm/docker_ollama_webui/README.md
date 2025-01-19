@@ -1,10 +1,22 @@
-# ollama_webui
+# ollama_webui <!-- omit in toc -->
 
 Ollama LLM with [OpenWebUI](https://github.com/open-webui/open-webui) container
 
-## Description
+## Description <!-- omit in toc -->
 
 Runs a chat webUI with embedded Ollama. The `open-webui` container and `ollama` are both meant to run completely offline. Run your own private chatbot and stop training corporations' models for free.
+
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Usage](#usage)
+  - [Installing NVIDIA GPU drivers](#installing-nvidia-gpu-drivers)
+  - [Quickstart](#quickstart)
+  - [Docker Compose](#docker-compose)
+  - [Adding Ollama models](#adding-ollama-models)
+  - [Performance tweaks](#performance-tweaks)
+    - [Improve response speed time](#improve-response-speed-time)
+- [Links](#links)
 
 ## Usage
 
@@ -55,6 +67,16 @@ Some models I've found useful:
 - [qwq](https://ollama.com/library/qwq)
 - [dolphin-mistral](https://ollama.com/library/dolphin-mistral)
 - [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral)
+
+### Performance tweaks
+
+#### Improve response speed time
+
+[Source](https://github.com/open-webui/open-webui/discussions/7821#discussioncomment-11641870)
+
+If responses from the LLM are slow, try switching off `"Retrieval Query Generation"`, `"Tags Generation"`, and `"Autocomplete Generation"` in the web UI. These configurations can be found by opening `Admin Panel` -> `Settings` -> `Interface`.
+
+Restart both Ollama and Open-WebUI after making this change.
 
 ## Links
 
