@@ -15,6 +15,16 @@ Check the [template categories section](#template-categories) for a list of temp
   - Edit the `.env` file to your liking
 - Run `docker compose up -d` (or another command, if listed in the `README.md`)
 
+#### Use a symlink
+
+If you want to create a link to a template, i.e. if you are running a [Palworld server](./templates/games/docker_palworld_server/) and want a link to the template directory in your `$HOME`, you can use `ln -s` on Linux:
+
+```bash
+ln -s /path/to/docker_templates/templates/games/docker_palworld_server /path/to/link
+```
+
+With `ln -s`, avoid using variables like `$HOME` or `~`. These symbolic links are brittle, they work best with absolute paths and will break if you move the source path.
+
 ### Method 2: Copy/paste
 
 - Navigate to the container(s) you want
