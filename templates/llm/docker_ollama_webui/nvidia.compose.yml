@@ -1,35 +1,73 @@
 ---
-networks:
-  openwebui_net: {}
-
 volumes:
-  ollama: {}
-  open-webui: {}
+  ollama_data: {}
+  open-webui_data: {}
+
+networks:
+  ollama_net: {}
 
 services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    restart: unless-stopped
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: ${OLLAMA_GPU_DRIVER:-nvidia}
+              capabilities:
+                - gpu
+              count: ${OLLAMA_GPU_COUNT:-1}
+    environment:
+      ## Can be (h)ours or (m)inutes
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-10m}
+    ports:
+      - ${OLLAMA_PORT:-11434}:11434
+      # - 53:53
+    volumes:
+      - ${OLLAMA_DATA_DIR:-ollama_data}:/root/.ollama
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - ollama_net
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:${OPENWEBUI_CONTAINER_VER:-ollama}
+    image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     restart: unless-stopped
     ports:
-      - "${OPENWEBUI_PORT:-3000}:8080"
+      - ${OPEN_WEBUI_PORT:-3000}:8080
     volumes:
-      - ${OPENWEBUI_OLLAMA_DIR:-ollama}:/root/.ollama
-      - ${OPENWEBUI_DATA_DIR:-open-webui}:/app/backend/data
+      - ${OPEN_WEBUI_DATA_DIR:-open-webui_data}:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      OLLAMA_BASE_URLS: ${OLLAMA_WEBUI_BASE_URLS:-"http://ollama:11434"}
+      WEBUI_SECRET_KEY: ${OLLAMA_WEBUI_SECRET_KEY:-""}
     ## to use GPUs (requires NVIDIA runtime installed)
+    #  Install on Fedora: sudo dnf install -y akmod-nvidia
     runtime: nvidia
+    depends_on:
+      - ollama
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
-      - openwebui_net
+      - ollama_net
 
-  ## Watchtower container to keep webUI up to date
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
-    ## Ensure watchtower only runs once
-    restart: "no"
+    restart: unless-stopped
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the `com.centurylinklabs.watchtower.enable=true` label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --run-once open-webui
     networks:
-      - openwebui_net
+      - ollama_net
