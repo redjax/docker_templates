@@ -1,8 +1,47 @@
-# Docker Templates
+# Docker Templates <!-- omit in toc -->
+
+<!-- Repo image -->
+<p align="center">
+  <a href="https://github.com/redjax/docker_templates">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="src/img/repo-readme-header.png">
+      <img src="src/img/repo-readme-header.png" height="100">
+    </picture>
+  </a>
+</p>
+
+<!-- Git Badges -->
+<p align="center">
+  <a href="https://github.com/redjax/docker_templates">
+    <img alt="Created At" src="https://img.shields.io/github/created-at/redjax/docker_templates">
+  </a>
+  <a href="https://github.com/redjax/docker_templates/commit">
+    <img alt="Last Commit" src="https://img.shields.io/github/last-commit/redjax/docker_templates">
+  </a>
+  <a href="https://github.com/redjax/docker_templates/commit">
+    <img alt="Commits this year" src="https://img.shields.io/github/commit-activity/y/redjax/docker_templates">
+  </a>
+  <a href="https://github.com/redjax/docker_templates">
+    <img alt="Repo size" src="https://img.shields.io/github/repo-size/redjax/docker_templates">
+  </a>
+  <!-- ![GitHub Latest Release](https://img.shields.io/github/release-date/redjax/docker_templates) -->
+  <!-- ![GitHub commits since latest release](https://img.shields.io/github/commits-since/redjax/docker_templates/latest) -->
+  <!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/docker_templates/tests.yml) -->
+</p>
+
+---
 
 Templates for Docker/Compose containers. Some are completely custom, but most are an example `compose.yml`/`docker-compose.yml` file and example `.env` file.
 
 Check the [template categories section](#template-categories) for a list of template types.
+
+## Table of Contents  <!-- omit in toc -->
+
+- [Instructions](#instructions)
+  - [Method 1: Clone the whole repository](#method-1-clone-the-whole-repository)
+    - [Use a symlink](#use-a-symlink)
+  - [Method 2: Copy/paste](#method-2-copypaste)
+- [Template Categories](#template-categories)
 
 ## Instructions
 
@@ -14,6 +53,16 @@ Check the [template categories section](#template-categories) for a list of temp
 - Copy `.env.example` -> `.env`, if it exists
   - Edit the `.env` file to your liking
 - Run `docker compose up -d` (or another command, if listed in the `README.md`)
+
+#### Use a symlink
+
+If you want to create a link to a template, i.e. if you are running a [Palworld server](./templates/games/docker_palworld_server/) and want a link to the template directory in your `$HOME`, you can use `ln -s` on Linux:
+
+```bash
+ln -s /path/to/docker_templates/templates/games/docker_palworld_server /path/to/link
+```
+
+With `ln -s`, avoid using variables like `$HOME` or `~`. These symbolic links are brittle, they work best with absolute paths and will break if you move the source path.
 
 ### Method 2: Copy/paste
 
