@@ -42,6 +42,8 @@ docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock containrrr/wa
 
 There are multiple possible configurations for ollama + open-webui, including ollama on host with open-webui in a container, an all-in-one with ollama and open-webui in the same container, ollama and open-webui in separate containers, supporting GPU instead of CPU, etc.
 
+You can also use one of the `aio-*.compose.yml` stacks, where `aio` means "all in one" and includes open-webui with ollama bundled.
+
 As of now, only NVIDIA GPU enabled containers are supported.
 
 After [installing the NVIDIA GPU drivers](#installing-nvidia-gpu-drivers), bring up the stack with:
