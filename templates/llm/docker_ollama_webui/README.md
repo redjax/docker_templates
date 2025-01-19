@@ -8,6 +8,10 @@ Runs a chat webUI with embedded Ollama. The `open-webui` container and `ollama` 
 
 ## Usage
 
+### Installing NVIDIA GPU drivers
+
+Run one of the scripts in the [`scripts/graphics_drivers/`](./scripts/graphics_drivers/) path to install the NVIDIA container toolkit & GPU drivers on the host, and enable GPU passthrough to containers.
+
 ### Quickstart
 
 Use a `docker run` command to get started:
@@ -24,15 +28,17 @@ docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock containrrr/wa
 
 ### Docker Compose
 
-This directory includes a [`compose.yml`](./compose.yml) file. Create a `.env` file by copying `.env.example` -> `.env`, then edit it, editing any runtime variables you wish to change.
+There are multiple possible configurations for ollama + open-webui, including ollama on host with open-webui in a container, an all-in-one with ollama and open-webui in the same container, ollama and open-webui in separate containers, supporting GPU instead of CPU, etc.
 
-Once your `.env` file is setup, run `docker compose up -d` and browse to `http://your-servername-or-ip:3000` (if you changed the `OPENWEBUI_PORT` env variable, use that port instead).
+As of now, only NVIDIA GPU enabled containers are supported.
 
-If you have a Nvidia GPU and have installed the [Nvidia container toolkit](https://gist.github.com/GurucharanSavanth/ee67321a63975e1c26e0765e2561ae9d#install-docker-and-nvidia-container-toolkit), you can run `ollama` with GPU support by running:
+After [installing the NVIDIA GPU drivers](#installing-nvidia-gpu-drivers), bring up the stack with:
 
 ```shell
 docker compose -f nvidia.compose.yml up -d
 ```
+
+This will take a little while, but will bring up ollama with NVIDIA GPU support and an open-webui on port `3000` (by default, set `OPENWEBUI_PORT` to something different if you want to change the web UI port).
 
 ### Adding Ollama models
 
