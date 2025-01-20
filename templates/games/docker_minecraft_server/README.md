@@ -64,7 +64,7 @@ A valid `whitelist.json` looks like this (replace the default values with your o
 ]
 ```
 
-When using a whitelist, you need to edit the [`compose.yml` file](./compose.yml); uncomment the `# - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json` line.
+When using a whitelist, you need to edit the [`compose.yml` file](./compose.yml); uncomment the `# - ${MC_SERVER_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json` line.
 
 ### Modded server
 

@@ -8,6 +8,7 @@ networks:
 services:
   mc-server:
     image: itzg/minecraft-server
+    container_name: ${MC_SERVER_CONTAINER_NAME:-minecraft-server}
     tty: true
     stdin_open: true
     restart: unless-stopped
@@ -72,13 +73,13 @@ services:
 
     volumes:
       - ${MC_SERVER_DATA_DIR:-mc_data}:/data
-      # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
+      # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
       ## Uncomment if you create a whitelist.json file
-      # - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
+      # - ${MC_SERVER_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
       ## Uncomment if you create a mods.txt file
-      # - ${MC_SERV_MODS_FILE:-./mods.txt}:/extras/mods.txt
+      # - ${MC_SERVER_MODS_FILE:-./mods.txt}:/extras/mods.txt
       ## Uncomment to mount a plugins directory with plugins you've downloaded
-      # - ${MC_SERV_PLUGINS_DIR:-./plugins}:/plugins
+      # - ${MC_SERVER_PLUGINS_FILE:-./plugins}:/plugins
 
     networks:
       - mc_net
