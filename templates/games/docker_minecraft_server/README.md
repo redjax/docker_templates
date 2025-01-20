@@ -1,8 +1,22 @@
-## Notes & Links
+# Docker Minecraft Server <!-- omit in toc -->
 
-### Notes
+Dockerized Minecraft server.
 
-### Links
+The [itz/minecraft-server container](https://hub.docker.com/r/itzg/minecraft-server) is a highly configurable server environment that supports vanilla server creation or modded with Fabric, Spiget, etc.
+
+```
+WARNING: This path is undergoing active development.
+
+Consider this template unstable until this message is reviewed.
+```
+
+## Usage
+
+...
+
+## Notes
+
+## Links
 
 - [Docker Hub: itzg/minecraft-server](https://hub.docker.com/r/itzg/minecraft-server)
 - [Github: itzg/minecraft-server](https://github.com/itzg/docker-mc-backup)
