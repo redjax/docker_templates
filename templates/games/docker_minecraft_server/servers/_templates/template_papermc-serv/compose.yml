@@ -58,9 +58,9 @@ services:
       SYNC_SKIP_NEWER_IN_DESTINATION: ${MC_SERV_SPIGET_SYNC_SKIP:-false}
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
-      # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
-      - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
-      - ${MC_SERV_PLUGINS_DIR:-./plugins}:/plugins
+      # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
+      - ${MC_SERVER_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
+      - ${MC_SERVER_PLUGINS_FILE:-./plugins}:/plugins
     healthcheck:
       test: mc-health
       start_period: 1m
