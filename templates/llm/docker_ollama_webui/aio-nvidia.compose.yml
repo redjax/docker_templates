@@ -16,6 +16,14 @@ services:
     volumes:
       - ${OLLAMA_DATA_DIR:-ollama}:/root/.ollama
       - ${OPENWEBUI_DATA_DIR:-open-webui}:/app/backend/data
+    environment:
+      OLLAMA_NUM_THREADS: ${OLLAMA_NUM_THREADS:-8}
+      ADMIN_EMAIL: ${OPENWEBUI_ADMIN_EMAIL:-no@none.com}
+      CUSTOM_NAME: ${OPENWEBUI_CUSTOM_NAME:-Open-WebUI}
+      USE_CUDA_DOCKER: ${OPENWEBUI_USE_CUDA:-false}
+      ENABLE_AUTOCOMPLETE_GENERATION: ${OPENWEBUI_ENABLE_AUTOCOMPLETE_GENERATION:-false}
+      ENABLE_TAGS_GENERATION: ${OPENWEBUI_ENABLE_TAGS_GENERATION:-false}
+      ENABLE_RETRIEVAL_QUERY_GENERATION: ${OPENWEBUI_ENABLE_RETRIEVAL_QUERY_GENERATION:-false}
     ## to use GPUs (requires NVIDIA runtime installed)
     runtime: nvidia
     deploy:
