@@ -14,8 +14,9 @@ Runs a chat webUI with embedded Ollama. The `open-webui` container and `ollama` 
   - [Quickstart](#quickstart)
   - [Docker Compose](#docker-compose)
   - [Adding Ollama models](#adding-ollama-models)
-  - [Performance tweaks](#performance-tweaks)
-    - [Improve response speed time](#improve-response-speed-time)
+    - [Models I've used](#models-ive-used)
+- [Performance tweaks](#performance-tweaks)
+  - [Improve response speed time](#improve-response-speed-time)
 - [Links](#links)
 
 ## Usage
@@ -70,26 +71,38 @@ Or to add the `qwq` model to the `nvidia.compose.yml` stack:
 docker compose -f nvidia.compose.yml exec -it ollama /bin/bash -c "ollama run qwq"
 ```
 
-Some models I've found useful:
+#### Models I've used
 
-- [qwq](https://ollama.com/library/qwq)
-- [dolphin-mistral](https://ollama.com/library/dolphin-mistral)
-- [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral)
-- [mistral](https://ollama.com/library/mistral)
-- [starcoder2](https://ollama.com/library/starcoder2)
-- [wizard-vicuna-uncensored](https://ollama.com/library/wizard-vicuna-uncensored)
-- [magicoder](https://ollama.com/library/magicoder)
-- [dolphincoder](https://ollama.com/library/dolphincoder)
-- [openhermes](https://ollama.com/library/openhermes)
-- [stable-code](https://ollama.com/library/stable-code)
+This is a table of models I've used or would use. The description is taken from [ollama.com](https://ollama.com) for each model.
 
-### Performance tweaks
+| Model | Description |
+| ----- | ----------- |
+| [qwq](https://ollama.com/library/qwq)| QwQ is an experimental research model focused on advancing AI reasoning capabilities. |
+| [dolphin-mistral](https://ollama.com/library/dolphin-mistral) | The uncensored Dolphin model based on Mistral that excels at coding tasks. Updated to version 2.8. |
+| [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral) | Uncensored, 8x7b and 8x22b fine-tuned models based on the Mixtral mixture of experts models that excels at coding tasks. Created by Eric Hartford. |
+| [mistral](https://ollama.com/library/mistral) | The 7B model released by Mistral AI, updated to version 0.3. |
+| [starcoder2](https://ollama.com/library/starcoder2) | StarCoder2 is the next generation of transparently trained open code LLMs that comes in three sizes: 3B, 7B and 15B parameters. |
+| [wizard-vicuna-uncensored](https://ollama.com/library/wizard-vicuna-uncensored) | Wizard Vicuna Uncensored is a 7B, 13B, and 30B parameter model based on Llama 2 uncensored by Eric Hartford. |
+| [magicoder](https://ollama.com/library/magicoder) | 🎩 Magicoder is a family of 7B parameter models trained on 75K synthetic instruction data using OSS-Instruct, a novel approach to enlightening LLMs with open-source code snippets. |
+| [dolphincoder](https://ollama.com/library/dolphincoder) | A 7B and 15B uncensored variant of the Dolphin model family that excels at coding, based on StarCoder2. |
+| [openhermes](https://ollama.com/library/openhermes) | OpenHermes 2.5 is a 7B model fine-tuned by Teknium on Mistral with fully open datasets. |
+| [stable-code](https://ollama.com/library/stable-code) | Stable Code 3B is a coding model with instruct and code completion variants on par with models such as Code Llama 7B that are 2.5x larger. |
+| [wizardlm2](https://ollama.com/library/wizardlm2) | State of the art large language model from Microsoft AI with improved performance on complex chat, multilingual, reasoning and agent use cases. |
 
-#### Improve response speed time
+
+## Performance tweaks
+
+### Improve response speed time
 
 [Source](https://github.com/open-webui/open-webui/discussions/7821#discussioncomment-11641870)
 
 If responses from the LLM are slow, try switching off `"Retrieval Query Generation"`, `"Tags Generation"`, and `"Autocomplete Generation"` in the web UI. These configurations can be found by opening `Admin Panel` -> `Settings` -> `Interface`.
+
+If using Docker Compose, you can set the environment variables:
+
+- `OPENWEBUI_ENABLE_AUTOCOMPLETE_GENERATION=false`
+- `OPENWEBUI_ENABLE_TAGS_GENERATION=false`
+- `OPENWEBUI_ENABLE_RETRIEVAL_QUERY_GENERATION=false`
 
 Restart both Ollama and Open-WebUI after making this change.
 
