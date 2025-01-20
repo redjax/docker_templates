@@ -13,6 +13,11 @@ services:
     restart: unless-stopped
     ports:
       - ${MC_SERVER_PORT:-25565}
+
+    ## Use EITHER env_file OR environment
+    #  If you use env_file, make sure to comment environment:
+    # env_file:
+    #   - ./envs/server.env
     environment:
       EULA: "TRUE"
       ENABLE_RCON: "true"
@@ -64,12 +69,14 @@ services:
       SYNC_SKIP_NEWER_IN_DESTINATION: ${MC_SERV_SPIGET_SYNC_SKIP:-false}
 
       REMOVE_OLD_MODS: "true"
+
     volumes:
       - ${MC_SERVER_DATA_DIR:-mc_data}:/data
       # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
       - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
       - ${MC_SERV_MODS_FILE}
       # - ${MC_SERV_PLUGINS_DIR:-./plugins}:/plugins
+
     networks:
       - mc_net
     labels:
