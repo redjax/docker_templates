@@ -75,6 +75,13 @@ Some models I've found useful:
 - [qwq](https://ollama.com/library/qwq)
 - [dolphin-mistral](https://ollama.com/library/dolphin-mistral)
 - [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral)
+- [mistral](https://ollama.com/library/mistral)
+- [starcoder2](https://ollama.com/library/starcoder2)
+- [wizard-vicuna-uncensored](https://ollama.com/library/wizard-vicuna-uncensored)
+- [magicoder](https://ollama.com/library/magicoder)
+- [dolphincoder](https://ollama.com/library/dolphincoder)
+- [openhermes](https://ollama.com/library/openhermes)
+- [stable-code](https://ollama.com/library/stable-code)
 
 ### Performance tweaks
 
