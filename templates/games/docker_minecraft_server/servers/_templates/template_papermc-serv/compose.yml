@@ -1,5 +1,4 @@
-version: "3.4"
-
+---
 services:
 
   ###########################
@@ -10,7 +9,7 @@ services:
 
   mc-server:
     image: itzg/minecraft-server
-    container_name: ${MC_SERV_CONTAINER_NAME:-mc-server_example}
+    container_name: ${MC_SERV_CONTAINER_NAME:-mc-server1}
     restart: unless-stopped
     ## Comment if using mc-router container
     ports:
@@ -22,11 +21,18 @@ services:
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the server!}
       EULA: "TRUE"
+      # ENABLE_RCON: "true"
+      ## NOTE: You must fill this environment variable,
+      #  there is no password, for security reasons
+      # RCON_PASSWORD: ${MC_SERV_RCON_PASSWORD}
+      ## Must set a different port for each server
+      # RCON_PORT: ${MC_SERV_RCON_PORT:-25575}:25575
       DIFFICULTY: ${MC_SERV_DIFFICULTY:-normal}
       # https://github.com/itzg/docker-minecraft-server#memory-limit
       MEMORY: ${MC_SERV_MEMORY:-4G}
       ## Uncomment this to import a saved game from the defined WORLDS dir
       # WORLD: /worlds/${MC_SERV_WORLD}
+      ## Default: 20
       MAX_PLAYERS: ${MC_SERV_MAX_PLAYERS:-20}
       MAX_WORLD_SIZE: ${MC_SERV_MAX_WORLD_SIZE:-10000}
       ALLOW_NETHER: ${MC_SERV_ALLOW_NETHER:-true}
@@ -41,12 +47,19 @@ services:
       ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#online-mode
       ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
       WHITELIST_FILE: /extra/whitelist.json
-      WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLE:-false}
+      WHITELIST_ENABLED: true
       OVERRIDE_WHITELIST: true
+      ## If using a Spigot/Bukkit/Paper server, optionall pass a list of plugin IDs
+      #  to automatically load them.
+      #  Find plugin IDs here: https://www.spigotmc.org/resources/
+      #  Example: SPITGET_RESOURCES=9089,34315
+      SPIGET_RESOURCES: ${MC_SERV_SPIGET_RESOURCES}
+      SYNC_SKIP_NEWER_IN_DESTINATION: ${MC_SERV_SPIGET_SYNC_SKIP:-false}
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
       - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
+      - ${MC_SERV_PLUGINS_DIR:-./plugins}:/plugins
     healthcheck:
       test: mc-health
       start_period: 1m
