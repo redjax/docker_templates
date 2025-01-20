@@ -24,18 +24,47 @@ Consider this template unstable until this message is reviewed.
 
 - [Table of Contents](#table-of-contents)
 - [Usage](#usage)
+  - [Env setup](#env-setup)
+  - [Player whitelist.json](#player-whitelistjson)
   - [Modded server](#modded-server)
 - [Links](#links)
 
 ## Usage
 
-- Copy [`.env.example`](./.env.example) to `.env`.
-  - Edit it to your liking, or leave the defaults.
-- (Optional) Create a `whitelist.json`
-  - If you know your players' usernames and UUIDs, you can copy the [`whitelist.example.json`](./whitelist.example.json) to `whitelist.json` and edit it to add them.
-  - If you use a whitelist:
-    - Set the `MC_SERV_WHITELIST_ENABLED=true` variable in your [`.env` file](./.env.example)
-    - Uncomment the `# - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json` line in the [`compose.yml` file](./compose.yml).
+There are multiple ways to run this Dockerized Minecraft server container. You can copy the example files like [`.env.example`](./.env.example) and [`./whitelist.example.json`](./whitelist.example.json) and run the [`compose.yml` file](./compose.yml) directly from this git repository. Using this method, you will run 1 server at a time.
+
+You can also copy the entire [`../docker_minecraft_server`](../docker_minecraft_server/) to another path on your filesystem, outside of the `docker_templates/` repository clone. You can edit the environment and whitelist files at that path, and create multiple isolated Minecraft servers this way. Any changes made in this repository template will need to be manually applied to your detached Minecraft servers.
+
+### Env setup
+
+Copy [`.env.example`](./.env.example) to `.env`. Edit it to your liking, or leave the defaults.
+
+**TODO**: Write documentation for using [`env_file`s](./envs).
+
+### Player whitelist.json
+
+You can add players to a [`whitelist.json`] file before starting your server if you know their username and UUID. You can use [mcuuid.net](https://mcuuid.net) to look up a player's UUID by username or username by UUID.
+
+When using a whitelist, you need to set `MC_SERV_WHITELIST_ENABLED=true` in the [`.env` file](./.env.example).
+
+Create a `whitelist.json` by copying [`whitelist.example.json`](./whitelist.example.json) to `whitelist.json`.
+
+A valid `whitelist.json` looks like this (replace the default values with your own, copy/paste `{key/value pairs}` for as many players you will allow to connect):
+
+```json
+[
+    {
+        "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "name": "username"
+    },
+    {
+        "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "name": "username"
+    }
+]
+```
+
+When using a whitelist, you need to edit the [`compose.yml` file](./compose.yml); uncomment the `# - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json` line.
 
 ### Modded server
 
