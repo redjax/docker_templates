@@ -1,0 +1,109 @@
+---
+volumes:
+  mc_data: {}
+
+networks:
+  mc_net: {}
+
+services:
+  mc-server:
+    image: itzg/minecraft-server
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - ${MC_SERVER_PORT:-25565}
+
+    ## Use EITHER env_file OR environment
+    #  If you use env_file, make sure to comment environment:
+    # env_file:
+    #   - ./envs/server.env
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      ## NOTE: You must fill this environment variable,
+      #  there is no password, for security reasons
+      RCON_PASSWORD: ${MC_SERV_RCON_PASSWORD}
+      ## Must set a different port for each server
+      RCON_PORT: ${MC_SERV_RCON_PORT:-25575}:25575
+      # https://github.com/itzg/docker-minecraft-server#memory-limit
+      MEMORY: ${MC_SERV_MEMORY:-4G}
+
+      TYPE: ${MC_SERV_TYPE:-VANILLA}
+      VERSION: ${MC_FORGE_VERSION:-LATEST}
+      MODE: ${MC_SERV_GAME_MODE:-survival}
+      MOTD: ${MC_SERV_MOTD:-Welcome to the server!}
+      DIFFICULTY: ${MC_SERV_DIFFICULTY:-peaceful}
+      
+      ## Uncomment this to import a saved game from the defined WORLDS dir
+      # WORLD: /worlds/${MC_SERV1_WORLD}
+      ## Default: 20
+      MAX_PLAYERS: ${MC_SERV_MAX_PLAYERS:-20}
+      MAX_WORLD_SIZE: ${MC_SERV_MAX_WORLD_SIZE:-10000}
+      ALLOW_NETHER: ${MC_SERV_ALLOW_NETHER:-true}
+      ENABLE_COMMAND_BLOCK: ${MC_SERV_COMMAND_BLOCK:-true}
+      MAX_BUILD_HEIGHT: ${MC_SERV_MAX_BUILD_HEIGHT:-256}
+      ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#max-tick-time
+      MAX_TICK_TIME: ${MC_SERV_MAX_TICK_TIME:-60000}
+      SNOOPER: false
+      VIEW_DISTANCE: ${MC_SERV_VIEW_DISTANCE:-10}
+      # LEVEL_SEED: ${MC_SERV1_SEED:-""}
+      PVP: ${MC_SERV_PVP:-true}
+      ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#online-mode
+      ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
+      MODS: ${MC_FORGE_MODS}
+      ## Do not change this value. Instead, mount a pre-made
+      #  mods.txt to the container's /extras/mods.txt
+      MODS_FILE: /extras/mods.txt
+
+      WHITELIST_FILE: /extra/whitelist.json
+      WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLED:-false}
+      OVERRIDE_WHITELIST: true
+
+      ## If using a Spigot/Bukkit/Paper server, optionally pass a list of plugin IDs
+      #  to automatically load them.
+      #  Find plugin IDs here: https://www.spigotmc.org/resources/
+      #  Example: SPITGET_RESOURCES=9089,34315
+      #  More info: https://docker-minecraft-server.readthedocs.io/en/latest/mods-and-plugins/spiget/#auto-download-using-spiget
+      SPIGET_RESOURCES: ${MC_SERV_SPIGET_RESOURCES}
+      SYNC_SKIP_NEWER_IN_DESTINATION: ${MC_SERV_SPIGET_SYNC_SKIP:-false}
+
+      REMOVE_OLD_MODS: "true"
+
+    volumes:
+      - ${MC_SERVER_DATA_DIR:-mc_data}:/data
+      # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
+      ## Uncomment if you create a whitelist.json file
+      # - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
+      ## Uncomment if you create a mods.txt file
+      # - ${MC_SERV_MODS_FILE:-./mods.txt}:/extras/mods.txt
+      ## Uncomment to mount a plugins directory with plugins you've downloaded
+      # - ${MC_SERV_PLUGINS_DIR:-./plugins}:/plugins
+
+    networks:
+      - mc_net
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    healthcheck:
+      test: mc-health
+      start_period: 1m
+      interval: 5s
+      retries: 20
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - mc_net

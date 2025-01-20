@@ -1,13 +1,17 @@
-version: "3.4"
+---
+# networks:
+#   minecraft-net:
+#     external: true
 
 services:
 
-  ###########################
-  # Vanilla survival server #
-  #   Type: VANILLA         #
-  #   Mode: survival        #
-  ###########################
+  ###############################################
+  # Server Template                             #
+  #   Type: <VANILLA, PAPER, etc>               #
+  #   Mode: <survival, creative, hardcore, etc> #
+  ###############################################
 
+  ## Replace '#' with an unused number
   mc-server:
     image: itzg/minecraft-server
     container_name: ${MC_SERV_CONTAINER_NAME:-mc-server_example}
@@ -19,14 +23,22 @@ services:
     stdin_open: true
     environment:
       TYPE: ${MC_SERV_TYPE:-VANILLA}
+      VERSION: ${MC_FORGE_VERSION}
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the server!}
       EULA: "TRUE"
-      DIFFICULTY: ${MC_SERV_DIFFICULTY:-normal}
+      ENABLE_RCON: "true"
+      ## NOTE: You must fill this environment variable,
+      #  there is no password, for security reasons
+      # RCON_PASSWORD: ${MC_SERV_RCON_PASSWORD}
+      ## Must set a different port for each server
+      # RCON_PORT: ${MC_SERV_RCON_PORT:-25575}:25575
+      DIFFICULTY: ${MC_SERV_DIFFICULTY:-peaceful}
       # https://github.com/itzg/docker-minecraft-server#memory-limit
       MEMORY: ${MC_SERV_MEMORY:-4G}
       ## Uncomment this to import a saved game from the defined WORLDS dir
-      # WORLD: /worlds/${MC_SERV_WORLD}
+      # WORLD: /worlds/${MC_SERV1_WORLD}
+      ## Default: 20
       MAX_PLAYERS: ${MC_SERV_MAX_PLAYERS:-20}
       MAX_WORLD_SIZE: ${MC_SERV_MAX_WORLD_SIZE:-10000}
       ALLOW_NETHER: ${MC_SERV_ALLOW_NETHER:-true}
@@ -36,19 +48,21 @@ services:
       MAX_TICK_TIME: ${MC_SERV_MAX_TICK_TIME:-60000}
       SNOOPER: false
       VIEW_DISTANCE: ${MC_SERV_VIEW_DISTANCE:-10}
-      # LEVEL_SEED: ${MC_SERV_SEED:-""}
+      # LEVEL_SEED: ${MC_SERV1_SEED:-""}
       PVP: ${MC_SERV_PVP:-true}
       ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#online-mode
       ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
-      WHITELIST_FILE: /extra/whitelist.json
-      WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLE:-false}
-      OVERRIDE_WHITELIST: true
+      # MODS: ${MC_FORGE_MODS}
+      MODS_FILE: /extras/mods.txt
+      REMOVE_OLD_MODS: "true"
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
-      # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
-      - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
+      # - ${MC_SERV1_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
+      - ${MC_SERV_MOD_FILE:-./mods.txt}:/extras/mods.txt
     healthcheck:
       test: mc-health
       start_period: 1m
       interval: 5s
       retries: 20
+    # networks:
+    #   - minecraft-net

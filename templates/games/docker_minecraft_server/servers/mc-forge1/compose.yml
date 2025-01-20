@@ -1,5 +1,4 @@
-version: "3.4"
-
+---
 # networks:
 #   minecraft-net:
 #     external: true
@@ -54,6 +53,7 @@ services:
       ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#online-mode
       ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
       MODS: ${MC_FORGE_MODS}
+      MODS_FILE: ${MC_FORGE_MODS_FILE}
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERV1_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro

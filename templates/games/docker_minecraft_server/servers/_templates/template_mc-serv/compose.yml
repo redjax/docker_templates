@@ -1,5 +1,4 @@
-version: "3.4"
-
+---
 # networks:
 #   minecraft-net:
 #     external: true
@@ -23,6 +22,7 @@ services:
     tty: ${MC_SERV_TTY:-true}
     stdin_open: true
     environment:
+      VERSION: ${MC_SERV_VERSION:-LATEST}
       TYPE: ${MC_SERV_TYPE:-VANILLA}
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the server!}

@@ -1,5 +1,4 @@
-version: "3.4"
-
+---
 services:
 
   ###########################
@@ -10,7 +9,7 @@ services:
 
   mc-server:
     image: itzg/minecraft-server
-    container_name: ${MC_SERV_CONTAINER_NAME:-mc-server-paper}
+    container_name: ${MC_SERV_CONTAINER_NAME:-mc-server1}
     restart: unless-stopped
     ## Comment if using mc-router container
     ports:
@@ -18,15 +17,23 @@ services:
     tty: ${MC_SERV_TTY:-true}
     stdin_open: true
     environment:
+      VERSION: ${MC_SERV_VERSION:-LATEST}
       TYPE: ${MC_SERV_TYPE:-VANILLA}
       MODE: ${MC_SERV_GAME_MODE:-survival}
-      MOTD: ${MC_SERV_MOTD:-Welcome to the server! This server uses PaperMC for mods.}
+      MOTD: ${MC_SERV_MOTD:-Welcome to the server!}
       EULA: "TRUE"
+      # ENABLE_RCON: "true"
+      ## NOTE: You must fill this environment variable,
+      #  there is no password, for security reasons
+      # RCON_PASSWORD: ${MC_SERV_RCON_PASSWORD}
+      ## Must set a different port for each server
+      # RCON_PORT: ${MC_SERV_RCON_PORT:-25575}:25575
       DIFFICULTY: ${MC_SERV_DIFFICULTY:-normal}
       # https://github.com/itzg/docker-minecraft-server#memory-limit
       MEMORY: ${MC_SERV_MEMORY:-4G}
       ## Uncomment this to import a saved game from the defined WORLDS dir
       # WORLD: /worlds/${MC_SERV_WORLD}
+      ## Default: 20
       MAX_PLAYERS: ${MC_SERV_MAX_PLAYERS:-20}
       MAX_WORLD_SIZE: ${MC_SERV_MAX_WORLD_SIZE:-10000}
       ALLOW_NETHER: ${MC_SERV_ALLOW_NETHER:-true}
@@ -36,12 +43,12 @@ services:
       MAX_TICK_TIME: ${MC_SERV_MAX_TICK_TIME:-60000}
       SNOOPER: false
       VIEW_DISTANCE: ${MC_SERV_VIEW_DISTANCE:-10}
-      # LEVEL_SEED: ${MC_SERV_SEED}
+      # LEVEL_SEED: ${MC_SERV_SEED:-""}
       PVP: ${MC_SERV_PVP:-true}
       ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#online-mode
       ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
       WHITELIST_FILE: /extra/whitelist.json
-      WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLED:-false}
+      WHITELIST_ENABLED: true
       OVERRIDE_WHITELIST: true
       ## If using a Spigot/Bukkit/Paper server, optionall pass a list of plugin IDs
       #  to automatically load them.

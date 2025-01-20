@@ -1,5 +1,4 @@
-version: "3.4"
-
+---
 # networks:
 #   minecraft-net:
 #     external: true
@@ -24,7 +23,7 @@ services:
     stdin_open: true
     environment:
       TYPE: ${MC_SERV_TYPE:-VANILLA}
-      VERSION: ${MC_FORGE_VERSION}
+      VERSION: ${MC_SERVE_VERSION:-LATEST}
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the server!}
       EULA: "TRUE"
