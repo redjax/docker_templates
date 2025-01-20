@@ -73,8 +73,11 @@ services:
     volumes:
       - ${MC_SERVER_DATA_DIR:-mc_data}:/data
       # - ${MC_SERV_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
-      - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
-      - ${MC_SERV_MODS_FILE}
+      ## Uncomment if you create a whitelist.json file
+      # - ${MC_SERV_WHITELIST_FILE:-./whitelist.json}:/extra/whitelist.json
+      ## Uncomment if you create a mods.txt file
+      # - ${MC_SERV_MODS_FILE:-./mods.txt}:/extras/mods.txt
+      ## Uncomment to mount a plugins directory with plugins you've downloaded
       # - ${MC_SERV_PLUGINS_DIR:-./plugins}:/plugins
 
     networks:
