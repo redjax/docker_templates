@@ -1,0 +1,59 @@
+---
+services:
+
+  ###########################
+  # Vanilla survival server #
+  #   Type: VANILLA         #
+  #   Mode: survival        #
+  ###########################
+
+  mc-server:
+    image: itzg/minecraft-server
+    container_name: ${MC_SERV_CONTAINER_NAME:-mc-server_auto-forge}
+    restart: unless-stopped
+    ## Comment if using mc-router container
+    ports:
+      - ${MC_SERV_PORT:-25565}:25565
+    tty: ${MC_SERV_TTY:-true}
+    stdin_open: true
+    environment:
+      TYPE: ${MC_SERV_TYPE:-AUTO_CURSEFORGE}
+      MODE: ${MC_SERV_GAME_MODE:-survival}
+      MOTD: ${MC_SERV_MOTD:-Welcome to the Neoforge server!}
+      EULA: "TRUE"
+      DIFFICULTY: ${MC_SERV_DIFFICULTY:-normal}
+      # https://github.com/itzg/docker-minecraft-server#memory-limit
+      MEMORY: ${MC_SERV_MEMORY:-4G}
+      ## Uncomment this to import a saved game from the defined WORLDS dir
+      # WORLD: /worlds/${MC_SERV_WORLD}
+      MAX_PLAYERS: ${MC_SERV_MAX_PLAYERS:-20}
+      MAX_WORLD_SIZE: ${MC_SERV_MAX_WORLD_SIZE:-10000}
+      ALLOW_NETHER: ${MC_SERV_ALLOW_NETHER:-true}
+      ENABLE_COMMAND_BLOCK: ${MC_SERV_COMMAND_BLOCK:-true}
+      MAX_BUILD_HEIGHT: ${MC_SERV_MAX_BUILD_HEIGHT:-256}
+      ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#max-tick-time
+      MAX_TICK_TIME: ${MC_SERV_MAX_TICK_TIME:-60000}
+      SNOOPER: false
+      VIEW_DISTANCE: ${MC_SERV_VIEW_DISTANCE:-10}
+      # LEVEL_SEED: ${MC_SERV_SEED:-""}
+      PVP: ${MC_SERV_PVP:-true}
+      ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#online-mode
+      ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
+      WHITELIST_FILE: /extras/whitelist.json
+      WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLE:-false}
+      OVERRIDE_WHITELIST: true
+      MODS_FILE: /extras/mods.txt
+      ## Curse Forge API key is empty by default.
+      #  Get a key at https://console.curseforge.com/#/api-keys
+      CF_API_KEY: ${MC_SERVER_CURSE_FORGE_API_KEY}
+      MODS: https://curseforge.com/minecraft/mc-mods/cloth-config,https://curseforge.com/minecraft/mc-mods/just-enough-resources-jer,https://curseforge.com/minecraft/mc-mods/just-enough-professions-jep,https://curseforge.com/minecraft/mc-mods/create-steam-n-rails,https://curseforge.com/minecraft/mc-mods/justenoughbreeding,https://curseforge.com/minecraft/mc-mods/farmers-structures,https://curseforge.com/minecraft/mc-mods/waystones,https://curseforge.com/minecraft/mc-mods/comforts,https://curseforge.com/minecraft/mc-mods/towns-and-towers,https://curseforge.com/minecraft/mc-mods/structory,https://curseforge.com/minecraft/mc-mods/explorers-compass,https://curseforge.com/minecraft/mc-mods/moogs-voyager-structures,https://curseforge.com/minecraft/mc-mods/explorify,https://curseforge.com/minecraft/mc-mods/goblin-traders,https://curseforge.com/minecraft/mc-mods/formations-nether,https://curseforge.com/minecraft/mc-mods/simply-swords,https://curseforge.com/minecraft/mc-mods/formations-overworld,https://curseforge.com/minecraft/mc-mods/villages-and-pillages,https://curseforge.com/minecraft/mc-mods/immersive-aircraft,https://curseforge.com/minecraft/mc-mods/explorations,https://curseforge.com/minecraft/mc-mods/jei,https://curseforge.com/minecraft/mc-mods/modernfix,https://curseforge.com/minecraft/mc-mods/mobtimizations,https://curseforge.com/minecraft/mc-mods/fastboot,https://curseforge.com/minecraft/mc-mods/load-my-chunks,https://curseforge.com/minecraft/mc-mods/blinkload,https://curseforge.com/minecraft/mc-mods/safe-harvest,https://curseforge.com/minecraft/mc-mods/clumps,https://curseforge.com/minecraft/mc-mods/connectivity,https://curseforge.com/minecraft/mc-mods/smooth-chunk-save
+    volumes:
+      - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
+      # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
+      - ${MC_SERVER_MODS_FILE:-./mods/default.txt}:/extras/mods.txt
+      - ${MC_SERVER_WHITELIST_FILE:-./whitelist.json}:/extras/whitelist.json
+    healthcheck:
+      test: mc-health
+      start_period: 1m
+      interval: 5s
+      retries: 20
