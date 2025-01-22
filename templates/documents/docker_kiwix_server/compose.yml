@@ -1,10 +1,73 @@
 ---
-# networks:
-#   unnamed_net: {}
+networks:
+  kiwix_net: {}
 
 # volumes:
 #   volume_name: {}
 
 services:
+  kiwix:
+    image: ghcr.io/kiwix/kiwix-serve:${KIWIX_CONTAINER_VER:-latest}
+    container_name: kiwix-server
+    restart: unless-stopped
+    command: "*.zim"
+    ports:
+      - ${KIWIX_WEBUI_PORT:-8000}:8080
+    volumes:
+      - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
 
-  ...
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: kiwix-transmission
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-Etc/UTC}
+      ## optional
+      - TRANSMISSION_WEB_HOME=
+      ## optional
+      - USER=
+      ## optional
+      - PASS=
+      ## optional
+      - WHITELIST=
+      ## optional
+      - PEERPORT=
+      ## optional
+      - HOST_WHITELIST=
+    volumes:
+      - ${TRANSMISSION_CONFIG_DIR:-./data/transmission/config}:/config
+      ## Set the downloads path to the Kiwix directory
+      - ${KIWIX_DATA_DIR:-./data/kiwix}:/downloads
+      - ${TRANSMISSION_WATCH_DIR:-./data/watch}:/watch
+    ports:
+      - ${TRANSMISSION_WEBUI_PORT:-9091}:9091
+      - ${TRANSMISSION_TORRENT_TCP_PORT:-51413}:51413
+      - ${TRANSMISSION_TORRENT_UDP_PORT:-51413}:51413/udp
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower-kiwix
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kiwix_net
