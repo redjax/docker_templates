@@ -20,3 +20,9 @@ build/
 __pycache__/
 .venv
 .python-version
+
+## Ignore direnv environment files
+.direnv/.*
+.direnv/**/.*
+.secrets
+!.direnv/*.*example*
