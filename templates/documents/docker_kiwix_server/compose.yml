@@ -11,8 +11,13 @@ services:
     container_name: kiwix-server
     restart: unless-stopped
     command: "*.zim"
+    user: "1000:1000"
     ports:
       - ${KIWIX_WEBUI_PORT:-8000}:8080
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: 1000
+      PGID: 1000
     volumes:
       - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
     labels:
@@ -43,8 +48,8 @@ services:
     volumes:
       - ${TRANSMISSION_CONFIG_DIR:-./data/transmission/config}:/config
       ## Set the downloads path to the Kiwix directory
-      - ${KIWIX_DATA_DIR:-./data/kiwix}:/downloads
-      - ${TRANSMISSION_WATCH_DIR:-./data/watch}:/watch
+      - ${TRANSMISSION_DATA_DIR:-./data/transmission}:/downloads
+      - ${TRANSMISSION_WATCH_DIR:-./data/transmission-watch}:/watch
     ports:
       - ${TRANSMISSION_WEBUI_PORT:-9091}:9091
       - ${TRANSMISSION_TORRENT_TCP_PORT:-51413}:51413
