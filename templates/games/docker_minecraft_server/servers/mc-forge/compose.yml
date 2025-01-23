@@ -46,7 +46,37 @@ services:
       ## Curse Forge API key is empty by default.
       #  Get a key at https://console.curseforge.com/#/api-keys
       CF_API_KEY: ${MC_SERVER_CURSE_FORGE_API_KEY}
-      MODS: https://curseforge.com/minecraft/mc-mods/cloth-config,https://curseforge.com/minecraft/mc-mods/just-enough-resources-jer,https://curseforge.com/minecraft/mc-mods/just-enough-professions-jep,https://curseforge.com/minecraft/mc-mods/create-steam-n-rails,https://curseforge.com/minecraft/mc-mods/justenoughbreeding,https://curseforge.com/minecraft/mc-mods/farmers-structures,https://curseforge.com/minecraft/mc-mods/waystones,https://curseforge.com/minecraft/mc-mods/comforts,https://curseforge.com/minecraft/mc-mods/towns-and-towers,https://curseforge.com/minecraft/mc-mods/structory,https://curseforge.com/minecraft/mc-mods/explorers-compass,https://curseforge.com/minecraft/mc-mods/moogs-voyager-structures,https://curseforge.com/minecraft/mc-mods/explorify,https://curseforge.com/minecraft/mc-mods/goblin-traders,https://curseforge.com/minecraft/mc-mods/formations-nether,https://curseforge.com/minecraft/mc-mods/simply-swords,https://curseforge.com/minecraft/mc-mods/formations-overworld,https://curseforge.com/minecraft/mc-mods/villages-and-pillages,https://curseforge.com/minecraft/mc-mods/immersive-aircraft,https://curseforge.com/minecraft/mc-mods/explorations,https://curseforge.com/minecraft/mc-mods/jei,https://curseforge.com/minecraft/mc-mods/modernfix,https://curseforge.com/minecraft/mc-mods/mobtimizations,https://curseforge.com/minecraft/mc-mods/fastboot,https://curseforge.com/minecraft/mc-mods/load-my-chunks,https://curseforge.com/minecraft/mc-mods/blinkload,https://curseforge.com/minecraft/mc-mods/safe-harvest,https://curseforge.com/minecraft/mc-mods/clumps,https://curseforge.com/minecraft/mc-mods/connectivity,https://curseforge.com/minecraft/mc-mods/smooth-chunk-save
+      CURSEFORGE_FILES: |
+        cloth-config
+        just-enough-resources-jer
+        just-enough-professions-jep
+        create-steam-n-rails
+        justenoughbreeding
+        farmers-structures
+        waystones
+        comforts
+        towns-and-towers
+        structory
+        explorers-compass
+        moogs-voyager-structures
+        explorify
+        goblin-traders
+        formations-nether
+        simply-swords
+        formations-overworld
+        villages-and-pillages
+        immersive-aircraft
+        explorations
+        jei
+        modernfix
+        mobtimizations
+        fastboot
+        load-my-chunks
+        blinkload
+        safe-harvest
+        clumps
+        connectivity
+        smooth-chunk-save
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
