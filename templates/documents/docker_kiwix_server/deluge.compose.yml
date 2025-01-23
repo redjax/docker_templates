@@ -25,6 +25,28 @@ services:
     networks:
       - kiwix_net
 
+  deluge:
+    image: lscr.io/linuxserver/deluge:latest
+    container_name: deluge
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-Etc/UTC}
+      - DELUGE_LOGLEVEL=${DELUGE_LOG_LEVEL:-error}
+    volumes:
+      - ${DELUGE_CONF_DIR:-./data/deluge/config}:/config
+      - ${DELUGE_DOWNLOADS_DIR:-./data/deluge/downloads}:/downloads
+    ports:
+      - ${DELUGE_WEBUI_PORT:-8112}:8112
+      - ${DELUGE_TORRENT_PORT:-6881}:6881
+      - ${DELUGE_TORRENT_PORT:-6881}:6881/udp
+      - ${DELUGE_THINCLIENT_PORT:-58846}:58846
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
+
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower-kiwix
