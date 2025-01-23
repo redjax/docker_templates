@@ -6,24 +6,24 @@ networks:
 #   volume_name: {}
 
 services:
-  kiwix:
-    image: ghcr.io/kiwix/kiwix-serve:${KIWIX_CONTAINER_VER:-latest}
-    container_name: kiwix-server
-    restart: unless-stopped
-    command: "*.zim"
-    user: "1000:1000"
-    ports:
-      - ${KIWIX_WEBUI_PORT:-8000}:8080
-    environment:
-      TZ: ${TZ:-Etc/UTC}
-      PUID: 1000
-      PGID: 1000
-    volumes:
-      - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - kiwix_net
+  # kiwix:
+  #   image: ghcr.io/kiwix/kiwix-serve:${KIWIX_CONTAINER_VER:-latest}
+  #   container_name: kiwix-server
+  #   restart: unless-stopped
+  #   command: "*.zim"
+  #   user: "1000:1000"
+  #   ports:
+  #     - ${KIWIX_WEBUI_PORT:-8000}:8080
+  #   environment:
+  #     TZ: ${TZ:-Etc/UTC}
+  #     PUID: 1000
+  #     PGID: 1000
+  #   volumes:
+  #     - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
+  #   labels:
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #   networks:
+  #     - kiwix_net
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
