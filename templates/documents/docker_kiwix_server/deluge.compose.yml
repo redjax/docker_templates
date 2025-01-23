@@ -36,7 +36,7 @@ services:
       - DELUGE_LOGLEVEL=${DELUGE_LOG_LEVEL:-error}
     volumes:
       - ${DELUGE_CONF_DIR:-./data/deluge/config}:/config
-      - ${DELUGE_DOWNLOADS_DIR:-./data/deluge/downloads}:/downloads
+      - ${TORRENT_DIR:-./data/deluge/downloads}:/downloads
     ports:
       - ${DELUGE_WEBUI_PORT:-8112}:8112
       - ${DELUGE_TORRENT_PORT:-6881}:6881

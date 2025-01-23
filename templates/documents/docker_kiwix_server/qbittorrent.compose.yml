@@ -37,7 +37,7 @@ services:
       - TORRENTING_PORT=6881
     volumes:
       - ${QBITTORRENT_CONFIG_DIR:-./data/qbittorrent/config}:/config
-      - ${QBITTORRENT_DOWNLOAD_DIR:-./data/qbittorrent/downloads}:/downloads
+      - ${TORRENT_DIR:-./data/qbittorrent/downloads}:/downloads
     ports:
       - ${QBITTORRENT_WEBUI_PORT:-8080}:8080
       - ${QBITTORRENT_TORRENT_PORT:-6881}:6881

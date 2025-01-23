@@ -49,7 +49,7 @@ services:
     volumes:
       - ${TRANSMISSION_CONFIG_DIR:-./data/transmission/config}:/config:rw
       ## Set the downloads path to the Kiwix directory
-      - ${TRANSMISSION_DATA_DIR:-./data/transmission/torrent}:/downloads:rw
+      - ${TORRENT_DIR:-./data/transmission/torrent}:/downloads:rw
       - ${TRANSMISSION_WATCH_DIR:-./data/transmission/watch}:/watch:rw
     ports:
       - ${TRANSMISSION_WEBUI_PORT:-9091}:9091
