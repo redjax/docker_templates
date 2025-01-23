@@ -1,0 +1,66 @@
+---
+networks:
+  kiwix_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+  kiwix:
+    image: ghcr.io/kiwix/kiwix-serve:${KIWIX_CONTAINER_VER:-latest}
+    container_name: kiwix-server
+    restart: unless-stopped
+    command: "*.zim"
+    user: "1000:1000"
+    ports:
+      - ${KIWIX_WEBUI_PORT:-8000}:8080
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
+
+  deluge:
+    image: lscr.io/linuxserver/deluge:latest
+    container_name: deluge
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-Etc/UTC}
+      - DELUGE_LOGLEVEL=${DELUGE_LOG_LEVEL:-error}
+    volumes:
+      - ${DELUGE_CONF_DIR:-./data/deluge/config}:/config
+      - ${DELUGE_DOWNLOADS_DIR:-./data/deluge/downloads}:/downloads
+    ports:
+      - ${DELUGE_WEBUI_PORT:-8112}:8112
+      - ${DELUGE_TORRENT_PORT:-6881}:6881
+      - ${DELUGE_TORRENT_PORT:-6881}:6881/udp
+      - ${DELUGE_THINCLIENT_PORT:-58846}:58846
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower-kiwix
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kiwix_net
