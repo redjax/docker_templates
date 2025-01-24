@@ -1,12 +1,6 @@
 ---
 services:
 
-  ###########################
-  # Vanilla survival server #
-  #   Type: VANILLA         #
-  #   Mode: survival        #
-  ###########################
-
   mc-server:
     image: itzg/minecraft-server
     container_name: ${MC_SERV_CONTAINER_NAME:-mc-server_auto-forge}
@@ -17,7 +11,9 @@ services:
     tty: ${MC_SERV_TTY:-true}
     stdin_open: true
     environment:
-      TYPE: ${MC_SERV_TYPE:-AUTO_CURSEFORGE}
+      VERSION: ${MC_SERVER_VERSION:-LATEST}
+      NEOFORGE_VERSION: ${MC_SERVER_NEOFORGE_VERSION:-latest}
+      TYPE: ${MC_SERV_TYPE:-NEOFORGE}
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the Neoforge server!}
       EULA: "TRUE"
@@ -46,37 +42,39 @@ services:
       ## Curse Forge API key is empty by default.
       #  Get a key at https://console.curseforge.com/#/api-keys
       CF_API_KEY: ${MC_SERVER_CURSE_FORGE_API_KEY}
-      CURSEFORGE_FILES: |
-        cloth-config
-        just-enough-resources-jer
-        just-enough-professions-jep
-        create-steam-n-rails
-        justenoughbreeding
-        farmers-structures
-        waystones
-        comforts
-        towns-and-towers
-        structory
-        explorers-compass
-        moogs-voyager-structures
-        explorify
-        goblin-traders
-        formations-nether
-        simply-swords
-        formations-overworld
-        villages-and-pillages
-        immersive-aircraft
-        explorations
-        jei
-        modernfix
-        mobtimizations
-        fastboot
-        load-my-chunks
-        blinkload
-        safe-harvest
-        clumps
-        connectivity
-        smooth-chunk-save
+      # CURSEFORGE_FILES: |
+      #   https://www.curseforge.com/minecraft/mc-mods/jei/download/5626488
+      # CURSEFORGE_FILES: |
+      #   cloth-config
+      #   just-enough-resources-jer
+      #   just-enough-professions-jep
+      #   create-steam-n-rails
+      #   justenoughbreeding
+      #   farmers-structures
+      #   waystones
+      #   comforts
+      #   towns-and-towers
+      #   structory
+      #   explorers-compass
+      #   moogs-voyager-structures
+      #   explorify
+      #   goblin-traders
+      #   formations-nether
+      #   simply-swords
+      #   formations-overworld
+      #   villages-and-pillages
+      #   immersive-aircraft
+      #   explorations
+      #   jei
+      #   modernfix
+      #   mobtimizations
+      #   fastboot
+      #   load-my-chunks
+      #   blinkload
+      #   safe-harvest
+      #   clumps
+      #   connectivity
+      #   smooth-chunk-save
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
