@@ -27,7 +27,15 @@ Consider this template unstable until this message is reviewed.
   - [Env setup](#env-setup)
   - [Player whitelist.json](#player-whitelistjson)
   - [Modded server](#modded-server)
+- [Using RCON to be a dirty cheater or server admin](#using-rcon-to-be-a-dirty-cheater-or-server-admin)
+  - [Spawning items](#spawning-items)
 - [Links](#links)
+  - [General](#general)
+  - [Tools/Utilities](#toolsutilities)
+  - [Guides/Tutorials](#guidestutorials)
+  - [Skins](#skins)
+  - [Maps/Seeds](#mapsseeds)
+  - [Mods/Plugins](#modsplugins)
 
 ## Usage
 
@@ -86,7 +94,30 @@ Set the [`TYPE=<mod-manager>` environment variable](https://docker-minecraft-ser
 
 Note that some of the `TYPE` values can take other values, like if `TYPE="QUILT"`, you can set `QUILT_LOADER_VERSION=...` and `QUILT_INSTALLER_VERSION=...`.
 
+## Using RCON to be a dirty cheater or server admin
+
+Start an RCON session with `docker compose exec -it mc-server rcon-cli`. You can also run a command directly, like `docker compose exec -it mc-server say "Hello to the whole server!"`.
+
+### Spawning items
+
+I use an `rcon-cli` command generator to "build" `/give` commands. Some options are:
+
+- [gamergeeks.net](https://www.gamergeeks.net/apps/minecraft/give-command-generator)
+- [nixinova.com](https://www.nixinova.com/tools/minecraft/commands/give)
+
+Some examples:
+
+| Command | Description |
+| ------- | ----------- |
+| `give /@ torch 64` | Give all players (`/@`) 64 torches. |
+| `give <player_name> torch 1` | Give a player 1 torch (use in-game name for `<player_name>`). |
+| `give @a diamond_pickaxe[enchantments={levels:{efficiency:5,fortune:3,unbreaking:3}},unbreakable={}]` | Give everyone a ridiculously OP pickaxe. |
+| `give @a diamond_axe[enchantments={levels:{efficiency:5,fortune:3,unbreaking:3}},unbreakable={}]` | Give everyone a ridiculously OP axe. |
+| `give @a diamond_shovel[enchantments={levels:{efficiency:5,fortune:3,unbreaking:3}},unbreakable={}]` | Give everyone a ridiculously OP shovel. |
+
 ## Links
+
+### General
 
 - [Docker Hub: itzg/minecraft-server](https://hub.docker.com/r/itzg/minecraft-server)
 - [Github: itzg/minecraft-server](https://github.com/itzg/docker-mc-backup)
@@ -94,3 +125,42 @@ Note that some of the `TYPE` values can take other values, like if `TYPE="QUILT"
 - [Blog: Minecraft Server in Docker: Adulting Made Easy](https://serialized.net/2021/02/minecraft_server_docker/)
 - [Github: jbarratt/docker-homelab](https://github.com/jbarratt/docker-homelab/blob/main/minecraft.yml)
 - [Github: itzg/docker-mc-backup](https://github.com/itzg/docker-mc-backup)
+- [Official Minecraft wiki](https://minecraft.wiki/w/Tutorial)
+
+### Tools/Utilities
+
+- [Minecraft object ID lookup](https://minecraft-ids.grahamedgecombe.com)
+- [chunkbase.com: seed chunk explorer](https://www.chunkbase.com/apps/)
+- [potioncraft.net](https://potioncraft.net)
+- [minecraft.tools](https://minecraft.tools/en/)
+- [UUID/username lookup: mcuuid.net](https://mcuuid.net) (find a player's username/UUID for your `whitelist.json`)
+- [rcon command generator: gamergeeks.net](https://www.gamergeeks.net/apps/minecraft/give-command-generator)
+- [rcon command generator: nixinova.com](https://www.nixinova.com/tools/minecraft/commands/give)
+- [Nether portal calculator: minefort.com](https://minefort.com/tools/nether-portal-calculator)
+- [Nether portal calculator: nethercalculator.com](https://nethercalculator.com)
+- [Modeller: plotz.co.uk](https://www.plotz.co.uk)
+- [Crafting: minecraft-crafting.net](https://www.minecraft-crafting.net)
+
+### Guides/Tutorials
+
+- [mentalblockgaming.com: Comprehensive introduction to redstone](https://mentalblockgaming.com/blog/redstone/walking-before-you-run-a-comprehensive-introduction-to-redstone/)
+
+### Skins
+
+- [namemc.com](https://namemc.com)
+- [minecraftskins.com](https://www.minecraftskins.com)
+- [planetminecraft.com](https://www.planetminecraft.com/skins/)
+- [minecraftskins.net](https://www.minecraftskins.net)
+- [skinmc.net](https://skinmc.net/skins)
+- [tynker.com](https://www.tynker.com/minecraft/skins/)
+- [Custom heads: freshcoal.com](https://freshcoal.com/maincollection)
+- [Custom heads: minecraft-heads.com](https://minecraft-heads.com)
+
+### Maps/Seeds
+
+- [minecraftmaps.com](https://www.minecraftmaps.com)
+- [minecraft-seeds.net](https://minecraft-seeds.net)
+
+### Mods/Plugins
+
+  - https://www.minecraftmods.com
