@@ -41,10 +41,32 @@ services:
       ## Curse Forge API key is empty by default.
       #  Get a key at https://console.curseforge.com/#/api-keys
       CF_API_KEY: ${MC_SERVER_CURSE_FORGE_API_KEY}
+      REMOVE_OLD_MODS: ${MC_SERV_REMOV_OLD_MODS:-true}
+      ENABLE_ROLLING_LOGS: true
       CURSEFORGE_FILES: |
         jei
         journeymap
-        
+        cloth-config
+        just-enough-professions-jep
+        justenoughbreeding
+        waystones
+        comforts
+        structory
+        explorers-compass
+        moogs-voyager-structures
+        explorify
+        formations-nether
+        formations-overworld
+        immersive-aircraft
+        explorations
+        modernfix
+        clumps
+        connectivity
+        smooth-chunk-save
+        cupboard
+        balm
+        formations
+
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
