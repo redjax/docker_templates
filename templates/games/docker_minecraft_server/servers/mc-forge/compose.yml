@@ -17,6 +17,8 @@ services:
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the Neoforge server!}
       EULA: "TRUE"
+      SERVER_NAME: ${MC_SERV_SERVER_NAME:-DockerMinecraft-Forge}
+      SERVER_PORT: ${MC_SERV_CONTAINER_PORT:-25565}
       DIFFICULTY: ${MC_SERV_DIFFICULTY:-normal}
       # https://github.com/itzg/docker-minecraft-server#memory-limit
       MEMORY: ${MC_SERV_MEMORY:-4G}
@@ -29,7 +31,6 @@ services:
       MAX_BUILD_HEIGHT: ${MC_SERV_MAX_BUILD_HEIGHT:-256}
       ## https://github.com/itzg/docker-minecraft-server/blob/master/README.md#max-tick-time
       MAX_TICK_TIME: ${MC_SERV_MAX_TICK_TIME:-60000}
-      SNOOPER: false
       VIEW_DISTANCE: ${MC_SERV_VIEW_DISTANCE:-10}
       # LEVEL_SEED: ${MC_SERV_SEED:-""}
       PVP: ${MC_SERV_PVP:-true}
@@ -43,6 +44,15 @@ services:
       CF_API_KEY: ${MC_SERVER_CURSE_FORGE_API_KEY}
       REMOVE_OLD_MODS: ${MC_SERV_REMOV_OLD_MODS:-true}
       ENABLE_ROLLING_LOGS: true
+      LOG_TIMESTAMP: true
+      ## Disable minecraft telemetry
+      SNOOPER_ENABLED: false
+      # SEED: ${MC_SERVER_SEED}
+      ## https://minecraft.wiki/w/Server.properties#level-type
+      # LEVEL_TYPE: ${MC_SERVER_LEVEL_TYPE:-"minecraft:default"}
+      ALLOW_FLIGHT: true
+      ## When true, ownload mods & server files, but don't start server
+      SETUP_ONLY: ${MC_SERV_SETUP_ONLY:-false}
       CURSEFORGE_FILES: |
         jei
         journeymap
