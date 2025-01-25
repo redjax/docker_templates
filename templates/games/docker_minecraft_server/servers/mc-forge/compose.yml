@@ -53,29 +53,8 @@ services:
       ALLOW_FLIGHT: true
       ## When true, ownload mods & server files, but don't start server
       SETUP_ONLY: ${MC_SERV_SETUP_ONLY:-false}
-      CURSEFORGE_FILES: |
-        jei
-        journeymap
-        cloth-config
-        just-enough-professions-jep
-        justenoughbreeding
-        waystones
-        comforts
-        structory
-        explorers-compass
-        moogs-voyager-structures
-        explorify
-        formations-nether
-        formations-overworld
-        immersive-aircraft
-        explorations
-        modernfix
-        clumps
-        connectivity
-        smooth-chunk-save
-        cupboard
-        balm
-        formations
+      ## Comma-separated list of mod names
+      CURSEFORGE_FILES: ${MC_SERVER_CF_MODS}
 
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
