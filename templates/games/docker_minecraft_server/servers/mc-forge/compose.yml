@@ -38,43 +38,13 @@ services:
       WHITELIST_FILE: /extras/whitelist.json
       WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLE:-false}
       OVERRIDE_WHITELIST: true
-      MODS_FILE: /extras/mods.txt
       ## Curse Forge API key is empty by default.
       #  Get a key at https://console.curseforge.com/#/api-keys
       CF_API_KEY: ${MC_SERVER_CURSE_FORGE_API_KEY}
-      # CURSEFORGE_FILES: |
-      #   https://www.curseforge.com/minecraft/mc-mods/jei/download/5626488
-      # CURSEFORGE_FILES: |
-      #   cloth-config
-      #   just-enough-resources-jer
-      #   just-enough-professions-jep
-      #   create-steam-n-rails
-      #   justenoughbreeding
-      #   farmers-structures
-      #   waystones
-      #   comforts
-      #   towns-and-towers
-      #   structory
-      #   explorers-compass
-      #   moogs-voyager-structures
-      #   explorify
-      #   goblin-traders
-      #   formations-nether
-      #   simply-swords
-      #   formations-overworld
-      #   villages-and-pillages
-      #   immersive-aircraft
-      #   explorations
-      #   jei
-      #   modernfix
-      #   mobtimizations
-      #   fastboot
-      #   load-my-chunks
-      #   blinkload
-      #   safe-harvest
-      #   clumps
-      #   connectivity
-      #   smooth-chunk-save
+      CURSEFORGE_FILES: |
+        jei
+        journeymap
+        
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
