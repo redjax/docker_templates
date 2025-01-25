@@ -126,6 +126,7 @@ Some examples:
 - [Github: jbarratt/docker-homelab](https://github.com/jbarratt/docker-homelab/blob/main/minecraft.yml)
 - [Github: itzg/docker-mc-backup](https://github.com/itzg/docker-mc-backup)
 - [Official Minecraft wiki](https://minecraft.wiki/w/Tutorial)
+- [itzg/minecraft-server docs: environment variables](https://docker-minecraft-server.readthedocs.io/en/latest/variables/#general-options)
 
 ### Tools/Utilities
 
