@@ -61,6 +61,7 @@ services:
       # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
       - ${MC_SERVER_MODS_FILE:-./mods/default.txt}:/extras/mods.txt
       - ${MC_SERVER_WHITELIST_FILE:-./whitelist.json}:/extras/whitelist.json
+      # - ${MC_SERVER_MOD_FILES:-./mods/mod_files}:/data/mods
     healthcheck:
       test: mc-health
       start_period: 1m
