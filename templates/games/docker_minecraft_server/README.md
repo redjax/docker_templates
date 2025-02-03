@@ -29,6 +29,7 @@ Consider this template unstable until this message is reviewed.
   - [Modded server](#modded-server)
 - [Using RCON to be a dirty cheater or server admin](#using-rcon-to-be-a-dirty-cheater-or-server-admin)
   - [Spawning items](#spawning-items)
+- [Manage multiple Minecraft installations with Prism](#manage-multiple-minecraft-installations-with-prism)
 - [Links](#links)
   - [General](#general)
   - [Tools/Utilities](#toolsutilities)
@@ -114,6 +115,12 @@ Some examples:
 | `give @a diamond_pickaxe[enchantments={levels:{efficiency:5,fortune:3,unbreaking:3}},unbreakable={}]` | Give everyone a ridiculously OP pickaxe. |
 | `give @a diamond_axe[enchantments={levels:{efficiency:5,fortune:3,unbreaking:3}},unbreakable={}]` | Give everyone a ridiculously OP axe. |
 | `give @a diamond_shovel[enchantments={levels:{efficiency:5,fortune:3,unbreaking:3}},unbreakable={}]` | Give everyone a ridiculously OP shovel. |
+
+## Manage multiple Minecraft installations with Prism
+
+The [Prism launcher](https://prismlauncher.org) can manage multiple Minecraft instances, accounts, & mods. When spinning up multiple different kinds of modded servers, Prism can help you maintain separate installs & configurations for your Minecraft client.
+
+Check [their Github](https://github.com/PrismLauncher/PrismLauncher/) for downloads & links to documentation.
 
 ## Links
 
