@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../templates/games/docker_minecraft_server"
+		}
+	],
+	"settings": {}
+}
