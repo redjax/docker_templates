@@ -6,7 +6,15 @@
 		},
 		{
 			"path": "../../templates/games/docker_minecraft_server",
-			"name": "Docker Minecraft"
+			"name": "Docker Minecraft Root"
+		},
+		{
+			"path": "../../templates/games/docker_minecraft_server/servers/production",
+			"name": "Minecraft Servers"
+		},
+		{
+			"path": "../../templates/games/docker_minecraft_server/servers/development",
+			"name": "(Dev) Minecraft Servers"
 		}
 	],
 	"settings": {}
