@@ -1,10 +1,12 @@
 {
 	"folders": [
 		{
-			"path": "../.."
+			"path": "../..",
+			"name": "Repository root"
 		},
 		{
-			"path": "../../templates/games/docker_minecraft_server"
+			"path": "../../templates/games/docker_minecraft_server",
+			"name": "Docker Minecraft"
 		}
 	],
 	"settings": {}
