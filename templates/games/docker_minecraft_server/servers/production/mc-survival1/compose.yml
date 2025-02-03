@@ -42,6 +42,7 @@ services:
       WHITELIST_FILE: /extra/whitelist.json
       WHITELIST_ENABLED: ${MC_SERV_WHITELIST_ENABLE:-false}
       OVERRIDE_WHITELIST: true
+      OPS: ${MC_SERVER_OPERATORS}
     volumes:
       - ${MC_SERV_DATA_DIR:-./data/minecraft-server}:/data
       # - ${MC_SERVER_WORLD_IMPORT_DIR:-./worlds}:/worlds:ro
