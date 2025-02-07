@@ -5,26 +5,25 @@ volumes:
 
 services:
   obsidian:
-    image: 'ghcr.io/sytone/obsidian-remote:latest'
-    container_name: obsidian-remote
+    image: lscr.io/linuxserver/obsidian:latest
+    container_name: obsidian
     restart: unless-stopped
-    ports:
-      - ${OBSIDIAN_HTTP_PORT:-8080}:8080
-      - ${OBSIDIAN_HTTPS_PORT:-8443}:8443
-    volumes:
-      - ${OBSIDIAN_VAULTS_DIR:-obsidian_vaults}:/vaults
-      - ${OBSIDIAN_CONFIG_DIR:-obsidian_config}:/config
+    security_opt:
+      - seccomp:unconfined
     environment:
       PUID: ${PUID:-1000}
-      PGID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
       TZ: ${TZ:-Etc/UTC}
-      DOCKER_MODS: linuxserver/mods:universal-git
-      CUSTOM_PORT: 8080
-      CUSTOM_HTTPS_PORT: 8443
-      KEYBOARD: ${OBSIDIAN_KEYBOARD_LAYOUT:-en-us-qwerty}
-      # CUSTOM_USER: ${OBSIDIAN_HTTP_USER:-obsidian}
-      # PASSWORD: ${OBSIDIAN_HTTP_PASSWORD:-Obsidian!}
+      CUSTOM_USER: ${OBSIDIAN_HTTP_USER:-obsidian}
+      PASSWORD: ${OBSIDIAN_HTTP_PASSWORD:-obsidian}
       TITLE: ${OBSIDIAN_HTTP_PAGE_TITLE:-Obsidian.md}
+    volumes:
+      - ${OBSIDIAN_CONFIG_DIR:-./obsidian/config}:/config
+    ports:
+      - ${OBSIDIAN_HTTP_PORT:-3000}:3000
+      - ${OBSIDIAN_HTTPS_PORT:-3001}:3001
+    devices:
+      - /dev/dri:/dev/dri
+    shm_size: ${OBSIDIAN_SHM_SIZE:-1gb}
     healthcheck:
-      test: curl -f http://localhost:8080/ || exit 1
-
+      test: curl -f http://localhost:3000/ || exit 1
