@@ -17,6 +17,8 @@ services:
       CUSTOM_USER: ${OBSIDIAN_HTTP_USER:-obsidian}
       PASSWORD: ${OBSIDIAN_HTTP_PASSWORD:-obsidian}
       TITLE: ${OBSIDIAN_HTTP_PAGE_TITLE:-Obsidian.md}
+      NO_DECOR: ${OBSIDIAN_DISABLE_WINDOW_CONTROLS}
+      NO_FULL: ${OBSIDIAN_DISABLE_FULLSCREEN}
     volumes:
       - ${OBSIDIAN_CONFIG_DIR:-./obsidian/config}:/config
     ports:
