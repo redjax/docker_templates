@@ -1,10 +1,11 @@
-## https://github.com/cooperspencer/gickup/blob/main/conf.example.yml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/cooperspencer/gickup/refs/heads/main/gickup_spec.json
+
+# Example copied from: https://github.com/cooperspencer/gickup/blob/main/conf.example.yml
 
 source:
   github:
     - token: some-token
-    # alternatively, specify token in a file, relative to current working directory when executed.
+      # alternatively, specify token in a file, relative to current working directory when executed.
       # token_file: token.txt
       user: some-user # the user you want to clone the repositories from.
       # if you want to get everything from your user, leave out the user parameter and just use the token.
@@ -33,7 +34,7 @@ source:
       filter:
         stars: 100 # only clone repos with 100 stars
         lastactivity: 1y # only clone repos which had activity during the last year
-        excludearchived: true 
+        excludearchived: true
         languages: # only clone repositories with the following languages
           - go
           - java
@@ -70,7 +71,7 @@ source:
       filter:
         stars: 100 # only clone repos with 100 stars
         lastactivity: 1y # only clone repos which had activity during the last year
-        excludearchived: true 
+        excludearchived: true
         languages: # only clone repositories with the following languages
           - go
           - java
@@ -137,7 +138,7 @@ source:
       filter:
         stars: 100 # only clone repos with 100 stars
         lastactivity: 1y # only clone repos which had activity during the last year
-        excludearchived: true 
+        excludearchived: true
         languages: # only clone repositories with the following languages
           - go
           - java
@@ -272,12 +273,12 @@ destination:
       bare: true # clone the repositories as bare
       lfs: true # clone lfs repos, !! ATTENTION !! git and git-lfs must be installed on the system!
   s3:
-   - endpoint: somewhere:9000 # whatever your s3 endpoint is
-     structured: true # checks repos out like hostersite/user|organization/repo
-     bucket: your-bucket-name
-     accesskey: your-access-key # can be an environment variable, just don't add a $ in front of it
-     secretkey: your-secret-key # can be an environment variable, just don't add a $ in front of it
-     usessl: true # wheter to use ssl or not
+    - endpoint: somewhere:9000 # whatever your s3 endpoint is
+      structured: true # checks repos out like hostersite/user|organization/repo
+      bucket: your-bucket-name
+      accesskey: your-access-key # can be an environment variable, just don't add a $ in front of it
+      secretkey: your-secret-key # can be an environment variable, just don't add a $ in front of it
+      usessl: true # wheter to use ssl or not
 cron: 0 22 * * * # optional - when cron is not provided, the program runs once and exits.
 # Otherwise, it runs according to the cron schedule.
 # See timezone commentary in docker-compose.yml for making sure this container runs
@@ -285,8 +286,9 @@ cron: 0 22 * * * # optional - when cron is not provided, the program runs once a
 # For more information on crontab or testing: https://crontab.guru/
 
 log: # optional
-  timeformat: 2006-01-02 15:04:05 # you can use a custom time format, use https://yourbasic.org/golang/format-parse-string-time-date-example/ to check how date formats work in go
-                                  # or set it as environment variable GICKUP_TIME_FORMAT
+  timeformat:
+    2006-01-02 15:04:05 # you can use a custom time format, use https://yourbasic.org/golang/format-parse-string-time-date-example/ to check how date formats work in go
+    # or set it as environment variable GICKUP_TIME_FORMAT
   file-logging: # optional
     dir: log # directory to log into
     file: gickup.log # file to log into
@@ -302,15 +304,14 @@ metrics:
       - http(s)://another-url-to-make-request-to
   push:
     ntfy:
-    - url: http(s)://url-to-ntfy/your-topic
-      token: your-token 
-      user: your-user
-      password: your-password
+      - url: http(s)://url-to-ntfy/your-topic
+        token: your-token
+        user: your-user
+        password: your-password
     gotify:
-    - url: http(s)://url-to-gotify
-      token: your-token
+      - url: http(s)://url-to-gotify
+        token: your-token
 ---
-
 # you can define separate source and destination pairs,
 # like "mirror all repos from github to gitea but keep gitlab repos up-to-date in ~/backup"
 # if cron is defined in the first config, this cron interval will be used for all the other confgurations, except it has one of its own.
