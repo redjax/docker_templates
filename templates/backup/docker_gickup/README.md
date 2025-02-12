@@ -18,6 +18,8 @@ Git repository mirroring & backup tool.
 - Copy the [default Gickup configuration](./config/default.yml) and modify it to your needs.
   - Reference the [example config file](./config/example.yml), or check [the most recent example in the Gickup repository](https://github.com/cooperspencer/gickup/blob/main/conf.example.yml).
   - Options are highly specific to the exact type of synchronization
+- If using an SSH key, follow the [SSH key setup instructions](#ssh-key) and copy it to the [`secrets/ssh_keys/`](./secrets/ssh_keys/) directory
+- If using a Personal Access Token (PAT), follow the [PAT setup instructions](#personal-access-token-pat) and create a file at [`secrets/tokens/`](./secrets/tokens/) (i.e. `./secrets/tokens/github_token`) with your PAT.
 
 ## SSH key
 
@@ -60,7 +62,45 @@ Some remotes, like Github and Gitlab, allow for creation of "Personal Access Tok
 
 ### Tell Gickup to use PAT
 
+After [creating a Personal Access Token (PAT) on your remote](#personal-access-token-pat), you need to tell Gickup how to use it. In your configuration file for Gickup (in the [`./config/`](./config/) directory), add a line referencing the path to your PAT , i.e. `token_file: "/.ssh/github_token"`. The path you input is the path in the container. You can set this path in your [`.env` file](./.env.example)'s `GICKUP_PAT_FILE` variable.
+
+If you do not provide a PAT and Gickup requires one, there will be an error log when you run the container telling you. For simple clones (source code only, no issues/wikis/pull requests, etc), an SSH key should suffice.
+
+## Edit Gickup's schedule with Cron
+
+You can place a [cron schedule](https://linuxhandbook.com/crontab/) at the top of your Gickup configuration to have the container automatically run your synchronization on a schedule you choose. You can use a tool like [crontab.guru](https://crontab.guru) to help you build a cron schedule.
+
+```yaml
+## Crontab schedule to run gickup
+cron: 0 * * * *
+
+source:
+  
+  ...
+```
+
+## Logging
+
+You can add file logging to your Gickup executions by adding a `log` section to the config. Set a `dir:` to tell Gickup which directory path to store your logs, and a `file:` to give the logfile a name. You can also set a `maxage:` to enable auto-cleanup.
+
+```yaml
 ...
+
+log:
+  timeformat: 2006-01-02 15:04:05
+  file-logging:
+    dir: log
+    file: gickup.log
+    maxage: 7
+
+source:
+
+  ...
+```
+
+## Miscellaneous
+
+Gickup has [more configuration options](https://cooperspencer.github.io/gickup-documentation/configuration/miscellaneous) that are not as fully documented, but are still very useful. Take a look through the miscellaneous options documentation to see if there are any other customizations you want to make to your Gickup configuration.
 
 ## Links
 
