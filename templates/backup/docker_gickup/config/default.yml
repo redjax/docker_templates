@@ -1,3 +1,14 @@
+## Crontab schedule to run gickup
+# cron: 0 * * * *
+
+## Enable logging
+# log:
+#   timeformat: 2006-01-02 15:04:05
+#   file-logging:
+#     dir: log
+#     file: gickup.log
+#     maxage: 7
+
 source:
   ## Use github repository as a source
   github:
@@ -21,7 +32,7 @@ source:
         #   - python
         #   - powershell
         #   - bash
-  
+
 destination:
   ## Backup to a local directory
   local:
