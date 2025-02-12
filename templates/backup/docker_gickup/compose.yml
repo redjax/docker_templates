@@ -1,0 +1,36 @@
+---
+networks:
+  gickup_net: {}
+
+services:
+  gickup:
+    image: buddyspencer/gickup:${GICKUP_VERSION:-latest}
+    container_name: gickup
+    restart: unless-stopped
+    volumes:
+      - ${GICKUP_CONFIG:-./config/default.yml}:/gickup/conf.yml
+    command: ["/gickup/conf.yml"]
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - gickup_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gickup_net
