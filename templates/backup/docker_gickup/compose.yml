@@ -9,6 +9,12 @@ services:
     restart: unless-stopped
     volumes:
       - ${GICKUP_CONFIG:-./config/default.yml}:/gickup/conf.yml
+      ## If using /backup/ in the container for local destination,
+      #  mount it in a volume for persistence
+      - ${GICKUP_BACKUP_DIR:-./backup}:/backup
+      ## Mount an SSH key, i.e. ~/.ssh/gickup_id_rsa
+      #  Create a key with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/gickup_id_rsa -N ""
+      - ${GICKUP_SSH_KEY}:/ssh/id_rsa:ro
     command: ["/gickup/conf.yml"]
     environment:
       TZ: ${TZ:-Etc/UTC}
