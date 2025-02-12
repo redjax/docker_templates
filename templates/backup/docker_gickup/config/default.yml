@@ -1,0 +1,67 @@
+## Crontab schedule to run gickup
+# cron: 0 * * * *
+
+## Enable logging
+# log:
+#   timeformat: 2006-01-02 15:04:05
+#   file-logging:
+#     dir: log
+#     file: gickup.log
+#     maxage: 7
+
+source:
+  ## Use github repository as a source
+  github:
+    ## Set clone URL base, including git username
+    - url: "git@github.com:<username>"
+      ssh: true
+      ## Path in container
+      key: "/ssh/id_rsa"
+      ## Names of repositories to include
+      include:
+        - "repo1"
+        - "repo2"
+      wiki: true
+      starred: true
+      issues: true
+      filter:
+        # lastactivity: 1y
+        excludearchived: true
+        excludeforks: true
+        # languages:
+        #   - python
+        #   - powershell
+        #   - bash
+
+destination:
+  ## Backup to a local directory
+  local:
+    ## Path in container
+    - path: "/backup/"
+
+  ## Backup to an S3 bucket
+  # s3:
+  #   - endpoint: somewhere:9000
+  #     structured: true
+  #     bucket: bucket-name
+  #     accesskey: your-access-key
+  #     secretkey: your-secret-key
+  #     usessl: true
+
+  ## Backup to a Gitlab repository
+  # gitlab:
+  #   - token: some-token
+  #     token_file: token.txt
+  #     url: http(s)://url-to-gitlab
+  #     force: true
+  #     mirror:
+  #       enabled: true
+
+  ## Backup to Github repository
+  # github:
+  #   - token: some-token
+  #     token_file: token.txt
+  #     organization: myorg
+  #     force: true
+  #     visibility:
+  #       repositories: private
