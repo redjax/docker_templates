@@ -10,7 +10,7 @@ services:
   gickup:
     image: buddyspencer/gickup:${GICKUP_VERSION:-latest}
     container_name: gickup
-    restart: no
+    restart: unless-stopped
     volumes:
       - ${GICKUP_CONFIG:-./config/default.yml}:/gickup/conf.yml
       ## If using /backup/ in the container for local destination,
