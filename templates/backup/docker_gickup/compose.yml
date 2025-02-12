@@ -1,0 +1,54 @@
+---
+networks:
+  gickup_net: {}
+
+volumes:
+  gickup_logs: {}
+  gickup_local_backups: {}
+
+services:
+  gickup:
+    image: buddyspencer/gickup:${GICKUP_VERSION:-latest}
+    container_name: gickup
+    restart: unless-stopped
+    volumes:
+      - ${GICKUP_CONFIG:-./config/default.yml}:/gickup/conf.yml
+      ## If using /backup/ in the container for local destination,
+      #  mount it in a volume for persistence
+      - ${GICKUP_BACKUP_DIR:-gickup_local_backups}:/backup
+      ## Mount an SSH key, i.e. ~/.ssh/gickup_id_rsa
+      #  Create a key with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/gickup_id_rsa -N ""
+      - ${GICKUP_SSH_KEY}:/.ssh/id_rsa:ro
+      ## Mount logging path to persist logs
+      - ${GICKUP_LOGS_DIR:-gickup_logs}:/log
+      ## Mount a Github PAT
+      - ${GICKUP_PAT_FILE}:/.ssh/github_token:ro
+      ## If you get errors about the container not being able to find a known_hosts file,
+      #  create a file called 'known_hosts' in the same path as the compose.yml file and
+      #  uncomment this volume mount.
+      # - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/.ssh/known_hosts
+    command: ["/gickup/conf.yml"]
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - gickup_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gickup_net
