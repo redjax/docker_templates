@@ -64,7 +64,15 @@ If you do not see your preferred remote, you can do a web search for "add SSH ke
 
 ### Tell Gickup to use SSH key
 
-...
+Put your SSH key in the [`secrets/ssh_keys/` directory](./secrets/ssh_keys/). The key will be mounted in the container at `/.ssh/id_rsa`. Also edit your [Gickup config](./config/) file; if it does not already have a `key:` parameter, add one and set it to the path *inside the container*, i.e. `/.ssh/id_rsa`.
+
+```yaml
+- url: "git@github.com:<username>"
+  ## Enable SSH for git operations
+  ssh: true
+  ## Path in container
+  key: "/.ssh/id_rsa"
+```
 
 ## Personal Access Token (PAT)
 
