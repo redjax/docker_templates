@@ -1,4 +1,6 @@
 config/*
+logs/*
+backup/*
 
 !*example*.*
 !config/default.yml
