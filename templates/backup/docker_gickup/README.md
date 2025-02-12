@@ -1,6 +1,21 @@
-# Gickup
+# Gickup <!-- omit in toc -->
 
 Git repository mirroring & backup tool.
+
+## Table of Contents <!-- omit in toc -->
+
+- [Description](#description)
+- [Setup](#setup)
+- [SSH key](#ssh-key)
+  - [Create an SSH key](#create-an-ssh-key)
+  - [Add SSH key to git remote](#add-ssh-key-to-git-remote)
+  - [Tell Gickup to use SSH key](#tell-gickup-to-use-ssh-key)
+- [Personal Access Token (PAT)](#personal-access-token-pat)
+  - [Tell Gickup to use PAT](#tell-gickup-to-use-pat)
+- [Edit Gickup's schedule with Cron](#edit-gickups-schedule-with-cron)
+- [Logging](#logging)
+- [Miscellaneous](#miscellaneous)
+- [Links](#links)
 
 ## Description
 
