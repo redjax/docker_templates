@@ -22,7 +22,9 @@ services:
       ## Mount logging path to persist logs
       - ${GICKUP_LOGS_DIR:-gickup_logs}:/log
       ## Mount a Github PAT
-      - ${GICKUP_PAT_FILE}:/.ssh/github_token:ro
+      - ${GICKUP_GITHUB_PAT_FILE}:/.ssh/github_token:ro
+      ## Mount a gitea/forgejo/codeberg PAT
+      - ${GICKUP_CODEBERG_PAT_FILE}:/.ssh/codeberg_token:ro
       ## If you get errors about the container not being able to find a known_hosts file,
       #  create a file called 'known_hosts' in the same path as the compose.yml file and
       #  uncomment this volume mount.
