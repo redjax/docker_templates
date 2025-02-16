@@ -1,6 +1,8 @@
-valheim-server
-valheim-server/
 valheim-server/*
+valheim-server/config/*
+valheim-server/data/*
+!valheim-server/.gitkeep
+
 
 **/.env
 **/.env.*
