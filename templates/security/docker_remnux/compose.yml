@@ -1,0 +1,18 @@
+---
+# networks:
+#   unnamed_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+
+  remnux:
+    image: remnux/remnux-distro
+    container_name: remnux
+    restart: unless-stopped
+    command: bash
+    volumes:
+      - ${REMNUX_FILES_DIR:-./remnux/files}:/home/remnux/files
+    ports:
+      - ${REMNUX_SSH_PORT:-22}:22

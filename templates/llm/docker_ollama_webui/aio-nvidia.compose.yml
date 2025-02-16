@@ -1,0 +1,56 @@
+---
+volumes:
+  ollama: {}
+  open-webui: {}
+
+networks:
+  openwebui_ollama_net: {}
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:ollama
+    container_name: open-webui_ollama
+    restart: unless-stopped
+    ports:
+      - ${OPENWEBUI_PORT:-3000}:8080
+    volumes:
+      - ${OLLAMA_DATA_DIR:-ollama}:/root/.ollama
+      - ${OPENWEBUI_DATA_DIR:-open-webui}:/app/backend/data
+    environment:
+      OLLAMA_NUM_THREADS: ${OLLAMA_NUM_THREADS:-8}
+      ADMIN_EMAIL: ${OPENWEBUI_ADMIN_EMAIL:-no@none.com}
+      CUSTOM_NAME: ${OPENWEBUI_CUSTOM_NAME:-Open-WebUI}
+      USE_CUDA_DOCKER: ${OPENWEBUI_USE_CUDA:-false}
+      ENABLE_AUTOCOMPLETE_GENERATION: ${OPENWEBUI_ENABLE_AUTOCOMPLETE_GENERATION:-false}
+      ENABLE_TAGS_GENERATION: ${OPENWEBUI_ENABLE_TAGS_GENERATION:-false}
+      ENABLE_RETRIEVAL_QUERY_GENERATION: ${OPENWEBUI_ENABLE_RETRIEVAL_QUERY_GENERATION:-false}
+    ## to use GPUs (requires NVIDIA runtime installed)
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: ${OLLAMA_GPU_DRIVER:-nvidia}
+              capabilities:
+                - gpu
+              count: ${OLLAMA_GPU_COUNT:-1}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - openwebui_ollama_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the `com.centurylinklabs.watchtower.enable=true` label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - openwebui_ollama_net

@@ -1,0 +1,15 @@
+.env
+*.env
+.env*
+*.env*
+
+!*example*
+!*example*.*
+!*.*example*
+!*.*example*.*
+
+password_hash
+
+mongodb/
+graylog/
+elasticsearch/

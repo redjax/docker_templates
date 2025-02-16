@@ -12,3 +12,6 @@ dev = [
     "nox>=2024.10.9",
     "pre-commit>=4.0.1",
 ]
+
+[tool.uv.workspace]
+members = ["templates/games/docker_palworld_server/rpc_mgr"]

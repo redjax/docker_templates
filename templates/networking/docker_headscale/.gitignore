@@ -1,0 +1,4 @@
+headscale/config/config.yaml
+headscale/data
+psks.json
+apikeys.json
