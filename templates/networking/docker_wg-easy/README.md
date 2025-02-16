@@ -2,9 +2,19 @@
 
 `wg-easy` is a WireGuard VPN management tool that offers a web UI. This tool helps to spin up a WireGuard VPN server in Docker.
 
+## Requirements
+
+- Docker
+- (Optional, recommended) a static IP address
+- (Optional, recommended) a domain name or dynamic DNS hostname
+
 ## Usage
 
+- [Install Docker](https://docs.docker.com/engine/install/)
 - [Install WireGuard](https://www.wireguard.com/install/)
+- Create a Docker network
+  - `docker network create --subnet 172.22.0.0/16 dns`
+  - In the above example you can use any Docker subnet, changing the `x`s, i.e. `172.xx.0.0/16`
 - Copy `.env.example` -> `.env`
 - Generate your admin password by running the [`generate_wg_password_hash.sh`](./generate_wg_password_hash.sh) script.
     - Copy the generated password into the `WG_EASY_ADMIN_PASSWORD_HASH` env variable in `.env`.
@@ -95,3 +105,4 @@ Your Docker container's `eth0` network can and will change, especially between h
     - [Run WireGuard Easy](https://github.com/wg-easy/wg-easy?tab=readme-ov-file#2-run-wireguard-easy)
     - [WireGuard Docker env variables](https://github.com/wg-easy/wg-easy?tab=readme-ov-file#options)
     - [Using WireGuard Easy with NGINX SSL](https://github.com/wg-easy/wg-easy/wiki/Using-WireGuard-Easy-with-nginx-SSL)
+- [Use WireGuard with DNS container i.e. PiHole](https://hugopersson.com/blog/wg-easy-docker-with-dns/)

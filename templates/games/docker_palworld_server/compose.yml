@@ -1,7 +1,7 @@
 ---
 services:
    palworld:
-      image: thijsvanloef/palworld-server-docker:latest
+      image: thijsvanloef/palworld-server-docker:${PALWORLD_CONTAINER_IMG_VERSION:-latest}
       restart: unless-stopped
       container_name: palworld-server
       stop_grace_period: 30s
@@ -10,25 +10,8 @@ services:
         - ${PALWORLD_QUERY_PORT:-27015}:27015/udp
         - ${PALWORLD_RCON_PORT:-25575}:25575/tcp
         # - ${PALWORLD_REST_API_PORT:-8212}:8212/tcp  # Port for REST API if REST_API_ENABLED: true
-      environment:
-         PUID: ${PUID:-1000}
-         PGID: ${PGID:-1000}
-         PORT: 8211
-         PLAYERS: ${PALWORLD_MAX_PLAYERS:-16}
-         SERVER_PASSWORD: ${PALWORLD_SERVER_PASSWORD:-"worldPals!"}
-         MULTITHREADING: ${PALWORLD_MULTIHREADING:-true}
-         REST_API_ENABLED: ${PALWORLD_REST_API_ENABLED:-false}
-         RCON_ENABLED: ${PALWORLD_RCON_ENABLED:-true}
-         RCON_PORT: 25575
-         TZ: ${PALWORLD_TZ:-"UTC"}
-         ADMIN_PASSWORD: ${PALWORLD_ADMIN_PASSWORD:-"adminPasswordHere"}
-         ## Enable this if you want your server to show up in the community servers tab.
-         #  USE A SERVER_PASSWORD IF TRUE!
-         COMMUNITY: false
-         SERVER_NAME: ${PALWORLD_SERVER_NAME:-"Docker Palworld"}
-         SERVER_DESCRIPTION: ${PALWORLD_SERVER_DESCRIPTION:-"Dockerized Palworld server"}
-          ## Defaults to "Steam" if not set, set this to "Xbox" if you want to host a server for Xbox players.
-          #  CROSSPLAY BETWEEN XBOX-STEAM IS NOT YET SUPPORTED
-         ALLOW_CONNECT_PLATFORM: "Steam"
+      env_file:
+         - server_opts.env
       volumes:
          - ${PALWORLD_DATA_DIR:-./palworld/data}:/palworld/
+         - ${PALWORLD_BACKUP_DIR:-./palworld/backups}:/palworld/backups

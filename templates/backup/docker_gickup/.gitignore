@@ -1,0 +1,7 @@
+config/*
+logs/*
+backup/*
+known_hosts
+
+!*example*.*
+!config/default.yml
