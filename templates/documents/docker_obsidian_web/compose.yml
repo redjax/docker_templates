@@ -1,0 +1,31 @@
+---
+volumes:
+  obsidian_vaults: {}
+  obsidian_config: {}
+
+services:
+  obsidian:
+    image: lscr.io/linuxserver/obsidian:latest
+    container_name: obsidian
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
+      CUSTOM_USER: ${OBSIDIAN_HTTP_USER:-obsidian}
+      PASSWORD: ${OBSIDIAN_HTTP_PASSWORD:-obsidian}
+      TITLE: ${OBSIDIAN_HTTP_PAGE_TITLE:-Obsidian.md}
+      NO_DECOR: ${OBSIDIAN_DISABLE_WINDOW_CONTROLS}
+      NO_FULL: ${OBSIDIAN_DISABLE_FULLSCREEN}
+    volumes:
+      - ${OBSIDIAN_CONFIG_DIR:-./obsidian/config}:/config
+    ports:
+      - ${OBSIDIAN_HTTP_PORT:-3000}:3000
+      - ${OBSIDIAN_HTTPS_PORT:-3001}:3001
+    devices:
+      - /dev/dri:/dev/dri
+    shm_size: ${OBSIDIAN_SHM_SIZE:-1gb}
+    healthcheck:
+      test: curl -f http://localhost:3000/ || exit 1

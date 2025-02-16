@@ -25,41 +25,6 @@ services:
     networks:
       - kiwix_net
 
-  transmission:
-    image: lscr.io/linuxserver/transmission:latest
-    container_name: kiwix-transmission
-    restart: unless-stopped
-    # user: "1000:1000"
-    environment:
-      PUID: 1000
-      PGID: 1000
-      TZ: ${TZ:-Etc/UTC}
-      ## optional
-      TRANSMISSION_WEB_HOME: 
-      ## optional
-      USER: 
-      ## optional
-      PASS: 
-      ## optional
-      WHITELIST: 
-      ## optional
-      PEERPORT: 
-      ## optional
-      HOST_WHITELIST: 
-    volumes:
-      - ${TRANSMISSION_CONFIG_DIR:-./data/transmission/config}:/config
-      ## Set the downloads path to the Kiwix directory
-      - ${TRANSMISSION_DATA_DIR:-./data/transmission/torrent}:/downloads
-      - ${TRANSMISSION_WATCH_DIR:-./data/transmission/watch}:/watch
-    ports:
-      - ${TRANSMISSION_WEBUI_PORT:-9091}:9091
-      - ${TRANSMISSION_TORRENT_TCP_PORT:-51413}:51413
-      - ${TRANSMISSION_TORRENT_UDP_PORT:-51413}:51413/udp
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - kiwix_net
-
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower-kiwix
