@@ -17,3 +17,15 @@ You will also need to download the following on both the server and your client:
 - [FTB Chunks(Fabric)](https://www.curseforge.com/minecraft/mc-mods/ftb-chunks-fabric/download/5378089)
 - [BCG Util](https://www.curseforge.com/minecraft/mc-mods/bcg-util/download/5359973)
 - [Cobblemon Quests](https://www.curseforge.com/minecraft/mc-mods/cobblemon-quests/download/5640002)
+
+## Cobblemon Commands
+
+- [Cobbelmon Wiki: commands](https://wiki.cobblemon.com/index.php/Commands)
+
+| Command                                                    | Description                                            | Example                                                                                 |
+| ---------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `/givepokemon <pokemon> [attributes]`                      | Give yourself a pokemon                                | `/givepokemon abra shiny ability=synchronize`                                           |
+| `/givepokemonother <target> <pokemon> [attributes]`        | Give other player(s) a pokemon                         | `/givepokemonother @a abra shiny ability=synchronize`                                   |
+| `/levelup <target> <slot>`                                 | Add +1 to level to pokemon in player's party slot      | `/levelup @p 1`                                                                         |
+| `/pokemonedit <slot> [pokemon / attributes]`               | Edit a pokemon in a specified slot                     | `/pokemonedit 1 abra ability=adaptability nature=adamant`                               |
+| `/pokemoneditother <target> <slot> [pokemon / attributes]` | Edit a Pokemon in a specified slot of a player's party | `/pokemoneditother PlayerName 1 abra ability=adaptability gender=female nature=adamant` |
