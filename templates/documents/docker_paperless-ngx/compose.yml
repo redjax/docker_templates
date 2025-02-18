@@ -29,9 +29,7 @@
 #
 # For more extensive installation and update instructions, refer to the
 # documentation.
-
-version: "3.4"
-
+---
 networks:
   # backend:
   #   internal: true
@@ -106,7 +104,7 @@ services:
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000/forms/libreoffice/convert#
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
-      PAPERLESS_URL: https://docs.crvr.us
+      PAPERLESS_URL: ${PAPERLESS_SERVER_URL}
     networks:
       - paperless_frontend
       - paperless_backend
