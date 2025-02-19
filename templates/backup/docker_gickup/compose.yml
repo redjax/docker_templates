@@ -28,7 +28,7 @@ services:
       ## If you get errors about the container not being able to find a known_hosts file,
       #  create a file called 'known_hosts' in the same path as the compose.yml file and
       #  uncomment this volume mount.
-      # - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/.ssh/known_hosts
+      - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/.ssh/known_hosts
     command: ["/gickup/conf.yml"]
     environment:
       TZ: ${TZ:-Etc/UTC}
@@ -39,7 +39,7 @@ services:
 
   watchtower:
     image: containrrr/watchtower:latest
-    container_name: watchtower
+    container_name: watchtower_gickup
     restart: unless-stopped
     pull_policy: always
     environment:
