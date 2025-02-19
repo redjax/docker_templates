@@ -8,7 +8,7 @@ volumes:
 
 services:
   gickup:
-    image: buddyspencer/gickup:${GICKUP_VERSION:-latest}
+    image: buddyspencer/gickup:${GICKUP_VERSION:-ubuntu-latest}
     container_name: gickup
     restart: unless-stopped
     volumes:
@@ -18,17 +18,17 @@ services:
       - ${GICKUP_BACKUP_DIR:-gickup_local_backups}:/backup
       ## Mount an SSH key, i.e. ~/.ssh/gickup_id_rsa
       #  Create a key with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/gickup_id_rsa -N ""
-      - ${GICKUP_SSH_KEY}:/.ssh/id_rsa:ro
+      - ${GICKUP_SSH_KEY}:/root/.ssh/id_rsa:ro
       ## Mount logging path to persist logs
       - ${GICKUP_LOGS_DIR:-gickup_logs}:/log
       ## Mount a Github PAT
-      - ${GICKUP_GITHUB_PAT_FILE}:/.ssh/github_token:ro
+      - ${GICKUP_GITHUB_PAT_FILE}:/root/.ssh/github_token:ro
       ## Mount a gitea/forgejo/codeberg PAT
-      - ${GICKUP_CODEBERG_PAT_FILE}:/.ssh/codeberg_token:ro
+      - ${GICKUP_CODEBERG_PAT_FILE}:/root/.ssh/codeberg_token:ro
       ## If you get errors about the container not being able to find a known_hosts file,
       #  create a file called 'known_hosts' in the same path as the compose.yml file and
       #  uncomment this volume mount.
-      - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/.ssh/known_hosts
+      - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/root/.ssh/known_hosts
     command: ["/gickup/conf.yml"]
     environment:
       TZ: ${TZ:-Etc/UTC}
