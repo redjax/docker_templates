@@ -12,7 +12,7 @@ source:
   ## Use github repository as a source
   github:
     ## Set clone URL base, including git username
-    - url: "git@github.com:your-username"
+    - user: "your-username"
       ssh: true
       ## Path in container
       key: "/root/.ssh/id_rsa"
