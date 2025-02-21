@@ -13,6 +13,7 @@ services:
     image: postgres:${POSTGRES_IMAGE_TAG:-bullseye}
     container_name: ${POSTGRES_CONTAINER_NAME:-postgres}
     restart: unless-stopped
+    user: ${POSTGRES_USER:-postgres}
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
