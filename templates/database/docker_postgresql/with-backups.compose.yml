@@ -1,11 +1,12 @@
 version: "3.7"
 
 volumes:
-  postgres_data:
-  pgadmin_data:
+  postgres_data: {}
+  pgadmin_data: {}
+  pgbackweb_data: {}
 
 networks:
-  pg_net:
+  pg_net: {}
 
 services:
 
@@ -54,5 +55,24 @@ services:
       - ${PGADMIN_DATA_DIR:-pgadmin_data}:/var/lib/pgadmin
     depends_on:
       - postgres
+    networks:
+      - pg_net
+
+  pgbackweb:
+    image: eduardolat/pgbackweb:latest
+    container_name: ${PGBACKWEB_CONTAINER_NAME:-pgbackweb}
+    ports:
+      - ${PGBACKWEB_WEBUI_PORT:-8085}:8085
+    volumes:
+      ## If you only use S3 destinations, you don't need this volume
+      - ${PGBACKWEB_BACKUPS_DIR:-pgbackweb_data}:/backups
+    environment:
+      ## Generate with generate_pgbackweb_encryption_key.sh
+      PBW_ENCRYPTION_KEY: ${PGBACKWEB_ENCRYPTION_KEY}
+      PBW_POSTGRES_CONN_STRING: ${PGBACKWEB_PG_CONNECTION_STRING:-postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable}
+      TZ: ${TZ:-Etc/UTC}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - pg_net
