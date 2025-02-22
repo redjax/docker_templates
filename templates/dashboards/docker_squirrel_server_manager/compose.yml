@@ -1,10 +1,106 @@
 ---
-# networks:
-#   unnamed_net: {}
+networks:
+  ssm_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  ssm_prometheus_data: {}
+  ssm_mongo_data: {}
+  ssm_redis_data: {}
+  ssm_server_data: {}
 
 services:
 
-  ...
+  proxy:
+    image: "ghcr.io/squirrelcorporation/squirrelserversmanager-proxy:latest"
+    container_name: ssm-proxy
+    restart: unless-stopped
+    ports:
+      - ${SSM_PROXY_PORT:-8000}:8000
+    depends_on:
+      - client
+      - mongo
+      - server
+      - redis
+      - prometheus
+    labels:
+      wud.display.name: ${SSM_PROXY_DISPLAY_NAME:-"SSM - Proxy"}
+      wud.watch.digest: ${SSM_PROXY_WATCH_DIGEST:-false}
+    networks:
+      - ssm_net
+
+  prometheus:
+    image: "ghcr.io/squirrelcorporation/squirrelserversmanager-prometheus:latest"
+    container_name: ssm-prometheus
+    restart: unless-stopped
+    env_file: .env.extra
+    volumes:
+      - ${SSM_PROMETHEUS_DATA_DIR:-ssm_prometheus_data}:/prometheus
+    labels:
+      wud.display.name: ${SSM_PROMETHEUS_DISPLAY_NAME:-"SSM - Prometheus"}
+    networks:
+      - ssm_net
+
+  mongo:
+    image: mongo
+    container_name: ssm-mongo
+    restart: unless-stopped
+    volumes:
+      - ${SSM_MONGO_DATA_DIR:-ssm_mongo_data}:/data/db
+    command: --quiet
+    labels:
+      wud.display.name: ${SSM_MONGO_DISPLAY_NAME:-"SSM - MongoDB"}
+    networks:
+      - ssm_net
+
+  redis:
+    image: redis
+    container_name: cache-ssm
+    restart: unless-stopped
+    volumes:
+      - ${SSM_REDIS_DATA_DIR:-ssm_redis_data}:/data
+    command: --save 60 1
+    labels:
+      wud.display.name: ${SSM_REDIS_DISPLAY_NAME:-"SSM - Redis"}
+    networks:
+      - ssm_net
+
+  server:
+    image: "ghcr.io/squirrelcorporation/squirrelserversmanager-server:latest"
+    container_name: ssm-server
+    restart: unless-stopped
+    external_links:
+      - mongo
+      - redis
+      - prometheus
+    depends_on:
+      - mongo
+      - redis
+      - prometheus
+    env_file: .env.extra
+    environment:
+      NODE_ENV: ${SSM_SERVER_ENV:-production}
+    volumes:
+      - ${SSM_SERVER_DATA_DIR:-ssm_server_data}:/data
+    labels:
+      wud.display.name: ${SSM_SERVER_DISPLAY_NAME:-"SSM - Server"}
+      wud.watch.digest: ${SSM_SERVER_DIGEST:-false}
+    healthcheck:
+      test: curl --fail http://localhost:3000/ping || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 60s
+    networks:
+      - ssm_net
+
+  client:
+    image: "ghcr.io/squirrelcorporation/squirrelserversmanager-client:latest"
+    container_name: ssm-client
+    restart: unless-stopped
+    depends_on:
+      - server
+    labels:
+      wud.display.name: ${SSM_CLIENT_DISPLAY_NAME:-"SSM - Client"}
+      wud.watch.digest: ${SSM_CLIENT_DIGEST:-false}
+    networks:
+      - ssm_net
