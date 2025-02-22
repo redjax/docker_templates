@@ -2,9 +2,32 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  bytestash_data: {}
 
 services:
+  bytestash:
+    image: "ghcr.io/jordan-dalby/bytestash:latest"
+    restart: always
+    volumes:
+      - ${BYTESTASH_DATA_DIR:-bytestash_data}:/data/snippets
+    ports:
+      - ${BYTESTASH_WEBUI_PORT:-5000}:5000
+    environment:
+      ## Base path for URL instead of /, i.e. /bytestash
+      BASE_PATH: ""
+      ## Generate with generate_jwt_token.py
+      JWT_SECRET: ${BYTESTASH_JWT_SECRET}
+      TOKEN_EXPIRY: 24h
+      ALLOW_NEW_ACCOUNTS: ${BYTESTASH_ALLOW_NEW_ACCOUNTS:-true}
+      DEBUG: ${BYTESTASH_DEBUG:-false}
+      DISABLE_ACCOUNTS: ${BYTESTASH_DISABLE_ACCOUNTS:-false}
+      DISABLE_INTERNAL_ACCOUNTS: ${BYTESTASH_DISABLE_INTERNAL_ACCOUNTS:-false}
 
-  ...
+      ## https://github.com/jordan-dalby/ByteStash/wiki/Single-Sign%E2%80%90on-Setup
+      OIDC_ENABLED: "false"
+      OIDC_DISPLAY_NAME: ""
+      OIDC_ISSUER_URL: ""
+      OIDC_CLIENT_ID: ""
+      OIDC_CLIENT_SECRET: ""
+      OIDC_SCOPES: ""
