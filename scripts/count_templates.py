@@ -6,6 +6,7 @@
 # ]
 # ///
 
+import argparse
 import logging
 from pathlib import Path
 import typing as t
@@ -31,11 +32,112 @@ OUTPUT_DIR: str = "./metadata"
 IGNORE_DIRS: list[str] = ["_cookiecutter", "docker_gickup/backup/"]
 TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.example"]
 
-SAVE_JSON: bool = True
-SAVE_CSV: bool = True
-SAVE_PARQUET: bool = True
-SAVE_COUNT: bool = True
-UPDATE_README: bool = True
+SAVE_JSON: bool = False
+SAVE_CSV: bool = False
+SAVE_PARQUET: bool = False
+SAVE_COUNT: bool = False
+UPDATE_README: bool = False
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Count repo templates")
+
+    parser.add_argument(
+        "--templates-root-dir",
+        type=str,
+        default=TEMPLATES_ROOT,
+        help="Root directory for templates",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default=OUTPUT_DIR,
+        help="Directory to save output files",
+    )
+    parser.add_argument(
+        "--ignore-dirs",
+        type=str,
+        nargs="*",
+        default=IGNORE_DIRS,
+        help="List of directories to ignore",
+    )
+    parser.add_argument(
+        "--template-indicators",
+        type=str,
+        nargs="*",
+        default=TEMPLATE_INDICATORS,
+        help="List of template indicators",
+    )
+    parser.add_argument(
+        "--save-json",
+        action="store_true",
+        default=SAVE_JSON,
+        help="Save the templates to a JSON file",
+    )
+    parser.add_argument(
+        "--json-file",
+        type=str,
+        default="./metadata/templates.json",
+        help="JSON file to save templates to",
+    )
+    parser.add_argument(
+        "--save-csv",
+        action="store_true",
+        default=SAVE_CSV,
+        help="Save the templates to a CSV file",
+    )
+    parser.add_argument(
+        "--csv-file",
+        type=str,
+        default="./metadata/templates.csv",
+        help="CSV file to save templates to",
+    )
+    parser.add_argument(
+        "--save-parquet",
+        action="store_true",
+        default=SAVE_PARQUET,
+        help="Save the templates to a Parquet file",
+    )
+    parser.add_argument(
+        "--parquet-file",
+        type=str,
+        default="./metadata/templates.parquet",
+        help="Parquet file to save templates to",
+    )
+    parser.add_argument(
+        "--save-count",
+        action="store_true",
+        default=SAVE_COUNT,
+        help="Save the count of templates",
+    )
+    parser.add_argument(
+        "--count-file",
+        type=str,
+        default="./metadata/templates_count",
+        help="File to save the count of templates to",
+    )
+    parser.add_argument(
+        "--update-readme",
+        action="store_true",
+        default=UPDATE_README,
+        help="Update the README file with the count of templates",
+    )
+    parser.add_argument(
+        "--readme-path",
+        type=str,
+        default="./README.md",
+        help="Path to the README file",
+    )
+    parser.add_argument(
+        "--update-all",
+        action="store_true",
+        default=False,
+        help="Update all files",
+    )
+
+    args = parser.parse_args()
+
+    return args
 
 
 def is_ignored(file: Path, ignore_dirs: list[str], templates_root_dir: Path) -> bool:
@@ -244,6 +346,7 @@ def count(
     save_parquet: bool = False,
     save_count: bool = False,
     update_readme: bool = False,
+    update_all_files: bool = False,
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
     parquet_file: str = "./templates.parquet",
@@ -287,6 +390,22 @@ def count(
     templates_df: pd.DataFrame = get_templates_df(templates)
     log.info(f"Templates ({templates_df.shape[0]}):\n{templates_df}")
 
+    if update_all_files:
+        log.info("Updating all metadata files")
+        save_templates_to_json(templates=templates, json_file=json_file)
+
+        save_templates_to_csv(
+            templates=templates,
+            csv_file=csv_file,
+            cols=["template", "parent", "path"],
+            exclude_cols=["path_parts"],
+        )
+
+        save_templates_to_parquet(templates=templates, parquet_file=parquet_file)
+
+        save_count_to_file(templates=templates, count_file=count_file)
+        update_readme_count(readme_path=readme_path, new_count=len(templates))
+
     if save_json:
         save_templates_to_json(templates=templates, json_file=json_file)
 
@@ -319,18 +438,36 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    args = parse_arguments()
+
     count(
-        templates_root_dir=TEMPLATES_ROOT,
-        ignore_dirs=IGNORE_DIRS,
-        template_file_indicators=TEMPLATE_INDICATORS,
-        save_json=SAVE_JSON,
-        save_csv=SAVE_CSV,
-        save_parquet=SAVE_PARQUET,
-        save_count=SAVE_COUNT,
-        update_readme=UPDATE_README,
-        json_file=f"{OUTPUT_DIR}/templates.json",
-        csv_file=f"{OUTPUT_DIR}/templates.csv",
-        parquet_file=f"{OUTPUT_DIR}/templates.parquet",
-        count_file=f"{OUTPUT_DIR}/templates_count",
-        readme_path="./README.md",
+        templates_root_dir=args.templates_root_dir or TEMPLATES_ROOT,
+        ignore_dirs=args.ignore_dirs or IGNORE_DIRS,
+        template_file_indicators=args.template_indicators or TEMPLATE_INDICATORS,
+        save_json=args.save_json or SAVE_JSON,
+        save_csv=args.save_csv or SAVE_CSV,
+        save_parquet=args.save_parquet or SAVE_PARQUET,
+        save_count=args.save_count or SAVE_COUNT,
+        update_readme=args.update_readme or UPDATE_README,
+        update_all_files=args.update_all or False,
+        json_file=args.json_file or f"{OUTPUT_DIR}/templates.json",
+        csv_file=args.csv_file or f"{OUTPUT_DIR}/templates.csv",
+        parquet_file=args.parquet_file or f"{OUTPUT_DIR}/templates.parquet",
+        count_file=args.count_file or f"{OUTPUT_DIR}/templates_count",
+        readme_path=args.readme_path or "./README.md",
     )
+    # count(
+    #     templates_root_dir=TEMPLATES_ROOT,
+    #     ignore_dirs=IGNORE_DIRS,
+    #     template_file_indicators=TEMPLATE_INDICATORS,
+    #     save_json=SAVE_JSON,
+    #     save_csv=SAVE_CSV,
+    #     save_parquet=SAVE_PARQUET,
+    #     save_count=SAVE_COUNT,
+    #     update_readme=UPDATE_README,
+    #     json_file=f"{OUTPUT_DIR}/templates.json",
+    #     csv_file=f"{OUTPUT_DIR}/templates.csv",
+    #     parquet_file=f"{OUTPUT_DIR}/templates.parquet",
+    #     count_file=f"{OUTPUT_DIR}/templates_count",
+    #     readme_path="./README.md",
+    # )
