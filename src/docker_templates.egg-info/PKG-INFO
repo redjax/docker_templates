@@ -1,3 +1,12 @@
+Metadata-Version: 2.2
+Name: docker-templates
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=2.2.3
+Requires-Dist: pyarrow>=19.0.1
+
 # Docker Templates <!-- omit in toc -->
 
 <!-- Repo image -->
@@ -29,9 +38,6 @@
   <!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/docker_templates/tests.yml) -->
 </p>
 
-<p align="center">
-  Templates: 156
-</p>
 ---
 
 Templates for Docker/Compose containers. Some are completely custom, but most are an example `compose.yml`/`docker-compose.yml` file and example `.env` file.
@@ -40,7 +46,6 @@ Check the [template categories section](#template-categories) for a list of temp
 
 ## Table of Contents  <!-- omit in toc -->
 
-- [](#)
 - [Instructions](#instructions)
   - [Method 1: Clone the whole repository](#method-1-clone-the-whole-repository)
     - [Use a symlink](#use-a-symlink)

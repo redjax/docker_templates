@@ -135,6 +135,15 @@ def run_linter(
     )
 
 
+@nox.session(python=[DEFAULT_PYTHON], name="count-templates")
+def update_template_count(session: nox.Session) -> None:
+    install_uv_project(session)
+    session.install("pandas", "pyarrow")
+
+    log.info("Counting templates")
+    session.run("uv", "run", "scripts/count_templates.py")
+
+
 ##############
 # Pre-commit #
 ##############

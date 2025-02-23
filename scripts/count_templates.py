@@ -10,19 +10,31 @@ import logging
 from pathlib import Path
 import typing as t
 import json
+import re
 
 log = logging.getLogger(__name__)
 
 import pandas as pd
 
+__all__ = [
+    "TEMPLATES_ROOT",
+    "OUTPUT_DIR",
+    "IGNORE_DIRS",
+    "TEMPLATE_INDICATORS",
+    "discover_templates",
+    "get_templates_df",
+    "count",
+]
+
 TEMPLATES_ROOT: str = "./templates"
-OUTPUT_DIR: str = "./scripts/metadata"
+OUTPUT_DIR: str = "./metadata"
 IGNORE_DIRS: list[str] = ["_cookiecutter", "docker_gickup/backup/"]
 TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.example"]
 
 SAVE_JSON: bool = True
 SAVE_CSV: bool = True
 SAVE_COUNT: bool = True
+UPDATE_README: bool = True
 
 
 def is_ignored(file: Path, ignore_dirs: list[str], templates_root_dir: Path) -> bool:
@@ -156,16 +168,50 @@ def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_fil
         return False
 
 
-def main(
+def update_readme_count(readme_file: str, new_count: int):
+    ## Get contents of README file
+    with open(readme_file, "r", encoding="utf-8") as f:
+        contents = f.read()
+
+    ## Find templates count
+    count_line_regex = re.compile(
+        r"(<p\s+align=['\"]center['\"]>.*?Templates:\s*\d+.*?</p>)", re.DOTALL
+    )
+
+    ## Look for line in README contents
+    updated_content = []
+
+    for line in contents:
+        match = count_line_regex.search(line)
+
+        if match:
+            ## Replace old count with new count
+            updated_content.append(
+                line.replace(match.group(0)),
+                f'<p align="center"\n  Templates: {new_count}\n</p>\n',
+            )
+        else:
+            updated_content.append(line)
+
+    ## Write update content back to README.md
+    with open(readme_file, "w", encoding="utf-8") as f:
+        f.writelines(updated_content)
+
+    log.info(f"Template count updated to {new_count} in {readme_file}")
+
+
+def count(
     templates_root_dir: t.Union[str, Path],
     ignore_dirs: list[str] | None = None,
     template_file_indicators: list[str] | None = None,
     save_json: bool = False,
     save_csv: bool = False,
     save_count: bool = False,
+    update_readme: bool = False,
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
     count_file: str = "./templates_count",
+    readme_file: str = "./README.md",
 ) -> None:
     # Set defaults to avoid mutable default arguments issue
     if ignore_dirs is None:
@@ -218,6 +264,11 @@ def main(
     if save_count:
         save_count_to_file(templates=templates, count_file=count_file)
 
+    if update_readme:
+        update_readme_count(readme_file=readme_file, new_count=len(templates))
+
+    return len(templates) if templates else 0
+
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -226,14 +277,16 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    main(
+    count(
         templates_root_dir=TEMPLATES_ROOT,
         ignore_dirs=IGNORE_DIRS,
         template_file_indicators=TEMPLATE_INDICATORS,
         save_json=SAVE_JSON,
         save_csv=SAVE_CSV,
         save_count=SAVE_COUNT,
+        update_readme=UPDATE_README,
         json_file=f"{OUTPUT_DIR}/templates.json",
         csv_file=f"{OUTPUT_DIR}/templates.csv",
         count_file=f"{OUTPUT_DIR}/templates_count",
+        readme_file=f"{OUTPUT_DIR}/README.md",
     )
