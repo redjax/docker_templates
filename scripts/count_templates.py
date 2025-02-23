@@ -456,18 +456,3 @@ if __name__ == "__main__":
         count_file=args.count_file or f"{OUTPUT_DIR}/templates_count",
         readme_path=args.readme_path or "./README.md",
     )
-    # count(
-    #     templates_root_dir=TEMPLATES_ROOT,
-    #     ignore_dirs=IGNORE_DIRS,
-    #     template_file_indicators=TEMPLATE_INDICATORS,
-    #     save_json=SAVE_JSON,
-    #     save_csv=SAVE_CSV,
-    #     save_parquet=SAVE_PARQUET,
-    #     save_count=SAVE_COUNT,
-    #     update_readme=UPDATE_README,
-    #     json_file=f"{OUTPUT_DIR}/templates.json",
-    #     csv_file=f"{OUTPUT_DIR}/templates.csv",
-    #     parquet_file=f"{OUTPUT_DIR}/templates.parquet",
-    #     count_file=f"{OUTPUT_DIR}/templates_count",
-    #     readme_path="./README.md",
-    # )
