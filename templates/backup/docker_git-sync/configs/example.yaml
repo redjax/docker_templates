@@ -1,0 +1,28 @@
+## Full example:
+#    https://github.com/AkashRajpurohit/git-sync/wiki/Configuration
+
+include_forks: false
+include_wiki: true
+include_repos: ["repo1", "repo2"]
+exclude_repos: ["repo3"]
+include_orgs: []
+exclude_orgs: []
+
+## Auth
+username: <github-username>
+tokens: [token1=, token2=]
+
+## Directory in container
+backup_dir: ~/git-backups
+## Options: bare, shallow, mirror, or full.
+clone_type: bare
+cron: 0 0 * * *
+concurrency: 5
+retry:
+  count: 3
+  delay: 10
+platform: github
+server:
+  domain: github.com
+  ## http or https
+  protocol: https
