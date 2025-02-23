@@ -2,9 +2,20 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  opengist_data: {}
 
 services:
-
-  ...
+  opengist:
+    image: ghcr.io/thomiceli/opengist:1.9
+    container_name: opengist
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      OG_LOG_LEVEL: ${OPENGIST_LOG_LEVEL:-"info"}
+    ports:
+      - ${OPENGIST_HTTP_PORT:-6157}:6157
+      - ${OPENGIST_SSH_PORT:-2222}:2222
+    volumes:
+      - ${OPENGIST_DATA_DIR:-opengist_data}:/opengist
