@@ -33,6 +33,7 @@ TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.exa
 
 SAVE_JSON: bool = True
 SAVE_CSV: bool = True
+SAVE_PARQUET: bool = True
 SAVE_COUNT: bool = True
 UPDATE_README: bool = True
 
@@ -153,6 +154,42 @@ def save_templates_to_csv(
         return False
 
 
+def save_templates_to_parquet(
+    templates: list[dict[str, t.Union[str, Path]]],
+    parquet_file: str,
+    cols: list[str] | None = None,
+    exclude_cols: list[str] | None = None,
+):
+    if not Path(parquet_file).parent.exists():
+        try:
+            Path(parquet_file).parent.mkdir(parents=True, exist_ok=True)
+        except Exception as exc:
+            msg = f"({type(exc)}) Error creating parent directory. Details: {exc}"
+            log.error(msg)
+            raise
+
+    # Convert all Path objects to strings to make them parquet-serializable
+    for template in templates:
+        for key, value in template.items():
+            if isinstance(value, Path):
+                template[key] = str(value)
+
+    templates_df: pd.DataFrame = get_templates_df(templates=templates, cols=cols)
+
+    # Remove excluded columns if any
+    if exclude_cols:
+        templates_df = templates_df.drop(columns=exclude_cols, errors="ignore")
+
+    try:
+        templates_df.to_parquet(parquet_file, index=False)
+        log.info(f"Templates saved to '{parquet_file}'.")
+        return True
+    except Exception as exc:
+        msg = f"({type(exc)}) Error writing templates to file. Details: {exc}"
+        log.error(msg)
+        return False
+
+
 def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_file: str):
     count: int = len(templates)
     try:
@@ -204,10 +241,12 @@ def count(
     template_file_indicators: list[str] | None = None,
     save_json: bool = False,
     save_csv: bool = False,
+    save_parquet: bool = False,
     save_count: bool = False,
     update_readme: bool = False,
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
+    parquet_file: str = "./templates.parquet",
     count_file: str = "./templates_count",
     readme_path: str = "./README.md",
 ) -> None:
@@ -259,6 +298,9 @@ def count(
             exclude_cols=["path_parts"],
         )
 
+    if save_parquet:
+        save_templates_to_parquet(templates=templates, parquet_file=parquet_file)
+
     if save_count:
         save_count_to_file(templates=templates, count_file=count_file)
 
@@ -283,10 +325,12 @@ if __name__ == "__main__":
         template_file_indicators=TEMPLATE_INDICATORS,
         save_json=SAVE_JSON,
         save_csv=SAVE_CSV,
+        save_parquet=SAVE_PARQUET,
         save_count=SAVE_COUNT,
         update_readme=UPDATE_README,
         json_file=f"{OUTPUT_DIR}/templates.json",
         csv_file=f"{OUTPUT_DIR}/templates.csv",
+        parquet_file=f"{OUTPUT_DIR}/templates.parquet",
         count_file=f"{OUTPUT_DIR}/templates_count",
         readme_path="./README.md",
     )
