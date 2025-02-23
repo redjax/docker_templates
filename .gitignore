@@ -26,3 +26,6 @@ __pycache__/
 .direnv/**/.*
 .secrets
 !.direnv/*.*example*
+
+templates.json
+templates.csv
