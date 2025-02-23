@@ -163,26 +163,41 @@ def discover_templates(
     templates: list[dict[str, t.Union[str, Path]]] = []
     seen_templates = set()
 
-    for indicator in template_file_indicators:
-        for file in templates_root_dir.rglob(indicator):
-            if is_ignored(file, ignore_dirs, templates_root_dir):
-                log.debug(f"Ignoring file in ignored directory: {file}")
-                continue
+    for file in templates_root_dir.rglob("*"):  # Scan all files
+        try:
+            if file.is_file() and any(
+                file.match(indicator) for indicator in template_file_indicators
+            ):
+                if is_ignored(file, ignore_dirs, templates_root_dir):
+                    log.debug(f"Ignoring file in ignored directory: {file}")
+                    continue
 
-            template_key = (file.parent, file.name)  # Unique key for seen_templates
+                template_dir = file.parent  # Identify the template's directory
 
-            if template_key not in seen_templates:
+                if template_dir in seen_templates:
+                    log.debug(f"Skipping already counted directory: {template_dir}")
+                    continue  # Skip if the directory was already counted
+
+                # Mark directory as counted
+                seen_templates.add(template_dir)
+
                 template_obj = {
                     "template": file.name,
                     "parent": file.parent.name,
-                    "path": file,
-                    "path_parts": file.parts,
+                    "path": file.parent,  # Store directory instead of file path
+                    "path_parts": file.parent.parts,
                 }
-                log.debug(f"Found template: {template_obj}")
+                log.debug(f"Found template directory: {template_obj}")
                 templates.append(template_obj)
-                seen_templates.add(template_key)
+        except PermissionError as e:
+            log.warning(f"PermissionError: {e}")
+            continue
+        except Exception as exc:
+            msg = f"({type(exc)}) Error counting templates. Details: {exc}"
+            log.error(msg)
+            continue
 
-    log.debug(f"Discovered [{len(templates)}] template(s)")
+    log.debug(f"Discovered [{len(templates)}] unique template directory(ies)")
     return templates
 
 
