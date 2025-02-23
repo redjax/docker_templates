@@ -1,0 +1,53 @@
+---
+networks:
+  semaphore_net: {}
+
+volumes:
+  semaphore_mysql: {}
+
+services:
+  semaphore:
+    image: semaphoreui/semaphore:latest
+    container_name: semaphore
+    restart: unless-stopped
+    ports:
+      - ${SEMAPHORE_WEBUI_PORT:-3000}:3000
+    environment:
+      SEMAPHORE_DB_USER: ${SEMAPHORE_DB_USER:-semaphore}
+      SEMAPHORE_DB_PASS: ${SEMAPHORE_DB_PASSWORD:-semaphore}
+      SEMAPHORE_DB_HOST: mysql
+      SEMAPHORE_DB_PORT: ${SEMAPHORE_DB_PORT:-3306}
+      SEMAPHORE_DB_DIALECT: mysql
+      SEMAPHORE_DB: ${SEMAPHORE_DB_DATABASE:-semaphore}
+      SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
+      SEMAPHORE_ADMIN_PASSWORD: ${SEMAPHORE_ADMIN_PASSWORD:-changeme}
+      SEMAPHORE_ADMIN_NAME: admin
+      SEMAPHORE_ADMIN_EMAIL: ${SEMAPHORE_ADMIN_EMAIL:-admin@localhost}
+      SEMAPHORE_ADMIN: admin
+      ## Generate with: head -c32 /dev/urandom | base64
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: ${SEMAPHORE_ACCESS_KEY}
+      ## If you wish to use ldap, set to: 'yes' 
+      SEMAPHORE_LDAP_ACTIVATED: ${SEMAPHORE_ENABLE_LDAP:-'no'}
+      SEMAPHORE_LDAP_HOST: ${SEMAPHORE_LDAP_HOST}
+      SEMAPHORE_LDAP_PORT: ${SEMAPHORE_LDAP_PORT:-'636'}
+      SEMAPHORE_LDAP_NEEDTLS: ${SEMAPHORE_LDAP_REQUIRE_TLS:-'yes'}
+      SEMAPHORE_LDAP_DN_BIND: ${SEMAPHORE_LDAP_DN_BIND_STRING:-'uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net'}
+      SEMAPHORE_LDAP_PASSWORD: ${SEMAPHORE_LDAP_PASSWORD}
+      SEMAPHORE_LDAP_DN_SEARCH: ${SEMAPHORE_LDAP_DN_SEARCH_STRING:-'cn=users,cn=accounts'}
+      SEMAPHORE_LDAP_SEARCH_FILTER: ${SEMAPHORE_LDAP_SEARCH_FILTER_STRING:-"(\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))"}
+      TZ: ${TZ:-Etc/UTC}
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:${SEMAPHORE_MYSQL_CONTAINER_VER:-8.0}
+    container_name: semaphore_mysql_db
+    restart: unless-stopped
+    hostname: mysql
+    volumes:
+      - ${SEMAPHORE_MYSQL_DATA_DIR:-semaphore_mysql}:/var/lib/mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: ${SEMAPHORE_MYSQL_RANDOM_ROOT_PASSWORD:-'yes'}
+      MYSQL_DATABASE: ${SEMAPHORE_MYSQL_DATABASE:-semaphore}
+      MYSQL_USER: ${SEMAPHORE_MYSQL_USER:-semaphore}
+      MYSQL_PASSWORD: ${SEMAPHORE_MYSQL_PASSWORD:-semaphore}
