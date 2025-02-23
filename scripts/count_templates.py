@@ -16,11 +16,12 @@ log = logging.getLogger(__name__)
 import pandas as pd
 
 TEMPLATES_ROOT: str = "./templates"
+OUTPUT_DIR: str = "./scripts/metadata"
 IGNORE_DIRS: list[str] = ["_cookiecutter", "docker_gickup/backup/"]
 TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.example"]
 
-SAVE_JSON: bool = False
-SAVE_CSV: bool = False
+SAVE_JSON: bool = True
+SAVE_CSV: bool = True
 
 
 def is_ignored(file: Path, ignore_dirs: list[str], templates_root_dir: Path) -> bool:
@@ -84,6 +85,15 @@ def get_templates_df(
 def save_templates_to_json(
     templates: list[dict[str, t.Union[str, Path]]], json_file: str
 ):
+    if not Path(json_file).parent.exists():
+        try:
+            Path(json_file).parent.mkdir(parents=True, exist_ok=True)
+        except Exception as exc:
+            msg = f"({type(exc)}) Error creating parent directory. Details: {exc}"
+            log.error(msg)
+
+            raise
+
     try:
         with open(json_file, "w") as f:
             json.dump(templates, f, sort_keys=True, default=str, indent=4)
@@ -103,6 +113,15 @@ def save_templates_to_csv(
     cols: list[str] | None,
     exclude_cols: list[str] | None = None,
 ):
+    if not Path(csv_file).parent.exists():
+        try:
+            Path(csv_file).parent.mkdir(parents=True, exist_ok=True)
+        except Exception as exc:
+            msg = f"({type(exc)}) Error creating parent directory. Details: {exc}"
+            log.error(msg)
+
+            raise
+
     templates_df: pd.DataFrame = get_templates_df(templates=templates, cols=cols)
 
     ## Remove excluded columns if any
@@ -192,4 +211,6 @@ if __name__ == "__main__":
         template_file_indicators=TEMPLATE_INDICATORS,
         save_json=SAVE_JSON,
         save_csv=SAVE_CSV,
+        json_file=f"{OUTPUT_DIR}/templates.json",
+        csv_file=f"{OUTPUT_DIR}/templates.csv",
     )
