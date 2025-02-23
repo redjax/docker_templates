@@ -1,3 +1,12 @@
+Metadata-Version: 2.2
+Name: docker-templates
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=2.2.3
+Requires-Dist: pyarrow>=19.0.1
+
 # Docker Templates <!-- omit in toc -->
 
 <!-- Repo image -->
@@ -27,11 +36,6 @@
   <!-- ![GitHub Latest Release](https://img.shields.io/github/release-date/redjax/docker_templates) -->
   <!-- ![GitHub commits since latest release](https://img.shields.io/github/commits-since/redjax/docker_templates/latest) -->
   <!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/docker_templates/tests.yml) -->
-</p>
-
-<p align="center">
-  Templates: 96
-  <span>(counted with <a href="./scripts/count_templates.py">count_templates.py</a>)</span>
 </p>
 
 ---

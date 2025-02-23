@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+src/docker_templates.egg-info/PKG-INFO
+src/docker_templates.egg-info/SOURCES.txt
+src/docker_templates.egg-info/dependency_links.txt
+src/docker_templates.egg-info/requires.txt
+src/docker_templates.egg-info/top_level.txt

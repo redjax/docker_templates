@@ -1,0 +1,84 @@
+## Crontab schedule to run gickup
+cron: "*/15 * * * *"
+
+log:
+  timeformat: 2006-01-02 15:04:05
+  file-logging:
+    dir: log
+    file: gickup.log
+    maxage: 7
+
+source:
+  ## Use github repository as a source
+  github:
+    ## Set clone URL base, including git username
+    - user: "your-username"
+      ssh: true
+      ## Path in container
+      key: "/root/.ssh/id_rsa"
+      token_file: "/root/.ssh/github_token"
+      ## Names of repositories to include
+      include:
+        - "repo1"
+        - "repo2"
+      ## wiki, starred, and issues require a PAT.
+      wiki: true
+      starred: false
+      issues: true
+      gists: true
+      filter:
+        # lastactivity: 1y
+        excludearchived: false
+        excludeforks: true
+        # languages:
+        #   - python
+        #   - powershell
+        #   - bash
+
+destination:
+  ## Backup to a local directory
+  local:
+    ## Path in container
+    - path: "/backup/"
+
+  ## Backup to a Codeberg repository
+  gitea:
+    - url: https://codeberg.org/
+      user: your-username
+      token_file: /root/.ssh/codeberg_token
+      createorg: true
+      lfs: true
+      mirror:
+        mirrorinterval: 8h
+        enabled: true
+      visibility:
+        repositories: private
+        organizations: private
+      force: true
+
+  ## Backup to an S3 bucket
+  # s3:
+  #   - endpoint: somewhere:9000
+  #     structured: true
+  #     bucket: bucket-name
+  #     accesskey: your-access-key
+  #     secretkey: your-secret-key
+  #     usessl: true
+
+  ## Backup to a Gitlab repository
+  # gitlab:
+  #   - token: some-token
+  #     token_file: token.txt
+  #     url: http(s)://url-to-gitlab
+  #     force: true
+  #     mirror:
+  #       enabled: true
+
+  ## Backup to Github repository
+  # github:
+  #   - token: some-token
+  #     token_file: token.txt
+  #     organization: myorg
+  #     force: true
+  #     visibility:
+  #       repositories: private
