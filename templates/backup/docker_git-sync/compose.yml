@@ -1,0 +1,19 @@
+---
+# networks:
+#   unnamed_net: {}
+
+volumes:
+  git-sync_backups: {}
+
+services:
+  git-sync:
+    image: ghcr.io/akashrajpurohit/git-sync:latest
+    container_name: git-sync
+    restart: unless-stopped
+    volumes:
+      - ${GIT_SYNC_CONFIG_FILE:-./configs/default.yaml}:/git-sync/config.yaml
+      - ${GIT_SYNC_BACKUPS_DIR:-git-sync_backups}:/backups
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+    
