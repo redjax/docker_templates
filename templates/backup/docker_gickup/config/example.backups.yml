@@ -23,11 +23,12 @@ source:
         - "repo2"
       ## wiki, starred, and issues require a PAT.
       wiki: true
-      starred: true
+      starred: false
       issues: true
+      gists: true
       filter:
         # lastactivity: 1y
-        excludearchived: true
+        excludearchived: false
         excludeforks: true
         # languages:
         #   - python
