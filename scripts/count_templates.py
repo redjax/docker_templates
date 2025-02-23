@@ -168,36 +168,34 @@ def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_fil
         return False
 
 
-def update_readme_count(readme_file: str, new_count: int):
-    ## Get contents of README file
-    with open(readme_file, "r", encoding="utf-8") as f:
-        contents = f.read()
+def update_readme_count(readme_path: str, new_count: int) -> None:
+    """Update the template count in the README.md file."""
 
-    ## Find templates count
-    count_line_regex = re.compile(
-        r"(<p\s+align=['\"]center['\"]>.*?Templates:\s*\d+.*?</p>)", re.DOTALL
+    ## Read the content of the README.md
+    with open(readme_path, "r", encoding="utf-8") as file:
+        readme_content = file.read()
+
+    log.debug(f"Original README content:\n{readme_content}")
+
+    # Regex to find the "Templates: #" line where the number is at the end
+    count_line_regex = r"Templates:\s*\d+"
+    log.debug("Regex match:", re.findall(count_line_regex, readme_content))
+
+    # Replace the old count with the new count
+    updated_content = re.sub(
+        count_line_regex, r"Templates: " + str(new_count), readme_content
     )
 
-    ## Look for line in README contents
-    updated_content = []
+    # Print the updated content for debugging
+    log.debug(f"Updated README content:\n{updated_content}")
 
-    for line in contents:
-        match = count_line_regex.search(line)
-
-        if match:
-            ## Replace old count with new count
-            updated_content.append(
-                line.replace(match.group(0)),
-                f'<p align="center"\n  Templates: {new_count}\n</p>\n',
-            )
-        else:
-            updated_content.append(line)
-
-    ## Write update content back to README.md
-    with open(readme_file, "w", encoding="utf-8") as f:
-        f.writelines(updated_content)
-
-    log.info(f"Template count updated to {new_count} in {readme_file}")
+    # If the content was updated, write the changes back to the file
+    if updated_content != readme_content:
+        with open(readme_path, "w", encoding="utf-8") as file:
+            file.write(updated_content)
+        log.info(f"Template count updated to {new_count} in README.md.")
+    else:
+        log.info("No update required for the README.md.")
 
 
 def count(
@@ -211,7 +209,7 @@ def count(
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
     count_file: str = "./templates_count",
-    readme_file: str = "./README.md",
+    readme_path: str = "./README.md",
 ) -> None:
     # Set defaults to avoid mutable default arguments issue
     if ignore_dirs is None:
@@ -265,7 +263,9 @@ def count(
         save_count_to_file(templates=templates, count_file=count_file)
 
     if update_readme:
-        update_readme_count(readme_file=readme_file, new_count=len(templates))
+        update_readme_count(
+            readme_path=readme_path, new_count=len(templates)
+        )  # new_count=len(templates))
 
     return len(templates) if templates else 0
 
@@ -288,5 +288,5 @@ if __name__ == "__main__":
         json_file=f"{OUTPUT_DIR}/templates.json",
         csv_file=f"{OUTPUT_DIR}/templates.csv",
         count_file=f"{OUTPUT_DIR}/templates_count",
-        readme_file=f"{OUTPUT_DIR}/README.md",
+        readme_path="./README.md",
     )
