@@ -32,6 +32,7 @@
 <p align="center">
   Templates: 156
 </p>
+
 ---
 
 Templates for Docker/Compose containers. Some are completely custom, but most are an example `compose.yml`/`docker-compose.yml` file and example `.env` file.
@@ -40,7 +41,6 @@ Check the [template categories section](#template-categories) for a list of temp
 
 ## Table of Contents  <!-- omit in toc -->
 
-- [](#)
 - [Instructions](#instructions)
   - [Method 1: Clone the whole repository](#method-1-clone-the-whole-repository)
     - [Use a symlink](#use-a-symlink)
