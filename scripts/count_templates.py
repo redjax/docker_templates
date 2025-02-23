@@ -22,6 +22,7 @@ TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.exa
 
 SAVE_JSON: bool = True
 SAVE_CSV: bool = True
+SAVE_COUNT: bool = True
 
 
 def is_ignored(file: Path, ignore_dirs: list[str], templates_root_dir: Path) -> bool:
@@ -140,14 +141,31 @@ def save_templates_to_csv(
         return False
 
 
+def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_file: str):
+    count: int = len(templates)
+    try:
+        with open(count_file, "w") as f:
+            f.write(str(count))
+            log.info(f"Templates count saved to '{count_file}'.")
+
+        return True
+    except Exception as exc:
+        msg = f"({type(exc)}) Error writing templates count to file. Details: {exc}"
+        log.error(msg)
+
+        return False
+
+
 def main(
     templates_root_dir: t.Union[str, Path],
     ignore_dirs: list[str] | None = None,
     template_file_indicators: list[str] | None = None,
     save_json: bool = False,
     save_csv: bool = False,
+    save_count: bool = False,
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
+    count_file: str = "./templates_count",
 ) -> None:
     # Set defaults to avoid mutable default arguments issue
     if ignore_dirs is None:
@@ -197,6 +215,9 @@ def main(
             exclude_cols=["path_parts"],
         )
 
+    if save_count:
+        save_count_to_file(templates=templates, count_file=count_file)
+
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -211,6 +232,8 @@ if __name__ == "__main__":
         template_file_indicators=TEMPLATE_INDICATORS,
         save_json=SAVE_JSON,
         save_csv=SAVE_CSV,
+        save_count=SAVE_COUNT,
         json_file=f"{OUTPUT_DIR}/templates.json",
         csv_file=f"{OUTPUT_DIR}/templates.csv",
+        count_file=f"{OUTPUT_DIR}/templates_count",
     )
