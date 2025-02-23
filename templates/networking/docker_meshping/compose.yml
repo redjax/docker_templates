@@ -1,10 +1,25 @@
 ---
-# networks:
-#   unnamed_net: {}
-
-# volumes:
-#   volume_name: {}
-
+volumes:
+  meshping_data: {}
+  
 services:
+  meshping:
+    image: svedrin/meshping:latest
+    container_name: meshping
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ${MESHPING_DATA_DIR:-meshping_data}:/opt/meshping/db
+    labels:
+      "com.centurylinklabs.watchtower.enable": "true"
+    # If you want to add other Meshping instances to peer with, uncomment this:
+    #environment:
+    #  MESHPING_PEERS: 10.10.10.1:9922,10.10.20.1:9922
 
-  ...
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: meshping_watchtower
+    command: "--label-enable --cleanup --debug --interval 60"
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
