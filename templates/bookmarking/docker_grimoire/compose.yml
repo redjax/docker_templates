@@ -2,9 +2,27 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  grimoire_data: {}
 
 services:
-
-  ...
+  grimoire:
+    image: goniszewski/grimoire:latest
+    container_name: grimoire
+    restart: unless-stopped
+    environment:
+      - PORT=5173
+      - PUBLIC_HTTPS_ONLY=false
+      - PUBLIC_SIGNUP_DISABLED=${GRIMOIRE_DISABLE_SIGNUPS:-false}
+    volumes:
+      - ${GRIMOIRE_DATA_DIR:-grimoire_data}:/app/data/
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:$PORT/api/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - ${GRIMOIRE_HTTP_PORT:-5173}:5173
