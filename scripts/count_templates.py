@@ -314,7 +314,7 @@ def update_readme_count(readme_file: str, new_count: int) -> None:
 
     # Regex to find the "Templates: #" line where the number is at the end
     count_line_regex = r"Templates:\s*\d+"
-    log.debug("Regex match:", re.findall(count_line_regex, readme_content))
+    log.debug(f"Regex match: {re.findall(count_line_regex, readme_content)}")
 
     # Replace the old count with the new count
     updated_content = re.sub(
