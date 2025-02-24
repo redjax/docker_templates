@@ -1,21 +1,12 @@
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#     "pandas",
-#     "pyarrow",
-# ]
-# ///
-
 import argparse
 import logging
 from pathlib import Path
 import typing as t
 import json
+import csv
 import re
 
 log = logging.getLogger(__name__)
-
-import pandas as pd
 
 __all__ = [
     "TEMPLATES_ROOT",
@@ -34,7 +25,6 @@ TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.exa
 
 SAVE_JSON: bool = False
 SAVE_CSV: bool = False
-SAVE_PARQUET: bool = False
 SAVE_COUNT: bool = False
 UPDATE_README: bool = False
 
@@ -91,18 +81,6 @@ def parse_arguments():
         type=str,
         default="./metadata/templates.csv",
         help="CSV file to save templates to",
-    )
-    parser.add_argument(
-        "--save-parquet",
-        action="store_true",
-        default=SAVE_PARQUET,
-        help="Save the templates to a Parquet file",
-    )
-    parser.add_argument(
-        "--parquet-file",
-        type=str,
-        default="./metadata/templates.parquet",
-        help="Parquet file to save templates to",
     )
     parser.add_argument(
         "--save-count",
@@ -190,7 +168,7 @@ def discover_templates(
                 log.debug(f"Found template directory: {template_obj}")
                 templates.append(template_obj)
         except PermissionError as e:
-            log.warning(f"PermissionError: {e}")
+            log.error(e)
             continue
         except Exception as exc:
             msg = f"({type(exc)}) Error counting templates. Details: {exc}"
@@ -201,110 +179,27 @@ def discover_templates(
     return templates
 
 
-def get_templates_df(
-    templates: list[dict[str, t.Union[str, Path]]], cols: list[str] | None = None
-) -> pd.DataFrame:
-    try:
-        return pd.DataFrame(templates, columns=cols)
-    except Exception as exc:
-        msg = f"({type(exc)}) Error creating templates DataFrame. Details: {exc}"
-        log.error(msg)
-
-        return pd.DataFrame()
-
-
 def save_templates_to_json(
     templates: list[dict[str, t.Union[str, Path]]], json_file: str
 ):
-    if not Path(json_file).parent.exists():
-        try:
-            Path(json_file).parent.mkdir(parents=True, exist_ok=True)
-        except Exception as exc:
-            msg = f"({type(exc)}) Error creating parent directory. Details: {exc}"
-            log.error(msg)
-
-            raise
-
-    try:
-        with open(json_file, "w") as f:
-            json.dump(templates, f, sort_keys=True, default=str, indent=4)
-            log.info(f"Templates saved to '{json_file}'")
-
-        return True
-    except Exception as exc:
-        msg = f"({type(exc)}) Error writing templates to file. Details: {exc}"
-        log.error(msg)
-
-        return False
+    Path(json_file).parent.mkdir(parents=True, exist_ok=True)
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(templates, f, indent=4, default=str, sort_keys=True)
+    log.info(f"Saved JSON: {json_file}")
 
 
 def save_templates_to_csv(
-    templates: list[dict[str, t.Union[str, Path]]],
-    csv_file: str,
-    cols: list[str] | None,
-    exclude_cols: list[str] | None = None,
+    templates: list[dict[str, t.Union[str, Path]]], csv_file: str
 ):
-    if not Path(csv_file).parent.exists():
-        try:
-            Path(csv_file).parent.mkdir(parents=True, exist_ok=True)
-        except Exception as exc:
-            msg = f"({type(exc)}) Error creating parent directory. Details: {exc}"
-            log.error(msg)
-
-            raise
-
-    templates_df: pd.DataFrame = get_templates_df(templates=templates, cols=cols)
-
-    ## Remove excluded columns if any
-    if exclude_cols:
-        templates_df = templates_df.drop(columns=exclude_cols, errors="ignore")
-
-    try:
-        templates_df.to_csv(csv_file, index=False)
-        log.info(f"Templates saved to '{csv_file}'.")
-
-        return True
-    except Exception as exc:
-        msg = f"({type(exc)}) Error writing templates to file. Details: {exc}"
-        log.error(msg)
-
-        return False
-
-
-def save_templates_to_parquet(
-    templates: list[dict[str, t.Union[str, Path]]],
-    parquet_file: str,
-    cols: list[str] | None = None,
-    exclude_cols: list[str] | None = None,
-):
-    if not Path(parquet_file).parent.exists():
-        try:
-            Path(parquet_file).parent.mkdir(parents=True, exist_ok=True)
-        except Exception as exc:
-            msg = f"({type(exc)}) Error creating parent directory. Details: {exc}"
-            log.error(msg)
-            raise
-
-    # Convert all Path objects to strings to make them parquet-serializable
-    for template in templates:
-        for key, value in template.items():
-            if isinstance(value, Path):
-                template[key] = str(value)
-
-    templates_df: pd.DataFrame = get_templates_df(templates=templates, cols=cols)
-
-    # Remove excluded columns if any
-    if exclude_cols:
-        templates_df = templates_df.drop(columns=exclude_cols, errors="ignore")
-
-    try:
-        templates_df.to_parquet(parquet_file, index=False)
-        log.info(f"Templates saved to '{parquet_file}'.")
-        return True
-    except Exception as exc:
-        msg = f"({type(exc)}) Error writing templates to file. Details: {exc}"
-        log.error(msg)
-        return False
+    if not templates:
+        log.warning("No data to save as CSV")
+        return
+    Path(csv_file).parent.mkdir(parents=True, exist_ok=True)
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=templates[0].keys())
+        writer.writeheader()
+        writer.writerows(templates)
+    log.info(f"Saved CSV: {csv_file}")
 
 
 def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_file: str):
@@ -358,13 +253,11 @@ def count(
     template_file_indicators: list[str] | None = None,
     save_json: bool = False,
     save_csv: bool = False,
-    save_parquet: bool = False,
     save_count: bool = False,
     update_readme: bool = False,
     update_all_files: bool = False,
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
-    parquet_file: str = "./templates.parquet",
     count_file: str = "./templates_count",
     readme_path: str = "./README.md",
 ) -> None:
@@ -402,21 +295,11 @@ def count(
         log.warning(f"No templates found at path '{templates_root_dir}'.")
         return
 
-    templates_df: pd.DataFrame = get_templates_df(templates)
-    log.info(f"Templates ({templates_df.shape[0]}):\n{templates_df}")
-
     if update_all_files:
         log.info("Updating all metadata files")
         save_templates_to_json(templates=templates, json_file=json_file)
 
-        save_templates_to_csv(
-            templates=templates,
-            csv_file=csv_file,
-            cols=["template", "parent", "path"],
-            exclude_cols=["path_parts"],
-        )
-
-        save_templates_to_parquet(templates=templates, parquet_file=parquet_file)
+        save_templates_to_csv(templates=templates, csv_file=csv_file)
 
         save_count_to_file(templates=templates, count_file=count_file)
         update_readme_count(readme_path=readme_path, new_count=len(templates))
@@ -425,23 +308,13 @@ def count(
         save_templates_to_json(templates=templates, json_file=json_file)
 
     if save_csv:
-        save_templates_to_csv(
-            templates=templates,
-            csv_file=csv_file,
-            cols=["template", "parent", "path"],
-            exclude_cols=["path_parts"],
-        )
-
-    if save_parquet:
-        save_templates_to_parquet(templates=templates, parquet_file=parquet_file)
+        save_templates_to_csv(templates=templates, csv_file=csv_file)
 
     if save_count:
         save_count_to_file(templates=templates, count_file=count_file)
 
     if update_readme:
-        update_readme_count(
-            readme_path=readme_path, new_count=len(templates)
-        )  # new_count=len(templates))
+        update_readme_count(readme_path=readme_path, new_count=len(templates))
 
     return len(templates) if templates else 0
 
@@ -461,13 +334,11 @@ if __name__ == "__main__":
         template_file_indicators=args.template_indicators or TEMPLATE_INDICATORS,
         save_json=args.save_json or SAVE_JSON,
         save_csv=args.save_csv or SAVE_CSV,
-        save_parquet=args.save_parquet or SAVE_PARQUET,
         save_count=args.save_count or SAVE_COUNT,
         update_readme=args.update_readme or UPDATE_README,
         update_all_files=args.update_all or False,
         json_file=args.json_file or f"{OUTPUT_DIR}/templates.json",
         csv_file=args.csv_file or f"{OUTPUT_DIR}/templates.csv",
-        parquet_file=args.parquet_file or f"{OUTPUT_DIR}/templates.parquet",
         count_file=args.count_file or f"{OUTPUT_DIR}/templates_count",
         readme_path=args.readme_path or "./README.md",
     )
