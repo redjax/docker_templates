@@ -293,6 +293,16 @@
         "template": "compose.yml"
     },
     {
+        "parent": "test-github-action",
+        "path": "templates/misc/test-github-action",
+        "path_parts": [
+            "templates",
+            "misc",
+            "test-github-action"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_node-server",
         "path": "templates/misc/project_templates/docker_node-server",
         "path_parts": [

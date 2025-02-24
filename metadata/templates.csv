@@ -28,6 +28,7 @@ compose.yml,docker_bytestash,templates/storage/docker_bytestash,"('templates', '
 .env.example,docker_download-suite,templates/media/docker_download-suite,"('templates', 'media', 'docker_download-suite')"
 .env.example,docker_emby,templates/media/docker_emby,"('templates', 'media', 'docker_emby')"
 compose.yml,docker_prowlarr,templates/media/docker_prowlarr,"('templates', 'media', 'docker_prowlarr')"
+compose.yml,test-github-action,templates/misc/test-github-action,"('templates', 'misc', 'test-github-action')"
 .env.example,docker_node-server,templates/misc/project_templates/docker_node-server,"('templates', 'misc', 'project_templates', 'docker_node-server')"
 .env.example,nginx-proxy,templates/misc/project_templates/docker_wordpress-nginx/nginx-proxy,"('templates', 'misc', 'project_templates', 'docker_wordpress-nginx', 'nginx-proxy')"
 .env.example,example_wordpress,templates/misc/project_templates/docker_wordpress-nginx/example_wordpress,"('templates', 'misc', 'project_templates', 'docker_wordpress-nginx', 'example_wordpress')"
