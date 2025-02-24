@@ -8,6 +8,7 @@ docker-compose.yml,prom-node,templates/monitoring_alerting/docker_monitoring/pro
 .env.example,docker_beszel,templates/monitoring_alerting/docker_beszel,"('templates', 'monitoring_alerting', 'docker_beszel')"
 .env.example,docker_watchtower,templates/monitoring_alerting/docker_watchtower,"('templates', 'monitoring_alerting', 'docker_watchtower')"
 .env.example,docker_selenium_hub,templates/web_scraping/docker_selenium_hub,"('templates', 'web_scraping', 'docker_selenium_hub')"
+compose.yml,docker_netalertx,templates/security/docker_netalertx,"('templates', 'security', 'docker_netalertx')"
 compose.yml,docker_remnux,templates/security/docker_remnux,"('templates', 'security', 'docker_remnux')"
 .env.example,docker_rabbitmq,templates/messaging/docker_rabbitmq,"('templates', 'messaging', 'docker_rabbitmq')"
 .env.example,docker_mosquitto,templates/messaging/docker_mosquitto,"('templates', 'messaging', 'docker_mosquitto')"

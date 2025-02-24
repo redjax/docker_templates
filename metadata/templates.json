@@ -93,6 +93,16 @@
         "template": ".env.example"
     },
     {
+        "parent": "docker_netalertx",
+        "path": "templates/security/docker_netalertx",
+        "path_parts": [
+            "templates",
+            "security",
+            "docker_netalertx"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_remnux",
         "path": "templates/security/docker_remnux",
         "path_parts": [
