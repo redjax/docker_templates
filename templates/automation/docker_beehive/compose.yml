@@ -2,9 +2,16 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  beehive_conf: {}
 
 services:
-
-  ...
+  beehive:
+    image: fribbledom/beehive
+    ports:
+      - ${BEEHIVE_WEBUI_PORT:-8181}:8181
+    volumes:
+      - ${BEEHIVE_CONF_DIR:-beehive_conf}:/conf
+    environment:
+      # be sure not to pass quotes, just the bare url
+      - CANONICAL_URL=${BEEHIVE_URL:-http://localhost:8181}
