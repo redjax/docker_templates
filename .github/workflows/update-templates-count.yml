@@ -1,0 +1,42 @@
+name: Count templates & update metadata, README
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  count-templates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Run count_templates.py
+        run: python scripts/count_templates.py
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md || echo "changes=true" >> $GITHUB_ENV
+
+      - name: Commit and push changes
+        if: env.changes == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md
+          git commit -m "Update template metadata from GitHub Actions" || echo "No changes to commit"
+          git push
