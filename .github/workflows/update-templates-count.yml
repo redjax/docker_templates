@@ -37,7 +37,17 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout "${{ github.head_ref }}"  # Switch to the PR branch
-          git add ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md
+
+          # Commit changes while still in detached HEAD state
+          git add metadata/templates_count metadata/templates.json metadata/templates.csv README.md
           git commit -m "Update template metadata from GitHub Actions" || echo "No changes to commit"
+
+          # Switch to the pull request branch
+          git fetch origin ${{ github.head_ref }}  # Ensure we have the latest branch data
+          git checkout ${{ github.head_ref }}
+
+          # Merge the detached HEAD commit into the PR branch
+          git merge --no-ff --allow-unrelated-histories -m "Merge automated changes" HEAD
+
+          # Push changes back to the PR branch
           git push origin "${{ github.head_ref }}"
