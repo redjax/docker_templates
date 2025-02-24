@@ -16,7 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ## Checkout the incoming PR branch
+          ref: ${{ github.event.pull_request.head.ref }}
           persist-credentials: true
+          ## Fetch all history for diffing
           fetch-depth: 0
 
       - name: Set up Python
@@ -25,29 +28,20 @@ jobs:
           python-version: "3.11"
 
       - name: Run count_templates.py
-        run: python scripts/count_templates.py --update-all --log-level debug
+        run: |
+          python scripts/count_templates.py --update-all --log-level debug
 
       - name: Check for changes
-        id: check_changes
         run: |
-          git diff --quiet ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md || echo "changes=true" >> $GITHUB_ENV
+          if [[ -n "$(git status --porcelain ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md)" ]]; then
+            echo "changes=true" >> $GITHUB_ENV
+          fi
 
       - name: Commit and push changes
         if: env.changes == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Commit changes while still in detached HEAD state
-          git add metadata/templates_count metadata/templates.json metadata/templates.csv README.md
-          git commit -m "Update template metadata from GitHub Actions" || echo "No changes to commit"
-
-          # Switch to the pull request branch
-          git fetch origin ${{ github.head_ref }}  # Ensure we have the latest branch data
-          git checkout ${{ github.head_ref }}
-
-          # Merge the detached HEAD commit into the PR branch
-          git merge --no-ff --allow-unrelated-histories -m "Merge automated changes" HEAD
-
-          # Push changes back to the PR branch
-          git push origin "${{ github.head_ref }}"
+          git add ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md
+          git commit -m "Update template metadata from GitHub Actions"
+          git push
