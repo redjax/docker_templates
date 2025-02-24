@@ -1,3 +1,40 @@
+"""Script to discover templates in the repo & publish the count to the README.md file for the repository.
+
+Description:
+    Discovers templates in the 'templates/' directory by detecting the presence of a `compose.yml`, `docker-compose.yml`, or `.env.example` file.
+    Templates that have 1 or more matching file indicators are only counted once.
+    
+    Discovered repos are saved in a CSV and JSON file in the `./metadata/` directory, and a line in the README.md file is updated with the count.
+    
+Usage:
+    python scripts/count_templates.py --help # Show CLI help.
+    
+    python scripts/count_templates.py --templates-root-dir "./templates" # Set the directory where templates are stored.
+    
+    python scripts/count_templates.py --update-all # Update all files (CSV, JSON, and README).
+    
+    python scripts/count_templates.py --save-csv # Update the CSV file only.
+    
+    python scripts/count_templates.py --save-json # Update the JSON file only.
+    
+    python scripts/count_templates.py --update-readme # Update the README file only.
+    
+Parameters:
+    --templates-root-dir: Directory where templates are stored.
+    --output-dir: Directory to save output files.
+    --ignore-dirs: List of directories to ignore.
+    --template-indicators: List of file indicators to use for template detection.
+    --save-json: Save the templates to a JSON file.
+    --json-file: JSON file to save templates to.
+    --save-csv: Save the templates to a CSV file.
+    --csv-file: CSV file to save templates to.
+    --save-count: Save the templates count to a file.
+    --count-file: File to save templates count to.
+    --update-readme: Update the README file with the templates count.
+    --update-all: Update all files (CSV, JSON, and README).
+    --readme-file: README file to update.
+"""
+
 import argparse
 import logging
 from pathlib import Path
@@ -8,6 +45,7 @@ import re
 
 log = logging.getLogger(__name__)
 
+## If this script is imported elsewhere, only export the following functions/vars
 __all__ = [
     "TEMPLATES_ROOT",
     "OUTPUT_DIR",
@@ -18,111 +56,148 @@ __all__ = [
     "count",
 ]
 
+## Path where docker templates are stored in the repo
 TEMPLATES_ROOT: str = "./templates"
+## Path to metadata directory where the CSV and JSON files will be saved
 OUTPUT_DIR: str = "./metadata"
-IGNORE_DIRS: list[str] = ["_cookiecutter", "docker_gickup/backup/"]
+## Directory/file patterns to ignore during discovery
+IGNORE_PATTERNS: list[str] = ["_cookiecutter", "docker_gickup/backup/"]
+## File indicators to use for template detection
 TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.example"]
 
+## When True, save to JSON
 SAVE_JSON: bool = False
+## When True, save to CSV
 SAVE_CSV: bool = False
+## When True, save to simple file with no extension
 SAVE_COUNT: bool = False
+## When True, update the repo's README.md
 UPDATE_README: bool = False
 
 
 def parse_arguments():
+    """Parse CLI args passed to the script.
+
+    Returns:
+        argparse.Namespace: Parsed CLI args.
+    """
+    ## Create parser
     parser = argparse.ArgumentParser(description="Count repo templates")
 
+    ## Path to docker templates
     parser.add_argument(
         "--templates-root-dir",
         type=str,
         default=TEMPLATES_ROOT,
         help="Root directory for templates",
     )
+    ## Path where JSON/CSV/filecount files will be saved
     parser.add_argument(
         "--output-dir",
         type=str,
         default=OUTPUT_DIR,
         help="Directory to save output files",
     )
+    ## Ignore
     parser.add_argument(
-        "--ignore-dirs",
+        "--ignore-pattern",
         type=str,
         nargs="*",
-        default=IGNORE_DIRS,
+        default=IGNORE_PATTERNS,
         help="List of directories to ignore",
     )
+    ## File/directory pattern indicating a path is a Docker template
     parser.add_argument(
-        "--template-indicators",
+        "--template-indicator",
         type=str,
         nargs="*",
         default=TEMPLATE_INDICATORS,
         help="List of template indicators",
     )
+    ## When present, save to JSON
     parser.add_argument(
         "--save-json",
         action="store_true",
         default=SAVE_JSON,
         help="Save the templates to a JSON file",
     )
+    ## JSON file to save templates to
     parser.add_argument(
         "--json-file",
         type=str,
         default="./metadata/templates.json",
         help="JSON file to save templates to",
     )
+    ## When present, save to CSV
     parser.add_argument(
         "--save-csv",
         action="store_true",
         default=SAVE_CSV,
         help="Save the templates to a CSV file",
     )
+    ## CSV file to save templates to
     parser.add_argument(
         "--csv-file",
         type=str,
         default="./metadata/templates.csv",
         help="CSV file to save templates to",
     )
+    ## When present, save the count of templates to a file
     parser.add_argument(
         "--save-count",
         action="store_true",
         default=SAVE_COUNT,
         help="Save the count of templates",
     )
+    ## Plaintext file to save count to
     parser.add_argument(
         "--count-file",
         type=str,
         default="./metadata/templates_count",
         help="File to save the count of templates to",
     )
+    ## When present, updates the README.md file
     parser.add_argument(
         "--update-readme",
         action="store_true",
         default=UPDATE_README,
         help="Update the README file with the count of templates",
     )
+    ## README.md file to update
     parser.add_argument(
-        "--readme-path",
+        "--readme-file",
         type=str,
         default="./README.md",
         help="Path to the README file",
     )
+    ## When present, updates all count files & the README.md file
     parser.add_argument(
         "--update-all",
         action="store_true",
         default=False,
         help="Update all files",
     )
+    ## Set logging level
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        default="INFO",
+        help="The logging level to use. Default is 'INFO'. Options are: ['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+    )
 
+    ## Parse CLI args
     args = parser.parse_args()
 
     return args
 
 
-def is_ignored(file: Path, ignore_dirs: list[str], templates_root_dir: Path) -> bool:
+def is_ignored(
+    file: Path, ignore_patterns: list[str], templates_root_dir: Path
+) -> bool:
     """Check if a file is inside an ignored directory."""
     relative_path = file.relative_to(templates_root_dir)  # Get relative path
 
-    for ignored in ignore_dirs:
+    for ignored in ignore_patterns:
         ignored_parts = Path(ignored).parts  # Split the ignored path into parts
         # Check if any part of the relative path contains the ignored directory parts
         if any(part.startswith(ignored_parts[0]) for part in relative_path.parts):
@@ -133,7 +208,7 @@ def is_ignored(file: Path, ignore_dirs: list[str], templates_root_dir: Path) -> 
 
 def discover_templates(
     templates_root_dir: Path,
-    ignore_dirs: list[str],
+    ignore_patterns: list[str],
     template_file_indicators: list[str],
 ) -> None:
     log.info(f"Counting templates in '{templates_root_dir}'")
@@ -146,7 +221,7 @@ def discover_templates(
             if file.is_file() and any(
                 file.match(indicator) for indicator in template_file_indicators
             ):
-                if is_ignored(file, ignore_dirs, templates_root_dir):
+                if is_ignored(file, ignore_patterns, templates_root_dir):
                     log.debug(f"Ignoring file in ignored directory: {file}")
                     continue
 
@@ -217,11 +292,11 @@ def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_fil
         return False
 
 
-def update_readme_count(readme_path: str, new_count: int) -> None:
+def update_readme_count(readme_file: str, new_count: int) -> None:
     """Update the template count in the README.md file."""
 
     ## Read the content of the README.md
-    with open(readme_path, "r", encoding="utf-8") as file:
+    with open(readme_file, "r", encoding="utf-8") as file:
         readme_content = file.read()
 
     log.debug(f"Original README content:\n{readme_content}")
@@ -240,7 +315,7 @@ def update_readme_count(readme_path: str, new_count: int) -> None:
 
     # If the content was updated, write the changes back to the file
     if updated_content != readme_content:
-        with open(readme_path, "w", encoding="utf-8") as file:
+        with open(readme_file, "w", encoding="utf-8") as file:
             file.write(updated_content)
         log.info(f"Template count updated to {new_count} in README.md.")
     else:
@@ -249,7 +324,7 @@ def update_readme_count(readme_path: str, new_count: int) -> None:
 
 def count(
     templates_root_dir: t.Union[str, Path],
-    ignore_dirs: list[str] | None = None,
+    ignore_patterns: list[str] | None = None,
     template_file_indicators: list[str] | None = None,
     save_json: bool = False,
     save_csv: bool = False,
@@ -259,11 +334,11 @@ def count(
     json_file: str = "./templates.json",
     csv_file: str = "./templates.csv",
     count_file: str = "./templates_count",
-    readme_path: str = "./README.md",
+    readme_file: str = "./README.md",
 ) -> None:
     # Set defaults to avoid mutable default arguments issue
-    if ignore_dirs is None:
-        ignore_dirs = []
+    if ignore_patterns is None:
+        ignore_patterns = []
     if template_file_indicators is None:
         template_file_indicators = []
 
@@ -280,7 +355,7 @@ def count(
     try:
         templates = discover_templates(
             templates_root_dir=templates_root_dir,
-            ignore_dirs=ignore_dirs,
+            ignore_patterns=ignore_patterns,
             template_file_indicators=template_file_indicators,
         )
     except Exception as exc:
@@ -302,7 +377,7 @@ def count(
         save_templates_to_csv(templates=templates, csv_file=csv_file)
 
         save_count_to_file(templates=templates, count_file=count_file)
-        update_readme_count(readme_path=readme_path, new_count=len(templates))
+        update_readme_count(readme_file=readme_file, new_count=len(templates))
 
     if save_json:
         save_templates_to_json(templates=templates, json_file=json_file)
@@ -314,24 +389,26 @@ def count(
         save_count_to_file(templates=templates, count_file=count_file)
 
     if update_readme:
-        update_readme_count(readme_path=readme_path, new_count=len(templates))
+        update_readme_count(readme_file=readme_file, new_count=len(templates))
 
     return len(templates) if templates else 0
 
 
 if __name__ == "__main__":
+    ## Parse user's CLI params
+    args = parse_arguments()
+
+    ## Setup logging
     logging.basicConfig(
-        level="INFO",
+        level=args.log_level.upper() or "INFO",
         format="%(asctime)s | %(levelname)s |> %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    args = parse_arguments()
-
     count(
         templates_root_dir=args.templates_root_dir or TEMPLATES_ROOT,
-        ignore_dirs=args.ignore_dirs or IGNORE_DIRS,
-        template_file_indicators=args.template_indicators or TEMPLATE_INDICATORS,
+        ignore_patterns=args.ignore_pattern or IGNORE_PATTERNS,
+        template_file_indicators=args.template_indicator or TEMPLATE_INDICATORS,
         save_json=args.save_json or SAVE_JSON,
         save_csv=args.save_csv or SAVE_CSV,
         save_count=args.save_count or SAVE_COUNT,
@@ -340,5 +417,5 @@ if __name__ == "__main__":
         json_file=args.json_file or f"{OUTPUT_DIR}/templates.json",
         csv_file=args.csv_file or f"{OUTPUT_DIR}/templates.csv",
         count_file=args.count_file or f"{OUTPUT_DIR}/templates_count",
-        readme_path=args.readme_path or "./README.md",
+        readme_file=args.readme_file or "./README.md",
     )
