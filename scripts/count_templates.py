@@ -19,7 +19,7 @@ Usage:
     
     python scripts/count_templates.py --update-readme # Update the README file only.
     
-Parameters:
+Params:
     --templates-root-dir: Directory where templates are stored.
     --output-dir: Directory to save output files.
     --ignore-dirs: List of directories to ignore.
@@ -335,13 +335,37 @@ def count(
     csv_file: str = "./templates.csv",
     count_file: str = "./templates_count",
     readme_file: str = "./README.md",
-) -> None:
-    # Set defaults to avoid mutable default arguments issue
+) -> int | None:
+    """Script entrypoint, start count of Docker templates & optionally update files.
+
+    Params:
+        templates_root_dir: Directory where templates are stored.
+        ignore_patterns: List of directories to ignore.
+        template_file_indicators: List of file indicators to use for template detection.
+        save_json: Save the templates to a JSON file.
+        save_csv: Save the templates to a CSV file.
+        save_count: Save the templates count to a file.
+        update_readme: Update the README file with the templates count.
+        update_all_files: Update all files (CSV, JSON, and README).
+        json_file: JSON file to save templates to.
+        csv_file: CSV file to save templates to.
+        count_file: File to save templates count to.
+        readme_file: README file to update.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: Missing templates root dir.
+        FileNotFoundError: Could not find templates root directory.
+    """
+    ## Set defaults to avoid mutable default arguments issue
     if ignore_patterns is None:
         ignore_patterns = []
     if template_file_indicators is None:
         template_file_indicators = []
 
+    ## Check for presence of templates directory
     if not templates_root_dir:
         raise ValueError("Missing templates root dir.")
     if not isinstance(templates_root_dir, Path):
@@ -352,6 +376,7 @@ def count(
             f"Could not find templates root directory at path: '{templates_root_dir}'"
         )
 
+    ## Discover templates in templates root path
     try:
         templates = discover_templates(
             templates_root_dir=templates_root_dir,
@@ -366,31 +391,45 @@ def count(
 
     log.debug(f"Found {len(templates)} templates in '{templates_root_dir}'")
 
+    ## No templates found
     if not templates or len(templates) == 0:
         log.warning(f"No templates found at path '{templates_root_dir}'.")
         return
 
+    ## --update-all detected
     if update_all_files:
         log.info("Updating all metadata files")
+
+        ## Update JSON file
         save_templates_to_json(templates=templates, json_file=json_file)
-
+        ## Update CSV file
         save_templates_to_csv(templates=templates, csv_file=csv_file)
-
+        ## Update plaintext count file
         save_count_to_file(templates=templates, count_file=count_file)
+        ## Update repo README
         update_readme_count(readme_file=readme_file, new_count=len(templates))
 
+    ## --save-json detected
     if save_json:
+        ## Update JSON file
         save_templates_to_json(templates=templates, json_file=json_file)
 
+    ## --save-csv detected
     if save_csv:
+        ## Save CSV file
         save_templates_to_csv(templates=templates, csv_file=csv_file)
 
+    ## --save-count detected
     if save_count:
+        ## Update plaintext count file
         save_count_to_file(templates=templates, count_file=count_file)
 
+    ## --update-readme detected
     if update_readme:
+        ## Update repo README
         update_readme_count(readme_file=readme_file, new_count=len(templates))
 
+    ## Return count of templates
     return len(templates) if templates else 0
 
 
@@ -405,17 +444,34 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    count(
-        templates_root_dir=args.templates_root_dir or TEMPLATES_ROOT,
-        ignore_patterns=args.ignore_pattern or IGNORE_PATTERNS,
-        template_file_indicators=args.template_indicator or TEMPLATE_INDICATORS,
-        save_json=args.save_json or SAVE_JSON,
-        save_csv=args.save_csv or SAVE_CSV,
-        save_count=args.save_count or SAVE_COUNT,
-        update_readme=args.update_readme or UPDATE_README,
-        update_all_files=args.update_all or False,
-        json_file=args.json_file or f"{OUTPUT_DIR}/templates.json",
-        csv_file=args.csv_file or f"{OUTPUT_DIR}/templates.csv",
-        count_file=args.count_file or f"{OUTPUT_DIR}/templates_count",
-        readme_file=args.readme_file or "./README.md",
-    )
+    ## Call count function
+    try:
+        templates_count: int | None = count(
+            templates_root_dir=args.templates_root_dir or TEMPLATES_ROOT,
+            ignore_patterns=args.ignore_pattern or IGNORE_PATTERNS,
+            template_file_indicators=args.template_indicator or TEMPLATE_INDICATORS,
+            save_json=args.save_json or SAVE_JSON,
+            save_csv=args.save_csv or SAVE_CSV,
+            save_count=args.save_count or SAVE_COUNT,
+            update_readme=args.update_readme or UPDATE_README,
+            update_all_files=args.update_all or False,
+            json_file=args.json_file or f"{OUTPUT_DIR}/templates.json",
+            csv_file=args.csv_file or f"{OUTPUT_DIR}/templates.csv",
+            count_file=args.count_file or f"{OUTPUT_DIR}/templates_count",
+            readme_file=args.readme_file or "./README.md",
+        )
+
+        ## Check and print results
+        if not templates_count or templates_count == 0:
+            print(f"No templates found in path '{args.templates_root_dir}'")
+            exit(0)
+        else:
+            print(
+                f"\nFound {templates_count} template(s) in '{args.templates_root_dir}'\n"
+            )
+            exit(0)
+    except Exception as exc:
+        msg = f"({type(exc)}) Error counting templates. Details: {exc}"
+        log.error(msg)
+
+        raise
