@@ -2,9 +2,34 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  netalertx_logs: {}
+  netalertx_db: {}
 
 services:
-
-  ...
+  netalertx:
+    # use the below line if you want to test the latest dev image
+    # image: "jokobsk/netalertx-dev:latest" 
+    image: "jokobsk/netalertx:latest"
+    container_name: netalertx
+    hostname: ${NETALERTX_HOSTNAME:-netalertx}
+    ## Must use privileged or host networking
+    privileged: true
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - ${NETALEERX_CONFIG_DIR:-./netalertx/config}:/app/config
+      - ${NETALERTX_DB_DIR:-netalertx_db}:/app/db
+      # (optional) useful for debugging if you have issues setting up the container
+      - ${NETALERTX_LOGS_DIR:-netalertx_logs}:/app/log
+      # (API: OPTION 1) use for performance
+      - type: tmpfs
+        target: /app/api
+      # (API: OPTION 2) use when debugging issues 
+      # -  local_path/api:/app/api
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PORT: ${NETALERTX_PORT:-20211}
+      LISTEN_ADDR: ${NETALERTX_LISTEN_ADDRESS:-0.0.0.0}
+      ## Cannot use LOADED_PLUGINS with APP_CONF_OVERRIDE
+      LOADED_PLUGINS: ${NETALERTX_LOADED_PLUGINS:-"ARPSCAN,AVAHISCAN,INTRNT,UI"}
