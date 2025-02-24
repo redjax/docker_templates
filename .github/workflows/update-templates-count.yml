@@ -25,7 +25,7 @@ jobs:
           python-version: "3.11"
 
       - name: Run count_templates.py
-        run: python scripts/count_templates.py
+        run: python scripts/count_templates.py --update-all --log-level debug
 
       - name: Check for changes
         id: check_changes
