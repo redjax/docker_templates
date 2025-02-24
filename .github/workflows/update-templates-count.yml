@@ -37,6 +37,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout "${{ github.head_ref }}"  # Switch to the PR branch
           git add ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md
           git commit -m "Update template metadata from GitHub Actions" || echo "No changes to commit"
-          git push
+          git push origin "${{ github.head_ref }}"
