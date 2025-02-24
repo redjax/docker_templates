@@ -6,6 +6,14 @@ x-logging: &default-logging
     max-file: "${LOG_MAX_FILE:-10}"
     compress: "true"
 
+volumes:
+  db_data: null
+  worker_dependency_cache: null
+  worker_logs: null
+  windmill_index: null
+  lsp_cache: null
+  caddy_data: null
+
 services:
   db:
     deploy:
@@ -20,10 +28,10 @@ services:
     expose:
       - 5432
     ports:
-      - 5432:5432
+      - ${WINDMILL_DB_PORT:-5432}:5432
     environment:
-      POSTGRES_PASSWORD: changeme
-      POSTGRES_DB: windmill
+      POSTGRES_PASSWORD: ${WINDMILL_DB_PASSWORD:-windmill}
+      POSTGRES_DB: ${WINDMILL_DB_DATABASE:-windmill}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -32,7 +40,7 @@ services:
     logging: *default-logging
 
   windmill_server:
-    image: ${WM_IMAGE}
+    image: ${WINDMILL_IMAGE:-ghcr.io/windmill-labs/windmill:main}
     pull_policy: always
     deploy:
       replicas: 1
@@ -41,17 +49,17 @@ services:
       - 8000
       - 2525
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${WINDMILL_DB_CONNECTION_STR:-postgres://postgres:windmill@db/windmill?sslmode=disable}
       - MODE=server
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - worker_logs:/tmp/windmill/logs
+      - ${WINDMILL_SERVER_LOGS_DIR:-worker_logs}:/tmp/windmill/logs
     logging: *default-logging
 
   windmill_worker:
-    image: ${WM_IMAGE}
+    image: ${WINDMILL_IMAGE:-ghcr.io/windmill-labs/windmill:main}
     pull_policy: always
     deploy:
       replicas: 3
@@ -62,7 +70,7 @@ services:
           # for GB, use syntax '2Gi'
     restart: unless-stopped
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${WINDMILL_DB_CONNECTION_STR:-postgres://postgres:windmill@db/windmill?sslmode=disable}
       - MODE=worker
       - WORKER_GROUP=default
     depends_on:
@@ -72,14 +80,14 @@ services:
     volumes:
       # mount the docker socket to allow to run docker containers from within the workers
       - /var/run/docker.sock:/var/run/docker.sock
-      - worker_dependency_cache:/tmp/windmill/cache
-      - worker_logs:/tmp/windmill/logs
+      - ${WINDMILL_WORKER_DEPENDENCY_CACHE_DIR:-worker_dependency_cache}:/tmp/windmill/cache
+      - ${WINDMILL_WORKER_LOGS_DIR:-worker_logs}:/tmp/windmill/logs
     logging: *default-logging
 
   ## This worker is specialized for "native" jobs. Native jobs run in-process and thus are much more lightweight than other jobs
   windmill_worker_native:
     # Use ghcr.io/windmill-labs/windmill-ee:main for the ee
-    image: ${WM_IMAGE}
+    image: ${WINDMILL_IMAGE:-ghcr.io/windmill-labs/windmill:main}
     pull_policy: always
     deploy:
       replicas: 1
@@ -90,7 +98,7 @@ services:
           # for GB, use syntax '2Gi'
     restart: unless-stopped
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${WINDMILL_DB_CONNECTION_STR:-postgres://postgres:windmill@db/windmill?sslmode=disable}
       - MODE=worker
       - WORKER_GROUP=native
       - NUM_WORKERS=8
@@ -99,7 +107,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - worker_logs:/tmp/windmill/logs
+      - ${WINDMILL_WORKER_LOGS_DIR:-worker_logs}:/tmp/windmill/logs
     logging: *default-logging
   # This worker is specialized for reports or scraping jobs. It is assigned the "reports" worker group which has an init script that installs chromium and can be targeted by using the "chromium" worker tag.
   # windmill_worker_reports:
@@ -129,23 +137,24 @@ services:
 
   # The indexer powers full-text job and log search, an EE feature.
   windmill_indexer:
-    image: ${WM_IMAGE}
+    image: ${WINDMILL_IMAGE:-ghcr.io/windmill-labs/windmill:main}
     pull_policy: always
     deploy:
-      replicas: 0 # set to 1 to enable full-text job and log search
+      ## set to 1 to enable full-text job and log search
+      replicas: 0
     restart: unless-stopped
     expose:
-      - 8001
+      - ${WINDMILL_INDEXER_PORT:-8001}
     environment:
-      - PORT=8001
+      - PORT=${WINDMILL_INDEXER_PORT:-8001}
       - DATABASE_URL=${DATABASE_URL}
       - MODE=indexer
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - windmill_index:/tmp/windmill/search
-      - worker_logs:/tmp/windmill/logs
+      - ${WINDMILL_INDEX_DIR:-windmill_index}:/tmp/windmill/search
+      - ${WINDMILL_WORKER_LOGS_DIR:-worker_logs}:/tmp/windmill/logs
     logging: *default-logging
 
   lsp:
@@ -155,41 +164,36 @@ services:
     expose:
       - 3001
     volumes:
-      - lsp_cache:/pyls/.cache
+      - ${WINDMILL_LSP_CACHE_DIR:-lsp_cache}:/pyls/.cache
     logging: *default-logging
 
-  multiplayer:
-    image: ghcr.io/windmill-labs/windmill-multiplayer:latest
-    deploy:
-      replicas: 0 # Set to 1 to enable multiplayer, only available on Enterprise Edition
-    restart: unless-stopped
-    expose:
-      - 3002
-    logging: *default-logging
+  # multiplayer:
+  #   image: ghcr.io/windmill-labs/windmill-multiplayer:latest
+  #   deploy:
+  #     ## Set to 1 to enable multiplayer, only available on Enterprise Edition
+  #     replicas: 0
+  #   restart: unless-stopped
+  #   expose:
+  #     - 3002
+  #   logging: *default-logging
 
   caddy:
     image: ghcr.io/windmill-labs/caddy-l4:latest
     restart: unless-stopped
     # Configure the mounted Caddyfile and the exposed ports or use another reverse proxy if needed
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
+      - ${WINDMILL_CADDY_CADDYFILE:-./Caddyfile}:/etc/caddy/Caddyfile
+      - ${WINDMILL_CADDY_DATA_DIR:-caddy_data}:/data
       # - ./certs:/certs # Provide custom certificate files like cert.pem and key.pem to enable HTTPS - See the corresponding section in the Caddyfile
     ports:
       # To change the exposed port, simply change 80:80 to <desired_port>:80. No other changes needed
-      - 80:80
-      - 25:25
+      - ${WINDMILL_CADDY_HTTP_PORT:-80}:80
+      - ${WINDMILL_CADDY_SMTP_PORT:-25}:25
       # - 443:443 # Uncomment to enable HTTPS handling by Caddy
     environment:
       - BASE_URL=":80"
-      # - BASE_URL=":443" # uncomment and comment line above to enable HTTPS via custom certificate and key files
-      # - BASE_URL=mydomain.com # Uncomment and comment line above to enable HTTPS handling by Caddy
+      ## uncomment and comment line above to enable HTTPS via custom certificate and key files
+      # - BASE_URL=":443"
+      ## Uncomment and comment line above to enable HTTPS handling by Caddy
+      # - BASE_URL=mydomain.com
     logging: *default-logging
-
-volumes:
-  db_data: null
-  worker_dependency_cache: null
-  worker_logs: null
-  windmill_index: null
-  lsp_cache: null
-  caddy_data: null
