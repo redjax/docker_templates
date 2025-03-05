@@ -1,10 +1,19 @@
 ---
-# networks:
-#   unnamed_net: {}
+## Basic rundeck configuration
+#  https://github.com/rundeck/docker-zoo/blob/master/basic/docker-compose.yml
 
-# volumes:
-#   volume_name: {}
+volumes:
+  rundeck_data: {}
 
 services:
-
-  ...
+  rundeck:
+    image: ${RUNDECK_IMAGE:-rundeck/rundeck:SNAPSHOT}
+    container_name: rundeck
+    tty: true
+    environment:
+      RUNDECK_SERVER_ADDRESS: ${RUNDECK_SERVER_ADDRESS:-0.0.0.0}
+    volumes:
+      - ${RUNDECK_DATA_DIR:-rundeck_data}:/home/rundeck/server/data
+      - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
+    ports:
+      - ${RUNDECK_PORT:-4440}:4440

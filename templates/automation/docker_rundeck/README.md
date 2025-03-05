@@ -2,6 +2,8 @@
 
 Automation platform for Ansible, Terraform/OpenTofu, Bash, Powershell, & more.
 
+The default login is `admin:admin`.
+
 ## Links
 
 - [Rundeck Docker](https://github.com/jjethwa/rundeck/tree/master)
