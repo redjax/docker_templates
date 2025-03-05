@@ -1,0 +1,43 @@
+---
+## Rundeck with MySQL database
+#  https://github.com/rundeck/docker-zoo/blob/master/mysql/docker-compose.yml
+
+networks:
+  rundeck_net: {}
+
+volumes:
+  db_data:
+
+services:
+    rundeck:
+        image: ${RUNDECK_IMAGE:-rundeck/rundeck:SNAPSHOT}
+        container_name: rundeck
+        links:
+          - mysql
+        environment:
+            RUNDECK_DATABASE_DRIVER: org.mariadb.jdbc.Driver
+            RUNDECK_DATABASE_USERNAME: ${MARIADB_USERNAME:-rundeck}
+            RUNDECK_DATABASE_PASSWORD: ${MARIADB_PASSWORD:-rundeck}
+            RUNDECK_DATABASE_URL: jdbc:mysql://mysql/rundeck?autoReconnect=true&useSSL=false
+            RUNDECK_GRAILS_URL: localhost:4440
+        volumes:
+          - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
+        ports:
+          - ${RUNDECK_PORT:-4440}:4440
+        networks:
+          rundeck_net:
+
+    mariadb:
+        image: mariadb:${MARIADB_IMG_VER:-lts}
+        container_name: rundeck-mysql
+        expose:
+          - 3306
+        environment:
+          - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-"RunDeck!"}
+          - MYSQL_DATABASE=${MARIADB_DB_NAME:-rundeck}
+          - MYSQL_USER=${MARIADB_USERNAME:-rundeck}
+          - MYSQL_PASSWORD=${MARIADB_PASSWORD:-rundeck}
+        volumes:
+          - ${MARIADB_DATA_DIR:-db_data}:/var/lib/mysql
+        networks:
+          rundeck_net:
