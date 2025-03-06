@@ -25,6 +25,11 @@ Setup steps:
       - `http://192.168.1.50:4440` (change the port if you set a different `RUNDECK_PORT`)
       - `https://rundeck.example.com` (if you're behind a reverse proxy, you must set `RUNDECK_SERVER_FORWARDED=true`)
   - Update any passwords in this file (using the docker command above)
+- Generate SSH keys with [`gen_ssh_keys.sh`](./scripts/gen_ssh_keys.sh) on Linux, or [`gen_ssh_keys.ps1`](./scripts/gen_ssh_keys.ps1) on Windows
+  - Set the following variables in your `.env` file:
+    - `RUNDECK_SSH_PRIVATE_KEY=./ssh/rundeck_id_rsa`
+    - `RUNDECK_SSH_PUBLIC_KEY=./ssh/rundeck_id_rsa.pub`
+    - `RUNDECK_SSH_KNOWN_HOSTS=./ssh/known_hosts`
 - Run with `docker compose up -d`
   - If you are using a firewall, you must allow port `4440` (or whatever you set in `RUNDECK_PORT`)
 
