@@ -1,3 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+
 rundeck/*
 rundeck/**
 realm.properties
