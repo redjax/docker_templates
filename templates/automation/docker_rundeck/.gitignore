@@ -5,9 +5,9 @@ __pycache__/
 
 rundeck/*
 rundeck/**
+ssh/*
+ssh/**
+
 realm.properties
 
-!rundeck/.gitkeep
-!rundeck/**/
-!rundeck/**/.gitkeep
-!rundeck/**/*example*.*
+!.gitkeep

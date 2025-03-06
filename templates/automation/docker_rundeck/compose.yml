@@ -32,10 +32,17 @@ services:
       ## 26214400 ~= 25MB
       RUNDECK_GRAILS_UPLOAD_MAXSIZE: ${RUNDECK_UPLOAD_MAXSIZE:-26214400}
       RUNDECK_SERVER_SESSION_TIMEOUT: ${RUNDECK_SERVER_SESSION_TIMEOUT:-86400}
+
+      ## Encrypt storage passwords
+      # RUNDECK_STORAGE_CONVERTER_1_CONFIG_PASSWORD: ${RUNDECK_STORAGE_CONVERTER_CONFIG_PASSWORD}
+      # RUNDECK_CONFIG_STORAGE_CONVERTER_1_CONFIG_PASSWORD: ${RUNDECK_CONFIG_STORAGE_CONVERTER_PASSWORD}
     volumes:
       - ${RUNDECK_DATA_DIR:-rundeck_data}:/home/rundeck/server/data
       - ${RUNDECK_CONFIG_FILE:-./realm.properties}:/home/rundeck/server/config/realm.properties
       - ${RUNDECK_LOG_DIR:-rundeck_logs}:/home/rundeck/server/logs
+      - ${RUNDECK_SSH_PRIVATE_KEY:-/dev/null}:/keys/id_rsa
+      - ${RUNDECK_SSH_PUBLIC_KEY:-/dev/null}:/keys/id_rsa.pub
+      - ${RUNDECK_SSH_KNOWN_HOSTS:-/dev/null}:/home/rundeck/.ssh/known_hosts
       - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
     ports:
       - ${RUNDECK_PORT:-4440}:4440
