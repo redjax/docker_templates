@@ -27,11 +27,14 @@ services:
       RUNDECK_GRAILS_URL: ${RUNDECK_GRAILS_URL:-http://localhost:4440}
       RUNDECK_SERVER_FORWARDED: ${RUNDECK_SERVER_FORWARDED:-false}
       RUNDECK_SERVER_ADDRESS: ${RUNDECK_SERVER_ADDRESS:-0.0.0.0}
+      RUNDECK_ADMIN_USER: ${RUNDECK_ADMIN_USER:-admin}
+      RUNDECK_ADMIN_PASSWORD: ${RUNDECK_ADMIN_PASSWORD:-admin}
       ## 26214400 ~= 25MB
       RUNDECK_GRAILS_UPLOAD_MAXSIZE: ${RUNDECK_UPLOAD_MAXSIZE:-26214400}
       RUNDECK_SERVER_SESSION_TIMEOUT: ${RUNDECK_SERVER_SESSION_TIMEOUT:-86400}
     volumes:
       - ${RUNDECK_DATA_DIR:-rundeck_data}:/home/rundeck/server/data
+      - ${RUNDECK_CONFIG_DIR:-rundeck_config}:/home/rundeck/server/config
       - ${RUNDECK_LOG_DIR:-rundeck_logs}:/home/rundeck/server/logs
       - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
     ports:

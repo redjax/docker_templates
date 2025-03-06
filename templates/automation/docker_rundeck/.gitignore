@@ -1,1 +1,6 @@
 rundeck/*
+rundeck/**
+
+!rundeck/.gitkeep
+!rundeck/**/
+!rundeck/**/.gitkeep
