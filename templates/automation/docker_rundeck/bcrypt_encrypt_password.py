@@ -112,7 +112,7 @@ def is_bcrypt_hash(hash_str) -> bool:
     return bool(bcrypt_pattern.match(hash_str))
 
 
-def hash_password(input_password: str):
+def hash_password(input_password: bytes) -> str:
     """Return a bcrypt-encrypted password.
 
     Params:
@@ -127,15 +127,13 @@ def hash_password(input_password: str):
         )
         exit(1)
 
-    ## Generate salt for the hashed password
-    salt = bcrypt.gensalt()
     ## Create hash from input password
-    hashed_password = bcrypt.hashpw(input_password.encode("utf-8"), salt)
+    hashed_password = bcrypt.hashpw(input_password, bcrypt.gensalt())
 
     return hashed_password
 
 
-def save_password(password: str, output_file: str) -> bool:
+def save_password(password: bytes, output_file: str) -> bool:
     """Save an encrypted password to a file.
 
     Params:
@@ -158,7 +156,7 @@ def save_password(password: str, output_file: str) -> bool:
     try:
 
         with open(output_file, "wb") as f:
-            f.write(password)
+            f.write(password.decode("utf-8"))
     except Exception as e:
         log.warning(f"Error saving password to file: {e}")
         return False
@@ -190,11 +188,11 @@ if __name__ == "__main__":
         password = args.password
 
     ## Create hashed password
-    hashed_password = hash_password(input_password=password)
+    hashed_password = hash_password(input_password=password.encode("utf-8"))
 
     if args.save:
         ## Save password to file
-        save_password(password=password, output_file=args.output)
+        save_password(password=hashed_password, output_file=args.output)
 
     if not args.no_print:
         ## Print hashed password if not disabled
