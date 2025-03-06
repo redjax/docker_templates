@@ -1,6 +1,8 @@
 rundeck/*
 rundeck/**
+realm.properties
 
 !rundeck/.gitkeep
 !rundeck/**/
 !rundeck/**/.gitkeep
+!rundeck/**/*example*.*

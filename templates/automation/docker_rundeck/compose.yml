@@ -34,7 +34,7 @@ services:
       RUNDECK_SERVER_SESSION_TIMEOUT: ${RUNDECK_SERVER_SESSION_TIMEOUT:-86400}
     volumes:
       - ${RUNDECK_DATA_DIR:-rundeck_data}:/home/rundeck/server/data
-      - ${RUNDECK_CONFIG_DIR:-rundeck_config}:/home/rundeck/server/config
+      - ${RUNDECK_CONFIG_FILE:-./realm.properties}:/home/rundeck/server/config/realm.properties
       - ${RUNDECK_LOG_DIR:-rundeck_logs}:/home/rundeck/server/logs
       - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
     ports:
