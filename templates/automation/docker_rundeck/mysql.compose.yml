@@ -12,24 +12,30 @@ services:
     rundeck:
         image: ${RUNDECK_IMAGE:-rundeck/rundeck:SNAPSHOT}
         container_name: rundeck
+        network_mode: bridge
         links:
-          - mysql
+          - mariadb
+        depends_on:
+          - mariadb
         environment:
             RUNDECK_DATABASE_DRIVER: org.mariadb.jdbc.Driver
             RUNDECK_DATABASE_USERNAME: ${MARIADB_USERNAME:-rundeck}
             RUNDECK_DATABASE_PASSWORD: ${MARIADB_PASSWORD:-rundeck}
-            RUNDECK_DATABASE_URL: jdbc:mysql://mysql/rundeck?autoReconnect=true&useSSL=false
-            RUNDECK_GRAILS_URL: localhost:4440
+            RUNDECK_DATABASE_URL: jdbc:mysql://mariadb/rundeck?autoReconnect=true&useSSL=false
+            RUNDECK_GRAILS_URL: ${RUNDECK_GRAILS_URL:-http://localhost:4440}
+            RUNDECK_SERVER_FORWARDED: ${RUNDECK_SERVER_FORWARDED:-false}
+            RUNDECK_SERVER_ADDRESS: ${RUNDECK_SERVER_ADDRESS:-0.0.0.0}
         volumes:
           - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
         ports:
           - ${RUNDECK_PORT:-4440}:4440
-        networks:
-          rundeck_net:
+        # networks:
+        #   rundeck_net:
 
     mariadb:
         image: mariadb:${MARIADB_IMG_VER:-lts}
         container_name: rundeck-mysql
+        network_mode: bridge
         expose:
           - 3306
         environment:
@@ -39,5 +45,17 @@ services:
           - MYSQL_PASSWORD=${MARIADB_PASSWORD:-rundeck}
         volumes:
           - ${MARIADB_DATA_DIR:-db_data}:/var/lib/mysql
-        networks:
-          rundeck_net:
+        # networks:
+        #   rundeck_net:
+
+    # nginx:
+    #   image: nginx:alpine
+    #   container_name: rundeck-nginx
+    #   ports:
+    #     - ${NGINX_HTTP_PORT:-80}:80
+    #   volumes:
+    #     - ${NGINX_CONFIG_FILE:-./nginx.conf}:/etc/nginx/nginx.conf:ro
+    #   depends_on:
+    #     - rundeck
+      # networks:
+      #   - rundeck_net
