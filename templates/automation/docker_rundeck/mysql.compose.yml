@@ -26,11 +26,12 @@ services:
             RUNDECK_SERVER_FORWARDED: ${RUNDECK_SERVER_FORWARDED:-false}
             RUNDECK_SERVER_ADDRESS: ${RUNDECK_SERVER_ADDRESS:-0.0.0.0}
         volumes:
+          - ${RUNDECK_DATA_DIR:-./rundeck/data}:/home/rundeck/server/data
           - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
         ports:
           - ${RUNDECK_PORT:-4440}:4440
         # networks:
-        #   rundeck_net:
+        #   - rundeck_net
 
     mariadb:
         image: mariadb:${MARIADB_IMG_VER:-lts}
@@ -46,16 +47,4 @@ services:
         volumes:
           - ${MARIADB_DATA_DIR:-db_data}:/var/lib/mysql
         # networks:
-        #   rundeck_net:
-
-    # nginx:
-    #   image: nginx:alpine
-    #   container_name: rundeck-nginx
-    #   ports:
-    #     - ${NGINX_HTTP_PORT:-80}:80
-    #   volumes:
-    #     - ${NGINX_CONFIG_FILE:-./nginx.conf}:/etc/nginx/nginx.conf:ro
-    #   depends_on:
-    #     - rundeck
-      # networks:
-      #   - rundeck_net
+        #   - rundeck_net
