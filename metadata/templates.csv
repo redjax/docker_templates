@@ -89,5 +89,6 @@ compose.yml,docker_olivetin,templates/automation/docker_olivetin,"('templates', 
 compose.yml,docker_semaphore,templates/automation/docker_semaphore,"('templates', 'automation', 'docker_semaphore')"
 .env.example,docker_prefect_server,templates/automation/docker_prefect_server,"('templates', 'automation', 'docker_prefect_server')"
 .env.example,docker_n8n,templates/automation/docker_n8n,"('templates', 'automation', 'docker_n8n')"
+compose.yml,docker_rundeck,templates/automation/docker_rundeck,"('templates', 'automation', 'docker_rundeck')"
 compose.yml,docker_beehive,templates/automation/docker_beehive,"('templates', 'automation', 'docker_beehive')"
 compose.yml,docker_windmill,templates/automation/docker_windmill,"('templates', 'automation', 'docker_windmill')"

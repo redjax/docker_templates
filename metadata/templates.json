@@ -941,6 +941,16 @@
         "template": ".env.example"
     },
     {
+        "parent": "docker_rundeck",
+        "path": "templates/automation/docker_rundeck",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_rundeck"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_beehive",
         "path": "templates/automation/docker_beehive",
         "path_parts": [
