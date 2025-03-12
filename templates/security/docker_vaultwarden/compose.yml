@@ -1,7 +1,4 @@
 ---
-# networks:
-#   unnamed_net: {}
-
 volumes:
   vaultwarden_data: {}
 
@@ -16,3 +13,19 @@ services:
       - ${VW_DATA_DIR:-vaultwarden_data}:/data/
     ports:
       - ${VW_WEBUI_PORT:-80}:80
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: vaultwarden-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP:-"true"}
+      ## Check for updates once every 24h
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
+    ## Only monitor containers with a specific label
+    command: --label-enable
