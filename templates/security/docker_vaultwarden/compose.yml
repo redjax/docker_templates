@@ -16,6 +16,24 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
+  ## Backup your vault to Bitwarden's servers
+  lazywarden:
+    image: querylab/lazywarden:latest
+    container_name: lazywarden
+    restart: unless-stopped
+    hostname: lazywarden
+    env_file:
+      - .env
+    environment:
+      UNLOCK_VAULT: "true"
+    volumes:
+      - ${LW_CONFIG_DIR:-lazywarden_config}:/root/lazywarden/config
+      - ${LW_BACKUP_DRIVE:-lazywarden_backups}:/root/lazywarden/backup-drive/
+      - ${LW_ENV_FILE:-./lazywarden.env}:/app/.env
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  ## For file-based backups on local filesystem/volume
   vaultwarden-backup:
     image: bruceforce/vaultwarden-backup
     container_name: vaultwarden-backup
@@ -46,6 +64,8 @@ services:
       ENCRYPTION_BASE64_GPG_KEY: ${VW_BACKUP_GPG_KEY}
       ENCRYPTION_PASSWORD: ${VW_BACKUP_ENCRYPTION_PASSWORD}
       TIMESTAMP: ${VW_BACKUP_APPEND_TIMESTAMP:-true}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   watchtower:
     image: containrrr/watchtower
