@@ -16,6 +16,37 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
+  vaultwarden-backup:
+    image: bruceforce/vaultwarden-backup
+    container_name: vaultwarden-backup
+    restart: on-failure
+    init: true
+    depends_on:
+      - vaultwarden
+    volumes:
+      ## Mount the vaultwarden data directory
+      - ${VW_DATA_DIRL:-vaultwarden_data}:/data/
+      - ${VW_BACKUP_BACKUPS_DIR:-./vw-backup/backups}:/backup/
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      UID: ${UUID:-1000}
+      GID: ${GUID:-1000}
+      ## DEBUG, INFO, WARN, ERROR, CRITICAL
+      LOG_LEVEL: ${VW_BACKUP_LOG_LEVEL:-INFO}
+      BACKUP_ADD_DATABASE: ${VW_BACKUP_INCLUDE_DB:-true}
+      BACKUP_ADD_ATTACHMENTS: ${VW_BACKUP_INCLUDE_ATTACHMENTS:-true}
+      BACKUP_ADD_CONFIG_JSON: ${VW_BACKUP_INCLUDE_CONFIG_JSON:-true}
+      BACKUP_ADD_ICON_CACHE: ${VW_BACKUP_INCLUDE_ICON_CACHE:-false}
+      BACKUP_ADD_RSA_KEY: ${VW_BACKUP_INCLUDE_RSA_KEY:-true}
+      BACKUP_DD_SENDS: ${VW_BACKUP_INCLUDE_DD_SENDS:-true}
+      BACKUP_USE_DEDUPE: ${VW_BACKUP_DEDUPE_BACKUPS:-false}
+      BACKUP_ON_STARTUP: ${VW_BACKUP_DO_BACKUP_ON_STARTUP:-false}
+      CRON_TIME: ${VW_BACKUP_CRON_EXPRESSION:-"59 23 * * *"}
+      DELETE_AFTER: ${VW_BACKUP_DELETE_AFTER_DAYS:-30}
+      ENCRYPTION_BASE64_GPG_KEY: ${VW_BACKUP_GPG_KEY}
+      ENCRYPTION_PASSWORD: ${VW_BACKUP_ENCRYPTION_PASSWORD}
+      TIMESTAMP: ${VW_BACKUP_APPEND_TIMESTAMP:-true}
+
   watchtower:
     image: containrrr/watchtower
     container_name: vaultwarden-watchtower
