@@ -10,7 +10,7 @@
 services:
   mariadb:
     image: mariadb
-    container_name: ${CONTAINER_NAME:-mariadb}
+    container_name: medcab_db-practice
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-mysql}
