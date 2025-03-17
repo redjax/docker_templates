@@ -1,0 +1,18 @@
+---
+# networks:
+#   unnamed_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+  olivetin:
+    image: jamesread/olivetin
+    container_name: olivetin
+    user: root
+    volumes:
+      - ${OLIVETIN_CONFIGs_dir:-./configs}:/config
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    ports:
+      - ${OLIVETIN_WEBUI_PORT:-1337}:1337
+    restart: unless-stopped

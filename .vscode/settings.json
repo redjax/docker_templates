@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./templates/games/docker_palworld_server/rpc_mgr/src"
+        "./templates/games/docker_palworld_server/rpc_mgr/src",
+        "./scripts"
     ]
 }
