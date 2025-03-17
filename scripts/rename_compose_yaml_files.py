@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 TEMPLATES_ROOT: str = "templates"
 ## File indicators to use for template detection
-TEMPLATE_INDICATORS: list[str] = ["compose.yml", "docker-compose.yml", ".env.example"]
+TEMPLATE_INDICATORS: list[str] = ["compose.yaml", "docker-compose.yaml"]
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Find any docker-compose.yaml, compose.yaml file and rename it to 'compose.yml'.")
@@ -70,8 +70,14 @@ def rename_yaml_to_yml(yaml_file: str, dry_run: bool = False):
         return new_name
     
     log.info(f"Renaming file '{p}' to '{new_name}'")
-    
-    return new_name
+    try:
+        new_path = p.rename(new_name)
+        return str(new_path)
+    except Exception as exc:
+        msg = f"({type(exc)}) Error renaming file '{yaml_file}' to '{new_name}'. Details: {exc}"
+        log.error(msg)
+        
+        return
 
 
 def save_renamed_files_to_csv(
