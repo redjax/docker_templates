@@ -35,6 +35,48 @@ def parse_arguments():
     return args
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Find any docker-compose.yaml, compose.yaml file and rename it to 'compose.yml'.")
+    
+    parser.add_argument("--scan-path", type=str, default=TEMPLATES_ROOT, help="Path to scan for files")
+    
+    # parser.add_argument("--ignore-pattern", type=str, nargs="*", default=IGNORE_PATTERNS, help="File/path names to ignore")
+    
+    parser.add_argument("--template-indicator", type=str, nargs="*", default=TEMPLATE_INDICATORS, help="List of template indicators")
+    
+    parser.add_argument("--ignore-categories-file", type=str, default=IGNORE_CATEGORY_NAMES_FILE, help="Path to a file containing category names to ignore/skip")
+    
+    ## Set logging level
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        default="INFO",
+        help="The logging level to use. Default is 'INFO'. Options are: ['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+    )
+    
+    ## When present, save to CSV
+    parser.add_argument(
+        "--save-json",
+        action="store_true",
+        help="Save the renamed files to a JSON file",
+    )
+    ## CSV file to save renamed files to
+    parser.add_argument(
+        "--json-file",
+        type=str,
+        default="./metadata/categories.json",
+        help="CSV file to save renamed files to",
+    )
+    
+    ## Dry run, where no actions will be taken
+    parser.add_argument("--dry-run", action="store_true", help="Do a dry run, where no real action will be taken.")
+    
+    ## Parse CLI args
+    args = parser.parse_args()
+
+    return args
+
+
 def load_ignored_categories(ignored_categories_file: str) -> list[str]:
     with open(ignored_categories_file, "r") as f:
         categories = f.read().splitlines()
