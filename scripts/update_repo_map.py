@@ -16,8 +16,17 @@ log = logging.getLogger(__name__)
 TEMPLATES_ROOT: str = "templates"
 COOKIECUTTER_TEMPLATE: str = "map/_template"
 OUTPUT_DIR: str = "map"
-IGNORE_CATEGORY_NAMES: list[str] = ["_cookiecutter"]
+# IGNORE_CATEGORY_NAMES: list[str] = ["_cookiecutter", "docker_netdata", "docker_cloudflare-tunnel", "docker_wazuh", "docker_wordpress-nginx", "docker_drone"]
+IGNORE_CATEGORY_NAMES_FILE: str = "metadata/ignore_categories"
 TEMPLATE_INDICATORS = ["*.env", "compose.yml", "docker-compose.yml", "*.env.example"]
+
+
+def load_ignored_categories(ignored_categories_file: str) -> list[str]:
+    with open(ignored_categories_file, "r") as f:
+        categories = f.read()
+        
+    return categories
+
 
 def has_template_indicators(directory: str) -> bool:
     for pattern in TEMPLATE_INDICATORS:
@@ -90,6 +99,9 @@ if __name__ == "__main__":
         format="%(asctime)s | %(levelname)s |> %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+    
+    IGNORE_CATEGORY_NAMES = load_ignored_categories(ignored_categories_file=IGNORE_CATEGORY_NAMES_FILE)
+    log.debug(f"Ignored categories: {IGNORE_CATEGORY_NAMES}")
 
     categories = get_categories(templates_root=TEMPLATES_ROOT, ignore_names=IGNORE_CATEGORY_NAMES)
     log.debug(f"Found [{len(categories)}] {'category' if len(categories) == 1 else 'categories'} in path: {TEMPLATES_ROOT}")
