@@ -8,9 +8,7 @@ Setup consists of a Server and an Agent.
 
 Option 1: Bash script
 
-```
-run_netdata.sh
-
+```shell
 #!/bin/bash
 
 docker run -d --name=netdata \
