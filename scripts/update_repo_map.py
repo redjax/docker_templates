@@ -6,11 +6,8 @@ import logging
 from pathlib import Path
 import typing as t
 import json
-import csv
 import argparse
 
-import cookiecutter
-from cookiecutter.main import cookiecutter
 
 log = logging.getLogger(__name__)
 
