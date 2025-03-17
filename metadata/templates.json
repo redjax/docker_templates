@@ -1,5 +1,15 @@
 [
     {
+        "parent": "docker_baserow",
+        "path": "templates/storage/docker_baserow",
+        "path_parts": [
+            "templates",
+            "storage",
+            "docker_baserow"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_bytestash",
         "path": "templates/storage/docker_bytestash",
         "path_parts": [
@@ -27,7 +37,7 @@
             "storage",
             "docker_seafile-server"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_minio",
@@ -37,7 +47,7 @@
             "storage",
             "docker_minio"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_yarr",
@@ -87,7 +97,7 @@
             "rss",
             "docker_freshrss"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_commafeed",
@@ -137,7 +147,7 @@
             "web_scraping",
             "docker_selenium_hub"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_wg-easy",
@@ -157,7 +167,7 @@
             "networking",
             "docker_nginx-proxy-manager"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_technitiumdns",
@@ -177,7 +187,17 @@
             "networking",
             "docker_adguard"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_portainer",
+        "path": "templates/networking/docker_portainer",
+        "path_parts": [
+            "templates",
+            "networking",
+            "docker_portainer"
+        ],
+        "template": "compose.yml"
     },
     {
         "parent": "docker_unifi-controller",
@@ -207,7 +227,7 @@
             "networking",
             "docker_traefik"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_portall",
@@ -238,7 +258,7 @@
             "project_templates",
             "docker_node-server"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "nginx-proxy",
@@ -250,7 +270,7 @@
             "docker_wordpress-nginx",
             "nginx-proxy"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "example_wordpress",
@@ -262,7 +282,7 @@
             "docker_wordpress-nginx",
             "example_wordpress"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_wordpress-template",
@@ -273,7 +293,7 @@
             "project_templates",
             "docker_wordpress-template"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_necesse",
@@ -283,7 +303,7 @@
             "games",
             "docker_necesse"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_minecraft_server",
@@ -433,7 +453,7 @@
             "servers",
             "_templates"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_palworld_server",
@@ -463,7 +483,7 @@
             "games",
             "docker_satisfactory"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_crafty_minecraft",
@@ -483,7 +503,7 @@
             "games",
             "docker_terraria-server"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_calibre",
@@ -493,7 +513,7 @@
             "media",
             "docker_calibre"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_download-suite",
@@ -503,7 +523,7 @@
             "media",
             "docker_download-suite"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_prowlarr",
@@ -523,7 +543,7 @@
             "media",
             "docker_photoprism"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_emby",
@@ -533,7 +553,7 @@
             "media",
             "docker_emby"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_plex",
@@ -543,7 +563,7 @@
             "media",
             "docker_plex"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_linkding",
@@ -553,7 +573,7 @@
             "bookmarking",
             "docker_linkding"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_shaarli",
@@ -563,7 +583,7 @@
             "bookmarking",
             "docker_shaarli"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_readeck",
@@ -573,7 +593,7 @@
             "bookmarking",
             "docker_readeck"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_shiori",
@@ -583,7 +603,7 @@
             "bookmarking",
             "docker_shiori"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_wallabag",
@@ -593,7 +613,7 @@
             "bookmarking",
             "docker_wallabag"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_git-sync",
@@ -623,7 +643,7 @@
             "backup",
             "kopia"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_coder",
@@ -633,7 +653,7 @@
             "code_forges",
             "docker_coder"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_forgejo",
@@ -643,7 +663,7 @@
             "code_forges",
             "docker_forgejo"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_gitea",
@@ -653,7 +673,7 @@
             "code_forges",
             "docker_gitea"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_red-discordbot",
@@ -714,7 +734,7 @@
             "docker_netdata",
             "server"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "agent",
@@ -725,7 +745,7 @@
             "docker_netdata",
             "agent"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_watchtower",
@@ -735,7 +755,7 @@
             "monitoring_alerting",
             "docker_watchtower"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_uptime-kuma",
@@ -755,7 +775,18 @@
             "monitoring_alerting",
             "docker_monitoring"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
+    },
+    {
+        "parent": "prom-node",
+        "path": "templates/monitoring_alerting/docker_monitoring/prom-node",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_monitoring",
+            "prom-node"
+        ],
+        "template": "compose.yml"
     },
     {
         "parent": "docker_redis",
@@ -765,7 +796,7 @@
             "database",
             "docker_redis"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_cloudbeaver",
@@ -776,7 +807,7 @@
             "web_uis",
             "docker_cloudbeaver"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_redis-commander",
@@ -787,7 +818,7 @@
             "web_uis",
             "docker_redis-commander"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_mysql_workbench",
@@ -798,7 +829,17 @@
             "web_uis",
             "docker_mysql_workbench"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_baserow",
+        "path": "templates/database/docker_baserow",
+        "path_parts": [
+            "templates",
+            "database",
+            "docker_baserow"
+        ],
+        "template": "compose.yml"
     },
     {
         "parent": "docker_influxdb",
@@ -808,7 +849,7 @@
             "database",
             "docker_influxdb"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_prometheus",
@@ -818,7 +859,7 @@
             "database",
             "docker_prometheus"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_mysql",
@@ -838,7 +879,7 @@
             "database",
             "docker_mongodb"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_postgresql",
@@ -858,7 +899,7 @@
             "database",
             "docker_nocodb"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_rabbitmq",
@@ -868,7 +909,7 @@
             "messaging",
             "docker_rabbitmq"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_mosquitto",
@@ -878,7 +919,7 @@
             "messaging",
             "docker_mosquitto"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_mayan-edms",
@@ -888,7 +929,7 @@
             "documents",
             "docker_mayan-edms"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_paperless-ngx",
@@ -928,7 +969,7 @@
             "documents",
             "docker_paperless-ng"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_docspell",
@@ -938,7 +979,7 @@
             "documents",
             "docker_docspell"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_olivetin",
@@ -958,7 +999,7 @@
             "automation",
             "docker_concourse_ci"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_semaphore",
@@ -978,7 +1019,7 @@
             "automation",
             "docker_prefect_server"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_n8n",
@@ -988,7 +1029,7 @@
             "automation",
             "docker_n8n"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_rundeck",
@@ -997,6 +1038,16 @@
             "templates",
             "automation",
             "docker_rundeck"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_huginn",
+        "path": "templates/automation/docker_huginn",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_huginn"
         ],
         "template": "compose.yml"
     },
