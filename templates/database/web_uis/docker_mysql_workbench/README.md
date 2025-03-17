@@ -8,7 +8,7 @@ https://hub.docker.com/r/linuxserver/mysql-workbench
   - `$ docker network create mysql_workbench-net`
   - Add this to the `networks:` section of a `docker-compose.yml` file, then add the `mysql_workbench-net` to any `mariadb`/`mysql` containers you want to interact with using the workbench:
 
-```
+```yaml
 ## docker-compose.yml
 
 networks:
