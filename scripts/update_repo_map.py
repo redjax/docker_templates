@@ -99,22 +99,6 @@ def save_categories_to_json(categories: list[dict[str, t.Union[str, list]]], jso
         f.write(json_data)
         
         log.info(f"Saved JSON to: {json_file}")
-    
-    
-def save_categories_to_csv(categories: list[dict[str, t.Union[str, list]]], csv_file: str):
-    if not categories:
-        log.warning("No data to save as CSV")
-        return
-    
-    log.info(f"Saving categories to CSV file: {csv_file}")
-    
-    Path(csv_file).parent.mkdir(parents=True, exist_ok=True)
-    with open(csv_file, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=categories[0].keys())
-        writer.writeheader()
-        writer.writerows(categories)
-        
-    log.info(f"Saved CSV: {csv_file}")
 
 
 def get_subcategories(category_path: str, ignore_names: list[str]) -> list[dict[str, t.Union[str, list]]]:
