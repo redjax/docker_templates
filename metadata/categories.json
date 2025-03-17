@@ -53,10 +53,6 @@
             {
                 "name": "web_uis",
                 "sub_categories": []
-            },
-            {
-                "name": "docker_baserow",
-                "sub_categories": []
             }
         ]
     },
