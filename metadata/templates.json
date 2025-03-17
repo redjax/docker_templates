@@ -120,6 +120,16 @@
         "template": ".env.example"
     },
     {
+        "parent": "docker_vaultwarden",
+        "path": "templates/security/docker_vaultwarden",
+        "path_parts": [
+            "templates",
+            "security",
+            "docker_vaultwarden"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_netalertx",
         "path": "templates/security/docker_netalertx",
         "path_parts": [
@@ -484,6 +494,16 @@
             "docker_satisfactory"
         ],
         "template": "compose.yml"
+    },
+    {
+        "parent": "docker_vrising-server",
+        "path": "templates/games/docker_vrising-server",
+        "path_parts": [
+            "templates",
+            "games",
+            "docker_vrising-server"
+        ],
+        "template": "docker-compose.yml"
     },
     {
         "parent": "docker_crafty_minecraft",
