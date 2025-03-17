@@ -29,6 +29,11 @@
   <!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/docker_templates/tests.yml) -->
 </p>
 
+<p align="center">
+  Templates: 98
+  <span>(counted with <a href="./scripts/count_templates.py">count_templates.py</a>)</span>
+</p>
+
 ---
 
 Templates for Docker/Compose containers. Some are completely custom, but most are an example `compose.yml`/`docker-compose.yml` file and example `.env` file.
