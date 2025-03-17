@@ -5,6 +5,7 @@ data/*
 export/*
 media/*
 consume/*
+tmp/*
 **/secret_key
 
 !**/empty

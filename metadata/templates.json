@@ -40,6 +40,46 @@
         "template": ".env.example"
     },
     {
+        "parent": "docker_yarr",
+        "path": "templates/rss/docker_yarr",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_yarr"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_tinytinyrss",
+        "path": "templates/rss/docker_tinytinyrss",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_tinytinyrss"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_rsshub",
+        "path": "templates/rss/docker_rsshub",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_rsshub"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_feedless",
+        "path": "templates/rss/docker_feedless",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_feedless"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_freshrss",
         "path": "templates/rss/docker_freshrss",
         "path_parts": [
@@ -48,6 +88,16 @@
             "docker_freshrss"
         ],
         "template": ".env.example"
+    },
+    {
+        "parent": "docker_commafeed",
+        "path": "templates/rss/docker_commafeed",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_commafeed"
+        ],
+        "template": "compose.yml"
     },
     {
         "parent": "docker_ollama_webui",
