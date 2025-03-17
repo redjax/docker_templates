@@ -1,234 +1,287 @@
 [
     {
-        "parent": "kopia",
-        "path": "templates/backup/kopia",
+        "parent": "docker_bytestash",
+        "path": "templates/storage/docker_bytestash",
         "path_parts": [
             "templates",
-            "backup",
-            "kopia"
+            "storage",
+            "docker_bytestash"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_opengist",
+        "path": "templates/storage/docker_opengist",
+        "path_parts": [
+            "templates",
+            "storage",
+            "docker_opengist"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_seafile-server",
+        "path": "templates/storage/docker_seafile-server",
+        "path_parts": [
+            "templates",
+            "storage",
+            "docker_seafile-server"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_backrest",
-        "path": "templates/backup/docker_backrest",
+        "parent": "docker_minio",
+        "path": "templates/storage/docker_minio",
         "path_parts": [
             "templates",
-            "backup",
-            "docker_backrest"
+            "storage",
+            "docker_minio"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_git-sync",
-        "path": "templates/backup/docker_git-sync",
+        "parent": "docker_yarr",
+        "path": "templates/rss/docker_yarr",
         "path_parts": [
             "templates",
-            "backup",
-            "docker_git-sync"
+            "rss",
+            "docker_yarr"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_tinytinyrss",
+        "path": "templates/rss/docker_tinytinyrss",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_tinytinyrss"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_rsshub",
+        "path": "templates/rss/docker_rsshub",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_rsshub"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_feedless",
+        "path": "templates/rss/docker_feedless",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_feedless"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_freshrss",
+        "path": "templates/rss/docker_freshrss",
+        "path_parts": [
+            "templates",
+            "rss",
+            "docker_freshrss"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_emby",
-        "path": "templates/media/docker_emby",
+        "parent": "docker_commafeed",
+        "path": "templates/rss/docker_commafeed",
         "path_parts": [
             "templates",
-            "media",
-            "docker_emby"
+            "rss",
+            "docker_commafeed"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_ollama_webui",
+        "path": "templates/llm/docker_ollama_webui",
+        "path_parts": [
+            "templates",
+            "llm",
+            "docker_ollama_webui"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_photoprism",
-        "path": "templates/media/docker_photoprism",
+        "parent": "docker_netalertx",
+        "path": "templates/security/docker_netalertx",
         "path_parts": [
             "templates",
-            "media",
-            "docker_photoprism"
+            "security",
+            "docker_netalertx"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_remnux",
+        "path": "templates/security/docker_remnux",
+        "path_parts": [
+            "templates",
+            "security",
+            "docker_remnux"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_selenium_hub",
+        "path": "templates/web_scraping/docker_selenium_hub",
+        "path_parts": [
+            "templates",
+            "web_scraping",
+            "docker_selenium_hub"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_prowlarr",
-        "path": "templates/media/docker_prowlarr",
+        "parent": "docker_wg-easy",
+        "path": "templates/networking/docker_wg-easy",
         "path_parts": [
             "templates",
-            "media",
-            "docker_prowlarr"
+            "networking",
+            "docker_wg-easy"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_nginx-proxy-manager",
+        "path": "templates/networking/docker_nginx-proxy-manager",
+        "path_parts": [
+            "templates",
+            "networking",
+            "docker_nginx-proxy-manager"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_plex",
-        "path": "templates/media/docker_plex",
+        "parent": "docker_technitiumdns",
+        "path": "templates/networking/docker_technitiumdns",
         "path_parts": [
             "templates",
-            "media",
-            "docker_plex"
+            "networking",
+            "docker_technitiumdns"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_adguard",
+        "path": "templates/networking/docker_adguard",
+        "path_parts": [
+            "templates",
+            "networking",
+            "docker_adguard"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_download-suite",
-        "path": "templates/media/docker_download-suite",
+        "parent": "docker_unifi-controller",
+        "path": "templates/networking/docker_unifi-controller",
         "path_parts": [
             "templates",
-            "media",
-            "docker_download-suite"
+            "networking",
+            "docker_unifi-controller"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_meshping",
+        "path": "templates/networking/docker_meshping",
+        "path_parts": [
+            "templates",
+            "networking",
+            "docker_meshping"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_traefik",
+        "path": "templates/networking/docker_traefik",
+        "path_parts": [
+            "templates",
+            "networking",
+            "docker_traefik"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_calibre",
-        "path": "templates/media/docker_calibre",
+        "parent": "docker_portall",
+        "path": "templates/networking/docker_portall",
         "path_parts": [
             "templates",
-            "media",
-            "docker_calibre"
+            "networking",
+            "docker_portall"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_headscale",
+        "path": "templates/networking/docker_headscale",
+        "path_parts": [
+            "templates",
+            "networking",
+            "docker_headscale"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_node-server",
+        "path": "templates/misc/project_templates/docker_node-server",
+        "path_parts": [
+            "templates",
+            "misc",
+            "project_templates",
+            "docker_node-server"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_graylog",
-        "path": "templates/monitoring_alerting/docker_graylog",
+        "parent": "nginx-proxy",
+        "path": "templates/misc/project_templates/docker_wordpress-nginx/nginx-proxy",
         "path_parts": [
             "templates",
-            "monitoring_alerting",
-            "docker_graylog"
+            "misc",
+            "project_templates",
+            "docker_wordpress-nginx",
+            "nginx-proxy"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_watchtower",
-        "path": "templates/monitoring_alerting/docker_watchtower",
+        "parent": "example_wordpress",
+        "path": "templates/misc/project_templates/docker_wordpress-nginx/example_wordpress",
         "path_parts": [
             "templates",
-            "monitoring_alerting",
-            "docker_watchtower"
+            "misc",
+            "project_templates",
+            "docker_wordpress-nginx",
+            "example_wordpress"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_uptime-kuma",
-        "path": "templates/monitoring_alerting/docker_uptime-kuma",
+        "parent": "docker_wordpress-template",
+        "path": "templates/misc/project_templates/docker_wordpress-template",
         "path_parts": [
             "templates",
-            "monitoring_alerting",
-            "docker_uptime-kuma"
+            "misc",
+            "project_templates",
+            "docker_wordpress-template"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "server",
-        "path": "templates/monitoring_alerting/docker_netdata/server",
+        "parent": "docker_necesse",
+        "path": "templates/games/docker_necesse",
         "path_parts": [
             "templates",
-            "monitoring_alerting",
-            "docker_netdata",
-            "server"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "agent",
-        "path": "templates/monitoring_alerting/docker_netdata/agent",
-        "path_parts": [
-            "templates",
-            "monitoring_alerting",
-            "docker_netdata",
-            "agent"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_beszel",
-        "path": "templates/monitoring_alerting/docker_beszel",
-        "path_parts": [
-            "templates",
-            "monitoring_alerting",
-            "docker_beszel"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_monitoring",
-        "path": "templates/monitoring_alerting/docker_monitoring",
-        "path_parts": [
-            "templates",
-            "monitoring_alerting",
-            "docker_monitoring"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "prom-node",
-        "path": "templates/monitoring_alerting/docker_monitoring/prom-node",
-        "path_parts": [
-            "templates",
-            "monitoring_alerting",
-            "docker_monitoring",
-            "prom-node"
-        ],
-        "template": "docker-compose.yml"
-    },
-    {
-        "parent": "docker_prefect_server",
-        "path": "templates/automation/docker_prefect_server",
-        "path_parts": [
-            "templates",
-            "automation",
-            "docker_prefect_server"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_olivetin",
-        "path": "templates/automation/docker_olivetin",
-        "path_parts": [
-            "templates",
-            "automation",
-            "docker_olivetin"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_concourse_ci",
-        "path": "templates/automation/docker_concourse_ci",
-        "path_parts": [
-            "templates",
-            "automation",
-            "docker_concourse_ci"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_huginn",
-        "path": "templates/automation/docker_huginn",
-        "path_parts": [
-            "templates",
-            "automation",
-            "docker_huginn"
-        ],
-        "template": "docker-compose.yml"
-    },
-    {
-        "parent": "docker_semaphore",
-        "path": "templates/automation/docker_semaphore",
-        "path_parts": [
-            "templates",
-            "automation",
-            "docker_semaphore"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_n8n",
-        "path": "templates/automation/docker_n8n",
-        "path_parts": [
-            "templates",
-            "automation",
-            "docker_n8n"
+            "games",
+            "docker_necesse"
         ],
         "template": ".env.example"
     },
@@ -240,46 +293,33 @@
             "games",
             "docker_minecraft_server"
         ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "mc-survival1",
-        "path": "templates/games/docker_minecraft_server/servers/production/mc-survival1",
-        "path_parts": [
-            "templates",
-            "games",
-            "docker_minecraft_server",
-            "servers",
-            "production",
-            "mc-survival1"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "mc-pixelmon",
-        "path": "templates/games/docker_minecraft_server/servers/production/mc-pixelmon",
-        "path_parts": [
-            "templates",
-            "games",
-            "docker_minecraft_server",
-            "servers",
-            "production",
-            "mc-pixelmon"
-        ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "mc-bigchadguys",
-        "path": "templates/games/docker_minecraft_server/servers/production/mc-bigchadguys",
+        "path": "templates/games/docker_minecraft_server/servers/development/mc-bigchadguys",
         "path_parts": [
             "templates",
             "games",
             "docker_minecraft_server",
             "servers",
-            "production",
+            "development",
             "mc-bigchadguys"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
+    },
+    {
+        "parent": "mc-forge1",
+        "path": "templates/games/docker_minecraft_server/servers/development/mc-forge1",
+        "path_parts": [
+            "templates",
+            "games",
+            "docker_minecraft_server",
+            "servers",
+            "development",
+            "mc-forge1"
+        ],
+        "template": "compose.yml"
     },
     {
         "parent": "mc-forge",
@@ -292,7 +332,7 @@
             "development",
             "mc-forge"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "mc-paper1",
@@ -305,7 +345,7 @@
             "development",
             "mc-paper1"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "mc-autoforge",
@@ -318,7 +358,7 @@
             "development",
             "mc-autoforge"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "_refactor",
@@ -332,41 +372,66 @@
             "mc-autoforge",
             "_refactor"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "mc-bigchadguys",
-        "path": "templates/games/docker_minecraft_server/servers/development/mc-bigchadguys",
+        "path": "templates/games/docker_minecraft_server/servers/production/mc-bigchadguys",
         "path_parts": [
             "templates",
             "games",
             "docker_minecraft_server",
             "servers",
-            "development",
+            "production",
             "mc-bigchadguys"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
-        "parent": "mc-forge1",
-        "path": "templates/games/docker_minecraft_server/servers/development/mc-forge1",
+        "parent": "mc-pixelmon",
+        "path": "templates/games/docker_minecraft_server/servers/production/mc-pixelmon",
         "path_parts": [
             "templates",
             "games",
             "docker_minecraft_server",
             "servers",
-            "development",
-            "mc-forge1"
+            "production",
+            "mc-pixelmon"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
-        "parent": "docker_necesse",
-        "path": "templates/games/docker_necesse",
+        "parent": "mc-survival1",
+        "path": "templates/games/docker_minecraft_server/servers/production/mc-survival1",
         "path_parts": [
             "templates",
             "games",
-            "docker_necesse"
+            "docker_minecraft_server",
+            "servers",
+            "production",
+            "mc-survival1"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_valheim_server",
+        "path": "templates/games/docker_valheim_server",
+        "path_parts": [
+            "templates",
+            "games",
+            "docker_valheim_server"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "_templates",
+        "path": "templates/games/docker_valheim_server/servers/_templates",
+        "path_parts": [
+            "templates",
+            "games",
+            "docker_valheim_server",
+            "servers",
+            "_templates"
         ],
         "template": ".env.example"
     },
@@ -388,39 +453,7 @@
             "games",
             "docker_enshrouded_server"
         ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_valheim_server",
-        "path": "templates/games/docker_valheim_server",
-        "path_parts": [
-            "templates",
-            "games",
-            "docker_valheim_server"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "_templates",
-        "path": "templates/games/docker_valheim_server/servers/_templates",
-        "path_parts": [
-            "templates",
-            "games",
-            "docker_valheim_server",
-            "servers",
-            "_templates"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_crafty_minecraft",
-        "path": "templates/games/docker_crafty_minecraft",
-        "path_parts": [
-            "templates",
-            "games",
-            "docker_crafty_minecraft"
-        ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_satisfactory",
@@ -433,6 +466,16 @@
         "template": ".env.example"
     },
     {
+        "parent": "docker_crafty_minecraft",
+        "path": "templates/games/docker_crafty_minecraft",
+        "path_parts": [
+            "templates",
+            "games",
+            "docker_crafty_minecraft"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_terraria-server",
         "path": "templates/games/docker_terraria-server",
         "path_parts": [
@@ -443,232 +486,62 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_opengist",
-        "path": "templates/storage/docker_opengist",
+        "parent": "docker_calibre",
+        "path": "templates/media/docker_calibre",
         "path_parts": [
             "templates",
-            "storage",
-            "docker_opengist"
+            "media",
+            "docker_calibre"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_minio",
-        "path": "templates/storage/docker_minio",
+        "parent": "docker_download-suite",
+        "path": "templates/media/docker_download-suite",
         "path_parts": [
             "templates",
-            "storage",
-            "docker_minio"
+            "media",
+            "docker_download-suite"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_baserow",
-        "path": "templates/storage/docker_baserow",
+        "parent": "docker_prowlarr",
+        "path": "templates/media/docker_prowlarr",
         "path_parts": [
             "templates",
-            "storage",
-            "docker_baserow"
+            "media",
+            "docker_prowlarr"
         ],
-        "template": "docker-compose.yml"
+        "template": "compose.yml"
     },
     {
-        "parent": "docker_seafile-server",
-        "path": "templates/storage/docker_seafile-server",
+        "parent": "docker_photoprism",
+        "path": "templates/media/docker_photoprism",
         "path_parts": [
             "templates",
-            "storage",
-            "docker_seafile-server"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_bytestash",
-        "path": "templates/storage/docker_bytestash",
-        "path_parts": [
-            "templates",
-            "storage",
-            "docker_bytestash"
+            "media",
+            "docker_photoprism"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_rabbitmq",
-        "path": "templates/messaging/docker_rabbitmq",
+        "parent": "docker_emby",
+        "path": "templates/media/docker_emby",
         "path_parts": [
             "templates",
-            "messaging",
-            "docker_rabbitmq"
+            "media",
+            "docker_emby"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_mosquitto",
-        "path": "templates/messaging/docker_mosquitto",
+        "parent": "docker_plex",
+        "path": "templates/media/docker_plex",
         "path_parts": [
             "templates",
-            "messaging",
-            "docker_mosquitto"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_red-discordbot",
-        "path": "templates/bots/docker_red-discordbot",
-        "path_parts": [
-            "templates",
-            "bots",
-            "docker_red-discordbot"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_headscale",
-        "path": "templates/networking/docker_headscale",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_headscale"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_portainer",
-        "path": "templates/networking/docker_portainer",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_portainer"
-        ],
-        "template": "docker-compose.yml"
-    },
-    {
-        "parent": "docker_portall",
-        "path": "templates/networking/docker_portall",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_portall"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_wg-easy",
-        "path": "templates/networking/docker_wg-easy",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_wg-easy"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_unifi-controller",
-        "path": "templates/networking/docker_unifi-controller",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_unifi-controller"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_traefik",
-        "path": "templates/networking/docker_traefik",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_traefik"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_meshping",
-        "path": "templates/networking/docker_meshping",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_meshping"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_technitiumdns",
-        "path": "templates/networking/docker_technitiumdns",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_technitiumdns"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_nginx-proxy-manager",
-        "path": "templates/networking/docker_nginx-proxy-manager",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_nginx-proxy-manager"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_adguard",
-        "path": "templates/networking/docker_adguard",
-        "path_parts": [
-            "templates",
-            "networking",
-            "docker_adguard"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_coder",
-        "path": "templates/code_forges/docker_coder",
-        "path_parts": [
-            "templates",
-            "code_forges",
-            "docker_coder"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_forgejo",
-        "path": "templates/code_forges/docker_forgejo",
-        "path_parts": [
-            "templates",
-            "code_forges",
-            "docker_forgejo"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_gitea",
-        "path": "templates/code_forges/docker_gitea",
-        "path_parts": [
-            "templates",
-            "code_forges",
-            "docker_gitea"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_freshrss",
-        "path": "templates/rss/docker_freshrss",
-        "path_parts": [
-            "templates",
-            "rss",
-            "docker_freshrss"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_shaarli",
-        "path": "templates/bookmarking/docker_shaarli",
-        "path_parts": [
-            "templates",
-            "bookmarking",
-            "docker_shaarli"
+            "media",
+            "docker_plex"
         ],
         "template": ".env.example"
     },
@@ -679,6 +552,16 @@
             "templates",
             "bookmarking",
             "docker_linkding"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_shaarli",
+        "path": "templates/bookmarking/docker_shaarli",
+        "path_parts": [
+            "templates",
+            "bookmarking",
+            "docker_shaarli"
         ],
         "template": ".env.example"
     },
@@ -713,12 +596,72 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_ollama_webui",
-        "path": "templates/llm/docker_ollama_webui",
+        "parent": "docker_git-sync",
+        "path": "templates/backup/docker_git-sync",
         "path_parts": [
             "templates",
-            "llm",
-            "docker_ollama_webui"
+            "backup",
+            "docker_git-sync"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_backrest",
+        "path": "templates/backup/docker_backrest",
+        "path_parts": [
+            "templates",
+            "backup",
+            "docker_backrest"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "kopia",
+        "path": "templates/backup/kopia",
+        "path_parts": [
+            "templates",
+            "backup",
+            "kopia"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_coder",
+        "path": "templates/code_forges/docker_coder",
+        "path_parts": [
+            "templates",
+            "code_forges",
+            "docker_coder"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_forgejo",
+        "path": "templates/code_forges/docker_forgejo",
+        "path_parts": [
+            "templates",
+            "code_forges",
+            "docker_forgejo"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_gitea",
+        "path": "templates/code_forges/docker_gitea",
+        "path_parts": [
+            "templates",
+            "code_forges",
+            "docker_gitea"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_red-discordbot",
+        "path": "templates/bots/docker_red-discordbot",
+        "path_parts": [
+            "templates",
+            "bots",
+            "docker_red-discordbot"
         ],
         "template": ".env.example"
     },
@@ -730,7 +673,7 @@
             "dashboards",
             "docker_dashy"
         ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_squirrel_server_manager",
@@ -739,6 +682,88 @@
             "templates",
             "dashboards",
             "docker_squirrel_server_manager"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_beszel",
+        "path": "templates/monitoring_alerting/docker_beszel",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_beszel"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_graylog",
+        "path": "templates/monitoring_alerting/docker_graylog",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_graylog"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "server",
+        "path": "templates/monitoring_alerting/docker_netdata/server",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_netdata",
+            "server"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "agent",
+        "path": "templates/monitoring_alerting/docker_netdata/agent",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_netdata",
+            "agent"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_watchtower",
+        "path": "templates/monitoring_alerting/docker_watchtower",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_watchtower"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_uptime-kuma",
+        "path": "templates/monitoring_alerting/docker_uptime-kuma",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_uptime-kuma"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_monitoring",
+        "path": "templates/monitoring_alerting/docker_monitoring",
+        "path_parts": [
+            "templates",
+            "monitoring_alerting",
+            "docker_monitoring"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_redis",
+        "path": "templates/database/docker_redis",
+        "path_parts": [
+            "templates",
+            "database",
+            "docker_redis"
         ],
         "template": ".env.example"
     },
@@ -754,17 +779,6 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_mysql_workbench",
-        "path": "templates/database/web_uis/docker_mysql_workbench",
-        "path_parts": [
-            "templates",
-            "database",
-            "web_uis",
-            "docker_mysql_workbench"
-        ],
-        "template": ".env.example"
-    },
-    {
         "parent": "docker_redis-commander",
         "path": "templates/database/web_uis/docker_redis-commander",
         "path_parts": [
@@ -776,12 +790,23 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_mysql",
-        "path": "templates/database/docker_mysql",
+        "parent": "docker_mysql_workbench",
+        "path": "templates/database/web_uis/docker_mysql_workbench",
         "path_parts": [
             "templates",
             "database",
-            "docker_mysql"
+            "web_uis",
+            "docker_mysql_workbench"
+        ],
+        "template": ".env.example"
+    },
+    {
+        "parent": "docker_influxdb",
+        "path": "templates/database/docker_influxdb",
+        "path_parts": [
+            "templates",
+            "database",
+            "docker_influxdb"
         ],
         "template": ".env.example"
     },
@@ -796,6 +821,16 @@
         "template": ".env.example"
     },
     {
+        "parent": "docker_mysql",
+        "path": "templates/database/docker_mysql",
+        "path_parts": [
+            "templates",
+            "database",
+            "docker_mysql"
+        ],
+        "template": "compose.yml"
+    },
+    {
         "parent": "docker_mongodb",
         "path": "templates/database/docker_mongodb",
         "path_parts": [
@@ -806,34 +841,14 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_redis",
-        "path": "templates/database/docker_redis",
+        "parent": "docker_postgresql",
+        "path": "templates/database/docker_postgresql",
         "path_parts": [
             "templates",
             "database",
-            "docker_redis"
+            "docker_postgresql"
         ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_baserow",
-        "path": "templates/database/docker_baserow",
-        "path_parts": [
-            "templates",
-            "database",
-            "docker_baserow"
-        ],
-        "template": "docker-compose.yml"
-    },
-    {
-        "parent": "docker_influxdb",
-        "path": "templates/database/docker_influxdb",
-        "path_parts": [
-            "templates",
-            "database",
-            "docker_influxdb"
-        ],
-        "template": ".env.example"
+        "template": "compose.yml"
     },
     {
         "parent": "docker_nocodb",
@@ -846,96 +861,22 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_postgresql",
-        "path": "templates/database/docker_postgresql",
+        "parent": "docker_rabbitmq",
+        "path": "templates/messaging/docker_rabbitmq",
         "path_parts": [
             "templates",
-            "database",
-            "docker_postgresql"
+            "messaging",
+            "docker_rabbitmq"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "single-node",
-        "path": "templates/security/docker_wazuh/wazuh-docker/single-node",
+        "parent": "docker_mosquitto",
+        "path": "templates/messaging/docker_mosquitto",
         "path_parts": [
             "templates",
-            "security",
-            "docker_wazuh",
-            "wazuh-docker",
-            "single-node"
-        ],
-        "template": "docker-compose.yml"
-    },
-    {
-        "parent": "multi-node",
-        "path": "templates/security/docker_wazuh/wazuh-docker/multi-node",
-        "path_parts": [
-            "templates",
-            "security",
-            "docker_wazuh",
-            "wazuh-docker",
-            "multi-node"
-        ],
-        "template": "docker-compose.yml"
-    },
-    {
-        "parent": "docker_remnux",
-        "path": "templates/security/docker_remnux",
-        "path_parts": [
-            "templates",
-            "security",
-            "docker_remnux"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_kiwix_server",
-        "path": "templates/documents/docker_kiwix_server",
-        "path_parts": [
-            "templates",
-            "documents",
-            "docker_kiwix_server"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_docspell",
-        "path": "templates/documents/docker_docspell",
-        "path_parts": [
-            "templates",
-            "documents",
-            "docker_docspell"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_obsidian_web",
-        "path": "templates/documents/docker_obsidian_web",
-        "path_parts": [
-            "templates",
-            "documents",
-            "docker_obsidian_web"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_paperless-ng",
-        "path": "templates/documents/docker_paperless-ng",
-        "path_parts": [
-            "templates",
-            "documents",
-            "docker_paperless-ng"
-        ],
-        "template": ".env.example"
-    },
-    {
-        "parent": "docker_paperless-ngx",
-        "path": "templates/documents/docker_paperless-ngx",
-        "path_parts": [
-            "templates",
-            "documents",
-            "docker_paperless-ngx"
+            "messaging",
+            "docker_mosquitto"
         ],
         "template": ".env.example"
     },
@@ -950,59 +891,133 @@
         "template": ".env.example"
     },
     {
-        "parent": "docker_selenium_hub",
-        "path": "templates/web_scraping/docker_selenium_hub",
+        "parent": "docker_paperless-ngx",
+        "path": "templates/documents/docker_paperless-ngx",
         "path_parts": [
             "templates",
-            "web_scraping",
-            "docker_selenium_hub"
+            "documents",
+            "docker_paperless-ngx"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_kiwix_server",
+        "path": "templates/documents/docker_kiwix_server",
+        "path_parts": [
+            "templates",
+            "documents",
+            "docker_kiwix_server"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_obsidian_web",
+        "path": "templates/documents/docker_obsidian_web",
+        "path_parts": [
+            "templates",
+            "documents",
+            "docker_obsidian_web"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_paperless-ng",
+        "path": "templates/documents/docker_paperless-ng",
+        "path_parts": [
+            "templates",
+            "documents",
+            "docker_paperless-ng"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_node-server",
-        "path": "templates/misc/project_templates/docker_node-server",
+        "parent": "docker_docspell",
+        "path": "templates/documents/docker_docspell",
         "path_parts": [
             "templates",
-            "misc",
-            "project_templates",
-            "docker_node-server"
+            "documents",
+            "docker_docspell"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "docker_wordpress-template",
-        "path": "templates/misc/project_templates/docker_wordpress-template",
+        "parent": "docker_olivetin",
+        "path": "templates/automation/docker_olivetin",
         "path_parts": [
             "templates",
-            "misc",
-            "project_templates",
-            "docker_wordpress-template"
+            "automation",
+            "docker_olivetin"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_concourse_ci",
+        "path": "templates/automation/docker_concourse_ci",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_concourse_ci"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "nginx-proxy",
-        "path": "templates/misc/project_templates/docker_wordpress-nginx/nginx-proxy",
+        "parent": "docker_semaphore",
+        "path": "templates/automation/docker_semaphore",
         "path_parts": [
             "templates",
-            "misc",
-            "project_templates",
-            "docker_wordpress-nginx",
-            "nginx-proxy"
+            "automation",
+            "docker_semaphore"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_prefect_server",
+        "path": "templates/automation/docker_prefect_server",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_prefect_server"
         ],
         "template": ".env.example"
     },
     {
-        "parent": "example_wordpress",
-        "path": "templates/misc/project_templates/docker_wordpress-nginx/example_wordpress",
+        "parent": "docker_n8n",
+        "path": "templates/automation/docker_n8n",
         "path_parts": [
             "templates",
-            "misc",
-            "project_templates",
-            "docker_wordpress-nginx",
-            "example_wordpress"
+            "automation",
+            "docker_n8n"
         ],
         "template": ".env.example"
+    },
+    {
+        "parent": "docker_rundeck",
+        "path": "templates/automation/docker_rundeck",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_rundeck"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_beehive",
+        "path": "templates/automation/docker_beehive",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_beehive"
+        ],
+        "template": "compose.yml"
+    },
+    {
+        "parent": "docker_windmill",
+        "path": "templates/automation/docker_windmill",
+        "path_parts": [
+            "templates",
+            "automation",
+            "docker_windmill"
+        ],
+        "template": "compose.yml"
     }
 ]
