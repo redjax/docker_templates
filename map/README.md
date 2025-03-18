@@ -1,6 +1,6 @@
 # Templates Map <!-- omit in toc -->
 
-This README is a table of contents for templates in this repository.
+Map of the repository's template categories. This page is automatically rendered by the [`update_repo_map.py` script](../scripts/update_repo_map.py)
 
 ## Map
 
@@ -25,13 +25,3 @@ This README is a table of contents for templates in this repository.
 - [networking](../templates/networking)
 - [messaging](../templates/messaging)
 - [monitoring_alerting](../templates/monitoring_alerting)
-
-## Old Version
-
-- [code_forges](../templates/code_forges)- [llm](../templates/llm)- [dashboards](../templates/dashboards)- [backup](../templates/backup)- [games](../templates/games)- [misc](../templates/misc)
-  - subcategories:
-    - [project_templates](../templates/misc/project_templates)
-- [database](../templates/database)
-  - subcategories:
-    - [web_uis](../templates/database/web_uis)
-- [media](../templates/media)- [rss](../templates/rss)- [web_scraping](../templates/web_scraping)- [bots](../templates/bots)- [automation](../templates/automation)- [storage](../templates/storage)- [security](../templates/security)- [bookmarking](../templates/bookmarking)- [documents](../templates/documents)- [networking](../templates/networking)- [messaging](../templates/messaging)- [monitoring_alerting](../templates/monitoring_alerting)
