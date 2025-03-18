@@ -7,6 +7,9 @@ from pathlib import Path
 import typing as t
 import json
 import argparse
+import cookiecutter
+from cookiecutter.main import cookiecutter
+
 
 
 log = logging.getLogger(__name__)
@@ -17,6 +20,7 @@ OUTPUT_DIR: str = "map"
 # IGNORE_CATEGORY_NAMES: list[str] = ["_cookiecutter", "docker_netdata", "docker_cloudflare-tunnel", "docker_wazuh", "docker_wordpress-nginx", "docker_drone"]
 IGNORE_CATEGORY_NAMES_FILE: str = "metadata/ignore_categories"
 TEMPLATE_INDICATORS = ["*.env", "compose.yml", "docker-compose.yml", "*.env.example"]
+CATEGORIES_METADATA_FILE: str = "metadata/categories.json"
 
 
 def parse_arguments():
@@ -48,8 +52,15 @@ def parse_arguments():
     parser.add_argument(
         "--json-file",
         type=str,
-        default="./metadata/categories.json",
+        default=CATEGORIES_METADATA_FILE,
         help="CSV file to save renamed files to",
+    )
+    ## Location where cookiecutter template will be rendered
+    parser.add_argument(
+        "-o", "--output-dir",
+        type=str,
+        default=OUTPUT_DIR,
+        help="Directory where cookiecutter template will be rendered"
     )
     
     ## Dry run, where no actions will be taken
@@ -63,7 +74,7 @@ def parse_arguments():
 
 def load_ignored_categories(ignored_categories_file: str) -> list[str]:
     with open(ignored_categories_file, "r") as f:
-        categories = f.read()
+        categories = f.read().splitlines()
         
     return categories
 
@@ -82,7 +93,7 @@ def save_categories_to_json(categories: list[dict[str, t.Union[str, list]]], jso
         
         return
     
-    log.info(f"Saving categories to JSON file: {json_file}")
+    log.debug(f"Categories JSON output file: {json_file}")
     
     json_data = json.dumps(categories, indent=4, default=str, sort_keys=True)
     if dry_run:
@@ -121,6 +132,67 @@ def get_categories(templates_root: str, ignore_names: list[str]) -> list[dict[st
 
     return categories
 
+
+def render_cookiecutter_template(cookiecutter_template: str, output_dir: str, dry_run: bool, no_input: bool = True, extra_context: dict = {}) -> bool:
+    log.debug(f"Cookiecutter template path: '{cookiecutter_template}', output directory: '{output_dir}")
+    if dry_run:
+        log.info(f"[DRY RUN] Would have applied cookiecutter template at path '{cookiecutter_template}' to output directory '{output_dir}'")
+        return True
+
+    try:
+        cookiecutter(cookiecutter_template, no_input=no_input, extra_context=extra_context, output_dir=output_dir)
+        log.debug(f"Template rendered successfully to path '{output_dir}'")
+        return True
+    except Exception as exc:
+        msg = f"({type(exc)})"
+        log.error(msg)
+        
+        raise exc
+
+
+def update_repo_map(repo_map_output_dir: str, cookiecutter_template: str, ignored_categories_file: str, templates_root: str, output_json_file: str, save_json: bool, dry_run: bool, cookiecutter_no_input: bool = True):
+    log.info(f"Loading ignored categories from file '{ignored_categories_file}'")
+    try:
+        ignore_category_names = load_ignored_categories(ignored_categories_file=ignored_categories_file)
+        log.debug(f"Ignored categories: {ignore_category_names}")
+    except Exception as exc:
+        msg = f"({type(exc)}) Error loading ignored categories. Details: {exc}"
+        log.error(msg)
+        
+        raise
+
+    log.info(f"Getting repository template categories from path '{templates_root}'") 
+    try:
+        categories: list[dict[str, t.Union[str, list[dict]]]] = get_categories(templates_root=templates_root, ignore_names=ignore_category_names)
+        log.debug(f"Found [{len(categories)}] {'category' if len(categories) == 1 else 'categories'} in path: {TEMPLATES_ROOT}")
+    except Exception as exc:
+        msg = f"({type(exc)}) Error getting categories from root path '{templates_root}'. Details: {exc}"
+        log.error(msg)
+        
+        raise
+    
+    if len(categories) > 0:
+        log.debug(f"Found categories: {categories}")
+    
+    if save_json:
+        log.info(f"Saving categories to JSON file: {output_json_file}")
+        try:
+            save_categories_to_json(categories=categories["categories"], json_file=output_json_file, dry_run=dry_run)
+        except Exception as exc:
+            msg = f"({type(exc)}) Error saving categories to JSON file '{output_json_file}'. Details: {exc}"
+            log.error(msg)
+    
+    extra_context = {"categories": categories}
+    log.info(f"Rendering cookiecutter template at path '{cookiecutter_template}' to output directory '{repo_map_output_dir}'")
+    log.debug(f"Extra content ({type(extra_context)}): {extra_context}")
+    try:
+        render_cookiecutter_template(cookiecutter_template=cookiecutter_template, output_dir=repo_map_output_dir, dry_run=dry_run, no_input=cookiecutter_no_input, extra_context=extra_context)
+    except Exception as exc:
+        # msg = f"({type(exc)}) Error rendering cookiecutter template. Details: {exc}"
+        # log.error(msg)
+        raise exc
+    
+
 if __name__ == "__main__":
     args = parse_arguments()
     
@@ -130,14 +202,18 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     
-    IGNORE_CATEGORY_NAMES = load_ignored_categories(ignored_categories_file=args.ignore_categories_file or IGNORE_CATEGORY_NAMES_FILE)
-    log.debug(f"Ignored categories: {IGNORE_CATEGORY_NAMES}")
-
-    categories = get_categories(templates_root=args.scan_path or TEMPLATES_ROOT, ignore_names=IGNORE_CATEGORY_NAMES)
-    log.debug(f"Found [{len(categories)}] {'category' if len(categories) == 1 else 'categories'} in path: {TEMPLATES_ROOT}")
-    
-    if len(categories) > 0:
-        log.debug(f"Found categories: {categories}")
-    
-    save_categories_to_json(categories=categories, json_file="metadata/categories.json", dry_run=args.dry_run)
-    
+    try:
+        update_repo_map(
+            repo_map_output_dir=args.output_dir,
+            cookiecutter_template=COOKIECUTTER_TEMPLATE,
+            ignored_categories_file=args.ignore_categories_file,
+            templates_root=args.scan_path,
+            output_json_file=args.json_file,
+            save_json=args.save_json,
+            dry_run=args.dry_run
+        )
+    except Exception as exc:
+        msg = f"({type(exc)}) Error occurred while updating repository map template. Details: {exc}"
+        log.error(msg)
+        
+        exit(1)
