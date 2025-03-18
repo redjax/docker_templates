@@ -11,10 +11,3 @@ This README is a table of contents for templates in this repository.
 {%- endfor %}
 {%- endmacro %}
 {{ render_categories(categories) }}
-
-## Old Version
-
-{% for category in categories %}- [{{ category.name }}](../{{ category.path }}){% if category.sub_categories %}
-  - subcategories:
-{% for subcategory in category.sub_categories %}    - [{{ subcategory.name }}](../{{ subcategory.path }})
-{% endfor %}{% endif %}{% endfor %}
