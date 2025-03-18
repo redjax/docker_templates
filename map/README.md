@@ -3,123 +3,35 @@
 This README is a table of contents for templates in this repository.
 
 ## Map
+
 - [code_forges](../templates/code_forges)
-  - subcategories:
-    - [docker_coder](../templates/code_forges/docker_coder)
-    - [docker_gitea](../templates/code_forges/docker_gitea)
-    - [docker_forgejo](../templates/code_forges/docker_forgejo)
 - [llm](../templates/llm)
-  - subcategories:
-    - [docker_ollama_webui](../templates/llm/docker_ollama_webui)
 - [dashboards](../templates/dashboards)
-  - subcategories:
-    - [docker_dashy](../templates/dashboards/docker_dashy)
-    - [docker_squirrel_server_manager](../templates/dashboards/docker_squirrel_server_manager)
 - [backup](../templates/backup)
-  - subcategories:
-    - [docker_git-sync](../templates/backup/docker_git-sync)
-    - [kopia](../templates/backup/kopia)
-    - [docker_gickup](../templates/backup/docker_gickup)
-    - [docker_backrest](../templates/backup/docker_backrest)
 - [games](../templates/games)
-  - subcategories:
-    - [docker_valheim_server](../templates/games/docker_valheim_server)
-    - [docker_enshrouded_server](../templates/games/docker_enshrouded_server)
-    - [docker_satisfactory](../templates/games/docker_satisfactory)
-    - [docker_terraria-server](../templates/games/docker_terraria-server)
-    - [docker_crafty_minecraft](../templates/games/docker_crafty_minecraft)
-    - [docker_minecraft_server](../templates/games/docker_minecraft_server)
-    - [docker_necesse](../templates/games/docker_necesse)
-    - [docker_palworld_server](../templates/games/docker_palworld_server)
-- [misc](../templates/misc)- [database](../templates/database)
-  - subcategories:
-    - [docker_influxdb](../templates/database/docker_influxdb)
-    - [docker_mysql](../templates/database/docker_mysql)
-    - [docker_redis](../templates/database/docker_redis)
-    - [docker_nocodb](../templates/database/docker_nocodb)
-    - [docker_baserow](../templates/database/docker_baserow)
-    - [docker_postgresql](../templates/database/docker_postgresql)
-    - [docker_mongodb](../templates/database/docker_mongodb)
-    - [docker_prometheus](../templates/database/docker_prometheus)
+- [misc](../templates/misc)
+    - [project_templates](../templates/misc/project_templates)
+- [database](../templates/database)
+    - [web_uis](../templates/database/web_uis)
 - [media](../templates/media)
-  - subcategories:
-    - [docker_plex](../templates/media/docker_plex)
-    - [docker_emby](../templates/media/docker_emby)
-    - [docker_calibre](../templates/media/docker_calibre)
-    - [docker_download-suite](../templates/media/docker_download-suite)
-    - [docker_photoprism](../templates/media/docker_photoprism)
-    - [docker_prowlarr](../templates/media/docker_prowlarr)
 - [rss](../templates/rss)
-  - subcategories:
-    - [docker_commafeed](../templates/rss/docker_commafeed)
-    - [docker_yarr](../templates/rss/docker_yarr)
-    - [docker_feedless](../templates/rss/docker_feedless)
-    - [docker_tinytinyrss](../templates/rss/docker_tinytinyrss)
-    - [docker_rsshub](../templates/rss/docker_rsshub)
-    - [docker_freshrss](../templates/rss/docker_freshrss)
 - [web_scraping](../templates/web_scraping)
-  - subcategories:
-    - [docker_selenium_hub](../templates/web_scraping/docker_selenium_hub)
 - [bots](../templates/bots)
-  - subcategories:
-    - [docker_red-discordbot](../templates/bots/docker_red-discordbot)
 - [automation](../templates/automation)
-  - subcategories:
-    - [docker_concourse_ci](../templates/automation/docker_concourse_ci)
-    - [docker_rundeck](../templates/automation/docker_rundeck)
-    - [docker_windmill](../templates/automation/docker_windmill)
-    - [docker_semaphore](../templates/automation/docker_semaphore)
-    - [docker_n8n](../templates/automation/docker_n8n)
-    - [docker_prefect_server](../templates/automation/docker_prefect_server)
-    - [docker_huginn](../templates/automation/docker_huginn)
-    - [docker_olivetin](../templates/automation/docker_olivetin)
-    - [docker_beehive](../templates/automation/docker_beehive)
 - [storage](../templates/storage)
-  - subcategories:
-    - [docker_seafile-server](../templates/storage/docker_seafile-server)
-    - [docker_minio](../templates/storage/docker_minio)
-    - [docker_baserow](../templates/storage/docker_baserow)
-    - [docker_bytestash](../templates/storage/docker_bytestash)
-    - [docker_opengist](../templates/storage/docker_opengist)
 - [security](../templates/security)
-  - subcategories:
-    - [docker_netalertx](../templates/security/docker_netalertx)
-    - [docker_remnux](../templates/security/docker_remnux)
 - [bookmarking](../templates/bookmarking)
-  - subcategories:
-    - [docker_wallabag](../templates/bookmarking/docker_wallabag)
-    - [docker_linkding](../templates/bookmarking/docker_linkding)
-    - [docker_shaarli](../templates/bookmarking/docker_shaarli)
-    - [docker_shiori](../templates/bookmarking/docker_shiori)
-    - [docker_readeck](../templates/bookmarking/docker_readeck)
 - [documents](../templates/documents)
-  - subcategories:
-    - [docker_mayan-edms](../templates/documents/docker_mayan-edms)
-    - [docker_kiwix_server](../templates/documents/docker_kiwix_server)
-    - [docker_paperless-ngx](../templates/documents/docker_paperless-ngx)
-    - [docker_obsidian_web](../templates/documents/docker_obsidian_web)
-    - [docker_paperless-ng](../templates/documents/docker_paperless-ng)
-    - [docker_docspell](../templates/documents/docker_docspell)
 - [networking](../templates/networking)
-  - subcategories:
-    - [docker_wg-easy](../templates/networking/docker_wg-easy)
-    - [docker_portall](../templates/networking/docker_portall)
-    - [docker_portainer](../templates/networking/docker_portainer)
-    - [docker_headscale](../templates/networking/docker_headscale)
-    - [docker_meshping](../templates/networking/docker_meshping)
-    - [docker_adguard](../templates/networking/docker_adguard)
-    - [docker_unifi-controller](../templates/networking/docker_unifi-controller)
-    - [docker_traefik](../templates/networking/docker_traefik)
-    - [docker_nginx-proxy-manager](../templates/networking/docker_nginx-proxy-manager)
-    - [docker_technitiumdns](../templates/networking/docker_technitiumdns)
 - [messaging](../templates/messaging)
-  - subcategories:
-    - [docker_rabbitmq](../templates/messaging/docker_rabbitmq)
-    - [docker_mosquitto](../templates/messaging/docker_mosquitto)
 - [monitoring_alerting](../templates/monitoring_alerting)
+
+## Old Version
+
+- [code_forges](../templates/code_forges)- [llm](../templates/llm)- [dashboards](../templates/dashboards)- [backup](../templates/backup)- [games](../templates/games)- [misc](../templates/misc)
   - subcategories:
-    - [docker_monitoring](../templates/monitoring_alerting/docker_monitoring)
-    - [docker_watchtower](../templates/monitoring_alerting/docker_watchtower)
-    - [docker_graylog](../templates/monitoring_alerting/docker_graylog)
-    - [docker_beszel](../templates/monitoring_alerting/docker_beszel)
-    - [docker_uptime-kuma](../templates/monitoring_alerting/docker_uptime-kuma)
+    - [project_templates](../templates/misc/project_templates)
+- [database](../templates/database)
+  - subcategories:
+    - [web_uis](../templates/database/web_uis)
+- [media](../templates/media)- [rss](../templates/rss)- [web_scraping](../templates/web_scraping)- [bots](../templates/bots)- [automation](../templates/automation)- [storage](../templates/storage)- [security](../templates/security)- [bookmarking](../templates/bookmarking)- [documents](../templates/documents)- [networking](../templates/networking)- [messaging](../templates/messaging)- [monitoring_alerting](../templates/monitoring_alerting)
