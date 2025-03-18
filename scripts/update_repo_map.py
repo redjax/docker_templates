@@ -64,7 +64,7 @@ def save_categories_to_json(categories: list[dict[str, t.Union[str, list]]], jso
 def get_subcategories(category_path: str, ignore_names: list[str]) -> list[dict[str, t.Union[str, list]]]:
     subcategories = []
     for subdir in Path(category_path).iterdir():
-        if subdir.is_dir() and subdir.name not in ignore_names and has_template_indicators(subdir):
+        if subdir.is_dir() and subdir.name not in ignore_names and not has_template_indicators(subdir):
             subcategories.append({
                 "name": subdir.name,
                 "path": str(subdir),
