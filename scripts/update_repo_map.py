@@ -64,8 +64,15 @@ def parse_arguments():
     parser.add_argument(
         "--json-file",
         type=str,
-        default="./metadata/categories.json",
+        default=CATEGORIES_METADATA_FILE,
         help="CSV file to save renamed files to",
+    )
+    ## Location where cookiecutter template will be rendered
+    parser.add_argument(
+        "-o", "--output-dir",
+        type=str,
+        default=OUTPUT_DIR,
+        help="Directory where cookiecutter template will be rendered"
     )
     
     ## Dry run, where no actions will be taken
@@ -94,7 +101,6 @@ def save_categories_to_json(categories: list[dict[str, t.Union[str, list]]], jso
     if not categories:
         log.warning("No data to save as JSON")
         return
-
     json_data = json.dumps(categories, indent=4, default=str, sort_keys=True)
     if dry_run:
         log.info(f"[DRY RUN] JSON data would be saved to '{json_file}':\n{json_data}")
