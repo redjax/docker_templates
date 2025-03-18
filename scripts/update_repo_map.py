@@ -8,7 +8,7 @@ from jinja2 import Environment, FileSystemLoader
 log = logging.getLogger(__name__)
 
 TEMPLATES_ROOT = "templates"
-TEMPLATE_DIR = "map/_template"
+JINJA_TEMPLATE_DIR = "map/_template"
 OUTPUT_DIR = "map"
 IGNORE_CATEGORY_NAMES_FILE = "metadata/ignore_categories"
 TEMPLATE_INDICATORS = ["*.env", "compose.yml", "docker-compose.yml", "*.env.example"]
@@ -19,7 +19,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Update the template map README via Jinja2.")
 
     parser.add_argument("--scan-path", type=str, default=TEMPLATES_ROOT, help="Path to scan for files")
-    parser.add_argument("--template-dir", type=str, default=TEMPLATE_DIR, help="Path to Jinja2 templates")
+    parser.add_argument("-d", "--template-dir", type=str, default=JINJA_TEMPLATE_DIR, help="Path to directory with Jinja templates")
+    parser.add_argument("-t", "--template-file", type=str, default="README.md.j2", help="Path to the Jinja template to render")
     parser.add_argument("--ignore-categories-file", type=str, default=IGNORE_CATEGORY_NAMES_FILE, help="Path to file with category names to ignore")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (default: INFO)")
     parser.add_argument("--save-json", action="store_true", help="Save categories to a JSON file")
@@ -80,9 +81,9 @@ def get_categories(templates_root: str, ignore_names: list[str]) -> list[dict[st
     return categories
 
 
-def render_jinja_template(template_dir: str, output_dir: str, context: dict, dry_run: bool):
+def render_jinja_template(template_dir: str, template_file: str, output_dir: str, context: dict, dry_run: bool):
     env = Environment(loader=FileSystemLoader(template_dir))
-    template = env.get_template("README.md")  # Example template name
+    template = env.get_template(template_file)
 
     rendered_content = template.render(context)
     output_path = Path(output_dir) / "README.md"
@@ -100,6 +101,7 @@ def render_jinja_template(template_dir: str, output_dir: str, context: dict, dry
 def update_repo_map(
     repo_map_output_dir: str,
     template_dir: str,
+    template_file: str,
     ignored_categories_file: str,
     templates_root: str,
     output_json_file: str,
@@ -117,8 +119,8 @@ def update_repo_map(
         save_categories_to_json(categories, output_json_file, dry_run)
 
     context = {"categories": categories}
-    log.info(f"Rendering Jinja2 template from directory '{template_dir}' to '{repo_map_output_dir}'")
-    render_jinja_template(template_dir, repo_map_output_dir, context, dry_run)
+    log.info(f"Rendering Jinja2 template '{template_file}' from directory '{template_dir}' to '{repo_map_output_dir}'")
+    render_jinja_template(template_dir, template_file, repo_map_output_dir, context, dry_run)
 
 
 if __name__ == "__main__":
@@ -134,6 +136,7 @@ if __name__ == "__main__":
         update_repo_map(
             repo_map_output_dir=args.output_dir,
             template_dir=args.template_dir,
+            template_file=args.template_file,
             ignored_categories_file=args.ignore_categories_file,
             templates_root=args.scan_path,
             output_json_file=args.json_file,
