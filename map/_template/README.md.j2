@@ -1,13 +1,13 @@
 # Templates Map <!-- omit in toc -->
 
-This README is a table of contents for templates in this repository.
+Map of the repository's template categories. This page is automatically rendered by the [`update_repo_map.py` script](../scripts/update_repo_map.py)
 
 ## Map
 {%- macro render_categories(categories, level=0) %}{# macro loops through input categories, recursively printing any sub-paths #}
-{%- for category in categories %}
+{%- for category in categories %}{# recursively iterate over categories & their subcategories #}
 {{ '  ' * level }}- [{{ category.name }}](../{{ category.path }}){# render indented list items, adding +2 to level each iteration #}
-{%- if category.sub_categories and category.sub_categories|length > 0 %}{{ render_categories(category.sub_categories, level + 2) }}
+{%- if category.sub_categories and category.sub_categories|length > 0 %}{{ render_categories(category.sub_categories, level + 2) }}{# render indentation in each nesting #}
 {%- endif %}
 {%- endfor %}
 {%- endmacro %}
-{{ render_categories(categories) }}
+{{ render_categories(categories) }}{# call the macro to build list of template categories #}
