@@ -1,3 +1,17 @@
+"""Update repository map at map/README.md.
+
+Scans the templates/ directory for all directories (which become 'categories' in the map),
+then finds all templates within for the 'all templates' section.
+
+TODO:
+
+- [ ] Template type beacons
+    - [ ] .category for category dirs
+    - [ ] .cookiecutter.template for cookiecutter template paths
+    - [ ] .docker-compose.template for Docker Compose template paths
+    - [ ] .shell.template for Docker templates that are just a shell script
+"""
+
 import logging
 from pathlib import Path
 import typing as t
