@@ -59,34 +59,63 @@ def save_categories_to_json(categories: list[dict[str, t.Union[str, list]]], jso
     with open(json_file, "w", encoding="utf-8") as f:
         f.write(json_data)
     log.info(f"Saved JSON to: {json_file}")
+    
+
+def get_templates(search_dir: str, template_indicators: list[str], ignore_names: list[str]):
+    templates: list = []
+    
+    for subdir in Path(search_dir).iterdir():
+        if subdir.is_dir() and subdir.name not in ignore_names and has_template_indicators(subdir):
+            templates.append({
+                "name": subdir.name,
+                "path": str(subdir),
+            })
+            
+    return templates
 
 
-def get_subcategories(category_path: str, ignore_names: list[str]) -> list[dict[str, t.Union[str, list]]]:
+def get_subcategories(category_path: str, ignore_names: list[str], template_indicators: list[str]) -> list[dict[str, t.Union[str, list]]]:
     subcategories = []
     for subdir in Path(category_path).iterdir():
         if subdir.is_dir() and subdir.name not in ignore_names and not has_template_indicators(subdir):
             subcategories.append({
                 "name": subdir.name,
                 "path": str(subdir),
-                "sub_categories": get_subcategories(subdir, ignore_names)
+                "count": sum(1 for _ in subdir.iterdir()),
+                "templates": get_templates(search_dir=str(subdir), template_indicators=template_indicators, ignore_names=ignore_names),
+                "sub_categories": get_subcategories(subdir, ignore_names, template_indicators)
             })
     return subcategories
 
 
-def get_categories(templates_root: str, ignore_names: list[str]) -> list[dict[str, t.Union[str, list]]]:
+def get_categories(templates_root: str, ignore_names: list[str], template_indicators: list[str]) -> list[dict[str, t.Union[str, list]]]:
     categories = []
     for category in Path(templates_root).iterdir():
         if category.is_dir() and category.name not in ignore_names:
-            subcategories = get_subcategories(category, ignore_names)
-            categories.append({"name": category.name,  "path": str(category),"sub_categories": subcategories})
+            subcategories = get_subcategories(category, ignore_names, template_indicators=template_indicators)
+            ## TODO: Get nested templates by searching at least 1 level down for template indicator files
+            categories.append(
+                {
+                    "name": category.name,
+                    "path": str(category),
+                    "count": sum(1 for _ in category.iterdir()),
+                    "templates": get_templates(search_dir=str(category), template_indicators=template_indicators, ignore_names=ignore_names),
+                    "sub_categories": subcategories
+                }
+            )
 
     return categories
 
 
 def render_jinja_template(template_dir: str, template_file: str, output_dir: str, context: dict, dry_run: bool):
+    log.debug(f"Searching '{template_dir}' for template '{template_file}'")
+    log.debug(f"Template context: {context}")
+
+    log.info(f"Loading template: {template_dir}/{template_file}")
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template_file)
 
+    log.debug("Rendering context into template")
     rendered_content = template.render(context)
     output_path = Path(output_dir) / "README.md"
 
@@ -94,16 +123,19 @@ def render_jinja_template(template_dir: str, template_file: str, output_dir: str
         log.info(f"[DRY RUN] Would have written the following content to '{output_path}':\n{rendered_content}")
         return
 
+    log.info(f"Saving rendered template to file '{output_path}'")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(rendered_content)
-    log.info(f"Rendered template saved to: {output_path}")
+    
+    log.info(f"Rendered template to: {output_path}")
 
 
 def update_repo_map(
     repo_map_output_dir: str,
     template_dir: str,
     template_file: str,
+    template_indicators: list[str],
     ignored_categories_file: str,
     templates_root: str,
     output_json_file: str,
@@ -112,9 +144,17 @@ def update_repo_map(
 ):
     log.info(f"Loading ignored categories from file '{ignored_categories_file}'")
     ignore_category_names = load_ignored_categories(ignored_categories_file)
+    log.debug(f"Ignore categories: {ignore_category_names}")
 
     log.info(f"Getting repository template categories from path '{templates_root}'")
-    categories = get_categories(templates_root, ignore_category_names)
+    try:
+        categories = get_categories(templates_root, ignore_category_names, template_indicators=template_indicators)
+        log.debug(f"Categories: {categories}")
+    except Exception as exc:
+        msg = f"({type(exc)}) Error getting categories. Details: {exc}"
+        log.error(msg)
+        
+        raise
 
     if save_json:
         log.info(f"Saving categories to JSON file: {output_json_file}")
@@ -130,7 +170,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         level=args.log_level.upper(),
-        format="%(asctime)s | %(levelname)s |> %(message)s",
+        format="%(asctime)s | %(levelname)s | %(module)s.%(funcName)s:%(lineno)d |> %(message)s" if args.log_level.upper() == 'DEBUG' else "%(asctime)s | %(levelname)s |> %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
@@ -139,6 +179,7 @@ if __name__ == "__main__":
             repo_map_output_dir=args.output_dir,
             template_dir=args.template_dir,
             template_file=args.template_file,
+            template_indicators=TEMPLATE_INDICATORS,
             ignored_categories_file=args.ignore_categories_file,
             templates_root=args.scan_path,
             output_json_file=args.json_file,
@@ -146,5 +187,5 @@ if __name__ == "__main__":
             dry_run=args.dry_run,
         )
     except Exception as exc:
-        log.error(f"Error: {exc}")
+        log.critical(f"Error: {exc}")
         exit(1)
