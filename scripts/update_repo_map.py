@@ -67,6 +67,7 @@ def get_subcategories(category_path: str, ignore_names: list[str]) -> list[dict[
         if subdir.is_dir() and subdir.name not in ignore_names and has_template_indicators(subdir):
             subcategories.append({
                 "name": subdir.name,
+                "path": str(subdir),
                 "sub_categories": get_subcategories(subdir, ignore_names)
             })
     return subcategories
@@ -77,7 +78,8 @@ def get_categories(templates_root: str, ignore_names: list[str]) -> list[dict[st
     for category in Path(templates_root).iterdir():
         if category.is_dir() and category.name not in ignore_names:
             subcategories = get_subcategories(category, ignore_names)
-            categories.append({"name": category.name, "sub_categories": subcategories})
+            categories.append({"name": category.name,  "path": str(category),"sub_categories": subcategories})
+
     return categories
 
 
