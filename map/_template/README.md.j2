@@ -8,7 +8,7 @@ Map of the repository's template categories. This page is automatically rendered
   - Categories in the [templates directory](../templates)
 - [All Templates](#all-templates)
   - Full listing of all categories & the templates within
-  - Note: some templates do not include a `compose.yml` or `.env.example` file, and are not picked up by the `update_repo_map.py` script, i.e. the [`portainer` stack]().
+  - Note: some templates do not include a `compose.yml` or `.env.example` file, and are not picked up by the `update_repo_map.py` script, i.e. the [`netdata` stack](../templates/monitoring_alerting/docker_netdata).
   - At a later date I will rework this by including a file indicator for categories (`.category`) and templates (`.docker.template`, `.cookiecutter.template`, etc)
 
 ## Map
