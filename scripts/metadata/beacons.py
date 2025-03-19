@@ -3,7 +3,6 @@ from pathlib import Path
 import typing as t
 import sys
 import argparse
-from jinja2 import Environment, FileSystemLoader
 
 log = logging.getLogger(__name__)
 
