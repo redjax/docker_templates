@@ -1,19 +1,18 @@
 import logging
 from pathlib import Path
 import typing as t
-import json
+import sys
 import argparse
 from jinja2 import Environment, FileSystemLoader
 
 log = logging.getLogger(__name__)
 
-TEMPLATES_ROOT = "templates"
-JINJA_TEMPLATE_DIR = "map/_template"
-OUTPUT_DIR = "map"
-IGNORE_CATEGORY_NAMES_FILE = "metadata/ignore_categories"
-TEMPLATE_INDICATORS = ["*.env", "compose.yml", "docker-compose.yml", "*.env.example"]
-TEMPLATE_BEACONS: dict = {"category": ".category", "docker_template": ".docker-compose.template", "cookiecutter_template": ".cookiecutter.template"}
-CATEGORIES_METADATA_FILE = "metadata/categories.json"
+## Add parent directory to PYTHONPATH dynamically
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+__all__ = ["search_beacons", "find_category_beacons", "find_cookiecutter_template_beacons", "find_compose_template_beacons"]
+
+from metadata.constants import TEMPLATES_ROOT, JINJA_TEMPLATE_DIR, OUTPUT_DIR, IGNORE_CATEGORY_NAMES_FILE, TEMPLATE_INDICATORS, TEMPLATE_BEACONS, CATEGORIES_METADATA_FILE
 
 def parse_arguments():
     """Parse CLI args passed to the script.
@@ -31,92 +30,6 @@ def parse_arguments():
         default=TEMPLATES_ROOT,
         help="Root directory for templates",
     )
-    ## Path where JSON/CSV/filecount files will be saved
-    # parser.add_argument(
-    #     "--output-dir",
-    #     type=str,
-    #     default=OUTPUT_DIR,
-    #     help="Directory to save output files",
-    # )
-    ## Ignore
-    # parser.add_argument(
-    #     "--ignore-pattern",
-    #     type=str,
-    #     nargs="*",
-    #     default=IGNORE_PATTERNS,
-    #     help="List of directories to ignore",
-    # )
-    ## File/directory pattern indicating a path is a Docker template
-    # parser.add_argument(
-    #     "--template-indicator",
-    #     type=str,
-    #     nargs="*",
-    #     default=TEMPLATE_INDICATORS,
-    #     help="List of template indicators",
-    # )
-    ## When present, save to JSON
-    # parser.add_argument(
-    #     "--save-json",
-    #     action="store_true",
-    #     default=SAVE_JSON,
-    #     help="Save the templates to a JSON file",
-    # )
-    ## JSON file to save templates to
-    # parser.add_argument(
-    #     "--json-file",
-    #     type=str,
-    #     default="./metadata/templates.json",
-    #     help="JSON file to save templates to",
-    # )
-    ## When present, save to CSV
-    # parser.add_argument(
-    #     "--save-csv",
-    #     action="store_true",
-    #     default=SAVE_CSV,
-    #     help="Save the templates to a CSV file",
-    # )
-    ## CSV file to save templates to
-    # parser.add_argument(
-    #     "--csv-file",
-    #     type=str,
-    #     default="./metadata/templates.csv",
-    #     help="CSV file to save templates to",
-    # )
-    ## When present, save the count of templates to a file
-    # parser.add_argument(
-    #     "--save-count",
-    #     action="store_true",
-    #     default=SAVE_COUNT,
-    #     help="Save the count of templates",
-    # )
-    ## Plaintext file to save count to
-    # parser.add_argument(
-    #     "--count-file",
-    #     type=str,
-    #     default="./metadata/templates_count",
-    #     help="File to save the count of templates to",
-    # )
-    ## When present, updates the README.md file
-    # parser.add_argument(
-    #     "--update-readme",
-    #     action="store_true",
-    #     default=UPDATE_README,
-    #     help="Update the README file with the count of templates",
-    # )
-    ## README.md file to update
-    # parser.add_argument(
-    #     "--readme-file",
-    #     type=str,
-    #     default="./README.md",
-    #     help="Path to the README file",
-    # )
-    ## When present, updates all count files & the README.md file
-    # parser.add_argument(
-    #     "--update-all",
-    #     action="store_true",
-    #     default=False,
-    #     help="Update all files",
-    # )
     ## Set logging level
     parser.add_argument(
         "--log-level",
@@ -180,7 +93,7 @@ def find_compose_template_beacons(templates_dir: str, beacons: list[str]):
         raise
 
 
-def main(templates_dir: str, beacons: dict = TEMPLATE_BEACONS):
+def search_beacons(templates_dir: str, beacons: dict = TEMPLATE_BEACONS):
     category_beacons = find_category_beacons(templates_dir=templates_dir, beacons=beacons["category"])
     log.debug(f"Category beacons ({len(category_beacons)}): {category_beacons}")
     
@@ -189,6 +102,10 @@ def main(templates_dir: str, beacons: dict = TEMPLATE_BEACONS):
     
     compose_beacons = find_compose_template_beacons(templates_dir, beacons=beacons["docker_template"])
     log.debug(f"Compose beacons ({len(compose_beacons)}): {compose_beacons}")
+    
+    beacons: dict = {"category_beacons": category_beacons, "cookiecutter_beacons": cookiecutter_beacons, "compose_beacons": compose_beacons}
+    
+    return beacons
 
     
 if __name__ == "__main__":
@@ -202,4 +119,4 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    main(templates_dir=TEMPLATES_ROOT)
+    search_beacons(templates_dir=TEMPLATES_ROOT)
