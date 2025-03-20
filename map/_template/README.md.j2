@@ -1,0 +1,42 @@
+# Templates Map
+
+Map of the repository's template categories. This page is automatically rendered by the [`update_repo_map.py` script](../scripts/update_repo_map.py)
+
+## Table of Contents
+
+- [Map](#map)
+  - Categories in the [templates directory](../templates)
+- [All Templates](#all-templates)
+  - Full listing of all categories & the templates within
+  - Note: some templates do not include a `compose.yml` or `.env.example` file, and are not picked up by the `update_repo_map.py` script, i.e. the [`netdata` stack](../templates/monitoring_alerting/docker_netdata).
+  - At a later date I will rework this by including a file indicator for categories (`.category`) and templates (`.docker.template`, `.cookiecutter.template`, etc)
+
+## Map
+
+### Template Categories
+{%- macro render_categories(categories, level=0) %}{# macro loops through input categories, recursively printing any sub-paths #}
+{%- for category in categories %}{# recursively iterate over categories & their subcategories #}
+{{ '  ' * level }}- [{{ category.name }}](../{{ category.path }}){# render indented list items, adding +2 to level each iteration #}
+{%- if category.sub_categories and category.sub_categories|length > 0 %}{{ render_categories(category.sub_categories, level + 2) }} {# render indentation in each nesting #}
+{%- endif %}
+{%- endfor %}
+{%- endmacro %}
+{{ render_categories(categories) }}{# call the macro to build list of template categories #}
+
+## All Templates
+
+{%- macro render_categories_with_templates(categories, level=0) %}
+{%- for category in categories %}
+{{ '  ' * level }}- [{{ category.name }}](../{{ category.path }})
+{%- if category.templates and category.templates|length > 0 %}
+{%- for _template in category.templates %}
+{{ '  ' * (level + 2) }}- [{{ _template.name }}](../{{ _template.path }})
+{%- endfor %}
+{%- endif %}
+{%- if category.sub_categories and category.sub_categories|length > 0 %}
+{{ render_categories_with_templates(category.sub_categories, level + 2) }}
+{%- endif %}
+{%- endfor %}
+{%- endmacro %}
+
+{{ render_categories_with_templates(categories) }}

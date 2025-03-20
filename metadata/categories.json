@@ -103,6 +103,15 @@
                 ]
             }
         ]
+        "sub_categories": []
+    },
+    {
+        "name": "storage",
+        "sub_categories": []
+    },
+    {
+        "name": "security",
+        "sub_categories": []
     },
     {
         "name": "bookmarking",
