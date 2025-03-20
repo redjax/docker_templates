@@ -145,9 +145,7 @@ def count(args: argparse.Namespace) -> int:
     count_file = args.count_file
     update_readme = args.update_readme
     readme_file = args.readme_file
-    beacons = args.beacon
-        
-    log.info(f"Counting template files in path '{templates_root_dir}'")    
+    beacons = args.beacon  
     
     ## Set defaults to avoid mutable default arguments issue
     if ignore_patterns is None:
@@ -170,8 +168,6 @@ def count(args: argparse.Namespace) -> int:
         raise FileNotFoundError(
             f"Could not find templates root directory at path: '{templates_root_dir}'"
         )
-        
-    log.info(f"Counting templates in path '{templates_root_dir}'")
     
     ## Discover templates in templates root path
     try:
