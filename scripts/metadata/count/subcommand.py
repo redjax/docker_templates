@@ -1,19 +1,21 @@
+from __future__ import annotations
+
+import argparse
 import logging
+from pathlib import Path
 import re
 import typing as t
-from pathlib import Path
-import argparse
 
 log = logging.getLogger(__name__)
 
+from metadata import search
 from metadata.constants import (
-    TEMPLATES_ROOT,
     IGNORE_IN_COUNT,
     METADATA_DIR,
     TEMPLATE_BEACONS,
     TEMPLATES_COUNT_FILE,
+    TEMPLATES_ROOT,
 )
-from metadata import search
 
 __all__ = ["parse_arguments", "count"]
 
@@ -108,7 +110,6 @@ def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_fil
 
 def update_readme_count(readme_file: str, new_count: int) -> None:
     """Update the template count in the README.md file."""
-
     ## Read the content of the README.md
     with open(readme_file, "r", encoding="utf-8") as file:
         readme_content = file.read()

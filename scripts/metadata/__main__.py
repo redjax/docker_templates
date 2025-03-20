@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
-import sys
 from pathlib import Path
+import sys
 
 ## Add parent directory to PYTHONPATH dynamically
 sys.path.append(str(Path(__file__).resolve().parent.parent))

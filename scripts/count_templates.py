@@ -34,14 +34,15 @@ Params:
     --update-all: Update all files (CSV, JSON, and README).
     --readme-file: README file to update.
 """
+from __future__ import annotations
 
 import argparse
+import csv
+import json
 import logging
 from pathlib import Path
-import typing as t
-import json
-import csv
 import re
+import typing as t
 
 log = logging.getLogger(__name__)
 
@@ -80,6 +81,7 @@ def parse_arguments():
 
     Returns:
         argparse.Namespace: Parsed CLI args.
+
     """
     ## Create parser
     parser = argparse.ArgumentParser(description="Count repo templates")
@@ -305,7 +307,6 @@ def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_fil
 
 def update_readme_count(readme_file: str, new_count: int) -> None:
     """Update the template count in the README.md file."""
-
     ## Read the content of the README.md
     with open(readme_file, "r", encoding="utf-8") as file:
         readme_content = file.read()
@@ -369,6 +370,7 @@ def count(
     Raises:
         ValueError: Missing templates root dir.
         FileNotFoundError: Could not find templates root directory.
+
     """
     ## Set defaults to avoid mutable default arguments issue
     if ignore_patterns is None:
