@@ -13,8 +13,6 @@ from metadata.constants import (
     TEMPLATE_BEACONS,
     TEMPLATES_COUNT_FILE,
 )
-from metadata.utils import is_ignored
-from metadata.io import load_ignored_patterns
 from metadata import search
 
 __all__ = ["parse_arguments", "count"]
@@ -60,7 +58,7 @@ def parse_arguments(subparsers):
     
     ## When present, save the count of templates to a file
     count_parser.add_argument(
-        "--save-count",
+        "--save",
         action="store_true",
         default=False,
         help="Save the count of templates",
@@ -141,7 +139,7 @@ def update_readme_count(readme_file: str, new_count: int) -> None:
 def count(args: argparse.Namespace) -> int:
     templates_root_dir = args.templates_root_dir
     ignore_patterns = args.ignore
-    save_count = args.save_count
+    save_count = args.save
     count_file = args.count_file
     update_readme = args.update_readme
     readme_file = args.readme_file
