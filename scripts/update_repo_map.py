@@ -1,8 +1,11 @@
+from __future__ import annotations
+
+import argparse
+import json
 import logging
 from pathlib import Path
 import typing as t
-import json
-import argparse
+
 from jinja2 import Environment, FileSystemLoader
 
 log = logging.getLogger(__name__)

@@ -1,6 +1,7 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 import logging
-from dataclasses import dataclass, field
-import typing as t
 from pathlib import Path
 
 log = logging.getLogger(__name__)
