@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-import typing as t 
+import typing as t
 
 log = logging.getLogger(__name__)
 

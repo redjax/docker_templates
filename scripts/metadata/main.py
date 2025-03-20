@@ -1,17 +1,17 @@
+from __future__ import annotations
+
+import argparse
 import logging
 from pathlib import Path
-import typing as t
 import sys
-import argparse
 
 log = logging.getLogger(__name__)
 
 ## Add parent directory to PYTHONPATH dynamically
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from metadata.domain import beacon as beacon_domain
-from metadata.utils import setup
 from metadata import count, metadata
+from metadata.utils import setup
 
 __all__ = ["run"]
 
@@ -20,6 +20,7 @@ def parse_arguments():
 
     Returns:
         argparse.Namespace: Parsed CLI args.
+
     """
     ## Create parser
     parser = argparse.ArgumentParser(description="CLI for controlling repository metadata")
