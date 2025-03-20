@@ -93,6 +93,22 @@ def parse_arguments(subparsers):
         help="CSV file to save templates to",
     )
     
+    ## Limit output of discovered templates
+    metadata_parser.add_argument(
+        "--preview",
+        type=int,
+        default=10,
+        help="Limit output of discovered metadata. Override with --show-all"
+    )
+    
+    ## Show all templates, regardlesss of --preview
+    metadata_parser.add_argument(
+        "--show-all",
+        action="store_true",
+        default=False,
+        help="Show all discovered templates. WARNING: this may produce a lot of output & push your history out of your shell's window",
+    )
+    
     metadata_parser.set_defaults(func=_metadata)
     
     
@@ -104,6 +120,8 @@ def _metadata(args: argparse.Namespace):
     save_csv = args.save_csv
     templates_metadata_csv_file = args.csv_file
     beacons = args.beacon
+    preview = args.preview
+    show_all = args.show_all
     
     beacons = args.beacon  
     
@@ -163,6 +181,24 @@ def _metadata(args: argparse.Namespace):
     
     try:
         _json = json.dumps(templates, indent=4, default=str, sort_keys=True)
-        log.info(f"Templates metadata:\n{_json}")
     except Exception as exc:
         log.error(f"Unable to print templates metadata. Details: {exc}")
+
+    if show_all:
+        log.info(f"Templates:\n{_json}")
+
+    elif preview:
+        if preview == len(templates):
+            log.info(f"Templates:\n{_json}")
+        
+        else:
+            count = 0
+
+            log.info(f"Previewing [{preview}/{len(templates)}] {'template' if len(templates) == 1 else 'templates'}")
+            
+            for template in templates:
+                if count >= preview:
+                    continue
+
+                log.info(f"Template ({count + 1}/{preview}): {template}")
+                count +=  1
