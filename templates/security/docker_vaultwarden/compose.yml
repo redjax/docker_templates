@@ -1,0 +1,84 @@
+---
+volumes:
+  vaultwarden_data: {}
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${VW_DOMAIN}
+    volumes:
+      - ${VW_DATA_DIR:-vaultwarden_data}:/data/
+    ports:
+      - ${VW_WEBUI_PORT:-80}:80
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  ## Backup your vault to Bitwarden's servers
+  lazywarden:
+    image: querylab/lazywarden:latest
+    container_name: lazywarden
+    restart: unless-stopped
+    hostname: lazywarden
+    env_file:
+      - .env
+    environment:
+      UNLOCK_VAULT: "true"
+    volumes:
+      - ${LW_CONFIG_DIR:-lazywarden_config}:/root/lazywarden/config
+      - ${LW_BACKUP_DRIVE:-lazywarden_backups}:/root/lazywarden/backup-drive/
+      - ${LW_ENV_FILE:-./lazywarden.env}:/app/.env
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  ## For file-based backups on local filesystem/volume
+  vaultwarden-backup:
+    image: bruceforce/vaultwarden-backup
+    container_name: vaultwarden-backup
+    restart: on-failure
+    init: true
+    depends_on:
+      - vaultwarden
+    volumes:
+      ## Mount the vaultwarden data directory
+      - ${VW_DATA_DIRL:-vaultwarden_data}:/data/
+      - ${VW_BACKUP_BACKUPS_DIR:-./vw-backup/backups}:/backup/
+    env_file:
+      - ${VWBACKUP_ENV_FILE:-./vaultwarden-backup.env}
+    # environment:
+    #   TZ: ${TZ:-Etc/UTC}
+    #   UID: ${UUID:-1000}
+    #   GID: ${GUID:-1000}
+    #   ## DEBUG, INFO, WARN, ERROR, CRITICAL
+    #   LOG_LEVEL: ${VW_BACKUP_LOG_LEVEL:-INFO}
+    #   BACKUP_ADD_DATABASE: ${VW_BACKUP_INCLUDE_DB:-true}
+    #   BACKUP_ADD_ATTACHMENTS: ${VW_BACKUP_INCLUDE_ATTACHMENTS:-true}
+    #   BACKUP_ADD_CONFIG_JSON: ${VW_BACKUP_INCLUDE_CONFIG_JSON:-true}
+    #   BACKUP_ADD_ICON_CACHE: ${VW_BACKUP_INCLUDE_ICON_CACHE:-false}
+    #   BACKUP_ADD_RSA_KEY: ${VW_BACKUP_INCLUDE_RSA_KEY:-true}
+    #   BACKUP_DD_SENDS: ${VW_BACKUP_INCLUDE_DD_SENDS:-true}
+    #   BACKUP_USE_DEDUPE: ${VW_BACKUP_DEDUPE_BACKUPS:-false}
+    #   BACKUP_ON_STARTUP: ${VW_BACKUP_DO_BACKUP_ON_STARTUP:-false}
+    #   CRON_TIME: ${VW_BACKUP_CRON_EXPRESSION:-"59 23 * * *"}
+    #   DELETE_AFTER: ${VW_BACKUP_DELETE_AFTER_DAYS:-30}
+    #   ENCRYPTION_BASE64_GPG_KEY: ${VW_BACKUP_GPG_KEY}
+    #   ENCRYPTION_PASSWORD: ${VW_BACKUP_ENCRYPTION_PASSWORD}
+    #   TIMESTAMP: ${VW_BACKUP_APPEND_TIMESTAMP:-true}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: vaultwarden-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP:-"true"}
+      ## Check for updates once every 24h
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
+    ## Only monitor containers with a specific label
+    command: --label-enable
