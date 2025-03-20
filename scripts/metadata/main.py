@@ -10,7 +10,8 @@ log = logging.getLogger(__name__)
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from metadata.domain import beacon as beacon_domain
-from utils import setup
+from metadata.utils import setup
+from metadata import count, beacons
 
 __all__ = ["run"]
 
@@ -32,8 +33,9 @@ def parse_arguments():
     )
     
     ## Initialize subparser to pass into subcommands
-    subparsers= parser.add_subparsers(dest="command", help="Available commands")
-    
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    count.parse_arguments(subparsers)
+
     ## Parse CLI args
     args = parser.parse_args()
     
