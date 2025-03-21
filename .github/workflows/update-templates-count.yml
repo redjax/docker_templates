@@ -29,7 +29,7 @@ jobs:
 
       - name: Run count_templates.py
         run: |
-          python scripts/count_templates.py --update-all --log-level debug
+          python scripts/count_templates.py
 
       - name: Check for changes
         run: |
