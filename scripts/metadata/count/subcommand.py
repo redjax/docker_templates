@@ -95,6 +95,14 @@ def parse_arguments(subparsers):
 
 def save_count_to_file(templates: list[dict[str, t.Union[str, Path]]], count_file: str):
     count: int = len(templates)
+    
+    if Path(count_file).exists():
+        with open(count_file, "r") as f:
+            existing_count = int(f.read())
+            
+            if count == existing_count:
+                log.warning(f"Repository count has not changed. Counted [{count}] {'template' if count == 1 else 'templates'}")
+
     try:
         with open(count_file, "w") as f:
             f.write(str(count))
