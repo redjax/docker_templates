@@ -14,6 +14,8 @@ from metadata.constants import (
     TEMPLATE_BEACONS,
     TEMPLATES_METADATA_JSON_FILE,
     TEMPLATES_ROOT,
+    REPO_MAP_TEMPLATE_DIR,
+    REPO_MAP_OUTPUT_DIR
 )
 
 __all__ = ["parse_arguments", "_metadata"]
@@ -91,6 +93,22 @@ def parse_arguments(subparsers):
         help="CSV file to save templates to",
     )
     
+    ## When present, update the repository map README file
+    metadata_parser.add_argument(
+        "--update-repo-map",
+        action="store_true",
+        default=False,
+        help="Update the repository map README file"
+    )
+    
+    ## Directory where repo map README exists
+    metadata_parser.add_argument(
+        "--map-template-dir",
+        type=str,
+        default=REPO_MAP_TEMPLATE_DIR,
+        help="Directory where repository map template README exists"
+    )
+        
     ## Limit output of discovered templates
     metadata_parser.add_argument(
         "--preview",
