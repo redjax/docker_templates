@@ -6,6 +6,11 @@ import json
 import logging
 import sys
 import typing as t
+import sys
+import argparse
+
+from metadata import count
+from metadata.constants import (TEMPLATES_ROOT, METADATA_DIR, IGNORE_IN_COUNT, TEMPLATE_BEACONS, TEMPLATES_COUNT_FILE)
 
 from project_cli import count
 from project_cli.constants import (
