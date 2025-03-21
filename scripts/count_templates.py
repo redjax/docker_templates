@@ -1,10 +1,18 @@
-import logging
-import typing as t
-import sys
+from __future__ import annotations
+
 import argparse
+import logging
+import sys
+import typing as t
 
 from metadata import count
-from metadata.constants import (TEMPLATES_ROOT, METADATA_DIR, IGNORE_IN_COUNT, TEMPLATE_BEACONS, TEMPLATES_COUNT_FILE)
+from metadata.constants import (
+    IGNORE_IN_COUNT,
+    METADATA_DIR,
+    TEMPLATE_BEACONS,
+    TEMPLATES_COUNT_FILE,
+    TEMPLATES_ROOT,
+)
 
 log = logging.getLogger(__name__)
 

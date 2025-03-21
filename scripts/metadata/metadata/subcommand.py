@@ -11,11 +11,11 @@ from metadata import io, search
 from metadata.constants import (
     IGNORE_IN_COUNT,
     METADATA_DIR,
+    REPO_MAP_OUTPUT_DIR,
+    REPO_MAP_TEMPLATE_DIR,
     TEMPLATE_BEACONS,
     TEMPLATES_METADATA_JSON_FILE,
     TEMPLATES_ROOT,
-    REPO_MAP_TEMPLATE_DIR,
-    REPO_MAP_OUTPUT_DIR
 )
 
 __all__ = ["parse_arguments", "_metadata"]
