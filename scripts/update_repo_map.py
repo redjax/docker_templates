@@ -1,22 +1,11 @@
-"""Update repository map at map/README.md.
+from __future__ import annotations
 
-Scans the templates/ directory for all directories (which become 'categories' in the map),
-then finds all templates within for the 'all templates' section.
-
-TODO:
-
-- [ ] Template type beacons
-    - [ ] .category for category dirs
-    - [ ] .cookiecutter.template for cookiecutter template paths
-    - [ ] .docker-compose.template for Docker Compose template paths
-    - [ ] .shell.template for Docker templates that are just a shell script
-"""
-
+import argparse
+import json
 import logging
 from pathlib import Path
 import typing as t
-import json
-import argparse
+
 from jinja2 import Environment, FileSystemLoader
 
 log = logging.getLogger(__name__)

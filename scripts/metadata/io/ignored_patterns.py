@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -13,10 +15,10 @@ def load_ignored_patterns(ignore_patterns_file: str):
         log.debug(f"Ignored patterns: {ignored_patterns}")
         
         return ignored_patterns
-    except IOError as e:
+    except IOError:
         log.error(f"Error reading ignore patterns from file '{ignore_patterns_file}'.")
         raise
-    except PermissionError as perm_err:
+    except PermissionError:
         log.error(f"Permission denied reading ignored patterns file at path '{ignore_patterns_file}'")
         raise
     except Exception as exc:

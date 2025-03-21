@@ -1,22 +1,22 @@
-import logging
-import re
-import typing as t
-from pathlib import Path
+from __future__ import annotations
+
 import argparse
 import json
+import logging
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
+from metadata import io, search
 from metadata.constants import (
-    TEMPLATES_ROOT,
     IGNORE_IN_COUNT,
     METADATA_DIR,
     TEMPLATE_BEACONS,
-    TEMPLATES_METADATA_JSON_FILE
+    TEMPLATES_METADATA_JSON_FILE,
+    TEMPLATES_ROOT,
+    REPO_MAP_TEMPLATE_DIR,
+    REPO_MAP_OUTPUT_DIR
 )
-from metadata import io
-from metadata.utils import is_ignored
-from metadata import search
 
 __all__ = ["parse_arguments", "_metadata"]
 
@@ -93,6 +93,22 @@ def parse_arguments(subparsers):
         help="CSV file to save templates to",
     )
     
+    ## When present, update the repository map README file
+    metadata_parser.add_argument(
+        "--update-repo-map",
+        action="store_true",
+        default=False,
+        help="Update the repository map README file"
+    )
+    
+    ## Directory where repo map README exists
+    metadata_parser.add_argument(
+        "--map-template-dir",
+        type=str,
+        default=REPO_MAP_TEMPLATE_DIR,
+        help="Directory where repository map template README exists"
+    )
+        
     ## Limit output of discovered templates
     metadata_parser.add_argument(
         "--preview",
@@ -176,7 +192,7 @@ def _metadata(args: argparse.Namespace):
         try:
             io.save_templates_to_csv(templates=templates, csv_file=templates_metadata_csv_file)
             log.info(f"Saved templates metadata to {templates_metadata_csv_file}")
-        except Exception as exc:
+        except Exception:
             log.error(f"Error saving templates metadata to CSV file: '{templates_metadata_csv_file}")
     
     try:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     "TEMPLATES_ROOT",
     "REPO_MAP_TEMPLATE_DIR",
