@@ -24,7 +24,6 @@ Map of the repository's template categories. This page is automatically rendered
 {{ render_categories(categories) }}{# call the macro to build list of template categories #}
 
 ## All Templates
-
 {%- macro render_categories_with_templates(categories, level=0) %}
 {%- for category in categories %}
 {{ '  ' * level }}- [{{ category.name }}](../{{ category.path }})

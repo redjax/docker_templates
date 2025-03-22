@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 ## Add parent directory to PYTHONPATH dynamically
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from metadata import count, metadata
+from metadata import count, metadata, repo_map
 from metadata.utils import setup
 
 __all__ = ["run"]
@@ -39,6 +39,7 @@ def parse_arguments():
     ## Add subcommands to subparser
     count.parse_arguments(subparsers)
     metadata.parse_arguments(subparsers)
+    repo_map.parse_arguments(subparsers)
 
     ## Parse CLI args
     args = parser.parse_args()
