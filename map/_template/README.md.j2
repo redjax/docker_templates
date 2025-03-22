@@ -29,10 +29,11 @@ Map of the repository's template categories. This page is automatically rendered
 {{ '  ' * level }}- [{{ category.name }}](../{{ category.path }})
 {%- if category.templates and category.templates|length > 0 %}
 {%- for _template in category.templates %}
-{{ '  ' * (level + 1) }}- [{{ _template.name }}](../{{ _template.path }})
+{{ '  ' * (level + 2) }}- [{{ _template.name }}](../{{ _template.parent }})
 {%- endfor %}
 {%- endif %}
-{%- if category.sub_categories and category.sub_categories|length > 0 %}{{ render_categories_with_templates(category.sub_categories, level + 1) }}{% endif %}
+{%- if category.sub_categories and category.sub_categories|length > 0 %}{{ render_categories_with_templates(category.sub_categories, level + 2) }}
+{%- endif %}
 {%- endfor %}
 {%- endmacro %}
 {{ render_categories_with_templates(categories) }}
