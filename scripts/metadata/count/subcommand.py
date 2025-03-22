@@ -12,7 +12,7 @@ from metadata import search
 from metadata.constants import (
     IGNORE_IN_COUNT,
     METADATA_DIR,
-    TEMPLATE_BEACONS,
+    TEMPLATE_BEACONS_DICT,
     TEMPLATES_COUNT_FILE,
     TEMPLATES_ROOT,
 )
@@ -54,8 +54,8 @@ def parse_arguments(subparsers):
         "--beacon",
         type=list[str],
         nargs="*",
-        default=TEMPLATE_BEACONS,
-        help="1 or more beacon file to search for, i.e. '.category', '.docker-compose.template'"
+        default=TEMPLATE_BEACONS_DICT["docker_template"]["beacon"],
+        help="1 or more beacon filename to search for, i.e. '.category', '.docker-compose.template'"
     )
     
     ## When present, save the count of templates to a file
@@ -178,7 +178,7 @@ def count(args: argparse.Namespace) -> int:
     
     ## Discover templates in templates root path
     try:
-        templates = search.discover_templates(
+        templates = search.find_beacons(
             templates_root_dir=templates_root_dir,
             ignore_patterns=ignore_patterns,
             template_file_indicators=beacons,

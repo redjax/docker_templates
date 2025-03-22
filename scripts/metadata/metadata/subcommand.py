@@ -13,9 +13,11 @@ from metadata.constants import (
     METADATA_DIR,
     REPO_MAP_OUTPUT_DIR,
     REPO_MAP_TEMPLATE_DIR,
-    TEMPLATE_BEACONS,
+    TEMPLATE_BEACONS_DICT,
     TEMPLATES_METADATA_JSON_FILE,
     TEMPLATES_ROOT,
+    TEMPLATES_METADATA_CSV_FILE,
+    
 )
 
 __all__ = ["parse_arguments", "_metadata"]
@@ -57,7 +59,7 @@ def parse_arguments(subparsers):
         "--beacon",
         type=list[str],
         nargs="*",
-        default=TEMPLATE_BEACONS,
+        default=TEMPLATE_BEACONS_DICT["category"],
         help="1 or more beacon file to search for, i.e. '.category', '.docker-compose.template'"
     )
     
@@ -89,25 +91,25 @@ def parse_arguments(subparsers):
     metadata_parser.add_argument(
         "--csv-file",
         type=str,
-        default="./metadata/templates.csv",
+        default=TEMPLATES_METADATA_CSV_FILE,
         help="CSV file to save templates to",
     )
     
-    ## When present, update the repository map README file
-    metadata_parser.add_argument(
-        "--update-repo-map",
-        action="store_true",
-        default=False,
-        help="Update the repository map README file"
-    )
+    # ## When present, update the repository map README file
+    # metadata_parser.add_argument(
+    #     "--update-repo-map",
+    #     action="store_true",
+    #     default=False,
+    #     help="Update the repository map README file"
+    # )
     
-    ## Directory where repo map README exists
-    metadata_parser.add_argument(
-        "--map-template-dir",
-        type=str,
-        default=REPO_MAP_TEMPLATE_DIR,
-        help="Directory where repository map template README exists"
-    )
+    # ## Directory where repo map README exists
+    # metadata_parser.add_argument(
+    #     "--map-template-dir",
+    #     type=str,
+    #     default=REPO_MAP_TEMPLATE_DIR,
+    #     help="Directory where repository map template README exists"
+    # )
         
     ## Limit output of discovered templates
     metadata_parser.add_argument(
@@ -139,7 +141,24 @@ def _metadata(args: argparse.Namespace):
     preview = args.preview
     show_all = args.show_all
     
-    beacons = args.beacon  
+    beacons = args.beacon
+    
+    if beacons is None:
+        beacons = []
+    if isinstance(beacons, str):
+        log.debug(f"beacons is a str: {beacons}")
+        beacons = [beacons]
+    elif isinstance(beacons, list):
+        beacons: list[str] = []
+        for b in beacons:
+            if isinstance(b, dict):
+                beacons.append(b)
+            elif isinstance(b, str):
+                beacons.append(b["beacon"])
+    elif isinstance(beacons, dict):
+        beacons = [beacons["beacon"]]
+                
+    log.debug(f"Beacons: {beacons}")
     
     ## Set defaults to avoid mutable default arguments issue
     if ignore_patterns is None:
@@ -165,7 +184,7 @@ def _metadata(args: argparse.Namespace):
         
     ## Discover templates in templates root path
     try:
-        templates = search.discover_templates(
+        templates = search.find_beacons(
             templates_root_dir=templates_root_dir,
             ignore_patterns=ignore_patterns,
             template_file_indicators=beacons,
