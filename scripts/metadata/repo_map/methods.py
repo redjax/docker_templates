@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 from metadata.constants import TEMPLATE_BEACONS_DICT, TEMPLATES_ROOT, REPO_MAP_TEMPLATE_DIR, REPO_MAP_OUTPUT_DIR, CATEGORIES_METADATA_JSON_FILE, IGNORE_TEMPLATE_CATEGORIES
 from metadata import search,io
 
-__all__ = ["parse_arguments", "_repo_map"]
+__all__ = ["parse_arguments", "_categories"]
 
 def parse_arguments(subparsers):
     repo_map_parser = subparsers.add_parser("map", help="Interact with the repository map file in ./map")
@@ -22,7 +22,7 @@ def parse_arguments(subparsers):
     repo_map_parser.add_argument("--template-dir", type=str, default=REPO_MAP_TEMPLATE_DIR, help="Path to directory with Jinja templates")
     repo_map_parser.add_argument("-t", "--template-file", type=str, default="README.md.j2", help="Path to the Jinja template to render")
     repo_map_parser.add_argument("--ignore", type=str, default=IGNORE_TEMPLATE_CATEGORIES, help="1 or more file/dir name pattern to ignore")
-    # repo_map_parser.add_argument("--save-json", action="store_true", help="Save categories to a JSON file")
+    repo_map_parser.add_argument("--save-json", action="store_true", help="Save categories to a JSON file")
     repo_map_parser.add_argument("--json-file", type=str, default=CATEGORIES_METADATA_JSON_FILE, help="JSON file to save categories")
     repo_map_parser.add_argument("-o", "--output-dir", type=str, default=REPO_MAP_OUTPUT_DIR, help="Output directory for generated files")
     # repo_map_parser.add_argument("--dry-run", action="store_true", help="Perform a dry run without actual changes")
@@ -36,7 +36,7 @@ def parse_arguments(subparsers):
     )
     ## When present, update the repository map README file
     repo_map_parser.add_argument(
-        "--save",
+        "--update-repo-map",
         action="store_true",
         default=False,
         help="Update the repository map README file"
@@ -50,7 +50,7 @@ def parse_arguments(subparsers):
         help="Directory where repository map template README exists"
     )
     
-    repo_map_parser.set_defaults(func=_repo_map)
+    repo_map_parser.set_defaults(func=_categories)
     
     
 def render_jinja_template(template_dir: str, template_file: str, output_dir: str, context: dict, dry_run: bool):
@@ -78,12 +78,14 @@ def render_jinja_template(template_dir: str, template_file: str, output_dir: str
 
     
 
-def _repo_map(args: argparse.Namespace):
+def _categories(args: argparse.Namespace):
     scan_path = args.scan_path
     ignore_patterns = args.ignore
     beacons = args.beacon
-    save_map = args.save
+    update_repo_map = args.update_repo_map
     map_template_dir = args.map_template_dir
+    save_json = args.save_json
+    json_file = args.json_file
     # dry_run = args.dry_run
     
     if beacons is None:
@@ -105,7 +107,7 @@ def _repo_map(args: argparse.Namespace):
     
     ## Discover categories in templates root path
     try:
-        categories = search.find_category_beacons(
+        categories = search.find_beacons(
             templates_root_dir=scan_path,
             ignore_patterns=ignore_patterns,
             template_file_indicators=beacons,
@@ -117,8 +119,15 @@ def _repo_map(args: argparse.Namespace):
         raise
     
     log.debug(f"Found [{len(categories)}] {'category' if len(categories) == 1 else 'categories'}")
+    
+    if save_json:
+        try:
+            io.save_categories_to_json(categories, json_file=json_file)
+        except Exception as exc:
+            log.error(exc)
+            pass
             
-    if save_map:
+    if update_repo_map:
         log.info(f"Update repository map file")
         template_file = "REAMDE.md.j2"
         try:
