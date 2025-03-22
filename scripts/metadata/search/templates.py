@@ -8,15 +8,18 @@ log = logging.getLogger(__name__)
 
 from metadata.utils import is_ignored
 
-__all__ = ["discover_templates"]
+__all__ = ["find_beacons"]
 
 
-def discover_templates(
-    templates_root_dir: Path,
+def find_beacons(
+    templates_root_dir: t.Union[str, Path],
     ignore_patterns: list[str],
     template_file_indicators: list[str],
 ) -> None:
-    log.info(f"Counting templates in '{templates_root_dir}'")
+    if isinstance(templates_root_dir, str):
+        templates_root_dir = Path(templates_root_dir)
+
+    log.info(f"Finding templates in '{templates_root_dir}'")
 
     templates: list[dict[str, t.Union[str, Path]]] = []
     seen_templates = set()
