@@ -21,12 +21,7 @@
     },
     {
         "name": "misc",
-        "sub_categories": [
-            {
-                "name": "project_templates",
-                "sub_categories": []
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "database",

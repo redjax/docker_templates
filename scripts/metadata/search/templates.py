@@ -8,10 +8,61 @@ log = logging.getLogger(__name__)
 
 from metadata.utils import is_ignored
 
-__all__ = ["find_beacons"]
+__all__ = [
+    "build_category_tree",
+    "find_category_beacons",
+    "find_template_beacons",
+]
+
+def build_category_tree(
+    root: Path,
+    current_path: Path,
+    ignore_patterns: list[str],
+    template_file_indicators: list[str],
+) -> dict:
+    category = {
+        "name": current_path.name,
+        "sub_categories": []
+    }
+
+    for item in current_path.iterdir():
+        if item.is_dir():
+            if (item / ".category").exists():
+                sub_category = build_category_tree(root, item, ignore_patterns, template_file_indicators)
+                category["sub_categories"].append(sub_category)
+        elif item.is_file() and item.name == ".category":
+            # We've already handled this by creating the category
+            pass
+        elif item.is_file() and any(item.match(indicator) for indicator in template_file_indicators):
+            if not is_ignored(item, ignore_patterns, root):
+                # Here you might want to add some information about the template
+                # For now, we're just counting it by its presence
+                pass
+
+    return category
+
+def find_category_beacons(
+    templates_root_dir: t.Union[str, Path],
+    ignore_patterns: list[str],
+    template_file_indicators: list[str],
+) -> list[dict]:
+    if isinstance(templates_root_dir, str):
+        templates_root_dir = Path(templates_root_dir)
+
+    log.info(f"Finding templates in '{templates_root_dir}'")
+
+    categories = []
+
+    for item in templates_root_dir.iterdir():
+        if item.is_dir() and (item / ".category").exists():
+            category = build_category_tree(templates_root_dir, item, ignore_patterns, template_file_indicators)
+            categories.append(category)
+
+    log.debug(f"Discovered [{len(categories)}] top-level categories")
+    return categories
 
 
-def find_beacons(
+def find_template_beacons(
     templates_root_dir: t.Union[str, Path],
     ignore_patterns: list[str],
     template_file_indicators: list[str],
