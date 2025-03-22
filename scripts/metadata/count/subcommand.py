@@ -178,7 +178,7 @@ def count(args: argparse.Namespace) -> int:
     
     ## Discover templates in templates root path
     try:
-        templates = search.find_beacons(
+        templates = search.find_template_beacons(
             templates_root_dir=templates_root_dir,
             ignore_patterns=ignore_patterns,
             template_file_indicators=beacons,

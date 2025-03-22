@@ -107,7 +107,7 @@ def _categories(args: argparse.Namespace):
     
     ## Discover categories in templates root path
     try:
-        categories = search.find_beacons(
+        categories = search.find_category_beacons(
             templates_root_dir=scan_path,
             ignore_patterns=ignore_patterns,
             template_file_indicators=beacons,
