@@ -1,14 +1,9 @@
 from __future__ import annotations
 
 import argparse
-import csv
-import json
 import logging
-import sys
+from pathlib import Path
 import typing as t
-
-from metadata import count
-from metadata.constants import (TEMPLATES_ROOT, METADATA_DIR, IGNORE_IN_COUNT, TEMPLATE_BEACONS, TEMPLATES_COUNT_FILE)
 
 from project_cli import count
 from project_cli.constants import (
