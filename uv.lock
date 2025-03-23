@@ -183,21 +183,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cyclopts"
-version = "3.10.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "attrs" },
-    { name = "docstring-parser", marker = "python_full_version < '4.0'" },
-    { name = "rich" },
-    { name = "rich-rst" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/23/11/63e85bebead0559df403ef5ac701340bb61f95f5e5f7cb0228c96cf24e37/cyclopts-3.10.1.tar.gz", hash = "sha256:2c6b66724e917b6ebd3361280e5fd11ed515e5f4aa39af87abe29242178069fb", size = 68242 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/6d/549b2c378e9ecb9061f30f75fd3270783c2deccffeb0d4459ddfc9cd66c8/cyclopts-3.10.1-py3-none-any.whl", hash = "sha256:f4b280c5a4eaed041716f4aac2a3294a8d33590c1dc02f8b86095fb3b48729e2", size = 77949 },
-]
-
-[[package]]
 name = "dependency-groups"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -249,24 +234,6 @@ dev = [
     { name = "cookiecutter", specifier = ">=2.6.0" },
     { name = "nox", specifier = ">=2024.10.9" },
     { name = "pre-commit", specifier = ">=4.0.1" },
-]
-
-[[package]]
-name = "docstring-parser"
-version = "0.16"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/08/12/9c22a58c0b1e29271051222d8906257616da84135af9ed167c9e28f85cb3/docstring_parser-0.16.tar.gz", hash = "sha256:538beabd0af1e2db0146b6bd3caa526c35a34d61af9fd2887f3a8a27a739aa6e", size = 26565 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d5/7c/e9fcff7623954d86bdc17782036cbf715ecab1bec4847c008557affe1ca8/docstring_parser-0.16-py3-none-any.whl", hash = "sha256:bf0a1387354d3691d102edef7ec124f219ef639982d096e26e3b60aeffa90637", size = 36533 },
-]
-
-[[package]]
-name = "docutils"
-version = "0.21.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ae/ed/aefcc8cd0ba62a0560c3c18c33925362d46c6075480bfa4df87b28e169a9/docutils-0.21.2.tar.gz", hash = "sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f", size = 2204444 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/d7/9322c609343d929e75e7e5e6255e614fcc67572cfd083959cdef3b7aad79/docutils-0.21.2-py3-none-any.whl", hash = "sha256:dafca5b9e384f0e419294eb4d2ff9fa826435bf15f15b7bd45723e8ad76811b2", size = 587408 },
 ]
 
 [[package]]

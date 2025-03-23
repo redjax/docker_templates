@@ -94,6 +94,9 @@ def find_template_beacons(
 ) -> None:
     if isinstance(templates_root_dir, str):
         templates_root_dir = Path(templates_root_dir)
+    
+    if isinstance(template_file_indicators, str):
+        template_file_indicators: list[str] = [template_file_indicators]
 
     log.info(f"Finding templates in '{templates_root_dir}'")
 
