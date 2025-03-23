@@ -35,7 +35,7 @@ After starting the container, you can use the `ntfy` command in the container to
 To create an admin account (you will be prompted for a password):
 
 ```shell
-docker compose exec -it ntfy netfy user add --role=admin <your-admin-username>
+docker compose exec -it ntfy ntfy user add --role=admin <your-admin-username>
 ```
 
 If you need to change a user's password, you can run:
@@ -103,31 +103,37 @@ docker compose exec -it ntfy access <username> <topic> <permission>
 To list all tokens:
 
 ```shell
-docker compose exec -it netfy netfy token list
+docker compose exec -it ntfy ntfy token list
 ```
 
 To list tokens for a given user:
 
 ```shell
-docker compose exec -it netfy netfy token <username>
+docker compose exec -it ntfy ntfy token <username>
 ```
 
 To add a token for a user:
 
 ```shell
-docker compose exec -it netfy netfy token add <username>
+docker compose exec -it ntfy ntfy token add <username>
 ```
 
 To add a token with an expiration:
 
 ```shell
-docker compose exec -it netfy netfy token add --expires=2d <username>
+docker compose exec -it ntfy ntfy token add --expires=2d <username>
+```
+
+To create a token with a label:
+
+```shell
+docker compose exec -it ntfy ntfy token add --label="<label-name>" <username>
 ```
 
 To remove a token from a user:
 
 ```shell
-docker compose exec -it netfy netfy token remove <username> <token>
+docker compose exec -it ntfy ntfy token remove <username> <token>
 ```
 
 ## Links
