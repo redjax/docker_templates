@@ -80,15 +80,7 @@
                 "count": 4,
                 "name": "docker_wazuh",
                 "path": "templates/security/docker_wazuh",
-                "sub_categories": [
-                    {
-                        "count": 2,
-                        "name": "scripts",
-                        "path": "templates/security/docker_wazuh/scripts",
-                        "sub_categories": [],
-                        "templates": []
-                    }
-                ],
+                "sub_categories": [],
                 "templates": []
             }
         ],
@@ -189,22 +181,7 @@
                         "count": 8,
                         "name": "docker_wordpress-nginx",
                         "path": "templates/misc/project_templates/docker_wordpress-nginx",
-                        "sub_categories": [
-                            {
-                                "count": 1,
-                                "name": "wordpress_sites",
-                                "path": "templates/misc/project_templates/docker_wordpress-nginx/wordpress_sites",
-                                "sub_categories": [],
-                                "templates": []
-                            },
-                            {
-                                "count": 4,
-                                "name": "scripts",
-                                "path": "templates/misc/project_templates/docker_wordpress-nginx/scripts",
-                                "sub_categories": [],
-                                "templates": []
-                            }
-                        ],
+                        "sub_categories": [],
                         "templates": [
                             {
                                 "name": "nginx-proxy",
