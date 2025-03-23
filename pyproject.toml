@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["jinja2>=3.1.6", "pandas>=2.2.3", "pyarrow>=19.0.1"]
+dependencies = [
+    "jinja2>=3.1.6",
+    "pandas>=2.2.3",
+    "pyarrow>=19.0.1",
+]
 
 [dependency-groups]
 dev = ["cookiecutter>=2.6.0", "nox>=2024.10.9", "pre-commit>=4.0.1"]
