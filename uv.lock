@@ -223,8 +223,7 @@ name = "docker-templates"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "cookiecutter" },
-    { name = "cyclopts" },
+    { name = "jinja2" },
     { name = "pandas" },
     { name = "pyarrow" },
 ]
@@ -238,8 +237,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cookiecutter", specifier = ">=2.6.0" },
-    { name = "cyclopts", specifier = ">=3.10.1" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pyarrow", specifier = ">=19.0.1" },
 ]
