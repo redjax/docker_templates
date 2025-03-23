@@ -39,9 +39,15 @@ import argparse
 import logging
 from pathlib import Path
 import typing as t
-import json
-import csv
-import re
+
+from project_cli import count
+from project_cli.constants import (
+    IGNORE_IN_COUNT,
+    METADATA_DIR,
+    TEMPLATE_BEACONS,
+    TEMPLATES_COUNT_FILE,
+    TEMPLATES_ROOT,
+)
 
 log = logging.getLogger(__name__)
 
