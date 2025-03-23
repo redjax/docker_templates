@@ -153,4 +153,4 @@ docker compose exec -it ntfy ntfy token remove <username> <token>
     - [Access tokens](https://docs.ntfy.sh/config/#access-tokens)
 - Setup guides
   - [Medium.com: Ntfy: self-hosted notification service](https://medium.com/@williamdonze/ntfy-self-hosted-notification-service-0f3eada6e657)
-  - 
+  - [(personal blog) Ntfy - Self-hosted push notifications server for all your services](https://akashrajpurohit.com/blog/selfhost-ntfy-for-push-notifications/)
