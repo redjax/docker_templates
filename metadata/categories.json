@@ -1,12 +1,7 @@
 [
     {
         "name": "code_forges",
-        "sub_categories": [
-            {
-                "name": "docker_drone",
-                "sub_categories": []
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "llm",
@@ -26,26 +21,7 @@
     },
     {
         "name": "misc",
-        "sub_categories": [
-            {
-                "name": "project_templates",
-                "sub_categories": [
-                    {
-                        "name": "docker_wordpress-nginx",
-                        "sub_categories": [
-                            {
-                                "name": "wordpress_sites",
-                                "sub_categories": []
-                            },
-                            {
-                                "name": "scripts",
-                                "sub_categories": []
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "database",
@@ -74,35 +50,15 @@
     },
     {
         "name": "automation",
-        "sub_categories": [
-            {
-                "name": "docker_huginn",
-                "sub_categories": []
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "storage",
-        "sub_categories": [
-            {
-                "name": "docker_baserow",
-                "sub_categories": []
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "security",
-        "sub_categories": [
-            {
-                "name": "docker_wazuh",
-                "sub_categories": [
-                    {
-                        "name": "scripts",
-                        "sub_categories": []
-                    }
-                ]
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "bookmarking",
@@ -114,16 +70,7 @@
     },
     {
         "name": "networking",
-        "sub_categories": [
-            {
-                "name": "docker_portainer",
-                "sub_categories": []
-            },
-            {
-                "name": "docker_cloudflare-tunnel",
-                "sub_categories": []
-            }
-        ]
+        "sub_categories": []
     },
     {
         "name": "messaging",
@@ -131,11 +78,6 @@
     },
     {
         "name": "monitoring_alerting",
-        "sub_categories": [
-            {
-                "name": "docker_netdata",
-                "sub_categories": []
-            }
-        ]
+        "sub_categories": []
     }
 ]
