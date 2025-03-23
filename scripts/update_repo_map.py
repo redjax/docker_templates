@@ -35,22 +35,6 @@ def parse_arguments():
     return args
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Update the template map README via Jinja2.")
-
-    parser.add_argument("--scan-path", type=str, default=TEMPLATES_ROOT, help="Path to scan for files")
-    parser.add_argument("--template-dir", type=str, default=TEMPLATE_DIR, help="Path to Jinja2 templates")
-    parser.add_argument("--ignore-categories-file", type=str, default=IGNORE_CATEGORY_NAMES_FILE, help="Path to file with category names to ignore")
-    parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (default: INFO)")
-    parser.add_argument("--save-json", action="store_true", help="Save categories to a JSON file")
-    parser.add_argument("--json-file", type=str, default=CATEGORIES_METADATA_FILE, help="JSON file to save categories")
-    parser.add_argument("-o", "--output-dir", type=str, default=OUTPUT_DIR, help="Output directory for generated files")
-    parser.add_argument("--dry-run", action="store_true", help="Perform a dry run without actual changes")
-
-    args = parser.parse_args()
-    return args
-
-
 def load_ignored_categories(ignored_categories_file: str) -> list[str]:
     with open(ignored_categories_file, "r") as f:
         categories = f.read().splitlines()
@@ -68,6 +52,7 @@ def save_categories_to_json(categories: list[dict[str, t.Union[str, list]]], jso
     if not categories:
         log.warning("No data to save as JSON")
         return
+
     json_data = json.dumps(categories, indent=4, default=str, sort_keys=True)
     if dry_run:
         log.info(f"[DRY RUN] JSON data would be saved to '{json_file}':\n{json_data}")
