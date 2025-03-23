@@ -12,6 +12,7 @@ Uses PUT/POST methods to send notifications to a custom server.
   - [Docker environment](#docker-environment)
   - [Users](#users)
 - [Usage](#usage)
+  - [Scripts](#scripts)
   - [User Management](#user-management)
   - [Access Control](#access-control)
     - [ACLs](#acls)
@@ -45,6 +46,12 @@ docker compose exec -it ntfy user change-pass <username>
 ```
 
 ## Usage
+
+### Scripts
+
+There are a number of [`scripts/`](./scripts/) to assist with managing the `ntfy` container. The first time you run this stack, you can use the [`create_admin_user.sh`](./scripts/create_admin_user.sh) script to create the `ntfy` admin user, which has access to all topic.
+
+It is cheap and easy to [create users](./scripts/create_user.sh) and [API tokens](./scripts/create_api_token.sh). You can start simple with a single user you use for everything, and use access tokens to separate feeds, or you can create a new user for each service you connect. The second method is more robust, but can become unwieldy without good notes.
 
 ### User Management
 
