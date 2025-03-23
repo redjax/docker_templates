@@ -42,7 +42,7 @@ jobs:
 
       - name: Check for changes
         run: |
-          if [[ -n "$(git status --porcelain ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md)" ]]; then
+          if [[ -n "$(git status --porcelain ./map/_template ./metadata/templates.json)" ]]; then
             echo "changes=true" >> $GITHUB_ENV
           fi
 
