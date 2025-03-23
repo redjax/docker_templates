@@ -47,6 +47,14 @@ def new_docker_template_page(template_path: str) -> None:
                 log.error(msg)
 
                 raise exc
+            
+            log.warning(f"Adding .category beacon file to '{CONTAINER_SECTION}'")
+            try:
+                with open(f"{CONTAINER_SECTION}/.category", "w") as f:
+                    pass
+            except Exception as exc:
+                log.error(f"Failed to create .category beacon file at path '{CONTAINER_SECTION}/.category'. Details: {exc}")
+                raise
 
         break
 
