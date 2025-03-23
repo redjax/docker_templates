@@ -52,7 +52,7 @@ def parse_arguments(subparsers):
     ## Beacons
     count_parser.add_argument(
         "--beacon",
-        type=list[str],
+        type=str,
         nargs="*",
         default=TEMPLATE_BEACONS_DICT["docker_template"]["beacon"],
         help="1 or more beacon filename to search for, i.e. '.category', '.docker-compose.template'"
@@ -160,10 +160,14 @@ def count(args: argparse.Namespace) -> int:
     elif isinstance(ignore_patterns, str):
         ignore_patterns = [ignore_patterns]
         
+    log.debug(f"Beacons ({type(beacons)}): {beacons}")
+        
     if beacons is None:
         beacons = []
     if isinstance(beacons, str):
         beacons = [beacons]
+        
+    log.debug(f"Beacons ({type(beacons)}): {beacons}")
 
     ## Check for presence of templates directory
     if not templates_root_dir:
