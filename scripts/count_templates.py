@@ -5,8 +5,8 @@ import logging
 import sys
 import typing as t
 
-from metadata import count
-from metadata.constants import (
+from project_cli import count
+from project_cli.constants import (
     IGNORE_IN_COUNT,
     METADATA_DIR,
     TEMPLATE_BEACONS,

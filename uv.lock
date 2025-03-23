@@ -183,6 +183,21 @@ wheels = [
 ]
 
 [[package]]
+name = "cyclopts"
+version = "3.10.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "docstring-parser", marker = "python_full_version < '4.0'" },
+    { name = "rich" },
+    { name = "rich-rst" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/23/11/63e85bebead0559df403ef5ac701340bb61f95f5e5f7cb0228c96cf24e37/cyclopts-3.10.1.tar.gz", hash = "sha256:2c6b66724e917b6ebd3361280e5fd11ed515e5f4aa39af87abe29242178069fb", size = 68242 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/6d/549b2c378e9ecb9061f30f75fd3270783c2deccffeb0d4459ddfc9cd66c8/cyclopts-3.10.1-py3-none-any.whl", hash = "sha256:f4b280c5a4eaed041716f4aac2a3294a8d33590c1dc02f8b86095fb3b48729e2", size = 77949 },
+]
+
+[[package]]
 name = "dependency-groups"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
