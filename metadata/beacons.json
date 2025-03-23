@@ -1,0 +1,16 @@
+{
+    "path_type": [
+        {
+            "file": ".docker-compose.template",
+            "description": "Denotes a directory that is a Docker Compose template"
+        },
+        {
+            "file": ".cookiecutter.template",
+            "description": "Denotes a directory/path that is a cookiecutter template"
+        },
+        {
+            "file": ".category",
+            "description": "Denotes a directory that is a template category or subcategory, which has nested templates"
+        }
+    ]
+}

@@ -22,14 +22,23 @@ jobs:
           ## Fetch all history for diffing
           fetch-depth: 0
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version-file: "pyproject.toml"
+
+      # - name: Set up Python
+      #   run: uv python install
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - name: Run count_templates.py
         run: |
-          python scripts/count_templates.py --update-all --log-level debug
+          uv run scripts/count_templates.py --update-all --log-level debug
 
       - name: Check for changes
         run: |
