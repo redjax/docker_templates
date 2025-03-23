@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import logging
 from pathlib import Path
 
 import cookiecutter
-from cookiecutter.main import cookiecutter
+from cookiecutter.main import cookiecutter  # noqa: F811
 
 log = logging.getLogger(__name__)
 
