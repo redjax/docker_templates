@@ -1,0 +1,56 @@
+name: Update repo map README
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  count-templates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ## Checkout the incoming PR branch
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: true
+          ## Fetch all history for diffing
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      # - name: Set up Python
+      #   run: uv python install
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
+
+      - name: Run update_repo_map.py
+        run: |
+          uv run scripts/update_repo_map.py --save-json --log-level debug
+
+      - name: Check for changes
+        run: |
+          if [[ -n "$(git status --porcelain ./map/README.md ./metadata/categories.json ./metadata/templates.json)" ]]; then
+            echo "changes=true" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and push changes
+        if: env.changes == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./map/README.md ./metadata/categories.json ./metadata/templates.json
+          git commit -m "Update template metadata from GitHub Actions"
+          git push
