@@ -1,0 +1,10 @@
+ntfy/*
+
+!ntfy/**/.gitkeep
+
+!ntfy/*/
+
+ntfy/*/*
+
+!ntfy/*/.gitkeep
+!ntfy/config/example.server.yml

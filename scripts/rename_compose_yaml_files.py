@@ -1,8 +1,9 @@
-import typing as t
+from __future__ import annotations
+
 import argparse
+import csv
 import logging
 from pathlib import Path
-import csv
 
 log = logging.getLogger(__name__)
 
