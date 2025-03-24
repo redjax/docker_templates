@@ -46,6 +46,13 @@ services:
     environment:
       OLLAMA_BASE_URLS: ${OPENWEBUI_BASE_URLS:-"http://ollama:11434"}
       WEBUI_SECRET_KEY: ${OPENWEBUI_SECRET_KEY:-""}
+      OLLAMA_NUM_THREADS: ${OLLAMA_NUM_THREADS:-8}
+      ADMIN_EMAIL: ${OPENWEBUI_ADMIN_EMAIL:-no@none.com}
+      CUSTOM_NAME: ${OPENWEBUI_CUSTOM_NAME:-Open-WebUI}
+      USE_CUDA_DOCKER: ${OPENWEBUI_USE_CUDA:-true}
+      ENABLE_AUTOCOMPLETE_GENERATION: ${OPENWEBUI_ENABLE_AUTOCOMPLETE_GENERATION:-false}
+      ENABLE_TAGS_GENERATION: ${OPENWEBUI_ENABLE_TAGS_GENERATION:-false}
+      ENABLE_RETRIEVAL_QUERY_GENERATION: ${OPENWEBUI_ENABLE_RETRIEVAL_QUERY_GENERATION:-false}
     ## to use GPUs (requires NVIDIA runtime installed)
     #  Install on Fedora: sudo dnf install -y akmod-nvidia
     runtime: nvidia
