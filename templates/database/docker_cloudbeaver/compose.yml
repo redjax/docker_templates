@@ -1,10 +1,31 @@
 ---
-# networks:
-#   unnamed_net: {}
+networks:
+  default:
+    name: cloudbeaver
+    external: true
 
-# volumes:
-#   volume_name: {}
+volumes:
+  cloudbeaver_data: {}
 
 services:
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:${CLOUDBEAVER_IMG_VERSION:-latest}
+    container_name: cloudbeaver
+    restart: unless-stopped
+    ports:
+      - "${CLOUDBEAVER_HTTP_PORT:-8978}:8978"
+    volumes:
+      - ${CLOUDBEAVER_DATA_DIR:-cloudbeaver}:/opt/cloudbeaver/workspace
+    environment:
+      CLOUDBEAVER_ADMIN_NAME: ${CLOUDBEAVER_ADMIN_USERNAME:-cbadmin}
+      CLOUDBEAVER_ADMIN_PASSWORD: ${CLOUDBEAVER_ADMIN_PASSWORD:-admin}
+  
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ## Clean up old images and check for updates every 5 minutes
+    command: --cleanup=true --interval 300
 
-  ...
