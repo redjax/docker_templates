@@ -10,7 +10,7 @@ app:
   log_failed_attempts: true
 
 domains:
-  spooki.one:
+  <domain.url>:
     base_domain: "<domain.url>"
     cert_resolver: "letsencrypt"
     prefer_wildcard_cert: true
