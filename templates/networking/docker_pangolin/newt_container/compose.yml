@@ -11,6 +11,7 @@ services:
     image: fosrl/newt
     container_name: pangolin-newt
     restart: unless-stopped
+    network_mode: host
     environment:
       - PANGOLIN_ENDPOINT=${PANGOLIN_ENDPOINT:-https://proxy.example.com}
       - NEWT_ID=${NEWT_ID}
