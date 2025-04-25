@@ -52,6 +52,8 @@ services:
       ## optional
       #  remote syslog
       - ${UNIFI_REMOTE_SYSLOG_PORT:-5514}:5514/udp
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   unifi-db:
     image: docker.io/mongo:${MONGO_CONTAINER_IMG_VER:-8.0.8}
@@ -67,3 +69,9 @@ services:
     volumes:
       - ${MONGO_DATA_DIR:-mongo_data}:/data/db
       - ${MONGO_INITDB_SCRIPT:-./mongo/init-mongo.sh}:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: unifi-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
