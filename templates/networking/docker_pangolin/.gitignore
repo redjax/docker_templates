@@ -6,3 +6,5 @@ config/traefik/*
 !config/pangolin/*example*.yml
 !config/traefik/
 !config/traefik/*example*.yml
+
+!.gitkeep
