@@ -65,7 +65,7 @@ rate_limits:
 
 users:
   server_admin:
-    email: "admin@spooki.one"
+    email: "admin@domain.url"
     password: "<yourSuperSecureAdminPassword"
 
 flags:
