@@ -1,0 +1,76 @@
+---
+## https://docs.fossorial.io/Pangolin/Configuration/config
+#  https://github.com/fosrl/pangolin/blob/main/config/config.example.yml
+
+app:
+  dashboard_url: "https://<your.domain.url>"
+  log_level: "info"
+  ## Save logs to config/logs
+  save_logs: true
+  log_failed_attempts: true
+
+domains:
+  spooki.one:
+    base_domain: "<domain.url>"
+    cert_resolver: "letsencrypt"
+    prefer_wildcard_cert: true
+
+server:
+  ## Port for public-facing API
+  external_port: 5000
+  ## Port for internal/private API
+  internal_port: 5001
+  ## WebUI port
+  next_port: 8000
+  ## Hostname of the container. Use for internal communication.
+  #  If using Docker Compose, this should be the name of the container
+  internal_hostname: "pangolin"
+  session_cooki_name: "p_session_token"
+  resource_access_token_param: "p_token"
+  resource_access_token_headers:
+    id: "P-Access-Token-Id"
+    token: "P-Access-Token"
+  resource_session_request_param: p_session_request
+  cors:
+    origins: ["https://<your.domain.url>"]
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    allowed_headers: ["X-CSRF-Token", "Content-Type"]
+    credentials: true
+  trust_proxy: true
+  dashboard_session_length_hours: 720
+  resource_session_length_hours: 720
+
+traefik:
+  ## The name of the Traefik entrypoint for HTTP traffic.
+  #  This must match the name of the entrypoint in the Traefik configuration.
+  http_entrypoint: "web"
+  https_entrypoint: "websecure"
+  ## Additional middlewares to apply to the resource router generated at runtime.
+  #  These must be defined in another Traefik configuration provider,
+  #  like the dynamic file provider.
+  additional_middlewares: []
+
+gerbil:
+  start_port: 51820
+  base_endpoint: "localhost"
+  block_size: 24
+  site_block_size: 30
+  subnet_group: 100.89.137.0/20
+  use_subdomain: true
+
+rate_limits:
+  global:
+    window_minutes: 1
+    max_requests: 500
+
+users:
+  server_admin:
+    email: "admin@spooki.one"
+    password: "<yourSuperSecureAdminPassword"
+
+flags:
+    require_email_verification: false
+    disable_signup_without_invite: true
+    disable_user_create_org: true
+    allow_raw_resources: true
+    allow_base_domain_resources: true

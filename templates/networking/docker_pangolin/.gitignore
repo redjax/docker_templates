@@ -1,0 +1,8 @@
+config/*
+config/pangolin/*
+config/traefik/*
+
+!config/pangolin/
+!config/pangolin/*example*.yml
+!config/traefik/
+!config/traefik/*example*.yml
