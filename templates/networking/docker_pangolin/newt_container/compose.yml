@@ -1,0 +1,18 @@
+---
+## Compose file for Newt network.
+#  Copy this configuration to any backend servers you want to reach via Pangolin.
+#  Set your PANGOLIN_ENDPOINT, NEWT_ID, and NEWT_SECRET in a .env file, then run
+#  this stack.
+#
+# You do NOT run this on the Pangolin server. Copy/paste the example .env and this compose
+# file on one of your backend servers, then delete this comment.
+services:
+  newt:
+    image: fosrl/newt
+    container_name: pangolin-newt
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PANGOLIN_ENDPOINT=${PANGOLIN_ENDPOINT:-https://proxy.example.com}
+      - NEWT_ID=${NEWT_ID}
+      - NEWT_SECRET=${NEWT_SECRET}

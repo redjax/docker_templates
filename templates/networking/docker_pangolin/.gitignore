@@ -1,0 +1,12 @@
+config/*
+config/pangolin/*
+config/traefik/*
+config/letsencrypt/*
+
+!config/pangolin/
+!config/pangolin/*example*.yml
+!config/traefik/
+!config/traefik/*example*.yml
+!config/letsencrypt/
+
+!.gitkeep

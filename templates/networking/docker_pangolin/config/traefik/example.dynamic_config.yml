@@ -1,0 +1,53 @@
+http:
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+
+  routers:
+    main-app-router-redirect:
+      rule: "Host(`proxy.<your.domain>`)"
+      service: next-service
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-to-https
+
+    next-router:
+      rule: "Host(`proxy.<your.domain>`) && !PathPrefix(`/api/v1`)"
+      service: next-service
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "<your.domain>"
+            sans:
+              - "*.<your.domain>"
+
+    api-router:
+      rule: "Host(`proxy.<your.domain>`) && PathPrefix(`/api/v1`)"
+      service: api-service
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+
+    ws-router:
+      rule: "Host(`proxy.<your.domain>`)"
+      service: api-service
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    next-service:
+      loadBalancer:
+        servers:
+          - url: "http://pangolin:8000"
+
+    api-service:
+      loadBalancer:
+        servers:
+          - url: "http://pangolin:3000"
