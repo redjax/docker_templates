@@ -18,3 +18,4 @@ Reverse proxy & authentication server. Comparable to Cloudflare Tunnels & authen
     - Set your admin email in `email: `
   - `./traefik/dynamic_config.yml`:
     - Set your domain name in the `rule: "Host(``)"` line.
+- (Optional) [Setup Cloudflare DNS challenges](https://docs.fossorial.io/Pangolin/Configuration/wildcard-certs#wildcard-config-for-dns-01-challenge) using an API token for easier certificate setup.
