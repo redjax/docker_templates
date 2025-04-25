@@ -2,6 +2,11 @@
 ## https://github.com/fosrl/pangolin/blob/main/docker-compose.example.yml
 name: pangolin
 
+networks:
+  default:
+    driver: bridge
+    name: pangolin
+
 services:
   pangolin:
     image: fosrl/pangolin:latest
@@ -57,8 +62,3 @@ services:
       - ${TRAEFIK_CONFIG_DIR:-./config/traefik}:/etc/traefik:ro
       ## Volume to store the Let's Encrypt certificates
       - ${LETSENCRYPT_CERT_DIR:-./config/letsencrypt}:/letsencrypt
-
-networks:
-  default:
-    driver: bridge
-    name: pangolin
