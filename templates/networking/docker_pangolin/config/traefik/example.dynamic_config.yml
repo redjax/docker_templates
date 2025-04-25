@@ -1,0 +1,7 @@
+next-router:
+  rule: "Host(`example.com`) && !PathPrefix(`/api/v1`)"
+  service: next-service
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: letsencrypt
