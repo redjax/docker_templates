@@ -375,7 +375,7 @@
         ]
     },
     {
-        "count": 13,
+        "count": 12,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -397,8 +397,8 @@
                 "path": "templates/networking/docker_portainer"
             },
             {
-                "name": "docker_unifi_controller-new",
-                "path": "templates/networking/docker_unifi_controller-new"
+                "name": "docker_unifi_controller",
+                "path": "templates/networking/docker_unifi_controller"
             },
             {
                 "name": "docker_meshping",
@@ -415,10 +415,6 @@
             {
                 "name": "docker_nginx-proxy-manager",
                 "path": "templates/networking/docker_nginx-proxy-manager"
-            },
-            {
-                "name": "docker_unifi-controller",
-                "path": "templates/networking/docker_unifi-controller"
             },
             {
                 "name": "docker_headscale",
