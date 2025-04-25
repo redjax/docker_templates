@@ -45,7 +45,7 @@ http:
     next-service:
       loadBalancer:
         servers:
-          - url: "http://pangolin:3002"
+          - url: "http://pangolin:8000"
 
     api-service:
       loadBalancer:
