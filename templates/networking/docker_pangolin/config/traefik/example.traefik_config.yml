@@ -1,8 +1,13 @@
 certificatesResolvers:
   letsencrypt:
     acme:
+      ## Uncomment only 1 below, either, httpChallenge OR dnsChallenge
+      #  https://docs.fossorial.io/Pangolin/Configuration/wildcard-certs#wildcard-config-for-dns-01-challenge
       httpChallenge:
         entryPoint: web
-      email: admin@example.com
+      # dnsChallenge:
+      #   ## https://doc.traefik.io/traefik/https/acme/#providers
+      #   provider: "cloudflare"
+      email: "admin@example.com"
       storage: "/letsencrypt/acme.json"
       caServer: "https://acme-v02.api.letsencrypt.org/directory"

@@ -5,3 +5,8 @@ next-router:
     - websecure
   tls:
     certResolver: letsencrypt
+    ## Uncomment when using Cloudflare DNS challenge
+    domains:
+      - main: "example.com"
+        sans:
+          - "*.example.com"
