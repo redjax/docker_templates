@@ -1,1 +1,4 @@
-config/
+unifi/
+mongo/*
+
+!mongo/init-mongo.sh
