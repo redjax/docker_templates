@@ -2,6 +2,7 @@ config/*
 config/pangolin/*
 config/traefik/*
 config/letsencrypt/*
+logs/*
 
 !config/pangolin/
 !config/pangolin/*example*.yml
