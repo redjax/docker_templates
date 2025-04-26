@@ -125,6 +125,8 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_portainer](../templates/networking/docker_portainer)
   - [docker_meshping](../templates/networking/docker_meshping)
   - [docker_wg-easy](../templates/networking/docker_wg-easy)
+  - [docker_newt-tunnel](../templates/networking/docker_newt-tunnel)
+  - [docker_pangolin](../templates/networking/docker_pangolin)
   - [docker_portall](../templates/networking/docker_portall)
   - [docker_nginx-proxy-manager](../templates/networking/docker_nginx-proxy-manager)
   - [docker_unifi-controller](../templates/networking/docker_unifi-controller)
