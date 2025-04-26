@@ -18,11 +18,16 @@
                 "path": "templates/storage/docker_minio"
             },
             {
+                "name": "docker_minio",
+                "path": "templates/storage/docker_minio"
+            },
+            {
                 "name": "docker_seafile-server",
                 "path": "templates/storage/docker_seafile-server"
             },
             {
                 "name": "docker_bytestash",
+                "path": "templates/storage/docker_bytestash""name": "docker_bytestash",
                 "path": "templates/storage/docker_bytestash"
             }
         ]
@@ -31,14 +36,56 @@
         "count": 3,
         "name": "dashboards",
         "path": "templates/dashboards",
+        "count": 3,
+        "name": "dashboards",
+        "path": "templates/dashboards",
         "sub_categories": [],
         "templates": [
             {
                 "name": "docker_dashy",
+                "path": "templates/dashboards/docker_dashy""name": "docker_dashy",
                 "path": "templates/dashboards/docker_dashy"
             },
             {
                 "name": "docker_squirrel_server_manager",
+                "path": "templates/dashboards/docker_squirrel_server_manager"
+            }
+        ]
+    },
+    {
+        "count": 10,
+        "name": "database",
+        "path": "templates/database",
+        "sub_categories": [
+            {
+                "count": 4,
+                "name": "web_uis",
+                "path": "templates/database/web_uis",
+                "sub_categories": [],
+                "templates": [
+                    {
+                        "name": "docker_mysql_workbench",
+                        "path": "templates/database/web_uis/docker_mysql_workbench"
+                    },
+                    {
+                        "name": "docker_redis-commander",
+                        "path": "templates/database/web_uis/docker_redis-commander"
+                    },
+                    {
+                        "name": "docker_cloudbeaver",
+                        "path": "templates/database/web_uis/docker_cloudbeaver"
+                    }
+                ]
+            }
+        ],
+        "templates": [
+            {
+                "name": "docker_baserow",
+                "path": "templates/database/docker_baserow"
+            },
+            {
+                "name": "docker_nocodb",
+                "path": "templates/database/docker_nocodb""name": "docker_squirrel_server_manager",
                 "path": "templates/dashboards/docker_squirrel_server_manager"
             }
         ]
@@ -88,10 +135,28 @@
             },
             {
                 "name": "docker_redis",
+                "path": "templates/database/docker_redis""name": "docker_postgresql",
+                "path": "templates/database/docker_postgresql"
+            },
+            {
+                "name": "docker_mongodb",
+                "path": "templates/database/docker_mongodb"
+            },
+            {
+                "name": "docker_redis",
                 "path": "templates/database/docker_redis"
             },
             {
                 "name": "docker_influxdb",
+                "path": "templates/database/docker_influxdb"
+            },
+            {
+                "name": "docker_mysql",
+                "path": "templates/database/docker_mysql"
+            },
+            {
+                "name": "docker_prometheus",
+                "path": "templates/database/docker_prometheus""name": "docker_influxdb",
                 "path": "templates/database/docker_influxdb"
             },
             {
@@ -167,9 +232,87 @@
                 ]
             }
         ],
+        "name": "misc",
+        "path": "templates/misc",
+        "sub_categories": [
+            {
+                "count": 4,
+                "name": "project_templates",
+                "path": "templates/misc/project_templates",
+                "sub_categories": [
+                    {
+                        "count": 8,
+                        "name": "docker_wordpress-nginx",
+                        "path": "templates/misc/project_templates/docker_wordpress-nginx",
+                        "sub_categories": [],
+                        "templates": [
+                            {
+                                "name": "example_wordpress",
+                                "path": "templates/misc/project_templates/docker_wordpress-nginx/example_wordpress"
+                            },
+                            {
+                                "name": "nginx-proxy",
+                                "path": "templates/misc/project_templates/docker_wordpress-nginx/nginx-proxy"
+                            }
+                        ]
+                    }
+                ],
+                "templates": [
+                    {
+                        "name": "docker_wordpress-template",
+                        "path": "templates/misc/project_templates/docker_wordpress-template"
+                    },
+                    {
+                        "name": "docker_node-server",
+                        "path": "templates/misc/project_templates/docker_node-server"
+                    }
+                ]
+            }
+        ],
+        "templates": []
+    },
+    {
+        "count": 7,
+        "name": "monitoring_alerting",
+        "path": "templates/monitoring_alerting",
+        "sub_categories": [
+            {
+                "count": 6,
+                "name": "docker_netdata",
+                "path": "templates/monitoring_alerting/docker_netdata",
+                "sub_categories": [],
+                "templates": [
+                    {
+                        "name": "agent",
+                        "path": "templates/monitoring_alerting/docker_netdata/agent"
+                    },
+                    {
+                        "name": "server",
+                        "path": "templates/monitoring_alerting/docker_netdata/server"
+                    }
+                ]
+            }
+        ],
         "templates": [
             {
                 "name": "docker_uptime-kuma",
+                "path": "templates/monitoring_alerting/docker_uptime-kuma"
+            },
+            {
+                "name": "docker_beszel",
+                "path": "templates/monitoring_alerting/docker_beszel"
+            },
+            {
+                "name": "docker_watchtower",
+                "path": "templates/monitoring_alerting/docker_watchtower"
+            },
+            {
+                "name": "docker_graylog",
+                "path": "templates/monitoring_alerting/docker_graylog"
+            },
+            {
+                "name": "docker_monitoring",
+                "path": "templates/monitoring_alerting/docker_monitoring""name": "docker_uptime-kuma",
                 "path": "templates/monitoring_alerting/docker_uptime-kuma"
             },
             {
@@ -331,6 +474,118 @@
         ]
     },
     {
+        "count": 5,
+        "name": "backup",
+        "path": "templates/backup",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_git-sync",
+                "path": "templates/backup/docker_git-sync"
+            },
+            {
+                "name": "docker_gickup",
+                "path": "templates/backup/docker_gickup"
+            },
+            {
+                "name": "docker_backrest",
+                "path": "templates/backup/docker_backrest"
+            },
+            {
+                "name": "kopia",
+                "path": "templates/backup/kopia"
+            }
+        ]
+    },
+    {
+        "count": 7,
+        "name": "documents",
+        "path": "templates/documents",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_kiwix_server",
+                "path": "templates/documents/docker_kiwix_server"
+            },
+            {
+                "name": "docker_paperless-ngx",
+                "path": "templates/documents/docker_paperless-ngx"
+            },
+            {
+                "name": "docker_paperless-ng",
+                "path": "templates/documents/docker_paperless-ng"
+            },
+            {
+                "name": "docker_mayan-edms",
+                "path": "templates/documents/docker_mayan-edms"
+            },
+            {
+                "name": "docker_docspell",
+                "path": "templates/documents/docker_docspell"
+            },
+            {
+                "name": "docker_obsidian_web",
+                "path": "templates/documents/docker_obsidian_web"
+            }
+        ]
+    },
+    {
+        "count": 3,
+        "name": "messaging",
+        "path": "templates/messaging",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_rabbitmq",
+                "path": "templates/messaging/docker_rabbitmq"
+            },
+            {
+                "name": "docker_mosquitto",
+                "path": "templates/messaging/docker_mosquitto"
+            }
+        ]
+    },
+    {
+        "count": 6,
+        "name": "bookmarking",
+        "path": "templates/bookmarking",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_shaarli",
+                "path": "templates/bookmarking/docker_shaarli"
+            },
+            {
+                "name": "docker_wallabag",
+                "path": "templates/bookmarking/docker_wallabag"
+            },
+            {
+                "name": "docker_readeck",
+                "path": "templates/bookmarking/docker_readeck"
+            },
+            {
+                "name": "docker_linkding",
+                "path": "templates/bookmarking/docker_linkding"
+            },
+            {
+                "name": "docker_shiori",
+                "path": "templates/bookmarking/docker_shiori"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "notifications",
+        "path": "templates/notifications",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_ntfy",
+                "path": "templates/notifications/docker_ntfy"
+            }
+        ]
+    },
+    {
         "count": 2,
         "name": "web_scraping",
         "path": "templates/web_scraping",
@@ -339,6 +594,38 @@
             {
                 "name": "docker_selenium_hub",
                 "path": "templates/web_scraping/docker_selenium_hub"
+            }
+        ]
+    },
+    {
+        "count": 7,
+        "name": "media",
+        "path": "templates/media",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_prowlarr",
+                "path": "templates/media/docker_prowlarr"
+            },
+            {
+                "name": "docker_calibre",
+                "path": "templates/media/docker_calibre"
+            },
+            {
+                "name": "docker_plex",
+                "path": "templates/media/docker_plex"
+            },
+            {
+                "name": "docker_emby",
+                "path": "templates/media/docker_emby"
+            },
+            {
+                "name": "docker_download-suite",
+                "path": "templates/media/docker_download-suite"
+            },
+            {
+                "name": "docker_photoprism",
+                "path": "templates/media/docker_photoprism"
             }
         ]
     },
@@ -402,6 +689,7 @@
             },
             {
                 "name": "docker_wg-easy",
+                "path": "templates/networking/docker_wg-easy""name": "docker_wg-easy",
                 "path": "templates/networking/docker_wg-easy"
             },
             {
@@ -425,8 +713,24 @@
                 "path": "templates/networking/docker_unifi-controller"
             },
             {
+                "name": "docker_nginx-proxy-manager",
+                "path": "templates/networking/docker_nginx-proxy-manager"
+            },
+            {
+                "name": "docker_unifi-controller",
+                "path": "templates/networking/docker_unifi-controller"
+            },
+            {
                 "name": "docker_headscale",
                 "path": "templates/networking/docker_headscale"
+            },
+            {
+                "name": "docker_technitiumdns",
+                "path": "templates/networking/docker_technitiumdns"
+            },
+            {
+                "name": "docker_traefik",
+                "path": "templates/networking/docker_traefik"
             },
             {
                 "name": "docker_technitiumdns",
@@ -442,10 +746,13 @@
         "count": 2,
         "name": "bots",
         "path": "templates/bots",
+        "name": "bots",
+        "path": "templates/bots",
         "sub_categories": [],
         "templates": [
             {
                 "name": "docker_red-discordbot",
+                "path": "templates/bots/docker_red-discordbot""name": "docker_red-discordbot",
                 "path": "templates/bots/docker_red-discordbot"
             }
         ]
@@ -454,42 +761,54 @@
         "count": 10,
         "name": "automation",
         "path": "templates/automation",
+        "count": 10,
+        "name": "automation",
+        "path": "templates/automation",
         "sub_categories": [],
         "templates": [
             {
                 "name": "docker_concourse_ci",
+                "path": "templates/automation/docker_concourse_ci""name": "docker_concourse_ci",
                 "path": "templates/automation/docker_concourse_ci"
             },
             {
                 "name": "docker_olivetin",
+                "path": "templates/automation/docker_olivetin""name": "docker_olivetin",
                 "path": "templates/automation/docker_olivetin"
             },
             {
                 "name": "docker_windmill",
+                "path": "templates/automation/docker_windmill""name": "docker_windmill",
                 "path": "templates/automation/docker_windmill"
             },
             {
                 "name": "docker_n8n",
+                "path": "templates/automation/docker_n8n""name": "docker_n8n",
                 "path": "templates/automation/docker_n8n"
             },
             {
                 "name": "docker_semaphore",
+                "path": "templates/automation/docker_semaphore""name": "docker_semaphore",
                 "path": "templates/automation/docker_semaphore"
             },
             {
                 "name": "docker_huginn",
+                "path": "templates/automation/docker_huginn""name": "docker_huginn",
                 "path": "templates/automation/docker_huginn"
             },
             {
                 "name": "docker_prefect_server",
+                "path": "templates/automation/docker_prefect_server""name": "docker_prefect_server",
                 "path": "templates/automation/docker_prefect_server"
             },
             {
                 "name": "docker_beehive",
+                "path": "templates/automation/docker_beehive""name": "docker_beehive",
                 "path": "templates/automation/docker_beehive"
             },
             {
                 "name": "docker_rundeck",
+                "path": "templates/automation/docker_rundeck""name": "docker_rundeck",
                 "path": "templates/automation/docker_rundeck"
             }
         ]
@@ -498,10 +817,14 @@
         "count": 2,
         "name": "llm",
         "path": "templates/llm",
+        "count": 2,
+        "name": "llm",
+        "path": "templates/llm",
         "sub_categories": [],
         "templates": [
             {
                 "name": "docker_ollama_webui",
+                "path": "templates/llm/docker_ollama_webui""name": "docker_ollama_webui",
                 "path": "templates/llm/docker_ollama_webui"
             }
         ]
@@ -538,30 +861,38 @@
         "count": 7,
         "name": "rss",
         "path": "templates/rss",
+        "name": "rss",
+        "path": "templates/rss",
         "sub_categories": [],
         "templates": [
             {
                 "name": "docker_feedless",
+                "path": "templates/rss/docker_feedless""name": "docker_feedless",
                 "path": "templates/rss/docker_feedless"
             },
             {
                 "name": "docker_freshrss",
+                "path": "templates/rss/docker_freshrss""name": "docker_freshrss",
                 "path": "templates/rss/docker_freshrss"
             },
             {
                 "name": "docker_tinytinyrss",
+                "path": "templates/rss/docker_tinytinyrss""name": "docker_tinytinyrss",
                 "path": "templates/rss/docker_tinytinyrss"
             },
             {
                 "name": "docker_commafeed",
+                "path": "templates/rss/docker_commafeed""name": "docker_commafeed",
                 "path": "templates/rss/docker_commafeed"
             },
             {
                 "name": "docker_rsshub",
+                "path": "templates/rss/docker_rsshub""name": "docker_rsshub",
                 "path": "templates/rss/docker_rsshub"
             },
             {
                 "name": "docker_yarr",
+                "path": "templates/rss/docker_yarr""name": "docker_yarr",
                 "path": "templates/rss/docker_yarr"
             }
         ]
@@ -570,42 +901,53 @@
         "count": 10,
         "name": "games",
         "path": "templates/games",
+        "name": "games",
+        "path": "templates/games",
         "sub_categories": [],
         "templates": [
             {
                 "name": "docker_terraria-server",
+                "path": "templates/games/docker_terraria-server""name": "docker_terraria-server",
                 "path": "templates/games/docker_terraria-server"
             },
             {
                 "name": "docker_satisfactory",
+                "path": "templates/games/docker_satisfactory""name": "docker_satisfactory",
                 "path": "templates/games/docker_satisfactory"
             },
             {
                 "name": "docker_valheim_server",
+                "path": "templates/games/docker_valheim_server""name": "docker_valheim_server",
                 "path": "templates/games/docker_valheim_server"
             },
             {
                 "name": "docker_minecraft_server",
+                "path": "templates/games/docker_minecraft_server""name": "docker_minecraft_server",
                 "path": "templates/games/docker_minecraft_server"
             },
             {
                 "name": "docker_vrising-server",
+                "path": "templates/games/docker_vrising-server""name": "docker_vrising-server",
                 "path": "templates/games/docker_vrising-server"
             },
             {
                 "name": "docker_necesse",
+                "path": "templates/games/docker_necesse""name": "docker_necesse",
                 "path": "templates/games/docker_necesse"
             },
             {
                 "name": "docker_palworld_server",
+                "path": "templates/games/docker_palworld_server""name": "docker_palworld_server",
                 "path": "templates/games/docker_palworld_server"
             },
             {
                 "name": "docker_crafty_minecraft",
+                "path": "templates/games/docker_crafty_minecraft""name": "docker_crafty_minecraft",
                 "path": "templates/games/docker_crafty_minecraft"
             },
             {
                 "name": "docker_enshrouded_server",
+                "path": "templates/games/docker_enshrouded_server""name": "docker_enshrouded_server",
                 "path": "templates/games/docker_enshrouded_server"
             }
         ]
