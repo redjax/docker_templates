@@ -14,6 +14,9 @@ services:
     restart: unless-stopped
     volumes:
       - ${PANGOLIN_CONFIG_DIR:-./config/pangolin}:/app/config
+      ## Mount Crowdsec config & data dirs
+      - ${CROWDSEC_DATA_DIR:-./container_data/crowdsec}:/var/lib/crowdsec/data
+      # - ${CROWDSEC_CONFIG_DIR:-./cconfig/crowdsec}:/etc/crowdsec
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/"]
       interval: "3s"
@@ -61,5 +64,5 @@ services:
     volumes:
       - ${TRAEFIK_CONFIG_DIR:-./config/traefik}:/etc/traefik:ro
       ## Volume to store the Let's Encrypt certificates
-      - ${LETSENCRYPT_CERT_DIR:-./config/letsencrypt}:/letsencrypt
-      - ${TRAEFIK_LOGS_DIR:-./logs/traefik}:/var/log/traefik
+      - ${LETSENCRYPT_CERT_DIR:-./container_data/letsencrypt}:/letsencrypt
+      - ${TRAEFIK_LOGS_DIR:-./container_data/logs/traefik}:/var/log/traefik

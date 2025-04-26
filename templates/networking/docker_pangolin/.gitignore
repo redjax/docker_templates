@@ -3,11 +3,23 @@ config/pangolin/*
 config/traefik/*
 config/letsencrypt/*
 logs/*
+container_data/*
+container_data/**/
+container_data/crowdsec/*
+container_data/letsencrypt/*
+container_data/pangolin/*
+container_data/traefik/*
+container_data/gerbil/*
+container_data/logs/*
 
 !config/pangolin/
 !config/pangolin/*example*.yml
 !config/traefik/
 !config/traefik/*example*.yml
-!config/letsencrypt/
+!container_data/crowdsec/
+!container_data/gerbil/
+!container_data/letsencrypt/
+!container_data/pangolin/
+!container_data/traefik/
 
 !.gitkeep
