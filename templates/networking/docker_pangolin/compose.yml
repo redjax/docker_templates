@@ -66,3 +66,31 @@ services:
       ## Volume to store the Let's Encrypt certificates
       - ${LETSENCRYPT_CERT_DIR:-./container_data/letsencrypt}:/letsencrypt
       - ${TRAEFIK_LOGS_DIR:-./container_data/logs/traefik}:/var/log/traefik
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: pangolin-crowdsec
+    restart: unless-stopped
+    command: -t
+    environment:
+      GID: "1000"
+      COLLECTIONS: crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
+      ENROLL_INSTANCE_NAME: "pangolin-crowdsec"
+      PARSERS: crowdsecurity/whitelists
+      ENROLL_TAGS: docker
+    healthcheck:
+      test: ["CMD", "cscli", "capi", "status"]
+    labels:
+      ## Disable traefik for crowdsec
+      - "traefik.enable=false"
+    volumes:
+      ## crowdsec config
+      - ./config/crowdsec:/etc/crowdsec
+      ## crowdsec db
+      - ./container_data/crowdsec:/var/lib/crowdsec/data
+      ## log bind mounts into crowdsec
+      ## traefik logs
+      - ./container_data/logs/traefik:/var/log/traefik
+    ports:
+      ## metrics endpoint for prometheus
+      - 6060:6060
