@@ -26,3 +26,25 @@ Reverse proxy & authentication server. Comparable to Cloudflare Tunnels & authen
 ### Cloudflare Setup
 
 If you are using Cloudflare, create a CNAME record for your backend, i.e. `proxy.example.com` (replacing `example.com` with your domain). You must disable the full proxy, so the cloud icon is gray instead of orange. The Cloudflare free plan cannot proxy UDP traffic, which is what Pangolin/Newt use to maintain connectivity between the server & backend service.
+
+## Troubleshooting
+
+### Pangolin/Newt Not Connecting (ICMP ping timeout)
+
+You may have trouble connecting your Pangolin (VPS/remote server) and Newt (local agent) machines, where the Newt container will fail to ping the Pangolin server, producing warnings and errors like this:
+
+```shell
+pangolin-newt  | INFO: YYYY/mm/dd HH:MM:SS Ping attempt 2
+pangolin-newt  | INFO: YYYY/mm/dd HH:MM:SS Pinging 100.89.128.1
+pangolin-newt  | WARN: YYYY/mm/dd HH:MM:SS Ping attempt 1 failed: failed to read ICMP packet: i/o timeout
+```
+
+When this happens, make sure you've opened your Wireguard port on the Pangolin server (default is `51820/udp`). You may also need to open this port on the local machine. You will need to allow traffic IN and OUT.
+
+For example, with `ufw`:
+
+```shell
+sudo ufw allow in 51820/udp && sudo ufw allow out 51820/udp && sudo ufw reload
+```
+
+Start by opening this port only on the Pangolin server to see if it can connect; if you still have trouble connecting with the Newt container, run the commands above on the Newt container's host, too.

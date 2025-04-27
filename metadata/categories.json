@@ -375,7 +375,7 @@
         ]
     },
     {
-        "count": 12,
+        "count": 14,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -403,6 +403,14 @@
             {
                 "name": "docker_wg-easy",
                 "path": "templates/networking/docker_wg-easy"
+            },
+            {
+                "name": "docker_newt-tunnel",
+                "path": "templates/networking/docker_newt-tunnel"
+            },
+            {
+                "name": "docker_pangolin",
+                "path": "templates/networking/docker_pangolin"
             },
             {
                 "name": "docker_portall",
