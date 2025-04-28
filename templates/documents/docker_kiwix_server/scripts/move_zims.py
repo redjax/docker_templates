@@ -3,6 +3,7 @@ import typing as t
 from pathlib import Path
 import os
 import shutil
+import argparse
 
 log = logging.getLogger(__name__)
 
@@ -14,21 +15,31 @@ LOG_LEVEL: str = "DEBUG"
 PROMPT_BEFORE_MOVING: bool = False
 
 ## Kiwix root path
-KIWIX_ZIM_DIR: str = os.environ["KIWIX_DATA_DIR"] or "./data/kiwix"
+DEFAULT_KIWIX_ZIM_DIR: str = os.environ.get("KIWIX_DATA_DIR","./data/kiwix")
 
 ## Transmission root path
-TRANSMISSION_DIR: str = (
-    os.environ["TRANSMISSION_TORRENT_DIR"] or "./data/transmission/torrent"
+DEFAULT_TRANSMISSION_DIR: str = (
+    os.environ.get("TRANSMISSION_TORRENT_DIR", "./data/transmission/torrent")
 )
-## Transmission incomplete downloads path
-TRANSMISSION_INCOMPLETE_DIR: str = f"{TRANSMISSION_DIR}/incomplete"
-## Transmission completed downloads path
-TRANSMISSION_COMPLETE_DIR: str = f"{TRANSMISSION_DIR}/complete"
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Script to move completed zim files.")
+    
+    parser.add_argument("-z", "--zim-dir", type=str, default=DEFAULT_KIWIX_ZIM_DIR, help="Kiwix zim directory")
+    parser.add_argument("-t", "--torrent-dir", type=str, default=DEFAULT_TRANSMISSION_DIR, help="Transmission torrent directory")
+    parser.add_argument("-p", "--prompt", action="store_true", help="Prompt before moving each file")
+    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug logging")
+    
+    args = parser.parse_args()
+    
+    return args
 
 
 def setup_logging(
     log_level: str = "INFO",
-    log_fmt: str = "%(levelname)s | [%(asctime)s] |> %(message)s",
+    log_fmt: str = "%(asctime)s | [%(levelname)s] :: %(message)s",
+    debug_log_fmt: str = "%(asctime)s | [%(levelname)s] | %(filename)s:%(lineno)d :: %(message)s",
     datefmt: str = "%Y-%m-%d_%H:%M:%S",
     silence_loggers: list[str] | None = [],
 ) -> None:
@@ -49,11 +60,14 @@ def setup_logging(
             Use this for any 3rd party modules, or dynamically load a list of loggers to silence from the environment.
     """
     log_level: str = log_level.upper()
-    logging.basicConfig(level=log_level, format=log_fmt, datefmt=datefmt)
+    
+    _fmt = debug_log_fmt if log_level == "DEBUG" else log_fmt
+    
+    logging.basicConfig(level=log_level, format=_fmt, datefmt=datefmt)
 
     if silence_loggers:
         for _logger in silence_loggers:
-            logging.getLogger(_logger).setLevel("WARNING")
+            logging.getLogger(_logger).disabled = True
 
 
 def str_to_path(p: t.Union[str, Path]) -> Path:
@@ -84,15 +98,18 @@ def path_exists(p: t.Union[str, Path], create_path: bool = False) -> bool:
         return p
 
 
-def print_script_env() -> None:
+def print_script_env(transmission_dir: str = DEFAULT_TRANSMISSION_DIR, kiwix_zim_dir: str = DEFAULT_KIWIX_ZIM_DIR) -> None:
+    incomplete_dir = f"{transmission_dir}/incomplete"
+    complete_dir = f"{transmission_dir}/complete"
+
     print(
         f"""
 [Script Environment]
   - PROMPT_BEFORE_MOVING={PROMPT_BEFORE_MOVING}
-  - [Exists: {path_exists(KIWIX_ZIM_DIR)}] KIWIX_ZIM_DIR={KIWIX_ZIM_DIR}
-  - [Exists: {path_exists(TRANSMISSION_DIR)}] TRANSMISSION_DIR={TRANSMISSION_DIR}
-  - [Exists: {path_exists(TRANSMISSION_INCOMPLETE_DIR)}] TRANSMISSION_INCOMPLETE_DIR={TRANSMISSION_INCOMPLETE_DIR}
-  - [Exists: {path_exists(TRANSMISSION_COMPLETE_DIR)}] TRANSMISSION_COMPLETE_DIR={TRANSMISSION_COMPLETE_DIR}
+  - [Exists: {path_exists(kiwix_zim_dir)}] KIWIX_ZIM_DIR={kiwix_zim_dir}
+  - [Exists: {path_exists(transmission_dir)}] TRANSMISSION_DIR={transmission_dir}
+  - [Exists: {path_exists(incomplete_dir)}] TRANSMISSION_INCOMPLETE_DIR={incomplete_dir}
+  - [Exists: {path_exists(complete_dir)}] TRANSMISSION_COMPLETE_DIR={complete_dir}
 """
     )
 
@@ -166,14 +183,18 @@ def move_completed(
 
 
 def main(
-    completed_torrents_path: t.Union[str, Path] = TRANSMISSION_COMPLETE_DIR,
-    incomplete_torrents_path: t.Union[str, Path] = TRANSMISSION_INCOMPLETE_DIR,
-    kiwix_zim_path: t.Union[str, Path] = KIWIX_ZIM_DIR,
-    kiwix_zim_live_path: t.Union[str, Path] = KIWIX_ZIM_DIR,
+    transmission_dir: t.Union[str, Path],
+    kiwix_zim_path: t.Union[str, Path],
+    kiwix_zim_live_path: t.Union[str, Path],
     create_paths_if_not_exist: bool = False,
     prompt_before_move: bool = False,
     print_script_environment: bool = False
 ):
+    ## Transmission incomplete downloads path
+    incomplete_torrents_path: str = f"{transmission_dir}/incomplete"
+    ## Transmission completed downloads path
+    completed_torrents_path: str = f"{transmission_dir}/complete"
+    
     if print_script_environment:
         print_script_env()
 
@@ -226,14 +247,14 @@ def main(
 
 
 if __name__ == "__main__":
-    setup_logging(log_level=LOG_LEVEL or "INFO")
+    args = parse_args()
+    setup_logging(log_level="DEBUG" if args.debug else "INFO")
 
     main(
-        completed_torrents_path=TRANSMISSION_COMPLETE_DIR,
-        incomplete_torrents_path=TRANSMISSION_INCOMPLETE_DIR,
-        kiwix_zim_path=KIWIX_ZIM_DIR,
-        kiwix_zim_live_path=KIWIX_ZIM_DIR,
+        transmission_dir=args.transmission_dir or DEFAULT_TRANSMISSION_DIR,
+        kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+        kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
         create_paths_if_not_exist=False,
-        prompt_before_move=PROMPT_BEFORE_MOVING,
+        prompt_before_move=args.prompt or PROMPT_BEFORE_MOVING,
         print_script_environment=PRINT_ENV
     )
