@@ -251,7 +251,7 @@ if __name__ == "__main__":
     setup_logging(log_level="DEBUG" if args.debug else "INFO")
 
     main(
-        transmission_dir=args.transmission_dir or DEFAULT_TRANSMISSION_DIR,
+        transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
         kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
         kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
         create_paths_if_not_exist=False,
