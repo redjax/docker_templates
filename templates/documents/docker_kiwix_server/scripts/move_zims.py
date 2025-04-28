@@ -7,12 +7,8 @@ import argparse
 
 log = logging.getLogger(__name__)
 
-## When True, env variables detected by the script will be printed
-PRINT_ENV: bool = True
 ## Options: WARNING, INFO, DEBUG, ERROR, CRITICAL
-LOG_LEVEL: str = "DEBUG"
-## When True, user will be prompted before moving each file
-PROMPT_BEFORE_MOVING: bool = False
+LOG_LEVEL: str = os.environ.get("LOG_LEVEL", "DEBUG")
 
 ## Kiwix root path
 DEFAULT_KIWIX_ZIM_DIR: str = os.environ.get("KIWIX_DATA_DIR","./data/kiwix")
@@ -29,6 +25,7 @@ def parse_args():
     parser.add_argument("-z", "--zim-dir", type=str, default=DEFAULT_KIWIX_ZIM_DIR, help="Kiwix zim directory")
     parser.add_argument("-t", "--torrent-dir", type=str, default=DEFAULT_TRANSMISSION_DIR, help="Transmission torrent directory")
     parser.add_argument("-p", "--prompt", action="store_true", help="Prompt before moving each file")
+    parser.add_argument("--print-env", action="store_true", help="Print script environment")
     parser.add_argument("-d", "--debug", action="store_true", help="Enable debug logging")
     
     args = parser.parse_args()
@@ -98,14 +95,14 @@ def path_exists(p: t.Union[str, Path], create_path: bool = False) -> bool:
         return p
 
 
-def print_script_env(transmission_dir: str = DEFAULT_TRANSMISSION_DIR, kiwix_zim_dir: str = DEFAULT_KIWIX_ZIM_DIR) -> None:
+def print_script_env(prompt: bool, transmission_dir: str = DEFAULT_TRANSMISSION_DIR, kiwix_zim_dir: str = DEFAULT_KIWIX_ZIM_DIR) -> None:
     incomplete_dir = f"{transmission_dir}/incomplete"
     complete_dir = f"{transmission_dir}/complete"
 
     print(
         f"""
 [Script Environment]
-  - PROMPT_BEFORE_MOVING={PROMPT_BEFORE_MOVING}
+  - PROMPT_BEFORE_MOVING={prompt}
   - [Exists: {path_exists(kiwix_zim_dir)}] KIWIX_ZIM_DIR={kiwix_zim_dir}
   - [Exists: {path_exists(transmission_dir)}] TRANSMISSION_DIR={transmission_dir}
   - [Exists: {path_exists(incomplete_dir)}] TRANSMISSION_INCOMPLETE_DIR={incomplete_dir}
@@ -196,7 +193,8 @@ def main(
     completed_torrents_path: str = f"{transmission_dir}/complete"
     
     if print_script_environment:
-        print_script_env()
+        print_script_env(prompt=prompt_before_move, transmission_dir=transmission_dir, kiwix_zim_dir=kiwix_zim_path)
+        exit(0)
 
     completed_torrents_path: Path = str_to_path(completed_torrents_path)
     incomplete_torrents_path: Path = str_to_path(incomplete_torrents_path)
@@ -256,8 +254,8 @@ if __name__ == "__main__":
             kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
             kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
             create_paths_if_not_exist=False,
-            prompt_before_move=args.prompt or PROMPT_BEFORE_MOVING,
-            print_script_environment=PRINT_ENV
+            prompt_before_move=args.prompt,
+            print_script_environment=args.print_env
         )
     except Exception as exc:
         log.error(f"Error: {exc}")
