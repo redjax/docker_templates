@@ -18,7 +18,7 @@ KIWIX_ZIM_DIR: str = os.environ["KIWIX_DATA_DIR"] or "./data/kiwix"
 
 ## Transmission root path
 TRANSMISSION_DIR: str = (
-    os.environ["TRANSMISSION_DATA_DIR"] or "./data/transmission/torrent"
+    os.environ["TRANSMISSION_TORRENT_DIR"] or "./data/transmission/torrent"
 )
 ## Transmission incomplete downloads path
 TRANSMISSION_INCOMPLETE_DIR: str = f"{TRANSMISSION_DIR}/incomplete"
