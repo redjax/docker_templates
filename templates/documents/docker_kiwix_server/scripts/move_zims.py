@@ -250,11 +250,15 @@ if __name__ == "__main__":
     args = parse_args()
     setup_logging(log_level="DEBUG" if args.debug else "INFO")
 
-    main(
-        transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
-        kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
-        kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
-        create_paths_if_not_exist=False,
-        prompt_before_move=args.prompt or PROMPT_BEFORE_MOVING,
-        print_script_environment=PRINT_ENV
-    )
+    try:
+        main(
+            transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
+            kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+            kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+            create_paths_if_not_exist=False,
+            prompt_before_move=args.prompt or PROMPT_BEFORE_MOVING,
+            print_script_environment=PRINT_ENV
+        )
+    except Exception as exc:
+        log.error(f"Error: {exc}")
+        exit(1)
