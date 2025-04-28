@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import shutil
 import argparse
+import time
 
 log = logging.getLogger(__name__)
 
@@ -18,6 +19,9 @@ DEFAULT_TRANSMISSION_DIR: str = (
     os.environ.get("TRANSMISSION_TORRENT_DIR", "./data/transmission/torrent")
 )
 
+class EmptyZimDirectoryException(Exception):
+    pass
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Script to move completed zim files.")
@@ -27,6 +31,8 @@ def parse_args():
     parser.add_argument("-p", "--prompt", action="store_true", help="Prompt before moving each file")
     parser.add_argument("--print-env", action="store_true", help="Print script environment")
     parser.add_argument("-d", "--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("-l", "--loop", action="store_true", help="Run script on a loop")
+    parser.add_argument("-s", "--loop-sleep", type=int, default=60, help="Loop sleep time in seconds")
     
     args = parser.parse_args()
     
@@ -223,7 +229,7 @@ def main(
         raise exc
 
     if not completed_torrents:
-        raise ValueError("Complete torrents list is None/empty.")
+        raise EmptyZimDirectoryException(f"No files were found in path: {kiwix_zim_live_path}.")
     log.info(f"Found [{len(completed_torrents)}] completed torrent(s).")
     log.debug(f"Complete torrents: {completed_torrents}")
 
@@ -231,6 +237,9 @@ def main(
         mv_successes, mv_errors, mv_skipped = move_completed(
             completed_files=completed_torrents, target_dir=kiwix_zim_live_path, prompt_confirm=prompt_before_move
         )
+    except EmptyZimDirectoryException as no_files_err:
+        log.warning(f"No files were found in path: {kiwix_zim_live_path}")
+        raise
     except Exception as exc:
         msg = f"({type(exc)}) Error moving some/all completed torrents to Kiwix ZIM directory: {kiwix_zim_live_path}. Details: {exc}"
         log.error(msg)
@@ -248,15 +257,41 @@ if __name__ == "__main__":
     args = parse_args()
     setup_logging(log_level="DEBUG" if args.debug else "INFO")
 
-    try:
-        main(
-            transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
-            kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
-            kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
-            create_paths_if_not_exist=False,
-            prompt_before_move=args.prompt,
-            print_script_environment=args.print_env
-        )
-    except Exception as exc:
-        log.error(f"Error: {exc}")
-        exit(1)
+    if args.loop:
+        log.info("Starting zim move script on a loop, sleep for [{} seconds]".format(args.loop_sleep))
+        while True:
+            try:
+                main(
+                    transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
+                    kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+                    kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+                    create_paths_if_not_exist=False,
+                    prompt_before_move=args.prompt,
+                    print_script_environment=args.print_env
+                )
+            except EmptyZimDirectoryException as no_files_err:
+                log.warning(no_files_err)
+                pass
+            except Exception as exc:
+                log.error(f"Error: {exc}")
+                exit(1)
+                
+            log.info(f"Sleeping for [{args.loop_sleep}] second(s) ...")
+            
+            time.sleep(args.loop_sleep)
+
+    else:
+        try:
+            main(
+                transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
+                kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+                kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+                create_paths_if_not_exist=False,
+                prompt_before_move=args.prompt,
+                print_script_environment=args.print_env
+            )
+        except EmptyZimDirectoryException as no_files_err:
+            exit(0)
+        except Exception as exc:
+            log.error(f"Error: {exc}")
+            exit(1)
