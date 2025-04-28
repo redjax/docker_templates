@@ -4,6 +4,7 @@ data/transmission/config/*
 data/transmission/config/blocklists/*
 data/transmission/config/resume/*
 data/transmission/config/torrents/*
+data/kiwix/*
 
 !data/
 !data/.gitkeep
@@ -17,3 +18,5 @@ data/transmission/config/torrents/*
 !data/transmission/config/resume/.gitkeep
 !data/transmission/config/torrents/
 !data/transmission/config/torrents/.gitkeep
+!data/kiwix/
+!data/kiwix/.gitkeep
