@@ -66,6 +66,7 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile
+      target: mover
     user: "1000:1000"
     working_dir: /project
     command: [
@@ -74,7 +75,7 @@ services:
       "--zim-dir",
       "/kiwix-zims",
       "--torrent-dir",
-      "/transmission-completed",
+      "/transmission-torrents",
       "--print-env",
       "--ignore",
       ".part"
@@ -85,15 +86,45 @@ services:
       PRINT_ENV: ${MOVER_PRINT_ENV:-false}
     volumes:
       ## Mount mover script
-      - ./scripts/move_zims.py:/project/move_zims.py
+      - ./scripts/container_scripts/move_zims.py:/project/move_zims.py
       ## Mount scheduler script
-      - ./scripts/docker_scheduled_mover.py:/project/docker_scheduled_mover.py
+      - ./scripts/container_scripts/docker_scheduled_mover.py:/project/docker_scheduled_mover.py
       ## Mount Kiwix .zim directory
       - ${KIWIX_DATA_DIR:-./data/kiwix}:/kiwix-zims
       ## Mount Transmission torrents directory
       - ${TRANSMISSION_TORRENT_DIR:-./data/transmission/torrent}:/transmission-torrents
       ## Mount host's timezone details
       - /etc/localtime:/etc/localtime:ro
+
+  torrent_mgr:
+    container_name: kiwix-torrent-mgr
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+      target: torrent_mgr
+    user: "1000:1000"
+    working_dir: /project
+    command: [
+      "python",
+      "docker_scheduled_rm_finished_torrents.py",
+    ]
+    environment:
+      ## INFO, DEBUG, WARNING, ERROR, CRITICAL, NOTSET
+      LOG_LEVEL: ${TORRENT_MGR_LOG_LEVEL:-INFO}
+      TRANSMISSION_HOST: ${TORRENT_MGR_TRANSMISSION_HOST:-kiwix-transmission}
+      TRANSMISSION_PORT: ${TORRENT_MGR_TRANSMISSION_PORT:-9091}
+      TRANSMISSION_USER: ${TORRENT_MGR_TRANSMISSION_USER}
+      TRANSMISSION_PASSWORD: ${TORRENT_MGR_TRANSMISSION_PASSWORD}
+    volumes:
+      ## Mount torrent_mgr script
+      - ./scripts/container_scripts/torrents_mgr.py:/project/torrents_mgr.py
+      ## Mount scheduler script
+      - ./scripts/container_scripts/docker_scheduled_rm_finished_torrents.py:/project/docker_scheduled_rm_finished_torrents.py
+      ## Mount host's timezone details
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - kiwix_net
 
   watchtower:
     image: containrrr/watchtower:latest
