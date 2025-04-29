@@ -5,7 +5,7 @@ RUN python -m pip install --upgrade pip
 
 RUN mkdir -p /project
 RUN mkdir /kiwix-zims
-RUN mkdir /transmission-completed
+RUN mkdir /transmission-torrents
 
 WORKDIR /project
 
