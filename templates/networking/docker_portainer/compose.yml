@@ -1,11 +1,17 @@
-﻿version: "3"
-
+﻿---
 services:
 
   portainer:
-    image: portainer/portainer-ce
+    ## Official image
+    # image: portainer/portainer-ce
+    # https://github.com/ngxson/portainer-ce-without-annoying
+    image: ngxson/portainer-ce-without-annoying:latest
     container_name: portainer
     restart: unless-stopped
+    ports:
+      - ${PORTAINER_WEBUI_PORT:-9443}
+      - ${PORTAINER_TUNNEL_PORT:-8000}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PORTAINER_DATA:-./data}:/data
+      - ${PORTAINER_DATA_DIR:-./portainer/data}:/data
+
