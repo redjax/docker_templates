@@ -35,6 +35,7 @@ def parse_args():
     parser.add_argument("-d", "--debug", action="store_true", help="Enable debug logging")
     parser.add_argument("-l", "--loop", action="store_true", help="Run script on a loop")
     parser.add_argument("-s", "--loop-sleep", type=int, default=60, help="Loop sleep time in seconds")
+    parser.add_argument("-i", "--ignore", nargs="+", default=IGNORE_PATTERNS, help="Path patterns to ignore")
     
     args = parser.parse_args()
     
@@ -133,6 +134,7 @@ def scan_completed(completed_path: t.Union[str, Path]):
 def move_completed(
     completed_files: list[Path],
     target_dir: t.Union[str, Path],
+    ignore_patterns: list[str],
     prompt_confirm: bool = False,
 ) -> t.Tuple[list[Path] | None, list[Path] | None, list[Path] | None] | None:
     if not completed_files:
@@ -150,7 +152,7 @@ def move_completed(
 
     for f in completed_files:
         ## Check if any part of file is in ignored patterns IGNORE_PATTERNS
-        if any(f.match(pattern) for pattern in IGNORE_PATTERNS):
+        if any(f.match(pattern) for pattern in ignore_patterns):
             log.debug(f"Skipping ignored item: {f.name}")
             continue
         
@@ -196,6 +198,7 @@ def main(
     transmission_dir: t.Union[str, Path],
     kiwix_zim_path: t.Union[str, Path],
     kiwix_zim_live_path: t.Union[str, Path],
+    ignore_patterns: list[str],
     create_paths_if_not_exist: bool = False,
     prompt_before_move: bool = False,
     print_script_environment: bool = False
@@ -242,7 +245,7 @@ def main(
 
     try:
         mv_successes, mv_errors, mv_skipped = move_completed(
-            completed_files=completed_torrents, target_dir=kiwix_zim_live_path, prompt_confirm=prompt_before_move
+            completed_files=completed_torrents, target_dir=kiwix_zim_live_path, prompt_confirm=prompt_before_move, ignore_patterns=ignore_patterns
         )
     except EmptyZimDirectoryException as no_files_err:
         log.warning(f"No files were found in path: {kiwix_zim_live_path}")
@@ -295,7 +298,8 @@ if __name__ == "__main__":
                 kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
                 create_paths_if_not_exist=False,
                 prompt_before_move=args.prompt,
-                print_script_environment=args.print_env
+                print_script_environment=args.print_env,
+                ignore_patterns=args.ignore_patterns or IGNORE_PATTERNS
             )
         except EmptyZimDirectoryException as no_files_err:
             exit(0)
