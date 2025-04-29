@@ -48,7 +48,7 @@ def parse_args():
 def setup_logging(
     log_level: str = "INFO",
     log_fmt: str = "%(asctime)s | [%(levelname)s] :: %(message)s",
-    debug_log_fmt: str = "%(asctime)s | [%(levelname)s] | %(filename)s:%(lineno)d :: %(message)s",
+    debug_log_fmt: str = "%(asctime)s | [%(levelname)s] | %(name)s:%(lineno)d :: %(message)s",
     datefmt: str = "%Y-%m-%d_%H:%M:%S",
     silence_loggers: list[str] | None = [],
 ) -> None:
