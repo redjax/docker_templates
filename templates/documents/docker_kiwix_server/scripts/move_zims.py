@@ -265,7 +265,15 @@ def main(
 
 if __name__ == "__main__":
     args = parse_args()
-    setup_logging(log_level="DEBUG" if args.debug else "INFO")
+    
+    if args.debug:
+        log_level = "DEBUG"
+    else:
+        log_level = os.environ.get("LOG_LEVEL", "INFO")
+        
+    setup_logging(log_level=log_level)
+    
+    log.debug(f"CLI args: {args}")
 
     if args.loop:
         log.info("Starting zim move script on a loop, sleep for [{} seconds]".format(args.loop_sleep))
@@ -277,7 +285,8 @@ if __name__ == "__main__":
                     kiwix_zim_live_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
                     create_paths_if_not_exist=False,
                     prompt_before_move=args.prompt,
-                    print_script_environment=args.print_env
+                    print_script_environment=args.print_env,
+                    ignore_patterns=args.ignore or IGNORE_PATTERNS
                 )
             except EmptyZimDirectoryException as no_files_err:
                 log.warning(no_files_err)
@@ -299,7 +308,7 @@ if __name__ == "__main__":
                 create_paths_if_not_exist=False,
                 prompt_before_move=args.prompt,
                 print_script_environment=args.print_env,
-                ignore_patterns=args.ignore_patterns or IGNORE_PATTERNS
+                ignore_patterns=args.ignore or IGNORE_PATTERNS
             )
         except EmptyZimDirectoryException as no_files_err:
             exit(0)

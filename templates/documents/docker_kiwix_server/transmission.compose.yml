@@ -60,6 +60,21 @@ services:
     networks:
       - kiwix_net
 
+  mover:
+    container_name: kiwix-mover
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+    working_dir: /project
+    command: ["python", "move_zims.py", "--loop", "--loop-sleep", "30", "--zim-dir", "/kiwix-zims", "--torrent-dir", "/transmission-completed", "--ignore", ".part"]
+    environment:
+      LOG_LEVEL: DEBUG
+    volumes:
+      - ./scripts/move_zims.py:/project/move_zims.py
+      - ${KIWIX_DATA_DIR:-./data/kiwix}:/kiwix-zims
+      - ${TRANSMISSION_COMPLETED_DIR:-./data/transmission/torrent/completed}:/transmission-completed
+
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower-kiwix
