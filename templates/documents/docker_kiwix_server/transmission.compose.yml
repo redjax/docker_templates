@@ -74,7 +74,7 @@ services:
       "--zim-dir",
       "/kiwix-zims",
       "--torrent-dir",
-      "/transmission-completed",
+      "/transmission-torrents",
       "--print-env",
       "--ignore",
       ".part"

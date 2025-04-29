@@ -12,7 +12,7 @@ import time
 import datetime as dt
 
 from move_zims import main as move_zims_main
-from move_zims import setup_logging
+from move_zims import setup_logging, print_script_env
 from move_zims import EmptyZimDirectoryException
 
 log = logging.getLogger(__name__)
@@ -129,12 +129,20 @@ if __name__ == "__main__":
     _transmission_dir = args.torrent_dir
     _ignore_patterns = args.ignore
     
+    if args.print_env:
+        print_script_env(
+            prompt=False,
+            transmission_dir=_transmission_dir,
+            kiwix_zim_dir=_kiwix_zim_dir,
+            ignore_patterns=_ignore_patterns
+        )
+    
     try:
         main(
             transmission_dir=_transmission_dir,
             kiwix_zim_path=_kiwix_zim_dir,
             create_paths_if_not_exist=False,
-            print_script_environment=print_env,
+            print_script_environment=False,
             ignore_patterns=_ignore_patterns
         )
     except Exception as exc:
