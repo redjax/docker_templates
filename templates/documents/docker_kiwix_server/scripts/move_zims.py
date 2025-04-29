@@ -223,7 +223,6 @@ def main(
         completed_torrents_path,
         incomplete_torrents_path,
         kiwix_zim_path,
-        # kiwix_zim_live_path,
     ]:
         path_exists(p, create_path=create_paths_if_not_exist)
 

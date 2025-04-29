@@ -70,14 +70,12 @@ services:
     working_dir: /project
     command: [
       "python",
-      "move_zims.py",
-      "--loop",
-      "--loop-sleep",
-      "30",
+      "docker_scheduled_mover.py",
       "--zim-dir",
       "/kiwix-zims",
       "--torrent-dir",
-      "/transmission-torrents",
+      "/transmission-completed",
+      "--print-env",
       "--ignore",
       ".part"
     ]
@@ -88,10 +86,14 @@ services:
     volumes:
       ## Mount mover script
       - ./scripts/move_zims.py:/project/move_zims.py
+      ## Mount scheduler script
+      - ./scripts/docker_scheduled_mover.py:/project/docker_scheduled_mover.py
       ## Mount Kiwix .zim directory
       - ${KIWIX_DATA_DIR:-./data/kiwix}:/kiwix-zims
       ## Mount Transmission torrents directory
       - ${TRANSMISSION_TORRENT_DIR:-./data/transmission/torrent}:/transmission-torrents
+      ## Mount host's timezone details
+      - /etc/localtime:/etc/localtime:ro
 
   watchtower:
     image: containrrr/watchtower:latest
