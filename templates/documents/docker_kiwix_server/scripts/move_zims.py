@@ -199,7 +199,7 @@ def main(
     transmission_dir: t.Union[str, Path],
     kiwix_zim_path: t.Union[str, Path],
     kiwix_zim_live_path: t.Union[str, Path],
-    ignore_patterns: list[str],
+    ignore_patterns: list[str] = [],
     create_paths_if_not_exist: bool = False,
     prompt_before_move: bool = False,
     print_script_environment: bool = False
