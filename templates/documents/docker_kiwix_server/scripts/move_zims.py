@@ -1,5 +1,6 @@
 import logging
 import typing as t
+import datetime as dt
 from pathlib import Path
 import os
 import shutil
@@ -295,7 +296,9 @@ if __name__ == "__main__":
                 log.error(f"Error: {exc}")
                 exit(1)
                 
-            log.info(f"Sleeping for [{args.loop_sleep}] second(s) ...")
+            next_run = dt.datetime.now() + dt.timedelta(seconds=args.loop_sleep)
+                
+            log.info(f"Sleeping for [{args.loop_sleep}] second(s) [next run: {next_run}]")
             
             time.sleep(args.loop_sleep)
 
