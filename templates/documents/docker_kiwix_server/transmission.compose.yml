@@ -66,14 +66,32 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile
+    user: "1000:1000"
     working_dir: /project
-    command: ["python", "move_zims.py", "--loop", "--loop-sleep", "30", "--zim-dir", "/kiwix-zims", "--torrent-dir", "/transmission-completed", "--ignore", ".part"]
+    command: [
+      "python",
+      "move_zims.py",
+      "--loop",
+      "--loop-sleep",
+      "30",
+      "--zim-dir",
+      "/kiwix-zims",
+      "--torrent-dir",
+      "/transmission-torrents",
+      "--ignore",
+      ".part"
+    ]
     environment:
-      LOG_LEVEL: DEBUG
+      ## INFO, DEBUG, WARNING, ERROR, CRITICAL, NOTSET
+      LOG_LEVEL: ${MOVER_LOG_LEVEL:-INFO}
+      PRINT_ENV: ${MOVER_PRINT_ENV:-false}
     volumes:
+      ## Mount mover script
       - ./scripts/move_zims.py:/project/move_zims.py
+      ## Mount Kiwix .zim directory
       - ${KIWIX_DATA_DIR:-./data/kiwix}:/kiwix-zims
-      - ${TRANSMISSION_COMPLETED_DIR:-./data/transmission/torrent/completed}:/transmission-completed
+      ## Mount Transmission torrents directory
+      - ${TRANSMISSION_TORRENT_DIR:-./data/transmission/torrent}:/transmission-torrents
 
   watchtower:
     image: containrrr/watchtower:latest
