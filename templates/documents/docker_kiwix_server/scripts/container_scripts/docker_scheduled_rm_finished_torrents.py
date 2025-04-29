@@ -138,7 +138,7 @@ if __name__ == "__main__":
     else:
         log_level = os.environ.get("LOG_LEVEL", "INFO")
         
-    setup_logging(log_level=log_level)
+    setup_logging(log_level=log_level, silence_loggers=["urllib3.connectionpool"])
     
     log.debug(f"CLI args: {args}")
     
