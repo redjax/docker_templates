@@ -1,34 +1,54 @@
 import logging
 import typing as t
+import datetime as dt
 from pathlib import Path
 import os
 import shutil
+import argparse
+import time
 
 log = logging.getLogger(__name__)
 
-## When True, env variables detected by the script will be printed
-PRINT_ENV: bool = True
 ## Options: WARNING, INFO, DEBUG, ERROR, CRITICAL
-LOG_LEVEL: str = "DEBUG"
-## When True, user will be prompted before moving each file
-PROMPT_BEFORE_MOVING: bool = False
+LOG_LEVEL: str = os.environ.get("LOG_LEVEL", "DEBUG")
 
 ## Kiwix root path
-KIWIX_ZIM_DIR: str = os.environ["KIWIX_DATA_DIR"] or "./data/kiwix"
+DEFAULT_KIWIX_ZIM_DIR: str = os.environ.get("KIWIX_DATA_DIR","./data/kiwix")
 
 ## Transmission root path
-TRANSMISSION_DIR: str = (
-    os.environ["TRANSMISSION_DATA_DIR"] or "./data/transmission/torrent"
+DEFAULT_TRANSMISSION_DIR: str = (
+    os.environ.get("TRANSMISSION_TORRENT_DIR", "./data/transmission/torrent")
 )
-## Transmission incomplete downloads path
-TRANSMISSION_INCOMPLETE_DIR: str = f"{TRANSMISSION_DIR}/incomplete"
-## Transmission completed downloads path
-TRANSMISSION_COMPLETE_DIR: str = f"{TRANSMISSION_DIR}/complete"
+
+## File/directory patterns to ignore
+DEFAULT_IGNORE_PATTERNS: list[str] = ["*.part"]
+
+
+class EmptyZimDirectoryException(Exception):
+    pass
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Script to move completed zim files.")
+    
+    parser.add_argument("-z", "--zim-dir", type=str, default=DEFAULT_KIWIX_ZIM_DIR, help="Kiwix zim directory")
+    parser.add_argument("-t", "--torrent-dir", type=str, default=DEFAULT_TRANSMISSION_DIR, help="Transmission torrent directory")
+    parser.add_argument("-p", "--prompt", action="store_true", help="Prompt before moving each file")
+    parser.add_argument("--print-env", action="store_true", help="Print script environment")
+    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("-l", "--loop", action="store_true", help="Run script on a loop")
+    parser.add_argument("-s", "--loop-sleep", type=int, default=60, help="Loop sleep time in seconds")
+    parser.add_argument("-i", "--ignore", action="append", default=[], help="Path patterns to ignore")
+    
+    args = parser.parse_args()
+    
+    return args
 
 
 def setup_logging(
     log_level: str = "INFO",
-    log_fmt: str = "%(levelname)s | [%(asctime)s] |> %(message)s",
+    log_fmt: str = "%(asctime)s | [%(levelname)s] :: %(message)s",
+    debug_log_fmt: str = "%(asctime)s | [%(levelname)s] | %(filename)s:%(lineno)d :: %(message)s",
     datefmt: str = "%Y-%m-%d_%H:%M:%S",
     silence_loggers: list[str] | None = [],
 ) -> None:
@@ -49,11 +69,14 @@ def setup_logging(
             Use this for any 3rd party modules, or dynamically load a list of loggers to silence from the environment.
     """
     log_level: str = log_level.upper()
-    logging.basicConfig(level=log_level, format=log_fmt, datefmt=datefmt)
+    
+    _fmt = debug_log_fmt if log_level == "DEBUG" else log_fmt
+    
+    logging.basicConfig(level=log_level, format=_fmt, datefmt=datefmt)
 
     if silence_loggers:
         for _logger in silence_loggers:
-            logging.getLogger(_logger).setLevel("WARNING")
+            logging.getLogger(_logger).disabled = True
 
 
 def str_to_path(p: t.Union[str, Path]) -> Path:
@@ -84,15 +107,20 @@ def path_exists(p: t.Union[str, Path], create_path: bool = False) -> bool:
         return p
 
 
-def print_script_env() -> None:
-    print(
-        f"""
+def print_script_env(prompt: bool, transmission_dir: str = None, kiwix_zim_dir: str = None, ignore_patterns: list[str] = []) -> None:
+    incomplete_dir = f"{transmission_dir}/incomplete"
+    complete_dir = f"{transmission_dir}/complete"
+
+    log.info(
+        f"""Printing script environment
+
 [Script Environment]
-  - PROMPT_BEFORE_MOVING={PROMPT_BEFORE_MOVING}
-  - [Exists: {path_exists(KIWIX_ZIM_DIR)}] KIWIX_ZIM_DIR={KIWIX_ZIM_DIR}
-  - [Exists: {path_exists(TRANSMISSION_DIR)}] TRANSMISSION_DIR={TRANSMISSION_DIR}
-  - [Exists: {path_exists(TRANSMISSION_INCOMPLETE_DIR)}] TRANSMISSION_INCOMPLETE_DIR={TRANSMISSION_INCOMPLETE_DIR}
-  - [Exists: {path_exists(TRANSMISSION_COMPLETE_DIR)}] TRANSMISSION_COMPLETE_DIR={TRANSMISSION_COMPLETE_DIR}
+  - PROMPT_BEFORE_MOVING={prompt}
+  - IGNORE_PATTERNS={ignore_patterns}
+  - [Exists: {path_exists(kiwix_zim_dir)}] KIWIX_ZIM_DIR={kiwix_zim_dir}
+  - [Exists: {path_exists(transmission_dir)}] TRANSMISSION_DIR={transmission_dir}
+  - [Exists: {path_exists(incomplete_dir)}] TRANSMISSION_INCOMPLETE_DIR={incomplete_dir}
+  - [Exists: {path_exists(complete_dir)}] TRANSMISSION_COMPLETE_DIR={complete_dir}
 """
     )
 
@@ -111,6 +139,7 @@ def scan_completed(completed_path: t.Union[str, Path]):
 def move_completed(
     completed_files: list[Path],
     target_dir: t.Union[str, Path],
+    ignore_patterns: list[str],
     prompt_confirm: bool = False,
 ) -> t.Tuple[list[Path] | None, list[Path] | None, list[Path] | None] | None:
     if not completed_files:
@@ -127,6 +156,11 @@ def move_completed(
     log.info(f"Moving [{len(completed_files)}] to path: {target_dir}\n")
 
     for f in completed_files:
+        ## Check if any part of file is in ignored patterns IGNORE_PATTERNS
+        if any(f.match(pattern) for pattern in ignore_patterns):
+            log.debug(f"Skipping ignored item: {f.name}")
+            continue
+        
         move_file: bool = True
         target_path: Path = target_dir / f.name
 
@@ -166,27 +200,29 @@ def move_completed(
 
 
 def main(
-    completed_torrents_path: t.Union[str, Path] = TRANSMISSION_COMPLETE_DIR,
-    incomplete_torrents_path: t.Union[str, Path] = TRANSMISSION_INCOMPLETE_DIR,
-    kiwix_zim_path: t.Union[str, Path] = KIWIX_ZIM_DIR,
-    kiwix_zim_live_path: t.Union[str, Path] = KIWIX_ZIM_DIR,
+    transmission_dir: t.Union[str, Path],
+    kiwix_zim_path: t.Union[str, Path],
+    ignore_patterns: list[str] = [],
     create_paths_if_not_exist: bool = False,
     prompt_before_move: bool = False,
     print_script_environment: bool = False
 ):
+    ## Transmission incomplete downloads path
+    incomplete_torrents_path: str = f"{transmission_dir}/incomplete"
+    ## Transmission completed downloads path
+    completed_torrents_path: str = f"{transmission_dir}/complete"
+    
     if print_script_environment:
-        print_script_env()
+        print_script_env(prompt=prompt_before_move, transmission_dir=transmission_dir, kiwix_zim_dir=kiwix_zim_path, ignore_patterns=ignore_patterns)
 
     completed_torrents_path: Path = str_to_path(completed_torrents_path)
     incomplete_torrents_path: Path = str_to_path(incomplete_torrents_path)
     kiwix_zim_path: Path = str_to_path(kiwix_zim_path)
-    kiwix_zim_live_path: Path = str_to_path(kiwix_zim_live_path)
-
+    
     for p in [
         completed_torrents_path,
         incomplete_torrents_path,
         kiwix_zim_path,
-        kiwix_zim_live_path,
     ]:
         path_exists(p, create_path=create_paths_if_not_exist)
 
@@ -204,16 +240,19 @@ def main(
         raise exc
 
     if not completed_torrents:
-        raise ValueError("Complete torrents list is None/empty.")
+        raise EmptyZimDirectoryException(f"No files were found in path: {kiwix_zim_path}.")
     log.info(f"Found [{len(completed_torrents)}] completed torrent(s).")
     log.debug(f"Complete torrents: {completed_torrents}")
 
     try:
         mv_successes, mv_errors, mv_skipped = move_completed(
-            completed_files=completed_torrents, target_dir=kiwix_zim_live_path, prompt_confirm=prompt_before_move
+            completed_files=completed_torrents, target_dir=kiwix_zim_path, prompt_confirm=prompt_before_move, ignore_patterns=ignore_patterns
         )
+    except EmptyZimDirectoryException as no_files_err:
+        log.warning(f"No files were found in path: {kiwix_zim_path}")
+        raise
     except Exception as exc:
-        msg = f"({type(exc)}) Error moving some/all completed torrents to Kiwix ZIM directory: {kiwix_zim_live_path}. Details: {exc}"
+        msg = f"({type(exc)}) Error moving some/all completed torrents to Kiwix ZIM directory: {kiwix_zim_path}. Details: {exc}"
         log.error(msg)
 
         raise exc
@@ -226,14 +265,76 @@ def main(
 
 
 if __name__ == "__main__":
-    setup_logging(log_level=LOG_LEVEL or "INFO")
+    args = parse_args()
+    
+    if args.debug:
+        log_level = "DEBUG"
+    else:
+        log_level = os.environ.get("LOG_LEVEL", "INFO")
+        
+    if not args.print_env:
+        if os.environ.get("PRINT_ENV"):
+            print_env = True
+        else:
+            print_env = False
+    else:
+        print_env = True
+        
+    setup_logging(log_level=log_level)
+    
+    log.debug(f"CLI args: {args}")
+    
+    _kiwix_zim_dir = args.zim_dir
+    if not _kiwix_zim_dir:
+        _kiwix_zim_dir = DEFAULT_KIWIX_ZIM_DIR
+        
+    _transmission_dir = args.torrent_dir
+    if not _transmission_dir:
+        _transmission_dir = DEFAULT_TRANSMISSION_DIR
+        
+    _ignore_patterns = args.ignore
+    if not _ignore_patterns:
+        _ignore_patterns = DEFAULT_IGNORE_PATTERNS
+        
+    log.debug(f"Ignore patterns: {_ignore_patterns}")
 
-    main(
-        completed_torrents_path=TRANSMISSION_COMPLETE_DIR,
-        incomplete_torrents_path=TRANSMISSION_INCOMPLETE_DIR,
-        kiwix_zim_path=KIWIX_ZIM_DIR,
-        kiwix_zim_live_path=KIWIX_ZIM_DIR,
-        create_paths_if_not_exist=False,
-        prompt_before_move=PROMPT_BEFORE_MOVING,
-        print_script_environment=PRINT_ENV
-    )
+    if args.loop:
+        log.info("Starting zim move script on a loop, sleep for [{} seconds]".format(args.loop_sleep))
+        while True:
+            try:
+                main(
+                    transmission_dir=_transmission_dir,
+                    kiwix_zim_path=_kiwix_zim_dir,
+                    create_paths_if_not_exist=False,
+                    prompt_before_move=args.prompt,
+                    print_script_environment=print_env,
+                    ignore_patterns=_ignore_patterns
+                )
+            except EmptyZimDirectoryException as no_files_err:
+                log.warning(no_files_err)
+                pass
+            except Exception as exc:
+                log.error(f"Error: {exc}")
+                exit(1)
+                
+            next_run = dt.datetime.now() + dt.timedelta(seconds=args.loop_sleep)
+                
+            log.info(f"Sleeping for [{args.loop_sleep}] second(s) [next run: {next_run}]")
+            
+            time.sleep(args.loop_sleep)
+
+    else:
+        try:
+            main(
+                transmission_dir=args.torrent_dir or DEFAULT_TRANSMISSION_DIR,
+                kiwix_zim_path=args.zim_dir or DEFAULT_KIWIX_ZIM_DIR,
+                create_paths_if_not_exist=False,
+                prompt_before_move=args.prompt,
+                print_script_environment=args.print_env,
+                ignore_patterns=_ignore_patterns
+            )
+        except EmptyZimDirectoryException as no_files_err:
+            exit(0)
+        except Exception as exc:
+            log.error(f"Error: {exc}")
+            exit(1)
