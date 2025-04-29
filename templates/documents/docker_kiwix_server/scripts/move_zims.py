@@ -19,6 +19,8 @@ DEFAULT_TRANSMISSION_DIR: str = (
     os.environ.get("TRANSMISSION_TORRENT_DIR", "./data/transmission/torrent")
 )
 
+IGNORE_PATTERNS: list[str] = ["*.part"]
+
 class EmptyZimDirectoryException(Exception):
     pass
 
@@ -147,6 +149,11 @@ def move_completed(
     log.info(f"Moving [{len(completed_files)}] to path: {target_dir}\n")
 
     for f in completed_files:
+        ## Check if any part of file is in ignored patterns IGNORE_PATTERNS
+        if any(f.match(pattern) for pattern in IGNORE_PATTERNS):
+            log.debug(f"Skipping ignored item: {f.name}")
+            continue
+        
         move_file: bool = True
         target_path: Path = target_dir / f.name
 
