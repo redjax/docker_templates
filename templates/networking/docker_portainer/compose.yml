@@ -9,9 +9,26 @@ services:
     container_name: portainer
     restart: unless-stopped
     ports:
-      - ${PORTAINER_WEBUI_PORT:-9443}
-      - ${PORTAINER_TUNNEL_PORT:-8000}
+      - ${PORTAINER_WEBUI_PORT:-9443}:9443
+      - ${PORTAINER_TUNNEL_PORT:-8000}:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PORTAINER_DATA_DIR:-./portainer/data}:/data
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower_portainer
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
