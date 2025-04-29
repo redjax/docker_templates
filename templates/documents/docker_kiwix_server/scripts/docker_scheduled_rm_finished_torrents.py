@@ -13,7 +13,7 @@ import time
 import datetime as dt
 
 from torrents_mgr import main as torrents_mgr_main
-from torrents_mgr import setup_logging
+from torrents_mgr import setup_logging, test_transmission_connectivity
 
 log = logging.getLogger(__name__)
 
@@ -24,8 +24,8 @@ def parse_args():
     parser = argparse.ArgumentParser("torrent_mgr_scheduler", description="Scheduler entrypoint for removing completed torrent files.")
     
     parser.add_argument("-d", "--debug", action="store_true", help="Enable debug logging")
-    parser.add_argument("--host", type=str, default="localhost", help="The IP or FQDN of your Transmission server")
-    parser.add_argument("--port", type=str, default=9091, help="The port of your Transmission server")
+    parser.add_argument("--host", type=str, default=None, help="The IP or FQDN of your Transmission server")
+    parser.add_argument("--port", type=str, default=None, help="The port of your Transmission server")
     parser.add_argument("--username", type=str, default=None, help="The username of your Transmission server")
     parser.add_argument("--password", type=str, default=None, help="The password of your Transmission server")
     
@@ -116,6 +116,14 @@ def main(
         log.error(f"({type(exc)}) Error scheduling job: {exc}")
         raise
     
+    log.info("Testing connectivity to Transmission server")
+    try:
+        connect_success = test_transmission_connectivity(host=transmission_host, port=transmission_port, username=transmission_username, password=transmission_password)
+    except Exception as exc:
+        log.error(f"Error connecting to Transmission server. Details: {exc}")
+        raise
+    
+    log.info("Success connecting to Transmission server")    
     
     log.info(f"Starting scheduler, running once per hour. Next run: {get_next_quarter_hour()}")
     while True:
@@ -138,6 +146,15 @@ if __name__ == "__main__":
     _transmission_port = args.port
     _transmission_username = args.username
     _transmission_password = args.password
+    
+    if not _transmission_host:
+        _transmission_host = os.environ.get("TRANSMISSION_HOST")
+    if not _transmission_port:
+        _transmission_port = os.environ.get("TRANSMISSION_PORT")
+    if not _transmission_username:
+        _transmission_username = os.environ.get("TRANSMISSION_USER")
+    if not _transmission_password:
+        _transmission_password = os.environ.get("TRANSMISSION_PASSWORD")
     
     try:
         main(

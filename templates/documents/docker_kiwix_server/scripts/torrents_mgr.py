@@ -89,6 +89,30 @@ def get_transmission_client(host: str, port: int, username: str | None = None, p
     return client
 
 
+def test_transmission_connectivity(
+    host: str, 
+    port: int, 
+    username: str | None = None, 
+    password: str | None = None
+) -> bool:
+    """Test connection to Transmission server and validate credentials.
+    
+    Returns:
+        bool: True if connection succeeds, raises exception otherwise
+    """
+    try:
+        log.info("Testing connection to Transmission server at %s:%s", host, port)
+        client = get_transmission_client(host=host, port=port, username=username, password=password)
+        
+        ## Perform a basic operation to validate credentials
+        client.session_stats()
+        log.info("Successfully connected to Transmission server")
+        return True
+    except Exception as exc:
+        log.critical(f"Connection failed to: {host}:{port}")
+        raise RuntimeError(f"Connection failed: {exc}") from exc
+
+
 def remove_finished_torrents(client: Client):
     ## Fetch all torrents
     log.info("Fetching torrents from remote Transmission server ...")

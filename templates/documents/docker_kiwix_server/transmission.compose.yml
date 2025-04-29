@@ -112,7 +112,7 @@ services:
     environment:
       ## INFO, DEBUG, WARNING, ERROR, CRITICAL, NOTSET
       LOG_LEVEL: ${TORRENT_MGR_LOG_LEVEL:-INFO}
-      TRANSMISSION_HOST: ${TORRENT_MGR_TRANSMISSION_HOST:-transmission}
+      TRANSMISSION_HOST: ${TORRENT_MGR_TRANSMISSION_HOST:-kiwix-transmission}
       TRANSMISSION_PORT: ${TORRENT_MGR_TRANSMISSION_PORT:-9091}
       TRANSMISSION_USER: ${TORRENT_MGR_TRANSMISSION_USER}
       TRANSMISSION_PASSWORD: ${TORRENT_MGR_TRANSMISSION_PASSWORD}
@@ -121,6 +121,8 @@ services:
       - ./scripts/docker_scheduled_rm_finished_torrents.py:/project/docker_scheduled_rm_finished_torrents.py
       ## Mount host's timezone details
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - kiwix_net
 
   watchtower:
     image: containrrr/watchtower:latest
