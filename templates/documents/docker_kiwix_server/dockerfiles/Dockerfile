@@ -11,8 +11,8 @@ RUN mkdir /transmission-torrents
 
 WORKDIR /project
 
-COPY scripts/move_zims.py /project
-COPY scripts/docker_scheduled_mover.py /project
+COPY scripts/container_scripts/move_zims.py /project
+COPY scripts/container_scripts/docker_scheduled_mover.py /project
 
 RUN pip install schedule
 
@@ -23,8 +23,8 @@ FROM base AS torrent_mgr
 
 RUN mkdir -p /project
 
-COPY scripts/torrents_mgr.py /project
-COPY scripts/docker_scheduled_rm_finished_torrents.py /project
+COPY scripts/container_scripts/torrents_mgr.py /project
+COPY scripts/container_scripts/docker_scheduled_rm_finished_torrents.py /project
 
 RUN pip install transmission-rpc schedule
 

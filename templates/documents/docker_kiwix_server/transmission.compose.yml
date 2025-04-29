@@ -86,9 +86,9 @@ services:
       PRINT_ENV: ${MOVER_PRINT_ENV:-false}
     volumes:
       ## Mount mover script
-      - ./scripts/move_zims.py:/project/move_zims.py
+      - ./scripts/container_scripts/move_zims.py:/project/move_zims.py
       ## Mount scheduler script
-      - ./scripts/docker_scheduled_mover.py:/project/docker_scheduled_mover.py
+      - ./scripts/container_scripts/docker_scheduled_mover.py:/project/docker_scheduled_mover.py
       ## Mount Kiwix .zim directory
       - ${KIWIX_DATA_DIR:-./data/kiwix}:/kiwix-zims
       ## Mount Transmission torrents directory
@@ -117,8 +117,10 @@ services:
       TRANSMISSION_USER: ${TORRENT_MGR_TRANSMISSION_USER}
       TRANSMISSION_PASSWORD: ${TORRENT_MGR_TRANSMISSION_PASSWORD}
     volumes:
+      ## Mount torrent_mgr script
+      - ./scripts/container_scripts/torrents_mgr.py:/project/torrents_mgr.py
       ## Mount scheduler script
-      - ./scripts/docker_scheduled_rm_finished_torrents.py:/project/docker_scheduled_rm_finished_torrents.py
+      - ./scripts/container_scripts/docker_scheduled_rm_finished_torrents.py:/project/docker_scheduled_rm_finished_torrents.py
       ## Mount host's timezone details
       - /etc/localtime:/etc/localtime:ro
     networks:
