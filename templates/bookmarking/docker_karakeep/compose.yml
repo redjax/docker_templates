@@ -1,10 +1,59 @@
 ---
-# networks:
-#   unnamed_net: {}
+networks:
+  karakeep_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  karakeep_data: {}
+  meilisearch_data: {}
 
 services:
+  web:
+    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
+    container_name: karakeep
+    restart: unless-stopped
+    volumes:
+      - ${KARAKEEP_DATA_DIR:-karakeep_data}:/data
+    ports:
+      - ${KARAKEEP_WEBUI_PORT:-3000}:3000
+    env_file:
+      - .env
+    environment:
+      MEILI_ADDR: http://karakeep-meilisearch:7700
+      BROWSER_WEB_URL: http://karakeep-chrome:9222
+      # OPENAI_API_KEY: ${KARAKEEP_OPENAI_API_KEY}
+      OLLAMA_BASE_URL: ${KARAKEEP_OLLAMA_BASE_URL}
+      INFERENCE_TEXT_MODEL: ${KARAKEEP_OLLAMA_INFERENCE_TEXT_MODEL}
+      INFERENCE_IMAGE_MODEL: ${KARAKEEP_OLLAMA_INFERENCE_IMAGE_MODEL}
+      INFERENCE_CONTEXT_LENGTH: ${KARAKEEP_OLLAMA_INFERENCE_CONTEXT_LENGTH}
+      ## If the model you're using doesn't support structured output, you also need:
+      # INFERENCE_OUTPUT_SCHEMA=plain
+      DATA_DIR: /data
+    networks:
+      - karakeep_net
 
-  ...
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:${CHROME_VERSION:-123}
+    container_name: karakeep-chrome
+    restart: unless-stopped
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    networks:
+      - karakeep_net
+
+  meilisearch:
+    image: getmeili/meilisearch:${MEILISEARCH_VERSION:-v1.13.3}
+    container_name: karakeep-meilisearch
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - ${MEILISEARCH_DATA_DIR:-meilisearch_data}:/meili_data
+    networks:
+      - karakeep_net
