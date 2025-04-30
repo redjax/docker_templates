@@ -2,9 +2,48 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  dockge_data: {}
+  dockge_stacks: {}
 
 services:
+  dockge:
+    image: louislam/dockge:latest
+    container_name: dockge
+    restart: unless-stopped
+    ports:
+      - ${DOCKGE_WEBUI_PORT:-5001}:5001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKGE_DATA_DIR:-./data}:/app/data
 
-  ...
+      ## If you want to use private registries, you need to share the auth file with Dockge:
+      # - /root/.docker/:/root/.docker
+
+      ## Stacks Directory
+      # ⚠️ READ THIS CAREFULLY. If you do this wrong, your data could end up writing into the wrong path
+      # ⚠️ FULL path only. No relative path
+      - ${DOCKGE_STACKS_DIR:-/opt/dockge/stacks}:/opt/stacks
+    environment:
+      # Tell Dockge where is your stacks directory
+      DOCKGE_STACKS_DIR: ${DOCKGE_STACKS_DIR:-/opt/dockge/stacks}
+      DOCKGE_ENABLE_CONSOLE: ${DOCKGE_ENABLE_CONSOLE:-false}
+
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower_dockge
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
