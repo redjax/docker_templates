@@ -1,0 +1,43 @@
+volumes:
+  vrising_server_steam_data: {}
+  vrising_server_game_data: {}
+
+networks:
+  default:
+    driver: bridge
+    name: vrising_net
+
+services:
+  vrising-server:
+    image: trueosiris/vrising:${VRISING_SERVER_CONTAINER_IMG_VER:-latest}
+    container_name: vrising-server
+    restart: unless-stopped
+    ports:
+      - ${VIRISING_SERVER_PORT:-9876}:9876/udp
+      - ${VRISING_SERVER_QUERY_PORT:-9877}:9877/udp
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      SERVERNAME: ${VRISING_SERVER_NAME:-"Dockerized VRising Server"}
+      WORLDNAME: ${VRISING_SERVER_WORLDNAME:-world1}
+      GAMEPORT: 9876
+      QUERYPORT: 9877
+      LOGDAYS: ${VRISING_SERVER_LOGDAYS:-30}
+    volumes:
+      - ${VRISING_SERVER_STEAM_DIR:-vrising_server_steam_data}:/mnt/vrising/server
+      - ${VRISING_SERVER_GAME_DATA_DIR:-vrising_server_game_data}:/mnt/vrising/data
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: vrising-server_watchtower
+    restart: unless-stopped
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the `com.centurylinklabs.watchtower.enable=true` label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
