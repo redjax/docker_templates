@@ -1,1 +1,6 @@
 vrising/*
+configs/*
+
+!configs/
+!configs/example/
+!configs/example*.json
