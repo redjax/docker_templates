@@ -1,6 +1,9 @@
+---
+name: vrising-server
+
 volumes:
-  vrising_server_steam_data: {}
-  vrising_server_game_data: {}
+  game_data: {}
+  persistent_data: {}
 
 networks:
   default:
@@ -23,8 +26,8 @@ services:
       QUERYPORT: 9877
       LOGDAYS: ${VRISING_SERVER_LOGDAYS:-30}
     volumes:
-      - ${VRISING_SERVER_STEAM_DIR:-vrising_server_steam_data}:/mnt/vrising/server
-      - ${VRISING_SERVER_GAME_DATA_DIR:-vrising_server_game_data}:/mnt/vrising/data
+      - ${VRISING_SERVER_DATA_DIR:-game_data}:/mnt/vrising/server
+      - ${VRISING_SERVER_PERSIST_DIR:-persistent_data}:/mnt/vrising/persistentdata
 
       ##
       # Comment out/remove VRISING_SERVER_GAME_SETTINGS_FILE and VRISING_SERVER_GAME_HOST_SETTINGS_FILE
