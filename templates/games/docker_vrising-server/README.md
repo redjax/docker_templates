@@ -1,3 +1,13 @@
+<!-- V Rising image -->
+<p align="center">
+  <a href="https://github.com/redjax/docker_templates">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.cloudflare.steamstatic.com//steam/apps/1604030/header.jpg">
+      <img src="https://cdn.cloudflare.steamstatic.com//steam/apps/1604030/header.jpg" height="200">
+    </picture>
+  </a>
+</p>
+
 # V Rising <!-- omit in toc -->
 
 Dockerized [V Rising](https://store.steampowered.com/app/1604030/V_Rising/) server. Based on [TrueOsiris's container](https://github.com/TrueOsiris/docker-vrising).
@@ -9,6 +19,9 @@ Dockerized [V Rising](https://store.steampowered.com/app/1604030/V_Rising/) serv
   - [Customize starting powers with VBloodUnitSettings](#customize-starting-powers-with-vbloodunitsettings)
   - [Customize starting equipment with StarterEquipmentId](#customize-starting-equipment-with-starterequipmentid)
   - [Modify starting resources with StarterResourceId](#modify-starting-resources-with-starterresourceid)
+- [Backups](#backups)
+  - [Using named volumes](#using-named-volumes)
+  - [Using host volume mounts](#using-host-volume-mounts)
 - [Links](#links)
 
 ## Setup
@@ -127,6 +140,16 @@ Options:
 | 60             | 815373441   |
 | 70             | -1370930855 |
 | 80             | -1394108841 |
+
+## Backups
+
+### Using named volumes
+
+Use the included [backup script](./scripts/backup_vrising_server.sh) to run a lightweight Alpine Linux container that extracts the server's `persistentdata` and `server` directories.
+
+### Using host volume mounts
+
+Just back up the directory like a normal file.
 
 ## Links
 
