@@ -1,60 +1,74 @@
 #!/bin/bash
+set -eo pipefail
 
-CONTAINER_NAME="vrising-server"
-BACKUP_VOLUME_NAME="vrising_server_backup"
+# Configuration
+VOLUME_PREFIX="vrising-server"
+GAME_VOLUME="${VOLUME_PREFIX}_game_data"
+PERSISTENTDATA_VOLUME="${VOLUME_PREFIX}_persistent_data"
+BACKUP_VOLUME="vrising-server_backup"
 LOCAL_BACKUP_PATH="./backup/mnt_vrising"
+BACKUP_CONTAINER="vrising_backup_container"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
+## Check if docker is installed
 if ! command -v docker &> /dev/null; then
-    echo "docker is not installed, exiting.."
+    echo "Docker is not installed, exiting..."
     exit 1
 fi
 
-echo "Removing existing backup container if it exists"
-docker rm -f vrising_backup_container
+## Check if critical volumes exist (exit if missing)
+for volume in "$GAME_VOLUME" "$PERSISTENTDATA_VOLUME"; do
+    if ! docker volume inspect "$volume" &> /dev/null; then
+        echo "Error: Docker volume '$volume' does not exist."
+        exit 1
+    fi
+done
 
-if [[ $? -eq 0 ]]; then
-    echo "Backup container removed successfully"
-else
-    echo "Failed to remove backup container. Continuing anyway."
+## Check if backup volume exists; create it if missing (optional)
+if ! docker volume inspect "$BACKUP_VOLUME" &> /dev/null; then
+    echo "Warning: Backup volume '$BACKUP_VOLUME' does not exist. Creating it now..."
+    docker volume create "$BACKUP_VOLUME"
 fi
 
-echo "Starting backup container."
+## Remove any existing backup container
+echo "Removing existing backup container if it exists..."
+docker rm -f "$BACKUP_CONTAINER" 2>/dev/null || true
 
-docker run --name vrising_backup_container \
-    -v "${CONTAINER_NAME}:/mnt/vrising" \
-    -v "${BACKUP_VOLUME_NAME}:/backup" \
+## Start backup container with correct volume mounts
+echo "Starting backup container..."
+docker run -d --name "$BACKUP_CONTAINER" \
+    -v "${GAME_VOLUME}:/mnt/vrising/server:ro" \
+    -v "${PERSISTENTDATA_VOLUME}:/mnt/vrising/persistentdata:ro" \
+    -v "${BACKUP_VOLUME}:/backup" \
     -v "${LOCAL_BACKUP_PATH}:/local_backup" \
-    alpine sleep infinity &
+    alpine sleep infinity
 
-if [[ ! $? -eq 0 ]]; then
-    echo "Failed to start backup container."
-    exit 1
-fi
+## Wait a few seconds to ensure container is up
+sleep 3
 
-## Wait for container to start
-sleep 2
+## Install rsync inside the backup container
+echo "Installing rsync in backup container..."
+docker exec "$BACKUP_CONTAINER" sh -c "apk update && apk add --no-cache rsync"
 
-## Copy files from /mnt/vrising to backup volume
-docker exec vrising_backup_container sh -c "cp -r /mnt/vrising/* /backup/"
+## Create timestamped backup directories inside backup volume
+echo "Creating backup directories inside backup volume..."
+docker exec "$BACKUP_CONTAINER" sh -c "mkdir -p /backup/${TIMESTAMP}/server /backup/${TIMESTAMP}/persistentdata"
 
-if [[ ! $? -eq 0 ]]; then
-    echo "Failed to copy files from /mnt/vrising to backup volume."
+## Copy data from mounted volumes to backup volume
+echo "Copying server files to backup volume..."
+docker exec "$BACKUP_CONTAINER" sh -c "cp -a /mnt/vrising/server/. /backup/${TIMESTAMP}/server/"
+docker exec "$BACKUP_CONTAINER" sh -c "cp -a /mnt/vrising/persistentdata/. /backup/${TIMESTAMP}/persistentdata/"
 
-    docker stop vrising_backup_container
-    docker rm vrising_backup_container
-
-    exit 1
-fi
+## Sync backup volume contents to local backup path
+echo "Syncing backup volume to local backup directory..."
+docker exec "$BACKUP_CONTAINER" sh -c "rsync -a /backup/${TIMESTAMP} /local_backup/"
 
 ## Stop and remove backup container
-docker stop vrising_backup_container
-docker rm vrising_backup_container
+echo "Cleaning up backup container..."
+docker stop "$BACKUP_CONTAINER"
+docker rm "$BACKUP_CONTAINER"
 
-if [[ $? -eq 0 ]]; then
-    echo "Backup completed successfully. V Rising server data copied to ${LOCAL_BACKUP_PATH}"
+echo "Backup completed successfully! Backup timestamp: $TIMESTAMP"
+echo "Backup files are available at: ${LOCAL_BACKUP_PATH}/${TIMESTAMP}"
 
-    exit 0
-else
-    echo "Failed to stop and remove backup container."
-    exit 1
-fi
+exit 0
