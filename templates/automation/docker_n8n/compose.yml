@@ -1,5 +1,4 @@
-version: "3"
-
+---
 volumes:
   n8n_conf:
   n8n_files:
