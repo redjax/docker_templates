@@ -1,4 +1,6 @@
 ---
+name: valheim-server
+
 services:
   valheim-server:
     image: lloesche/valheim-server
