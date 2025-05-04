@@ -2,8 +2,8 @@
 <p align="center">
   <a href="https://github.com/redjax/docker_templates">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.cloudflare.steamstatic.com//steam/apps/1604030/header.jpg">
-      <img src="https://cdn.cloudflare.steamstatic.com//steam/apps/1604030/header.jpg" height="200">
+      <source media="(prefers-color-scheme: dark)" srcset="./vrising-banner.jpg">
+      <img src="./vrising-banner.jpg" height="200">
     </picture>
   </a>
 </p>
