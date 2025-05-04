@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  Templates: 133
+  Templates: 138
   <span>(counted with <a href="./scripts/count_templates.py">count_templates.py</a>)</span>
 </p>
 

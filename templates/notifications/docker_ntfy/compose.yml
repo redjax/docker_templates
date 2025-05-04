@@ -21,6 +21,11 @@ services:
       NTFY_AUTH_DEFAULT_ACCESS: ${NTFY_AUTH_ACCESS_POLICY:-deny-all}
       NTFY_BEHIND_PROXY: ${NTFY_PROXIED:-false}
       NTFY_ENABLE_SIGNUP: ${NTFY_SIGNUP_ENABLED:-false}
+      ## Enable file attachments by uncommenting section below
+      NTFY_ATTACHMENT_CACHE_DIR: "/var/lib/ntfy/attachments"
+      NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT: ${NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT:-5G}
+      NTFY_ATTACHMENT_FILE_SIZE_LIMIT: ${NTFY_ATTACHMENT_FILE_SIZE_LIMIT:-15M}
+      NTFY_ATTACHMENT_EXPIRY_DURATION: ${NTFY_ATTACHMENT_EXPIRY_DURATION:-3h}
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     volumes:

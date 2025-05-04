@@ -16,7 +16,7 @@ source:
     - user: "your-username"
       ssh: true
       ## Path in container
-      key: "/root/.ssh/id_rsa"
+      sshkey: "/root/.ssh/id_rsa"
       token_file: "/root/.ssh/github_token"
       ## Names of repositories to include
       include:
