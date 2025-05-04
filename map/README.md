@@ -124,6 +124,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_adguard](../templates/networking/docker_adguard)
   - [docker_portainer](../templates/networking/docker_portainer)
   - [docker_meshping](../templates/networking/docker_meshping)
+  - [docker_dockge](../templates/networking/docker_dockge)
   - [docker_wg-easy](../templates/networking/docker_wg-easy)
   - [docker_newt-tunnel](../templates/networking/docker_newt-tunnel)
   - [docker_pangolin](../templates/networking/docker_pangolin)

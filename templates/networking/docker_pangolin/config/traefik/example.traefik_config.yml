@@ -16,10 +16,78 @@ experimental:
       ## Use latest version from:
       #  https://github.com/fosrl/badger/releases
       version: "v1.1.0"
+    ## Enable crowdsec plugin
+    crowdsec:
+      moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      version: "v1.4.2"
 
 log:
   level: "INFO"
-  format: "common"
+  format: "json"
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json
+  filters:
+    statusCodes:
+      ## Success codes
+      - "200-299" 
+      ## Client errors
+      - "400-499" 
+      ## Server errors
+      - "500-599" 
+    retryAttempts: true
+    ## Increased to focus on slower requests
+    minDuration: "100ms" 
+  ## Add buffering for better performance
+  bufferingSize: 100     
+  fields:
+    ## Start with dropping all fields
+    defaultMode: drop    
+    names:
+      ## Keep client address for IP tracking
+      ClientAddr: keep
+      ## Keep client host for IP tracking
+      ClientHost: keep 
+      ## Keep request method for tracking
+      RequestMethod: keep
+      ## Keep request path for tracking
+      RequestPath: keep
+      ## Keep request protocol for tracking
+      RequestProtocol: keep
+      ## Keep downstream status for tracking
+      DownstreamStatus: keep
+      ## Keep downstream content size for tracking
+      DownstreamContentSize: keep
+      ## Keep request duration for tracking
+      Duration: keep
+      ServiceName: keep # Keep service name for tracking
+      ## Keep start time for tracking
+      StartUTC: keep
+      ## Keep TLS version for tracking
+      TLSVersion: keep
+      ## Keep TLS cipher for tracking
+      TLSCipher: keep
+      ## Keep retry attempts for tracking
+      RetryAttempts: keep
+    headers:
+      ## Start with dropping all headers
+      defaultMode: drop
+      names:
+        ## Keep user agent for tracking
+        User-Agent: keep
+        ## Keep real IP for tracking
+        X-Real-Ip: keep
+        ## Keep forwarded IP for tracking
+        X-Forwarded-For: keep
+        ## Keep forwarded protocol for tracking
+        X-Forwarded-Proto: keep
+        ## Keep content type for tracking
+        Content-Type: keep
+        ## Redact sensitive information
+        Authorization: redact 
+        ## Redact sensitive information
+        Cookie: redact       
 
 certificatesResolvers:
   letsencrypt:
@@ -46,6 +114,9 @@ entryPoints:
     http:
       tls:
         certResolver: "letsencrypt"
+      ## Enable crowdsec middleware
+      middlewares: 
+        - crowdsec@file
 
 serversTransport:
   insecureSkipVerify: true
