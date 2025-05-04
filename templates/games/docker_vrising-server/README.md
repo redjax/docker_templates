@@ -28,6 +28,10 @@ Dockerized [V Rising](https://store.steampowered.com/app/1604030/V_Rising/) serv
       - Edit the values, using [this page as a reference](https://kosgames.com/v-rising-server-settings-guide-serverhostsettings-json-file-23200/)
 - Run `docker compose up -d`
 
+**NOTE**
+
+The first time you run this container, your `ServerGameSettings.json` and `ServerHostSettings.json` will be overwritten. If you customize your settings, make a copy before running `docker compose up -d`, then paste your configuration over top of whatever the server generates, then restart the stack.
+
 ## Game Settings
 
 To change the game settings for a V Rising server, you can edit the `ServerGameSettings.json` in the server's data directory, `$VRISING_SERVER_GAME_DATA_DIR/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json`. If using a host mount, you might need to uses admin privileges to edit the file.
