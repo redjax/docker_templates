@@ -1,2 +1,9 @@
-vrising_data/*
-vrising_saves/*
+vrising/*
+configs/*
+backup/*
+
+!configs/
+!configs/example/
+!configs/example*.json
+!configs/premade/
+!configs/premade/*.json
