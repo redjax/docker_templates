@@ -25,11 +25,17 @@ services:
     volumes:
       - ${VRISING_SERVER_STEAM_DIR:-vrising_server_steam_data}:/mnt/vrising/server
       - ${VRISING_SERVER_GAME_DATA_DIR:-vrising_server_game_data}:/mnt/vrising/data
-      ## Comment out if using a host mount (local directory)
+
+      ##
+      # Comment out/remove VRISING_SERVER_GAME_SETTINGS_FILE and VRISING_SERVER_GAME_HOST_SETTINGS_FILE
+      # if using a host mount (local directory).
+      ##
+
       ## Mount ServerGameSettings.json from host
-      # - ${VRISING_SERVER_GAME_SETTINGS_FILE:-./configs/ServerGameSettings.json}:/mnt/vrising/data/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json
+      - ${VRISING_SERVER_GAME_SETTINGS_FILE:-./configs/ServerGameSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json
       ## Mount ServerHostSettings.json from host
-      # - ${VRISING_SERVER_HOST_SETTINGS_FILE:-./configs/ServerHostSettings.json}:/mnt/vrising/data/VRisingServer_Data/StreamingAssets/Settings/ServerHostSettings.json
+      - ${VRISING_SERVER_HOST_SETTINGS_FILE:-./configs/ServerHostSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerHostSettings.json
+
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
