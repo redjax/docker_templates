@@ -375,7 +375,7 @@
         ]
     },
     {
-        "count": 14,
+        "count": 15,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -399,6 +399,10 @@
             {
                 "name": "docker_meshping",
                 "path": "templates/networking/docker_meshping"
+            },
+            {
+                "name": "docker_dockge",
+                "path": "templates/networking/docker_dockge"
             },
             {
                 "name": "docker_wg-easy",
