@@ -1,18 +1,32 @@
-# V Rising
+# V Rising <!-- omit in toc -->
 
 Dockerized [V Rising](https://store.steampowered.com/app/1604030/V_Rising/) server. Based on [TrueOsiris's container](https://github.com/TrueOsiris/docker-vrising).
+
+## Table of Contents <!-- omit in toc -->
+
+- [Setup](#setup)
+- [Game Settings](#game-settings)
+  - [Customize starting powers with VBloodUnitSettings](#customize-starting-powers-with-vbloodunitsettings)
+  - [Customize starting equipment with StarterEquipmentId](#customize-starting-equipment-with-starterequipmentid)
+  - [Modify starting resources with StarterResourceId](#modify-starting-resources-with-starterresourceid)
+- [Links](#links)
 
 ## Setup
 
 - Copy [`.env.example`] -> `.env`
   - (Optional) Edit default environment variables
+- Copy or create a server game and host settings file
+  - Option 1: Use [a premade config](./configs/premade/)
+    - **note**: You must use a named volume for this. A named volume mount is the default, don't edit `VRISING_SERVER_STEAM_DIR` and `VRISING_SERVER_GAME_DATA_DIR` in the [`.env` file to use a named volume](./.env.example))
+    - Copy `configs/premade/<premadeName>.ServerGameSettings.json` -> `configs/ServerGameSettings.json`
+    - Copy `configs/premade/<premadeName>.ServerHostSettings.json` -> `configs/ServerHostSettings.json`
+  - Option 2: Create your own
+    - **note**: You must use a named volume for this. A named volume mount is the default, don't edit `VRISING_SERVER_STEAM_DIR` and `VRISING_SERVER_GAME_DATA_DIR` in the [`.env` file to use a named volume](./.env.example))
+    - Copy `configs/example/example.ServerGameSettings.json` -> `configs/ServerGameSettings.json`
+      - Edit the values, using [this page as a reference](https://wiki.indifferentbroccoli.com/VRising/Settings)
+    - Copy `configs/example/example.ServerHostSettings.json` -> `configs/example/example.ServerHostSettings.json`
+      - Edit the values, using [this page as a reference](https://kosgames.com/v-rising-server-settings-guide-serverhostsettings-json-file-23200/)
 - Run `docker compose up -d`
-- (Optional) Edit the server/game settings JSON files
-  - Once the server finishes downloading & installing, you can find the `ServerGameSettings.json` and `ServerHostSettings.json` files in the path defined in `$VRISING_SERVER_GAME_DATA_DIR`.
-  - To change the server defaults, it's easiest to set `$VRISING_SERVER_GAME_DATA_DIR` to a host mount (a directory on the local machine, i.e. `./vrising/game_data`) and edit the files directly (**note**: You may need root/`sudo` to edit the files).
-  - Either way, the full path to the JSON configuration files is:
-    - `$VRISING_SERVER_GAME_DATA_DIR/VRisingServer_Data/StreamingAssets/Settings/`
-    - Edit `ServerGameSettings.json` using the [example game settings file](./configs/example/example.ServerGameSettings.json), and the `ServerHostSettings.json` using the [example server settings file](./configs/example/example.ServerHostSettings.json)
 
 ## Game Settings
 
@@ -21,6 +35,20 @@ To change the game settings for a V Rising server, you can edit the `ServerGameS
 ### Customize starting powers with VBloodUnitSettings
 
 In the server's `ServerGameSettings.json`, you can edit the powers new players start with using the `VBloodUnitSettings` key. [This Reddit thread](https://www.reddit.com/r/vrising/comments/vbd6e2/how_to_use_server_setting_vbloodunitsettings/) describes how to use the setting. [This article](https://techraptor.net/gaming/guides/v-rising-server-setup-and-config-guide) describes some of the settings and their effects.
+
+To grant powers, make sure your `ServerGameSettings.json` file's `VBloodUnitSettings` looks like this:
+
+```json
+"VBloodUnitSettings": [
+      {
+        "UnitId": -1905691330,
+        "UnitLevel": 16, 
+        "DefaultUnlocked": false
+      }
+]
+```
+
+You can create as many pairs of `UnitId`, `UnitLevel`, `DefaultUnlocked` as you want to grant boss powers.
 
 You can use the table below as a reference.
 
@@ -64,9 +92,42 @@ You can use the table below as a reference.
 | [The Winged Horror](https://vrisingwiki.net/The_Winged_Horror)                           | -393555055   | 78        |
 | [Solarus the Immaculate](https://vrisingwiki.net/Solarus_the_Immaculate)                 | -740796338   | 80        |
 
+### Customize starting equipment with StarterEquipmentId
+
+You can modify players' starting equipment quality using the `StarterEquipmentId` variable in `ServerGameSettings.json`.
+
+Options:
+
+| Quality          | Value       |
+| ---------------- | ----------- |
+| None             | 0           |
+| Copper           | 742198603   |
+| Merciless Copper | -663535879  |
+| Merciless Iron   | -1502721803 |
+| Dark Silver      | 28431735    |
+| Sanguine         | -983090495  |
+| Dracula          | -1466803079 |
+
+### Modify starting resources with StarterResourceId
+
+Modify players' starting resources with the `StarterResourceId` variable in `ServerGameSettings.json`.
+
+Options:
+
+| Resource Level | Value       |
+| -------------- | ----------- |
+| None           | 0           |
+| 30             | 1982471388  |
+| 40             | 1504234317  |
+| 50             | 548330870   |
+| 60             | 815373441   |
+| 70             | -1370930855 |
+| 80             | -1394108841 |
+
 ## Links
 
 - [TrueOsiris/docker-vrising](https://github.com/TrueOsiris/docker-vrising)
 - [fandom: V Rising dedicated server wiki](https://vrising.fandom.com/wiki/V_Rising_Dedicated_Server)
 - [TechRaptor: V Rising Server Setup and Config Guide](https://techraptor.net/gaming/guides/v-rising-server-setup-and-config-guide)
 - [Reddit: how to use server setting VBloodUnitSettings](https://www.reddit.com/r/vrising/comments/vbd6e2/how_to_use_server_setting_vbloodunitsettings/)
+- [All ServerGameSettings.json values & options](https://wiki.indifferentbroccoli.com/VRising/Settings)
