@@ -3,6 +3,7 @@ name: vrising-server
 
 volumes:
   game_data: {}
+  config_data: {}
   persistent_data: {}
 
 networks:
@@ -27,6 +28,7 @@ services:
       LOGDAYS: ${VRISING_SERVER_LOGDAYS:-30}
     volumes:
       - ${VRISING_SERVER_DATA_DIR:-game_data}:/mnt/vrising/server
+      - ${VRISING_SERVER_CONFIG_DIR:-config_data}:/mnt/vrising/server/VRisingServer_Data
       - ${VRISING_SERVER_PERSIST_DIR:-persistent_data}:/mnt/vrising/persistentdata
 
       ##

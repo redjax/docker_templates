@@ -4,6 +4,7 @@ set -eo pipefail
 # Configuration
 VOLUME_PREFIX="vrising-server"
 GAME_VOLUME="${VOLUME_PREFIX}_game_data"
+CONFIG_VOLUME="${VOLUME_PREFIX}_config_data"
 PERSISTENTDATA_VOLUME="${VOLUME_PREFIX}_persistent_data"
 BACKUP_VOLUME="vrising-server_backup"
 LOCAL_BACKUP_PATH="./backup/mnt_vrising"
@@ -17,7 +18,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 ## Check if critical volumes exist (exit if missing)
-for volume in "$GAME_VOLUME" "$PERSISTENTDATA_VOLUME"; do
+for volume in "$GAME_VOLUME" "$PERSISTENTDATA_VOLUME" "$CONFIG_VOLUME"; do
     if ! docker volume inspect "$volume" &> /dev/null; then
         echo "Error: Docker volume '$volume' does not exist."
         exit 1
@@ -38,6 +39,7 @@ docker rm -f "$BACKUP_CONTAINER" 2>/dev/null || true
 echo "Starting backup container..."
 docker run -d --name "$BACKUP_CONTAINER" \
     -v "${GAME_VOLUME}:/mnt/vrising/server:ro" \
+    -v "${CONFIG_VOLUME}:/mnt/vrising/server/VRisingServer_Data:ro" \
     -v "${PERSISTENTDATA_VOLUME}:/mnt/vrising/persistentdata:ro" \
     -v "${BACKUP_VOLUME}:/backup" \
     -v "${LOCAL_BACKUP_PATH}:/local_backup" \
@@ -52,12 +54,13 @@ docker exec "$BACKUP_CONTAINER" sh -c "apk update && apk add --no-cache rsync"
 
 ## Create timestamped backup directories inside backup volume
 echo "Creating backup directories inside backup volume..."
-docker exec "$BACKUP_CONTAINER" sh -c "mkdir -p /backup/${TIMESTAMP}/server /backup/${TIMESTAMP}/persistentdata"
+docker exec "$BACKUP_CONTAINER" sh -c "mkdir -p /backup/${TIMESTAMP}/server /backup/${TIMESTAMP}/persistentdata /backup/${TIMESTAMP}/VRisingServer_Data"
 
 ## Copy data from mounted volumes to backup volume
 echo "Copying server files to backup volume..."
 docker exec "$BACKUP_CONTAINER" sh -c "cp -a /mnt/vrising/server/. /backup/${TIMESTAMP}/server/"
 docker exec "$BACKUP_CONTAINER" sh -c "cp -a /mnt/vrising/persistentdata/. /backup/${TIMESTAMP}/persistentdata/"
+docker exec "$BACKUP_CONTAINER" sh -c "cp -a /mnt/vrising/server/VRisingServer_Data/. /backup/${TIMESTAMP}/VRisingServer_Data/"
 
 ## Sync backup volume contents to local backup path
 echo "Syncing backup volume to local backup directory..."
