@@ -8,6 +8,7 @@ backup/*
 !configs/example*.json
 !configs/premade/
 !configs/premade/*.json
+!configs/README.md
 
 !vrising/.gitkeep
 !vrising/persist/
