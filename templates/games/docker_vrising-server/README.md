@@ -22,6 +22,7 @@ Dockerized [V Rising](https://store.steampowered.com/app/1604030/V_Rising/) serv
 - [Backups](#backups)
   - [Using named volumes](#using-named-volumes)
   - [Using host volume mounts](#using-host-volume-mounts)
+- [Customize the server](#customize-the-server)
 - [Links](#links)
 
 ## Setup
