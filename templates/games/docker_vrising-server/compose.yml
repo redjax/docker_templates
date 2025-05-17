@@ -37,9 +37,9 @@ services:
       ##
 
       ## Mount ServerGameSettings.json from host
-      - ${VRISING_SERVER_GAME_SETTINGS_FILE:-./configs/ServerGameSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json
+      # - ${VRISING_SERVER_GAME_SETTINGS_FILE:-./configs/ServerGameSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json
       ## Mount ServerHostSettings.json from host
-      - ${VRISING_SERVER_HOST_SETTINGS_FILE:-./configs/ServerHostSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerHostSettings.json
+      # - ${VRISING_SERVER_HOST_SETTINGS_FILE:-./configs/ServerHostSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerHostSettings.json
 
     labels:
       - "com.centurylinklabs.watchtower.enable=true"

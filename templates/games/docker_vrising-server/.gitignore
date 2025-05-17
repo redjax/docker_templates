@@ -1,4 +1,5 @@
 vrising/*
+vrising/**/*
 configs/*
 backup/*
 
@@ -7,3 +8,10 @@ backup/*
 !configs/example*.json
 !configs/premade/
 !configs/premade/*.json
+!configs/README.md
+
+!vrising/.gitkeep
+!vrising/persist/
+!vrising/persist/.gitkeep
+!vrising/persist/Settings/
+!vrising/persist/Settings/.gitkeep
