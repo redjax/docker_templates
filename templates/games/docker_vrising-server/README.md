@@ -59,7 +59,7 @@ To grant powers, make sure your `ServerGameSettings.json` file's `VBloodUnitSett
 "VBloodUnitSettings": [
       {
         "UnitId": -1905691330,
-        "UnitLevel": 16, 
+        "UnitLevel": 16,
         "DefaultUnlocked": false
       }
 ]
@@ -150,6 +150,10 @@ Use the included [backup script](./scripts/backup_vrising_server.sh) to run a li
 ### Using host volume mounts
 
 Just back up the directory like a normal file.
+
+## Customize the server
+
+Read the instructions in [the `configs/` directory](./configs) to apply custom game settings to your server.
 
 ## Links
 
