@@ -13,39 +13,113 @@ services:
     #   platforms:
     #     - linux/amd64
     environment:
-      SERVER_NAME: ${ENSHROUDED_SERVER_NAME:-"My Enshrouded Server"}
+      TZ: ${TZ:-Etc/UTC}
+
+      AUTO_UPDATE: ${ENSHROUDED_SERVER_AUTO_UPDATE:-true}
+      AUTO_UPDATE_SCHEDULE: ${ENSHROUDED_SERVER_AUTO_UPDATE_SCHEDULE:-"0 3 * * *"}
+      SCHEDULED_RESTART: ${ENSHROUDED_SERVER_SCHEDULED_RESTART:-true}
+      SCHEDULED_RESTART_SCHEDULE: ${ENSHROUDED_SERVER_RESTART_SCHEDULE:-"0 4 * * *"}
+
+      NAME: ${ENSHROUDED_SERVER_NAME:-"My Enshrouded Server"}
+      WEBHOOK_URL: ${ENSHROUDED_WEBHOOK_URL}
       PASSWORD: ${ENSHROUDED_PASSWORD:-""}
       ADMIN_PASSWORD: ${ENSHROUDED_ADMIN_PASSWORD:-"adminpassword"}
-      SAVE_DIRECTORY: ${ENSHROUDED_SAVE_DIR:-./enshrouded/savegame}
-      LOG_DIRECTORY: ${ENSHROUDED_LOGS_DIR:-./enshrouded/logs}
+      # SAVE_DIRECTORY: ${ENSHROUDED_SAVE_DIR:-./enshrouded/savegame}
+      # LOG_DIRECTORY: ${ENSHROUDED_LOGS_DIR:-./enshrouded/logs}
       # SERVER_IP: 0.0.0.0
       # GAME_PORT: 15636
       # QUERY_PORT: 15637
       SLOT_COUNT: ${ENSHROUDED_SERVER_SLOTS:-16}
+
+      ###########################
+      # Game Settings Overrides #
+      ###########################
+      PLAYER_HEALTH_FACTOR: ${ENSHROUDED_SERVER_PLAYER_HEALTH_FACTOR:-"1.0"}
+      PLAYER_MANA_FACTOR: ${ENSHROUDED_SERVER_PLAYER_MANA_FACTOR:-"1.0"}
+      PLAYER_STAMINA_FACTOR: ${ENSHROUDED_SERVER_PLAYER_STAMINA_FACTOR:-"1.0"}
+      PLAYER_BODY_HEAT_FACTOR: ${ENSHROUDED_SERVER_PLAYER_BODY_HEAT_FACTOR:-"1.0"}
+      ENABLE_DURABILITY: ${ENSHROUDED_SERVER_ENABLE_DURABILITY:-"true"}
+      ENABLE_STARVING_DEBUFF: ${ENSHROUDED_SERVER_ENABLE_STARVING_DEBUFF:-"false"}
+      FOOD_BUFF_DURATION_FACTOR: ${ENSHROUDED_SERVER_FOOD_BUFF_DURATION_FACTOR:-"1.0"}
+      FROM_HUNGER_TO_STARVING: ${ENSHROUDED_SERVER_FROM_HUNGER_TO_STARVING:-"600000000000"}
+      SHROUD_TIME_FACTOR: ${ENSHROUDED_SERVER_SHROUD_TIME_FACTOR:-"1.0"}
+      TOMBSTONE_MODE: ${ENSHROUDED_SERVER_TOMBSTONE_MODE:-"AddBackpackMaterials"}
+      ENABLE_GLIDER_TURBULENCES: ${ENSHROUDED_SERVER_ENABLE_GLIDER_TURBULENCES:-"true"}
+      WEATHER_FREQUENCY: ${ENSHROUDED_SERVER_WEATHER_FREQUENCY:-"Normal"}
+      MINING_DAMAGE_FACTOR: ${ENSHROUDED_SERVER_MINING_DAMAGE_FACTOR:-"1.0"}
+      PLANT_GROWTH_SPEED_FACTOR: ${ENSHROUDED_SERVER_PLANT_GROWTH_SPEED_FACTOR:-"1.0"}
+      RESOURCE_DROP_STACK_AMOUNT_FACTOR: ${ENSHROUDED_SERVER_RESOURCE_DROP_STACK_AMOUNT_FACTOR:-"1.0"}
+      FACTORY_PRODUCTION_SPEED_FACTOR: ${ENSHROUDED_SERVER_FACTORY_PRODUCTION_SPEED_FACTOR:-"1.0"}
+      PERK_UPGRADE_RECYCLING_FACTOR: ${ENSHROUDED_SERVER_PERK_UPGRADE_RECYCLING_FACTOR:-"0.5"}
+      PERK_COST_FACTOR: ${ENSHROUDED_SERVER_PERK_COST_FACTOR:-"1.0"}
+      EXPERIENCE_COMBAT_FACTOR: ${ENSHROUDED_SERVER_EXPERIENCE_COMBAT_FACTOR:-"1.0"}
+      EXPERIENCE_MINING_FACTOR: ${ENSHROUDED_SERVER_EXPERIENCE_MINING_FACTOR:-"1.0"}
+      EXPERIENCE_EXPLORATION_QUESTS_FACTOR: ${ENSHROUDED_SERVER_EXPERIENCE_EXPLORATION_QUESTS_FACTOR:-"1.0"}
+      RANDOM_SPAWNER_AMOUNT: ${ENSHROUDED_SERVER_RANDOM_SPAWNER_AMOUNT:-"Normal"}
+      AGGRO_POOL_AMOUNT: ${ENSHROUDED_SERVER_AGGRO_POOL_AMOUNT:-"Normal"}
+      ENEMY_DAMAGE_FACTOR: ${ENSHROUDED_SERVER_ENEMY_DAMAGE_FACTOR:-"1.0"}
+      ENEMY_HEALTH_FACTOR: ${ENSHROUDED_SERVER_ENEMY_HEALTH_FACTOR:-"1.0"}
+      ENEMY_STAMINA_FACTOR: ${ENSHROUDED_SERVER_ENEMY_STAMINA_FACTOR:-"1.0"}
+      ENEMY_PERCEPTION_RANGE_FACTOR: ${ENSHROUDED_SERVER_ENEMY_PERCEPTION_RANGE_FACTOR:-"1.0"}
+      BOSS_DAMAGE_FACTOR: ${ENSHROUDED_SERVER_BOSS_DAMAGE_FACTOR:-"1.0"}
+      BOSS_HEALTH_FACTOR: ${ENSHROUDED_SERVER_BOSS_HEALTH_FACTOR:-"1.0"}
+      THREAT_BONUS: ${ENSHROUDED_SERVER_THREAT_BONUS:-"1.0"}
+      PACIFY_ALL_ENEMIES: ${ENSHROUDED_SERVER_PACIFY_ALL_ENEMIES:-"false"}
+      TAMING_STARTLE_REPERUSSION: ${ENSHROUDED_SERVER_TAMING_STARTLE_REPERUSSION:-"LoseSomeProgress"}
+      DAY_TIME_DURATION: ${ENSHROUDED_SERVER_DAY_TIME_DURATION:-"1800000000000"}
+      NIGHT_TIME_DURATION: ${ENSHROUDED_SERVER_NIGHT_TIME_DURATION:-"720000000000"}
+
+      ########################
+      # User Group Overrides #
+      ########################
+      SET_GROUP_ADMIN_PASSWORD: ${ENSHROUDED_SERVER_GROUP_ADMIN_PASSWORD:-"YourAdminPassword"}
+      SET_GROUP_ADMIN_CAN_KICK_BAN: ${ENSHROUDED_SERVER_ADMIN_CAN_KICK_BAN:-true}
+      SET_GROUP_ADMIN_CAN_ACCESS_INVENTORIES: ${ENSHROUDED_SERVER_ADMIN_CAN_ACCESS_INVENTORIES:-true}
+
     ports:
       - "${ENSHROUDED_SERVER_PORT:-15636}:15636/udp"
       - "${ENSHROUDED_SERVER_PORT:-15636}:15636/tcp"
       - "${ENSHROUDED_QUERY_PORT:-15637}:15637/udp"
       - "${ENSHROUDED_QUERY_PORT:-15637}:15637/tcp"
     volumes:
+      # - ${ENSHROUDED_SAVE_DIR:-./enshrouded/savegame}:/home/steam/enshrouded/savegame
+      # - ${ENSHROUDED_LOGS_DIR:-./enshrouded/logs}:/home/steam/enshrouded/logs
       - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
     networks:
       - enshrouded_net
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   ## Uncomment service below to enable auto backups
-  backups:
-    image: mbround18/backup-cron:latest
-    container_name: enshrouded-backups
+  # backups:
+  #   image: mbround18/backup-cron:latest
+  #   container_name: enshrouded-backups
+  #   restart: unless-stopped
+  #   environment:
+  #     - SCHEDULE=${ENSHROUDED_BACKUP_SCHEDULE:-*/10 * * * *}
+  #     - INPUT_FOLDER=/home/steam/enshrouded/savegame
+  #     - OUTPUT_FOLDER=/home/steam/backups
+  #     - OUTPUT_USER=1000
+  #     - OUTPUT_GROUP=1000
+  #     - KEEP_N_DAYS=${ENSHROUDED_BACKUP_KEEP_DAYS:-5}
+  #   volumes:
+  #     - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
+  #     - ${ENSHROUDED_BACKUP_DIR:-./enshrouded/backups}:/home/steam/backups
+  #   networks:
+  #     - enshrouded_net
+  # labels:
+  #   - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: enshrouded-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     environment:
-      - SCHEDULE=${ENSHROUDED_BACKUP_SCHEDULE:-*/10 * * * *}
-      - INPUT_FOLDER=/home/steam/enshrouded/savegame
-      - OUTPUT_FOLDER=/home/steam/backups
-      - OUTPUT_USER=1000
-      - OUTPUT_GROUP=1000
-      - KEEP_N_DAYS=${ENSHROUDED_BACKUP_KEEP_DAYS:-5}
-    volumes:
-      - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
-      - ${ENSHROUDED_BACKUP_DIR:-./enshrouded/backups}:/home/steam/backups
-    networks:
-      - enshrouded_net
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP:-"true"}
+      ## Check for updates once every 24h
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
+    ## Only monitor containers with a specific label
+    command: --label-enable
