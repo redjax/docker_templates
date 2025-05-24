@@ -79,6 +79,7 @@ services:
     ports:
       - "${ENSHROUDED_SERVER_PORT:-15636}:15636/udp"
       - "${ENSHROUDED_SERVER_PORT:-15636}:15636/tcp"
+      ## This is the port you connect with
       - "${ENSHROUDED_QUERY_PORT:-15637}:15637/udp"
       - "${ENSHROUDED_QUERY_PORT:-15637}:15637/tcp"
     volumes:
