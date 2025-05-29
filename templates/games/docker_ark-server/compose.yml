@@ -6,5 +6,27 @@
 #   volume_name: {}
 
 services:
-
-  ...
+  ark_server:
+    container_name: ark-survival-server
+    image: turzam/ark
+    restart: unless-stopped
+    environment:
+      SESSIONNAME: ${ARK_SERVER_SESSIONNAME:-Ark Docker}
+      SERVERMAP: ${ARK_SERVER_SERVERMAP:-TheIsland}
+      SERVERPASSWORD: ${ARK_SERVER_SERVERPASSWORD:-""}
+      ADMINPASSWORD: ${ARK_SERVER_ADMINPASSWORD:-adminpassword}
+      BACKUPONSTART: ${ARK_SERVER_BACKUPONSTART:-1}
+      UPDATEONSTART: ${ARK_SERVER_UPDATEONSTART:-1}
+      TZ: ${ARK_SERVER_TZ:-Etc/UTC}
+      GID: ${ARK_SERVER_GID:-1000}
+      UID: ${ARK_SERVER_UID:-1000}
+    volumes:
+      - ${ARK_SERVER_DATA_DIR:-./ark/data}:/ark
+      ## Uncomment if you are setting up automated backups
+      # - ${ARK_SERVER_CRON_FILE:-./backup_schedules/default.cron}:/ark/crontab
+    ports:
+      - ${ARK_SERVER_STEAM_PORT:-7778}:7778/udp
+      - ${ARK_SERVER_STEAM_PORT:-7778}:7778
+      - ${ARK_SERVER_GAME_PORT-27015}:27015/udp
+      - ${ARK_SERVER_GAME_PORT-27015}:27015
+      - ${ARK_SERVER_RCON_PORT:-32330}:32330

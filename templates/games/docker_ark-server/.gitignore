@@ -1,0 +1,4 @@
+ark/*
+backup_schedules/*
+
+!backcup_schedules/default
