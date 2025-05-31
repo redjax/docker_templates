@@ -13,10 +13,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: ${ARK_SERVER_CPU_LIMIT:-"2.00"}
+          cpus: ${ARK_SERVER_CPU_LIMIT:-2.00}
           memory: ${ARK_SERVER_MEMORY_LIMIT:-6G}
         reservations:
-          cpus: ${ARK_SERVER_CPU_RESEREVED:-"1.0"}
+          cpus: ${ARK_SERVER_CPU_RESEREVED:-1.0}
           memory: ${ARK_SERVER_MEMORY_RESERVED:-3G}
     environment:
       SESSIONNAME: ${ARK_SERVER_SESSIONNAME:-Ark Docker}
