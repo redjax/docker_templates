@@ -1,0 +1,24 @@
+---
+# volumes:
+#   forgejo_data: {}
+
+networks:
+  forgejo_net: {}
+
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:${FORGEJO_IMG_VER:-11}
+    container_name: forgejo
+    restart: always
+    env_file:
+      - ${FORGEJO_ENV_FILE:-./env_files/forgejo/default.env}
+    volumes:
+      # - ${FORGEJO_DATA_DIR:-forgejo_data}:/data
+      - ${FORGEJO_DATA_DIR:-./data/forgejo}:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - ${FORGEJO_WEBUI_PORT:-3000}:3000
+      - ${FORGEJO_SSH_PORT:-222}:22
+    networks:
+      - forgejo_net
