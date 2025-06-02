@@ -9,22 +9,82 @@ volumes:
 
 services:
   server:
-    image: codeberg.org/forgejo/forgejo:${IMAGE_VER:-1.20}
+    image: codeberg.org/forgejo/forgejo:${IMAGE_VER:-1.21}
     container_name: forgejo
     environment:
       USER_UID: 1000
       USER_GID: 1000
-      FORGEJO____APP_NAME: ${FORGEJO_SITE_NAME:-Forgejo}
+      FORGEJO__default__APP_NAME: ${FORGEJO_SITE_NAME:-Forgejo}
+
+      FORGEJO__repository__MAX_CREATION_LIMIT: ${FORGEJO_MAX_CREATION_LIMIT:--1}
+      FORGEJO__repository__ENABLE_PUSH_CREATE_USER: ${FORGEJO_ENABLE_PUSH_CREATE_USER:-true}
+      FORGEJO__repository__ENABLE_PUSH_CREATE: ${FORGEJO_ENABLE_PUSH_CREATE:-true}
+
       FORGEJO__server__ROOT_URL: ${FORGEJO_ROOT_DOMAIN}
+      ## Only enable this if you use a different port for SSH than 22
+      #  on the host.
+      FORGEJO__server__START_SSH_SERVER: ${FORGEJO__server__START_SSH_SERVER:-false}
       FORGEJO__server__SSH_DOMAIN: ${FORGEJO_SSH_DOMAIN}
+      FORGEJO__server__SSH_LISTEN_HOST: ${FORGEJO_SSH_LISTEN_HOST:-0.0.0.0}
       FORGEJO__server__SSH_PORT: ${FORGEJO_SSH_PORT:-2222}
-      FORGEJO__server__SSH_LISTEN_PORT: 22
+      FORGEJO__server__SSH_LISTEN_PORT: ${FORGEJO_SSH_LISTEN_PORT:-22}
+      ## If you request static resources from a different URL,
+      #  uncomment the following line & set a value for FORGEJO_STATIC_URL_PREFIX
+      # FORGEJO__server__STATIC_URL_PREFIX: ${FORGEJO_STATIC_URL_PREFIX}
+      FORGEJO__server__HTTP_ADDR: ${FORGEJO_HTTP_ADDR:-0.0.0.0}
+      FORGEJO__server__HTTP_PORT: ${FORGEJO_HTTP_PORT:-3000}
+
       FORGEJO__service__DISABLE_REGISTRATION: ${FORGEJO_DISABLE_REGISTRATION:-true}
       FORGEJO__service__REQUIRE_SIGNIN_VIEW: ${FORGEJO_REQUIRE_SIGNIN_VIEW:-false}
       FORGEJO__service__NO_REPLY_ADDRESS: ${FORGEJO_NOREPLY_ADDRESS:-noreply.localhost}
       FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: ${FORGEJO_KEEP_EMAIL_PRIVATE:-true}
+
       FORGEJO__actions__ENABLED: ${FORGEJO_ENABLE_ACTIONS:-true}
+
+      ## Set to 'false' on first run, but make sure to enable it after setup
       FORGEJO__security__INSTALL_LOCK: ${FORGEJO_INSTALL_LOCK:-true}
+      ## This key will be randomly generated the first time Forgejo runs.
+      #  MAKE SURE TO SAVE IT!!
+      FORGEJO__security__INSTALL_KEY: ${FORGEJO_INSTALL_KEY}
+      ## Generate a secret key and mount it in the container.
+      #  Note: you must uncomment the volume mount and create the file.
+      FORGEJO__security__SECRET_KEY_URI: ${FORGEJO_SECRET_KEY_FILE:-}
+
+      FORGEJO__ui__EXPLORE_PAGING_NUM: ${FORGEJO_EXPLORE_PAGING_NUM:-20}
+      FORGEJO__ui__ISSUE_PAGING_NUM: ${FORGEJO_ISSUE_PAGING_NUM:-20}
+      FORGEJO__ui__MEMBERS_PAGING_NUM: ${FORGEJO_MEMBERS_PAGING_NUM:-20}
+      FORGEJO__ui__FEED_MAX_COMMIT_NUM: ${FORGEJO_FEED_MAX_COMMIT_NUM:-5}
+      FORGEJO__ui__SITEMAP_PAGING_NUM: ${FORGEJO_SITEMAP_PAGING_NUM:-20}
+      FORGEJO__ui__GRAPH_MAX_COMMIT_NUM: ${FORGEJO_GRAPH_MAX_COMMIT_NUM:-100}
+      FORGEJO__ui__CORE_COMMENT_LINES: ${FORGEJO_CORE_COMMENT_LINES:-4}
+      ## forgejo-auto, forgejo-light, forgejo-dark, auto, gitea, arc-green
+      FORGEJO__ui__DEFAULT_THEME: ${FORGEJO_DEFAULT_THEME:-forgejo-auto}
+      FORGEJO__ui__SHOW_USER_EMAIL: ${FORGEJO_SHOW_USER_EMAIL:-true}
+      ## forgejo, gitea, codeberg, gitlab, git, github, gog
+      FORGEJO__ui__CUSOM_EMOJIS: ${FORGEJO_CUSTOM_EMOJIS:-forgejo}
+
+      FORGEJO__ui_admin__USER_PAGING_NUM: ${FORGEJO_ADMIN_USER_PAGING_NUM:-50}
+      FORGEJO__ui__admin__REPO_PAGING_NUM: ${FORGEJO_REPO_PAGING_NUM:-50}
+      FORGEJO__ui__admin__NOTICE_PAGING_NUM: ${FORGEJO_NOTICE_PAGING_NUM:-25}
+      FORGEJO__ui__admin__ORG_PAGING_NUM: ${FORGEJO_ORG_PAGING_NUM:-50}
+
+      FORGEJO__ui__user__REPO_PAGING_NUM: ${FORGEJO_USER_REPO_PAGING_NUM:-15}
+
+      FORGEJO__ui__csv__MAX_FILE_SIZE: ${FORGEJO_CSV_MAX_FILE_SIZE:-52428800}
+
+      ## You do not need CORS if all your applications are hosted on the same domain
+      # FORGEJO__cors__ENABLED: true
+      # FORGEJO__cors__SCHEME: https
+      # FORGEJO__cors__ALLOW_DOMAIN: https://example.com,https://another.com
+      # FORGEJO__cors__ALLOW_SUBDOMAIN: false
+      # FORGEJO__cors__METHODS: GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
+      # FORGEJO__cors__MAX_AGE: 10m
+      # FORGEJO__cors__ALLOW_CREDENTIALS: false
+
+      ## bleve, db, elasticsearch or meilisearch
+      FORGEJO__indexer__ISSUE_INDEXER_TYPE: ${FORGEJO_ISSUE_INDEXER_TYPE:-bleve}
+      ## i.e.: http://elastic:password@localhost:9200 or http://:apikey@localhost:7700
+      FORGEJO__indexer__ISSUE_INDEXER_CONN_STR: ${ISSUE_INDEXER_CONN_STR}
     restart: unless-stopped
     networks:
       - forgejo
@@ -72,4 +132,3 @@ services:
       # - WOODPECKER_BACKEND_DOCKER_NETWORK=${WOODPECKER_BACKEND_DOCKER_NETWORK:-forgejo}
     networks:
       - forgejo
-
