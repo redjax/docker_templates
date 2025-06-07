@@ -6,5 +6,10 @@
 #   volume_name: {}
 
 services:
+  omnitools:
+    image: iib0011/omni-tools:latest
+    container_name: omni-tools
+    restart: unless-stopped
+    ports:
+      - ${OMNITOOLS_HTTP_PORT:-8080}:80
 
-  ...
