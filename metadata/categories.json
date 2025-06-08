@@ -300,30 +300,6 @@
                 "path": "templates/bookmarking/docker_linkding"
             },
             {
-                "name": "docker_readeck",
-                "path": "templates/bookmarking/docker_readeck"
-            }
-        ]
-    },
-    {
-        "count": 2,
-        "name": "bots",
-        "path": "templates/bots",
-        "sub_categories": [],
-        "templates": [
-            {
-                "name": "docker_red-discordbot",
-                "path": "templates/bots/docker_red-discordbot"
-            }
-        ]
-    },
-    {
-        "count": 7,
-        "name": "rss",
-        "path": "templates/rss",
-        "sub_categories": [],
-        "templates": [
-            {
                 "name": "docker_linkwarden",
                 "path": "templates/bookmarking/docker_linkwarden"
             },
@@ -474,7 +450,7 @@
         ]
     },
     {
-        "count": 12,
+        "count": 15,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -490,6 +466,10 @@
             {
                 "name": "docker_technitiumdns",
                 "path": "templates/networking/docker_technitiumdns"
+            },
+            {
+                "name": "docker_pangolin",
+                "path": "templates/networking/docker_pangolin"
             },
             {
                 "name": "docker_headscale",
@@ -516,6 +496,14 @@
                 "path": "templates/networking/docker_unifi-controller"
             },
             {
+                "name": "docker_dockge",
+                "path": "templates/networking/docker_dockge"
+            },
+            {
+                "name": "docker_newt-tunnel",
+                "path": "templates/networking/docker_newt-tunnel"
+            },
+            {
                 "name": "docker_wg-easy",
                 "path": "templates/networking/docker_wg-easy"
             },
@@ -526,6 +514,18 @@
             {
                 "name": "docker_meshping",
                 "path": "templates/networking/docker_meshping"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "file_transfer",
+        "path": "templates/file_transfer",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_sftpgo",
+                "path": "templates/file_transfer/docker_sftpgo"
             }
         ]
     },
