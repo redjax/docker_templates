@@ -278,7 +278,7 @@
         ]
     },
     {
-        "count": 6,
+        "count": 9,
         "name": "bookmarking",
         "path": "templates/bookmarking",
         "sub_categories": [],
@@ -298,6 +298,42 @@
             {
                 "name": "docker_linkding",
                 "path": "templates/bookmarking/docker_linkding"
+            },
+            {
+                "name": "docker_readeck",
+                "path": "templates/bookmarking/docker_readeck"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "bots",
+        "path": "templates/bots",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_red-discordbot",
+                "path": "templates/bots/docker_red-discordbot"
+            }
+        ]
+    },
+    {
+        "count": 7,
+        "name": "rss",
+        "path": "templates/rss",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_linkwarden",
+                "path": "templates/bookmarking/docker_linkwarden"
+            },
+            {
+                "name": "docker_karakeep",
+                "path": "templates/bookmarking/docker_karakeep"
+            },
+            {
+                "name": "docker_grimoire",
+                "path": "templates/bookmarking/docker_grimoire"
             },
             {
                 "name": "docker_readeck",

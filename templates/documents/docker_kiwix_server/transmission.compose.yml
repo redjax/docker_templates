@@ -7,32 +7,32 @@ networks:
 
 services:
   kiwix:
-    # image: ghcr.io/kiwix/kiwix-serve:${KIWIX_CONTAINER_VER:-latest}
-    # container_name: kiwix-server
-    # restart: unless-stopped
-    # command: "*.zim"
-    # user: "1000:1000"
-    # ports:
-    #   - ${KIWIX_WEBUI_PORT:-8000}:8080
-    # environment:
-    #   TZ: ${TZ:-Etc/UTC}
-    #   PUID: 1000
-    #   PGID: 1000
-    # volumes:
-    #   - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
-    # labels:
-    #   - "com.centurylinklabs.watchtower.enable=true"
-    # networks:
-    #   - kiwix_net
+    image: ghcr.io/kiwix/kiwix-serve:${KIWIX_CONTAINER_VER:-latest}
+    container_name: kiwix-server
+    restart: unless-stopped
+    command: "*.zim"
+    user: "1000:1000"
+    ports:
+      - ${KIWIX_WEBUI_PORT:-8000}:8080
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - ${KIWIX_DATA_DIR:-./data/kiwix}:/data:ro
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
 
   transmission:
     image: lscr.io/linuxserver/transmission:latest
     container_name: kiwix-transmission
     restart: unless-stopped
-    # user: "1000:1000"
+    user: "1000:1000"
     environment:
-      # PUID: 1000
-      # PGID: 1000
+      PUID: 1000
+      PGID: 1000
       TZ: ${TZ:-Etc/UTC}
       ## optional
       TRANSMISSION_WEB_HOME: 
@@ -49,7 +49,7 @@ services:
     volumes:
       - ${TRANSMISSION_CONFIG_DIR:-./data/transmission/config}:/config:rw
       ## Set the downloads path to the Kiwix directory
-      - ${TORRENT_DIR:-./data/transmission/torrent}:/downloads:rw
+      - ${TRANSMISSION_TORRENT_DIR:-./data/transmission/torrent}:/downloads:rw
       - ${TRANSMISSION_WATCH_DIR:-./data/transmission/watch}:/watch:rw
     ports:
       - ${TRANSMISSION_WEBUI_PORT:-9091}:9091
@@ -57,6 +57,72 @@ services:
       - ${TRANSMISSION_TORRENT_UDP_PORT:-51413}:51413/udp
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - kiwix_net
+
+  mover:
+    container_name: kiwix-mover
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+      target: mover
+    user: "1000:1000"
+    working_dir: /project
+    command: [
+      "python",
+      "docker_scheduled_mover.py",
+      "--zim-dir",
+      "/kiwix-zims",
+      "--torrent-dir",
+      "/transmission-torrents",
+      "--print-env",
+      "--ignore",
+      ".part"
+    ]
+    environment:
+      ## INFO, DEBUG, WARNING, ERROR, CRITICAL, NOTSET
+      LOG_LEVEL: ${MOVER_LOG_LEVEL:-INFO}
+      PRINT_ENV: ${MOVER_PRINT_ENV:-false}
+    volumes:
+      ## Mount mover script
+      - ./scripts/container_scripts/move_zims.py:/project/move_zims.py
+      ## Mount scheduler script
+      - ./scripts/container_scripts/docker_scheduled_mover.py:/project/docker_scheduled_mover.py
+      ## Mount Kiwix .zim directory
+      - ${KIWIX_DATA_DIR:-./data/kiwix}:/kiwix-zims
+      ## Mount Transmission torrents directory
+      - ${TRANSMISSION_TORRENT_DIR:-./data/transmission/torrent}:/transmission-torrents
+      ## Mount host's timezone details
+      - /etc/localtime:/etc/localtime:ro
+
+  torrent_mgr:
+    container_name: kiwix-torrent-mgr
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+      target: torrent_mgr
+    user: "1000:1000"
+    working_dir: /project
+    command: [
+      "python",
+      "docker_scheduled_rm_finished_torrents.py",
+    ]
+    environment:
+      ## INFO, DEBUG, WARNING, ERROR, CRITICAL, NOTSET
+      LOG_LEVEL: ${TORRENT_MGR_LOG_LEVEL:-INFO}
+      TRANSMISSION_HOST: ${TORRENT_MGR_TRANSMISSION_HOST:-kiwix-transmission}
+      TRANSMISSION_PORT: ${TORRENT_MGR_TRANSMISSION_PORT:-9091}
+      TRANSMISSION_USER: ${TORRENT_MGR_TRANSMISSION_USER}
+      TRANSMISSION_PASSWORD: ${TORRENT_MGR_TRANSMISSION_PASSWORD}
+    volumes:
+      ## Mount torrent_mgr script
+      - ./scripts/container_scripts/torrents_mgr.py:/project/torrents_mgr.py
+      ## Mount scheduler script
+      - ./scripts/container_scripts/docker_scheduled_rm_finished_torrents.py:/project/docker_scheduled_rm_finished_torrents.py
+      ## Mount host's timezone details
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - kiwix_net
 
