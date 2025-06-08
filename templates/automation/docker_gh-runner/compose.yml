@@ -2,9 +2,21 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
-
 services:
-
-  ...
+  runner:
+    image: youssefbrr/github-actions:latest
+    restart: unless-stopped
+    environment:
+      - REPO=${RUNNER_REPO:-example/repo}
+      - REG_TOKEN=${RUNNER_TOKEN}
+      - NAME=${RUNNER_NAME:-self-hosted}
+    deploy:
+      mode: replicated
+      replicas: ${RUNNER_REPLICAS:-2}
+      resources:
+        limits:
+          cpus: ${RUNNER_CPUS_LIMIT:-0.5}
+          memory: ${RUNNER_MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: ${RUNNER_CPUS_RESERVe:-0.4}
+          memory: ${RUNNER_MEMORY_RESERVe:-256M}
