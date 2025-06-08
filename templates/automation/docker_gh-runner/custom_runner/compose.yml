@@ -1,0 +1,25 @@
+---
+volumes:
+  runner-data:
+
+services:
+  github-runner:
+    build:
+      context: .
+      args:
+        CONTAINER_BASE_IMAGE: ${CONTAINER_BASE_IMAGE:-ubuntu:24.04}
+        GH_RUNNER_VERSION: ${GH_RUNNER_VERSION:-2.294.0}
+    environment:
+      - GH_RUNNER_TOKEN=${GH_RUNNER_TOKEN}
+      - GH_RUNNER_URL=${GH_RUNNER_URL}
+    volumes:
+      - ${GH_RUNNER_DATA_DIR:-runner-data}:/home/docker/actions-runner/_work
+    deploy:
+      replicas: ${CONTAINER_REPLICAS:-1}
+      resources:
+        limits:
+          cpus: ${CONTAINER_CPUS_LIMIT:-2}
+          memory: ${CONTAINER_MEMORY_LIMIT:-7G}
+        reservations:
+          cpus: ${CONTAINER_CPUS_RESERVE:-0.5}
+          memory: ${CONTAINER_MEMORY_RESERVE:-2G}

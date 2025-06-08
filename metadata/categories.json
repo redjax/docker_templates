@@ -362,11 +362,15 @@
         ]
     },
     {
-        "count": 10,
+        "count": 11,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [],
         "templates": [
+            {
+                "name": "docker_gh-runner",
+                "path": "templates/automation/docker_gh-runner"
+            },
             {
                 "name": "docker_rundeck",
                 "path": "templates/automation/docker_rundeck"
@@ -510,6 +514,18 @@
             {
                 "name": "docker_meshping",
                 "path": "templates/networking/docker_meshping"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "file_transfer",
+        "path": "templates/file_transfer",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_sftpgo",
+                "path": "templates/file_transfer/docker_sftpgo"
             }
         ]
     },
