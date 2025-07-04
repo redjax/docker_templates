@@ -10,8 +10,15 @@ from jinja2 import Environment, FileSystemLoader
 
 log = logging.getLogger(__name__)
 
-from project_cli.constants import TEMPLATE_BEACONS_DICT, TEMPLATES_ROOT, REPO_MAP_TEMPLATE_DIR, REPO_MAP_OUTPUT_DIR, CATEGORIES_METADATA_JSON_FILE, IGNORE_TEMPLATE_CATEGORIES
-from project_cli import search,io
+from project_cli import io, search
+from project_cli.constants import (
+    CATEGORIES_METADATA_JSON_FILE,
+    IGNORE_TEMPLATE_CATEGORIES,
+    REPO_MAP_OUTPUT_DIR,
+    REPO_MAP_TEMPLATE_DIR,
+    TEMPLATE_BEACONS_DICT,
+    TEMPLATES_ROOT,
+)
 
 __all__ = ["parse_arguments", "_repo_map"]
 
