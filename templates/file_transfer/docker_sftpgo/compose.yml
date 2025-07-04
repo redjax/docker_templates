@@ -1,0 +1,33 @@
+---
+volumes:
+  sftpgo_data: {}
+  sftpgo_home: {}
+  sftpgo_backups: {}
+
+services:
+  sftpgo:
+    image: drakkan/sftpgo:${SFTPGO_CONTAINER_IMG_TAG:-latest}
+    container_name: sftpgo
+    restart: unless-stopped
+    ports:
+      - ${SFTPGO_HTTP_PORT:-8080}:8080
+      - ${SFTPGO_SSH_PORT:-2022}:2022
+    volumes:
+      - ${SFTPGO_DATA_DIR:-sftpgo_data}:/srv/sftpgo
+      - ${SFTPGO_HOME_DIR:-sftpgo_home}:/var/lib/sftpgo
+      - ${SFTPGO_BACKUPS_DIR:-sftpgo_backups}:/var/lib/sftpgo/backups
+      ## Mount a custom config file
+      #  - ${SFTPGO_CONFIG_FILE:-./config/sftpgo.json}:/var/lib/sftgo/.config/sftpgo/sftpgo.json
+    environment:
+      SFTPGO_LOG_LEVEL: ${SFTPGO_LOG_LEVEL:-info}
+      SFTPGO_GRACE_TIME: ${SFTPGO_GRACE_TIME:-10}
+
+      ## Configure SFTPGo via environment variable by prepending any
+      #  SFTPGo configuration option with SFTPGO_<option>__<value>
+      #  https://docs.sftpgo.com/latest/config-file/
+      SFTPGO_COMMON__IDLE_TIMEOUT: ${SFTPGO_IDLE_TIMEOUT:-15}
+      # 0 = unlimited
+      SFTPGO_COMMON__MAX_TOTAL_CONNECTIONS: ${SFTPGO_MAX_CONNECTIONS:-10}
+      SFTPGO_COMMON__MAX_PER_HOST_CONNECTIONS: ${SFTPGO_MAX_PER_HOST_CONNECTIONS:-20}
+      # Provide host keys like "ssh-rsa ..., ssh-rsa ..."
+      SFTPGO_SSHSFTP__HOST_KEYS: ${SFTPGO_HOST_KEYS}
