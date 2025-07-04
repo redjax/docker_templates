@@ -9,7 +9,7 @@ Dockerized server for [RustDesk](rustdesk.com)
 
 ## Ports
 
-Rustdesk requires the following ports:
+Rustdesk requires the following ports ([read more about required RustDesk ports](https://rustdesk.com/docs/en/self-host/#ports-required)):
 
 | Port/Range | Proto | Purpose |
 | ---------- | ----- | ------- |
