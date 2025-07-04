@@ -126,7 +126,7 @@
                 "name": "docker_graylog",
                 "path": "templates/monitoring_alerting/docker_graylog"
             },
-            {                                                                                      
+            {
                 "name": "docker_uptime-kuma",
                 "path": "templates/monitoring_alerting/docker_uptime-kuma"
             },
@@ -141,7 +141,7 @@
         ]
     },
     {
-        "count": 10,
+        "count": 11,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [],
@@ -165,6 +165,10 @@
             {
                 "name": "docker_huginn",
                 "path": "templates/automation/docker_huginn"
+            },
+            {
+                "name": "docker_gh-runner",
+                "path": "templates/automation/docker_gh-runner"
             },
             {
                 "name": "docker_olivetin",
@@ -242,13 +246,13 @@
     },
     {
         "count": 5,
-        "name": "code_forges",
-        "path": "templates/code_forges",
+        "name": "security",
+        "path": "templates/security",
         "sub_categories": [
             {
-                "count": 2,
-                "name": "docker_drone",
-                "path": "templates/code_forges/docker_drone",
+                "count": 4,
+                "name": "docker_wazuh",
+                "path": "templates/security/docker_wazuh",
                 "sub_categories": [],
                 "templates": []
             }
@@ -259,8 +263,8 @@
                 "path": "templates/security/docker_remnux"
             },
             {
-                "name": "docker_coder",
-                "path": "templates/code_forges/docker_coder"
+                "name": "docker_netalertx",
+                "path": "templates/security/docker_netalertx"
             },
             {
                 "name": "docker_vaultwarden",
@@ -285,7 +289,7 @@
         ]
     },
     {
-        "count": 10,
+        "count": 11,
         "name": "database",
         "path": "templates/database",
         "sub_categories": [
@@ -338,6 +342,10 @@
             {
                 "name": "docker_mysql",
                 "path": "templates/database/docker_mysql"
+            },
+            {
+                "name": "docker_cloudbeaver",
+                "path": "templates/database/docker_cloudbeaver"
             },
             {
                 "name": "docker_redis",
@@ -425,6 +433,18 @@
             }
         ],
         "templates": []
+    },
+    {
+        "count": 2,
+        "name": "file_transfer",
+        "path": "templates/file_transfer",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_sftpgo",
+                "path": "templates/file_transfer/docker_sftpgo"
+            }
+        ]
     },
     {
         "count": 7,
@@ -519,7 +539,7 @@
         ]
     },
     {
-        "count": 15,
+        "count": 16,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -559,6 +579,10 @@
             {
                 "name": "docker_portainer",
                 "path": "templates/networking/docker_portainer"
+            },
+            {
+                "name": "docker_rustdesk_server",
+                "path": "templates/networking/docker_rustdesk_server"
             },
             {
                 "name": "docker_pangolin",
@@ -625,46 +649,5 @@
                 "path": "templates/bookmarking/docker_readeck"
             }
         ]
-    },
-    {
-        "count": 2,
-        "name": "misc",
-        "path": "templates/misc",
-        "sub_categories": [
-            {
-                "count": 4,
-                "name": "project_templates",
-                "path": "templates/misc/project_templates",
-                "sub_categories": [
-                    {
-                        "count": 8,
-                        "name": "docker_wordpress-nginx",
-                        "path": "templates/misc/project_templates/docker_wordpress-nginx",
-                        "sub_categories": [],
-                        "templates": [
-                            {
-                                "name": "nginx-proxy",
-                                "path": "templates/misc/project_templates/docker_wordpress-nginx/nginx-proxy"
-                            },
-                            {
-                                "name": "example_wordpress",
-                                "path": "templates/misc/project_templates/docker_wordpress-nginx/example_wordpress"
-                            }
-                        ]
-                    }
-                ],
-                "templates": [
-                    {
-                        "name": "docker_wordpress-template",
-                        "path": "templates/misc/project_templates/docker_wordpress-template"
-                    },
-                    {
-                        "name": "docker_node-server",
-                        "path": "templates/misc/project_templates/docker_node-server"
-                    }
-                ]
-            }
-        ],
-        "templates": []
     }
 ]
