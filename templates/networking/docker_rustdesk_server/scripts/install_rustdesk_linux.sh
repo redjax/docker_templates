@@ -120,7 +120,7 @@ echo "Cleaning up"
 find . -maxdepth 1 -type f \( -name "*.rpm*" -o -name "*.deb*" \) -exec rm -f {} +
 
 ## Remove specific files if they exist
-rm -f my-rustdesk.pp rustdesk.mod rustdesk.pp
+rm -f my-rustdesk.pp rustdesk.mod rustdesk.pp null
 
 echo "..............................................."
 # Check if the rustdesk_id is not empty
