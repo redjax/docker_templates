@@ -100,7 +100,7 @@ if command -v sestatus >/dev/null 2>&1; then
       semodule_package -o rustdesk.pp -m rustdesk.mod
     else
       echo ""
-      echo "[WARNING] Could not apply rustdesk SELinux policy at path: $THIS_DIR/selinux/rustdesk.te". You will see SELinux popups."
+      echo "[WARNING] Could not apply rustdesk SELinux policy at path: $THIS_DIR/selinux/rustdesk.te. You will see SELinux popups."
       echo "Try running these commands repeatedly to fix:"
       echo ""
       echo "sudo ausearch -c 'rustdesk' --raw | audit2allow -M my-rustdesk"
