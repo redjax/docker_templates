@@ -141,7 +141,7 @@
         ]
     },
     {
-        "count": 11,
+        "count": 10,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [],
@@ -165,10 +165,6 @@
             {
                 "name": "docker_huginn",
                 "path": "templates/automation/docker_huginn"
-            },
-            {
-                "name": "docker_gh-runner",
-                "path": "templates/automation/docker_gh-runner"
             },
             {
                 "name": "docker_olivetin",
@@ -289,7 +285,7 @@
         ]
     },
     {
-        "count": 11,
+        "count": 10,
         "name": "database",
         "path": "templates/database",
         "sub_categories": [
@@ -344,10 +340,6 @@
                 "path": "templates/database/docker_mysql"
             },
             {
-                "name": "docker_cloudbeaver",
-                "path": "templates/database/docker_cloudbeaver"
-            },
-            {
                 "name": "docker_redis",
                 "path": "templates/database/docker_redis"
             }
@@ -394,7 +386,7 @@
         ]
     },
     {
-        "count": 2,
+        "count": 3,
         "name": "misc",
         "path": "templates/misc",
         "sub_categories": [
@@ -432,7 +424,12 @@
                 ]
             }
         ],
-        "templates": []
+        "templates": [
+            {
+                "name": "docker_omnitools",
+                "path": "templates/misc/docker_omnitools"
+            }
+        ]
     },
     {
         "count": 2,
@@ -539,7 +536,7 @@
         ]
     },
     {
-        "count": 16,
+        "count": 15,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -579,10 +576,6 @@
             {
                 "name": "docker_portainer",
                 "path": "templates/networking/docker_portainer"
-            },
-            {
-                "name": "docker_rustdesk_server",
-                "path": "templates/networking/docker_rustdesk_server"
             },
             {
                 "name": "docker_pangolin",
