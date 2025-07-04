@@ -1,0 +1,44 @@
+---
+networks:
+  rustdesk-net:
+    external: false
+
+volumes:
+  rustdesk_data: {}
+
+services:
+
+  ## Rustdesk Server
+  hbbs:
+    image: rustdesk/rustdesk-server:latest
+    container_name: rustdesk_server
+    restart: unless-stopped
+    command: hbbs -r ${RUSTDESK_SERVER_URL:-hbbr:21117}
+    environment:
+      ALWAYS_USE_RELAY: ${RUSTDESK_ALWAYS_USE_RELAY:-Y}
+    ports:
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+      - 21118:21118
+    volumes:
+      - ${RUSTDESK_DATA_DIR:-rustdesk_data}:/root
+    depends_on:
+      - hbbr
+    networks:
+      - rustdesk-net
+
+  ## Relay server
+  hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: rustdesk_relay
+    restart: unless-stopped
+    command: hbbr
+    ports:
+      - 21117:21117
+      - 21119:21119
+    volumes:
+      - ${RUSTDESK_DATA_DIR:-rustdesk_data}:/root
+    networks:
+      - rustdesk-net
+
