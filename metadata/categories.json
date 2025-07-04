@@ -16,6 +16,22 @@
         ]
     },
     {
+        "count": 3,
+        "name": "dashboards",
+        "path": "templates/dashboards",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_squirrel_server_manager",
+                "path": "templates/dashboards/docker_squirrel_server_manager"
+            },
+            {
+                "name": "docker_dashy",
+                "path": "templates/dashboards/docker_dashy"
+            }
+        ]
+    },
+    {
         "count": 2,
         "name": "llm",
         "path": "templates/llm",
@@ -31,9 +47,18 @@
         "count": 5,
         "name": "backup",
         "path": "templates/backup",
+        "count": 5,
+        "name": "backup",
+        "path": "templates/backup",
         "sub_categories": [],
         "templates": [
             {
+                "name": "kopia",
+                "path": "templates/backup/kopia"
+            },
+            {
+                "name": "docker_git-sync",
+                "path": "templates/backup/docker_git-sync"
                 "name": "kopia",
                 "path": "templates/backup/kopia"
             },
@@ -48,10 +73,19 @@
             {
                 "name": "docker_gickup",
                 "path": "templates/backup/docker_gickup"
+                "name": "docker_backrest",
+                "path": "templates/backup/docker_backrest"
+            },
+            {
+                "name": "docker_gickup",
+                "path": "templates/backup/docker_gickup"
             }
         ]
     },
     {
+        "count": 10,
+        "name": "games",
+        "path": "templates/games",
         "count": 10,
         "name": "games",
         "path": "templates/games",
@@ -76,8 +110,40 @@
             {
                 "name": "docker_crafty_minecraft",
                 "path": "templates/games/docker_crafty_minecraft"
+                "name": "docker_necesse",
+                "path": "templates/games/docker_necesse"
             },
             {
+                "name": "docker_minecraft_server",
+                "path": "templates/games/docker_minecraft_server"
+            },
+            {
+                "name": "docker_vrising-server",
+                "path": "templates/games/docker_vrising-server"
+            },
+            {
+                "name": "docker_valheim_server",
+                "path": "templates/games/docker_valheim_server"
+            },
+            {
+                "name": "docker_crafty_minecraft",
+                "path": "templates/games/docker_crafty_minecraft"
+            },
+            {
+                "name": "docker_satisfactory",
+                "path": "templates/games/docker_satisfactory"
+            },
+            {
+                "name": "docker_palworld_server",
+                "path": "templates/games/docker_palworld_server"
+            },
+            {
+                "name": "docker_enshrouded_server",
+                "path": "templates/games/docker_enshrouded_server"
+            },
+            {
+                "name": "docker_terraria-server",
+                "path": "templates/games/docker_terraria-server"
                 "name": "docker_satisfactory",
                 "path": "templates/games/docker_satisfactory"
             },
@@ -123,10 +189,16 @@
                 "path": "templates/monitoring_alerting/docker_watchtower"
             },
             {
+                "name": "docker_watchtower",
+                "path": "templates/monitoring_alerting/docker_watchtower"
+            },
+            {
                 "name": "docker_graylog",
                 "path": "templates/monitoring_alerting/docker_graylog"
             },
             {
+                "name": "docker_uptime-kuma",
+                "path": "templates/monitoring_alerting/docker_uptime-kuma"
                 "name": "docker_uptime-kuma",
                 "path": "templates/monitoring_alerting/docker_uptime-kuma"
             },
@@ -137,11 +209,13 @@
             {
                 "name": "docker_monitoring",
                 "path": "templates/monitoring_alerting/docker_monitoring"
+                "name": "docker_monitoring",
+                "path": "templates/monitoring_alerting/docker_monitoring"
             }
         ]
     },
     {
-        "count": 11,
+        "count": 10,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [],
@@ -165,10 +239,6 @@
             {
                 "name": "docker_huginn",
                 "path": "templates/automation/docker_huginn"
-            },
-            {
-                "name": "docker_gh-runner",
-                "path": "templates/automation/docker_gh-runner"
             },
             {
                 "name": "docker_olivetin",
@@ -289,7 +359,7 @@
         ]
     },
     {
-        "count": 11,
+        "count": 10,
         "name": "database",
         "path": "templates/database",
         "sub_categories": [
@@ -342,10 +412,6 @@
             {
                 "name": "docker_mysql",
                 "path": "templates/database/docker_mysql"
-            },
-            {
-                "name": "docker_cloudbeaver",
-                "path": "templates/database/docker_cloudbeaver"
             },
             {
                 "name": "docker_redis",
@@ -539,7 +605,7 @@
         ]
     },
     {
-        "count": 16,
+        "count": 15,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -579,10 +645,6 @@
             {
                 "name": "docker_portainer",
                 "path": "templates/networking/docker_portainer"
-            },
-            {
-                "name": "docker_rustdesk_server",
-                "path": "templates/networking/docker_rustdesk_server"
             },
             {
                 "name": "docker_pangolin",
