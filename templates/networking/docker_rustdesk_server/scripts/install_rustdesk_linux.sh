@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Script copied on: 7/3/2025
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Assign a random value to the password variable
 rustdesk_pw=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
@@ -64,7 +64,10 @@ if [ "${ID}" = "debian" ] || [ "$OS" = "Ubuntu" ] || [ "$OS" = "Debian" ] || [ "
     wget https://github.com/rustdesk/rustdesk/releases/download/1.2.6/rustdesk-1.2.6-x86_64.deb
     apt-get install -fy ./rustdesk-1.2.6-x86_64.deb > null
 elif [ "$OS" = "CentOS" ] || [ "$OS" = "RedHat" ] || [ "$OS" = "Fedora Linux" ] || [ "${UPSTREAM_ID}" = "rhel" ] || [ "$OS" = "Almalinux" ] || [ "$OS" = "Rocky*" ] ; then
-    dnf install -y libxdo
+    dnf install -y \
+        libxdo \
+        selinux-policy-devel \
+        make
 
     wget https://github.com/rustdesk/rustdesk/releases/download/1.2.6/rustdesk-1.2.6-0.x86_64.rpm
     dnf install ./rustdesk-1.2.6-0.x86_64.rpm -y > null
@@ -91,8 +94,19 @@ if command -v sestatus >/dev/null 2>&1; then
   selinux_status=$(getenforce 2>/dev/null)
   if [ "$selinux_status" = "Enforcing" ] || [ "$selinux_status" = "Permissive" ]; then
       echo "SELinux is enabled ($selinux_status), applying policy module..."
-      ausearch -c 'rustdesk' --raw | audit2allow -M my-rustdesk
-      semodule -X 300 -i my-rustdesk.pp
+
+    if [[ -f "$THIS_DIR/selinux/rustdesk.te" ]]; then
+      checkmodule -M -m -o rustdesk.mod ./selinux/rustdesk.te
+      semodule_package -o rustdesk.pp -m rustdesk.mod
+    else
+      echo ""
+      echo "[WARNING] Could not apply rustdesk SELinux policy. You will see SELinux popups."
+      echo "Try running these commands repeatedly to fix:"
+      echo ""
+      echo "sudo ausearch -c 'rustdesk' --raw | audit2allow -M my-rustdesk"
+      echo "sudo semodule -X 300 -i my-rustdesk.pp"
+      echo ""
+    fi
   else
       echo "SELinux is disabled."
   fi

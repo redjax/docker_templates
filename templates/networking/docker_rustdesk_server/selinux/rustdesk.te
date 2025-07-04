@@ -1,0 +1,47 @@
+module rustdesk 1.0;
+
+require {
+        type event_device_t;
+        type xserver_t;
+        type xserver_port_t;
+        type sudo_exec_t;
+        type init_t;
+        type ephemeral_port_t;
+        type user_tmp_t;
+        type user_fonts_cache_t;
+        type pulseaudio_home_t;
+        type session_dbusd_tmp_t;
+        type unconfined_dbusd_t;
+        class process execmem;
+        class file { open read create write execute execute_no_trans map setattr lock link unlink };
+        class unix_stream_socket connectto;
+        class tcp_socket name_connect;
+        class dir { add_name remove_name };
+        class sock_file write;
+        class chr_file { open read write } ;
+}
+
+#============= init_t ==============
+allow init_t xserver_t:unix_stream_socket connectto;
+allow init_t sudo_exec_t:file { open read execute execute_no_trans };
+allow init_t user_tmp_t:file { open write setattr };
+allow init_t self:process execmem;
+allow init_t user_fonts_cache_t:dir { add_name remove_name };
+allow init_t user_fonts_cache_t:file { read write create open link lock unlink };
+allow init_t xserver_port_t:tcp_socket name_connect;
+allow init_t pulseaudio_home_t:file { read write open lock };
+allow init_t session_dbusd_tmp_t:sock_file write;
+allow init_t unconfined_dbusd_t:unix_stream_socket connectto;
+
+#!!!! This AVC can be allowed using the boolean 'nis_enabled'
+allow init_t ephemeral_port_t:tcp_socket name_connect;
+
+#!!!! This AVC can be allowed using the boolean 'domain_can_mmap_files'
+allow init_t sudo_exec_t:file map;
+
+
+#============= init_t Wayland ==============
+allow init_t event_device_t:chr_file { open read write };
+
+#!!!! This AVC can be allowed using the boolean 'domain_can_mmap_files'
+allow init_t user_tmp_t:file map;
