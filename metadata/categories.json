@@ -141,7 +141,7 @@
         ]
     },
     {
-        "count": 10,
+        "count": 11,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [],
@@ -165,6 +165,10 @@
             {
                 "name": "docker_huginn",
                 "path": "templates/automation/docker_huginn"
+            },
+            {
+                "name": "docker_gh-runner",
+                "path": "templates/automation/docker_gh-runner"
             },
             {
                 "name": "docker_olivetin",
@@ -285,7 +289,7 @@
         ]
     },
     {
-        "count": 10,
+        "count": 11,
         "name": "database",
         "path": "templates/database",
         "sub_categories": [
@@ -340,6 +344,10 @@
                 "path": "templates/database/docker_mysql"
             },
             {
+                "name": "docker_cloudbeaver",
+                "path": "templates/database/docker_cloudbeaver"
+            },
+            {
                 "name": "docker_redis",
                 "path": "templates/database/docker_redis"
             }
@@ -386,7 +394,7 @@
         ]
     },
     {
-        "count": 2,
+        "count": 3,
         "name": "misc",
         "path": "templates/misc",
         "sub_categories": [
@@ -424,7 +432,24 @@
                 ]
             }
         ],
-        "templates": []
+        "templates": [
+            {
+                "name": "docker_omnitools",
+                "path": "templates/misc/docker_omnitools"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "file_transfer",
+        "path": "templates/file_transfer",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_sftpgo",
+                "path": "templates/file_transfer/docker_sftpgo"
+            }
+        ]
     },
     {
         "count": 7,
@@ -519,7 +544,7 @@
         ]
     },
     {
-        "count": 12,
+        "count": 16,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -541,6 +566,10 @@
                 "path": "templates/networking/docker_wg-easy"
             },
             {
+                "name": "docker_newt-tunnel",
+                "path": "templates/networking/docker_newt-tunnel"
+            },
+            {
                 "name": "docker_nginx-proxy-manager",
                 "path": "templates/networking/docker_nginx-proxy-manager"
             },
@@ -557,12 +586,24 @@
                 "path": "templates/networking/docker_portainer"
             },
             {
+                "name": "docker_rustdesk_server",
+                "path": "templates/networking/docker_rustdesk_server"
+            },
+            {
+                "name": "docker_pangolin",
+                "path": "templates/networking/docker_pangolin"
+            },
+            {
                 "name": "docker_unifi-controller",
                 "path": "templates/networking/docker_unifi-controller"
             },
             {
                 "name": "docker_traefik",
                 "path": "templates/networking/docker_traefik"
+            },
+            {
+                "name": "docker_dockge",
+                "path": "templates/networking/docker_dockge"
             },
             {
                 "name": "docker_meshping",
@@ -575,7 +616,7 @@
         ]
     },
     {
-        "count": 6,
+        "count": 9,
         "name": "bookmarking",
         "path": "templates/bookmarking",
         "sub_categories": [],
@@ -591,6 +632,18 @@
             {
                 "name": "docker_shiori",
                 "path": "templates/bookmarking/docker_shiori"
+            },
+            {
+                "name": "docker_grimoire",
+                "path": "templates/bookmarking/docker_grimoire"
+            },
+            {
+                "name": "docker_karakeep",
+                "path": "templates/bookmarking/docker_karakeep"
+            },
+            {
+                "name": "docker_linkwarden",
+                "path": "templates/bookmarking/docker_linkwarden"
             },
             {
                 "name": "docker_wallabag",
