@@ -86,6 +86,20 @@ rustdesk --config $rustdesk_cfg
 
 systemctl restart rustdesk
 
+## Allow rustdesk with SELinux if installed
+if command -v sestatus >/dev/null 2>&1; then
+  selinux_status=$(getenforce 2>/dev/null)
+  if [ "$selinux_status" = "Enforcing" ] || [ "$selinux_status" = "Permissive" ]; then
+      echo "SELinux is enabled ($selinux_status), applying policy module..."
+      ausearch -c 'rustdesk' --raw | audit2allow -M my-rustdesk
+      semodule -X 300 -i my-rustdesk.pp
+  else
+      echo "SELinux is disabled."
+  fi
+else
+    echo "SELinux utilities not found; skipping SELinux policy module application."
+fi
+
 echo "..............................................."
 # Check if the rustdesk_id is not empty
 if [ -n "$rustdesk_id" ]; then
