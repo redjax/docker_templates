@@ -115,8 +115,12 @@ else
     echo "SELinux utilities not found; skipping SELinux policy module application."
 fi
 
-echo "Cleaning up downloaded packages"
-rm ./*.deb* rm ./*.rpm*
+echo "Cleaning up"
+## Remove all .rpm and .deb files, including files like .rpm.1 or .deb.2
+find . -maxdepth 1 -type f \( -name "*.rpm*" -o -name "*.deb*" \) -exec rm -f {} +
+
+## Remove specific files if they exist
+rm -f my-rustdesk.pp rustdesk.mod rustdesk.pp
 
 echo "..............................................."
 # Check if the rustdesk_id is not empty
