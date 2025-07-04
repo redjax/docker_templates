@@ -1,6 +1,7 @@
 #!/bin/bash
 
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PARENT_DIR="$(dirname "$THIS_DIR")"
 
 # Assign a random value to the password variable
 rustdesk_pw=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
@@ -95,12 +96,12 @@ if command -v sestatus >/dev/null 2>&1; then
   if [ "$selinux_status" = "Enforcing" ] || [ "$selinux_status" = "Permissive" ]; then
       echo "SELinux is enabled ($selinux_status), applying policy module..."
 
-    if [[ -f "$THIS_DIR/selinux/rustdesk.te" ]]; then
+    if [[ -f "$PARENT_DIR/selinux/rustdesk.te" ]]; then
       checkmodule -M -m -o rustdesk.mod ./selinux/rustdesk.te
       semodule_package -o rustdesk.pp -m rustdesk.mod
     else
       echo ""
-      echo "[WARNING] Could not apply rustdesk SELinux policy at path: $THIS_DIR/selinux/rustdesk.te. You will see SELinux popups."
+      echo "[WARNING] Could not apply rustdesk SELinux policy at path: $PARENT_DIR/selinux/rustdesk.te. You will see SELinux popups."
       echo "Try running these commands repeatedly to fix:"
       echo ""
       echo "sudo ausearch -c 'rustdesk' --raw | audit2allow -M my-rustdesk"
@@ -113,6 +114,9 @@ if command -v sestatus >/dev/null 2>&1; then
 else
     echo "SELinux utilities not found; skipping SELinux policy module application."
 fi
+
+echo "Cleaning up downloaded packages"
+rm ./*.deb* rm ./*.rpm*
 
 echo "..............................................."
 # Check if the rustdesk_id is not empty
