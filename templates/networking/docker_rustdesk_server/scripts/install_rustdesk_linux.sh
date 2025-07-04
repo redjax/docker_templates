@@ -67,7 +67,7 @@ elif [ "$OS" = "CentOS" ] || [ "$OS" = "RedHat" ] || [ "$OS" = "Fedora Linux" ] 
     dnf install -y libxdo
 
     wget https://github.com/rustdesk/rustdesk/releases/download/1.2.6/rustdesk-1.2.6-0.x86_64.rpm
-    yum localinstall ./rustdesk-1.2.6-0.x86_64.rpm -y > null
+    dnf install ./rustdesk-1.2.6-0.x86_64.rpm -y > null
 else
     echo "Unsupported OS"
     # here you could ask the user for permission to try and install anyway
