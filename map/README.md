@@ -149,6 +149,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_paperless-ng](../templates/documents/docker_paperless-ng)
   - [docker_paperless-ngx](../templates/documents/docker_paperless-ngx)
   - [docker_mayan-edms](../templates/documents/docker_mayan-edms)
+  - [docker_paperless-ng](../templates/documents/docker_paperless-ng)
   - [docker_docspell](../templates/documents/docker_docspell)
 - [networking](../templates/networking)
   - [docker_portall](../templates/networking/docker_portall)

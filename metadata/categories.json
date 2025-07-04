@@ -126,7 +126,7 @@
                 "name": "docker_graylog",
                 "path": "templates/monitoring_alerting/docker_graylog"
             },
-            {
+            {                                                                                      
                 "name": "docker_uptime-kuma",
                 "path": "templates/monitoring_alerting/docker_uptime-kuma"
             },
@@ -242,13 +242,13 @@
     },
     {
         "count": 5,
-        "name": "security",
-        "path": "templates/security",
+        "name": "code_forges",
+        "path": "templates/code_forges",
         "sub_categories": [
             {
-                "count": 4,
-                "name": "docker_wazuh",
-                "path": "templates/security/docker_wazuh",
+                "count": 2,
+                "name": "docker_drone",
+                "path": "templates/code_forges/docker_drone",
                 "sub_categories": [],
                 "templates": []
             }
@@ -259,8 +259,8 @@
                 "path": "templates/security/docker_remnux"
             },
             {
-                "name": "docker_netalertx",
-                "path": "templates/security/docker_netalertx"
+                "name": "docker_coder",
+                "path": "templates/code_forges/docker_coder"
             },
             {
                 "name": "docker_vaultwarden",
@@ -625,5 +625,46 @@
                 "path": "templates/bookmarking/docker_readeck"
             }
         ]
+    },
+    {
+        "count": 2,
+        "name": "misc",
+        "path": "templates/misc",
+        "sub_categories": [
+            {
+                "count": 4,
+                "name": "project_templates",
+                "path": "templates/misc/project_templates",
+                "sub_categories": [
+                    {
+                        "count": 8,
+                        "name": "docker_wordpress-nginx",
+                        "path": "templates/misc/project_templates/docker_wordpress-nginx",
+                        "sub_categories": [],
+                        "templates": [
+                            {
+                                "name": "nginx-proxy",
+                                "path": "templates/misc/project_templates/docker_wordpress-nginx/nginx-proxy"
+                            },
+                            {
+                                "name": "example_wordpress",
+                                "path": "templates/misc/project_templates/docker_wordpress-nginx/example_wordpress"
+                            }
+                        ]
+                    }
+                ],
+                "templates": [
+                    {
+                        "name": "docker_wordpress-template",
+                        "path": "templates/misc/project_templates/docker_wordpress-template"
+                    },
+                    {
+                        "name": "docker_node-server",
+                        "path": "templates/misc/project_templates/docker_node-server"
+                    }
+                ]
+            }
+        ],
+        "templates": []
     }
 ]
