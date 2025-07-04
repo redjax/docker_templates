@@ -29,6 +29,8 @@ services:
       #  create a file called 'known_hosts' in the same path as the compose.yml file and
       #  uncomment this volume mount.
       - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/root/.ssh/known_hosts
+      ## Mount host's timezone
+      - /etc/timezone:/etc/timezone:ro
     command: ["/gickup/conf.yml"]
     environment:
       TZ: ${TZ:-Etc/UTC}
