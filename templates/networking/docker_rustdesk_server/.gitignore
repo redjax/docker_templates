@@ -1,1 +1,6 @@
 rustdesk/*
+
+null
+*.deb
+*.rpm
+*.tar.gz
