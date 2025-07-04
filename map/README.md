@@ -127,6 +127,7 @@ Map of the repository's template categories. This page is automatically rendered
 - [notifications](../templates/notifications)
   - [docker_ntfy](../templates/notifications/docker_ntfy)
 - [misc](../templates/misc)
+  - [docker_omnitools](../templates/misc/docker_omnitools)
   - [project_templates](../templates/misc/project_templates)
     - [docker_node-server](../templates/misc/project_templates/docker_node-server)
     - [docker_wordpress-template](../templates/misc/project_templates/docker_wordpress-template)

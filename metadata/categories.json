@@ -394,7 +394,7 @@
         ]
     },
     {
-        "count": 2,
+        "count": 3,
         "name": "misc",
         "path": "templates/misc",
         "sub_categories": [
@@ -432,7 +432,12 @@
                 ]
             }
         ],
-        "templates": []
+        "templates": [
+            {
+                "name": "docker_omnitools",
+                "path": "templates/misc/docker_omnitools"
+            }
+        ]
     },
     {
         "count": 2,
