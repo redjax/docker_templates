@@ -3,6 +3,7 @@
 
 services:
   gickup:
+    container_name: gickup-runonce
     restart: "no"
     volumes:
       ## Note you must create this file!
