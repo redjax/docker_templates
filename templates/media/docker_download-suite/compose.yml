@@ -1,5 +1,4 @@
-version: "3"
-
+---
 networks:
   media-net:
       driver: bridge
@@ -14,9 +13,9 @@ services:
       - PGID=1000
       - TZ=${TZ:-America/New_York}
     volumes:
-      - ${JACKETT_CONFIG_DIR:-./jackett/config}:/config
-      - ${JACKETT_PICONS_DIR:-./jackett/picons}:/picons
-      - ${JACKETT_DOWNLOADS:-./jackett/downloads}:/downloads
+      - ${JACKETT_CONFIG_DIR:-./apps/jackett/config}:/config
+      - ${JACKETT_PICONS_DIR:-./apps/jackett/picons}:/picons
+      - ${JACKETT_DOWNLOADS:-./apps/jackett/downloads}:/downloads
     ports:
       - ${JACKETT_PORT:-9117}:9117
     restart: ${JACKETT_RESTART:-unless-stopped}
@@ -31,9 +30,9 @@ services:
       - PGID=1000
       - TZ=${TZ:-American/New_York}
     volumes:
-      - "${SONARR_CONF_DIR:-./sonarr/config}:/config"
-      - "${TV_DIR:-./sonarr/tv}:/tv"
-      # - "${SONARR_DOWNLOADS:-./sonarr/downloads}:/downloads"
+      - "${SONARR_CONF_DIR:-./apps/sonarr/config}:/config"
+      - "${TV_DIR:-./apps/sonarr/tv}:/tv"
+      # - "${SONARR_DOWNLOADS:-./apps/sonarr/downloads}:/downloads"
     ports:
       - ${SONARR_PORT:-8989}:8989
     restart: "${SONARR_RESTART:-unless-stopped}"
@@ -51,10 +50,10 @@ services:
   #     - PGID=1000
   #     - TZ=${TZ:-America/New_York}
   #   volumes:
-  #     - ${COUCHPOTATO_CONF_DIR:-./couchpotato}:/config
-  #     - ${COUCHPOTATO_DOWNLOAD_DIR:-./couchpotato/downloads}:/downloads
-  #     - ${MOVIES_DIR:-./couchpotato/movies}:/movies
-  #     - ${TV_DIR:-./couchpotato/tv-shows}:/tv-shows
+  #     - ${COUCHPOTATO_CONF_DIR:-./apps/couchpotato}:/config
+  #     - ${COUCHPOTATO_DOWNLOAD_DIR:-./apps/couchpotato/downloads}:/downloads
+  #     - ${MOVIES_DIR:-./apps/couchpotato/movies}:/movies
+  #     - ${TV_DIR:-./apps/couchpotato/tv-shows}:/tv-shows
   #   ports:
   #     - ${COUCHPOTATO_WEB_PORT:-5050}:5050
   #   networks:
@@ -64,9 +63,9 @@ services:
     image: ${RADARR_IMAGE:-linuxserver/radarr}
     container_name: ${RADARR_CONTAINER_NAME:-radarr}
     volumes:
-      - ${RADARR_CONFIG_DIR:-./radarr/config}:/config
-      - ${BOOKS_DOWNLOAD_DIR:-./radarr/downloads}:/downloads
-      - ${MOVIES_DIR:-./radarr/movies}:/movies
+      - ${RADARR_CONFIG_DIR:-./apps/radarr/config}:/config
+      - ${BOOKS_DOWNLOAD_DIR:-./apps/radarr/downloads}:/downloads
+      - ${MOVIES_DIR:-./apps/radarr/movies}:/movies
     ports:
       - ${RADARR_PORT:-7878}:7878
     restart: ${RADARR_RESTART:-unless-stopped}
@@ -117,10 +116,10 @@ services:
   #     - TZ=${TZ:-America/New_York}
   #   # - DOCKER_MODS=linuxserver/calibra-web:calibre # optional
   #   volumes:
-  #     - ${LAZY_LIB_CONFIG_DIR:-./lazylibrarian/config}:/config
-  #     - ${BOOKS_DIR:-./lazylibrarian/books}:/downloads
-  #     - ${LIBRARY_DIR:-./lazylibrarian/books}:/books
-  #     # - ${LIBRARY_DIR:-./lazylibrarian/books}:/books
+  #     - ${LAZY_LIB_CONFIG_DIR:-./apps/lazylibrarian/config}:/config
+  #     - ${BOOKS_DIR:-./apps/lazylibrarian/books}:/downloads
+  #     - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
+  #     # - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
   #   ports:
   #     - ${LAZY_LIB_PORT:-5299}:5299
   #   expose:
@@ -131,21 +130,21 @@ services:
   #     - jackett:jackett
   #   restart: ${LAZY_LIB_RESTART:-unless-stopped}
 
-  readarr:
-    image: ${READARR_IMAGE:-hotio/readarr:nightly}
-    container_name: ${READARR_NAME:-readarr}
-    restart: ${READARR_RESTART:-unless-stopped}
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-America/New_York}
-      - UMASK=${READARR_UMASK:-002}
-    volumes:
-      - ${READARR_CONFIG_DIR:-./readarr/config}:/config
-      - ${READARR_BOOKS_DIR:-./readarr/books}:/books
-      - ${BOOKS_DOWNLOAD_DIR:-./readarr/downloads}:/downloads
-    ports:
-      - ${READARR_PORT:-8787}:8787
+  # readarr:
+  #  image: ${READARR_IMAGE:-hotio/readarr:nightly}
+  #   container_name: ${READARR_NAME:-readarr}
+  #   restart: ${READARR_RESTART:-unless-stopped}
+  #   environment:
+  #     - PUID=${PUID:-1000}
+  #     - PGID=${PGID:-1000}
+  #     - TZ=${TZ:-America/New_York}
+  #     - UMASK=${READARR_UMASK:-002}
+  #   volumes:
+  #     - ${READARR_CONFIG_DIR:-./apps/readarr/config}:/config
+  #     - ${READARR_BOOKS_DIR:-./apps/readarr/books}:/books
+  #     - ${BOOKS_DOWNLOAD_DIR:-./apps/readarr/downloads}:/downloads
+  #   ports:
+  #     - ${READARR_PORT:-8787}:8787
   #    expose:
   #     - 8787
 
@@ -160,9 +159,9 @@ services:
     networks:
       - media-net
     volumes:
-      - ${BAZARR_CONFIG_DIR:-./bazarr/data}:/config
-      - ${MOVIES_DIR:-./bazarr/movies}:/movies
-      - ${TV_DIR:-./bazarr/tv}:/tv
+      - ${BAZARR_CONFIG_DIR:-./apps/bazarr/data}:/config
+      - ${MOVIES_DIR:-./apps/bazarr/movies}:/movies
+      - ${TV_DIR:-./apps/bazarr/tv}:/tv
     ports:
       - ${BAZARR_PORT:-6767}:6767
     # expose:
@@ -212,8 +211,8 @@ services:
   #     - TZ=${TZ}
   #     - WEBUI_PORT=${QBITTORRENT_WEB_PORT:-8080}
   #   volumes:
-  #     - ${QBITTORRENT_CONF_DIR:-./qbittorrent/config}:/config
-  #     - ${QBITTORRENT_DOWNLOAD_DIR:-./qbittorrent/downloads}:/downloads
+  #     - ${QBITTORRENT_CONF_DIR:-./apps/qbittorrent/config}:/config
+  #     - ${QBITTORRENT_DOWNLOAD_DIR:-./apps/qbittorrent/downloads}:/downloads
   #   depends_on:
   #     - vpn
 
@@ -233,9 +232,9 @@ services:
       # - WHITELIST=${TRANSMISSION_WHITELIST}
       # - HOST_WHITELIST=${TRANSMISSION_HOST_WHITELIST}
   #  volumes:
-  #    - ${TRANSMISSION_CONF_DIR:-./transmission/conf}:/config
-  #    - ${TRANSMISSION_DOWNLOAD_DIR:-./transmission/downloads}:/downloads
-  #    - ${TRANSMISSION_WATCH_DIR:-./transmission/watch}:/watch
+  #    - ${TRANSMISSION_CONF_DIR:-./apps/transmission/conf}:/config
+  #    - ${TRANSMISSION_DOWNLOAD_DIR:-./apps/transmission/downloads}:/downloads
+  #    - ${TRANSMISSION_WATCH_DIR:-./apps/transmission/watch}:/watch
     # ports:
     #   - 9091:9091
     #   - 51413:51413
