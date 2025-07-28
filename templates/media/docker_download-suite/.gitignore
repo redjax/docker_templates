@@ -26,4 +26,6 @@ scripts/*
 !apps/
 !apps/**/
 !apps/**/empty
-!**/*.example
+
+!*example*.*
+!*.*example*
