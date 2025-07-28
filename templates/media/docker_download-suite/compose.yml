@@ -8,6 +8,7 @@ services:
   jackett:
     image: ${JACKETT_IMAGE:-linuxserver/jackett}
     container_name: ${JACKETT_NAME:-jackett}
+    restart: ${JACKETT_RESTART:-unless-stopped}
     environment:
       - PUID=1000
       - PGID=1000
@@ -18,13 +19,15 @@ services:
       - ${JACKETT_DOWNLOADS:-./apps/jackett/downloads}:/downloads
     ports:
       - ${JACKETT_PORT:-9117}:9117
-    restart: ${JACKETT_RESTART:-unless-stopped}
     networks:
       - media-net
 
   sonarr:
     image: ${SONARR_IMAGE:-linuxserver/sonarr}
     container_name: ${SONARR_NAME:-sonarr}
+    restart: "${SONARR_RESTART:-unless-stopped}"
+    links:
+      - jackett:jackett
     environment:
       - PUID=1000
       - PGID=1000
@@ -35,129 +38,38 @@ services:
       # - "${SONARR_DOWNLOADS:-./apps/sonarr/downloads}:/downloads"
     ports:
       - ${SONARR_PORT:-8989}:8989
-    restart: "${SONARR_RESTART:-unless-stopped}"
     networks:
       - media-net
-    links:
-      - jackett:jackett
-
-  # couchpotato:
-  #   image: lscr.io/linuxserver/couchpotato
-  #   container_name: couchpotato
-  #   restart: unless-stopped
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${TZ:-America/New_York}
-  #   volumes:
-  #     - ${COUCHPOTATO_CONF_DIR:-./apps/couchpotato}:/config
-  #     - ${COUCHPOTATO_DOWNLOAD_DIR:-./apps/couchpotato/downloads}:/downloads
-  #     - ${MOVIES_DIR:-./apps/couchpotato/movies}:/movies
-  #     - ${TV_DIR:-./apps/couchpotato/tv-shows}:/tv-shows
-  #   ports:
-  #     - ${COUCHPOTATO_WEB_PORT:-5050}:5050
-  #   networks:
-  #     - media-net
+    
 
   radarr:
     image: ${RADARR_IMAGE:-linuxserver/radarr}
     container_name: ${RADARR_CONTAINER_NAME:-radarr}
+    restart: ${RADARR_RESTART:-unless-stopped}
+    links:
+      - jackett:jackett
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
     volumes:
       - ${RADARR_CONFIG_DIR:-./apps/radarr/config}:/config
       - ${BOOKS_DOWNLOAD_DIR:-./apps/radarr/downloads}:/downloads
       - ${MOVIES_DIR:-./apps/radarr/movies}:/movies
     ports:
       - ${RADARR_PORT:-7878}:7878
-    restart: ${RADARR_RESTART:-unless-stopped}
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-America/New_York}
     networks:
       - media-net
-    links:
-      - jackett:jackett
-
-  # OPTIONAL: exportarr containers for exporting to Grafana
-  # sonarr-exporter:
-  #   image: ghcr.io/onedr0p/exportarr:latest
-  #   container_name: sonarr-exporter
-  #   command: ["exportarr", "sonarr"]
-  #   environment:
-  #     PORT: ${EXPORTARR_SONARR_PORT:-9707}
-  #     URL: ${EXPORTARR_SONARR_URL}
-  #     APIKEY: ${EXPORTARR_SONARR_APIKEY}
-  #     ENABLE_EPISODE_QUALITY_METRICS: ${EXPORTARR_SONARR_METRICS:-false}
-  #   ports:
-  #     - ${EXPORTARR_SONARR_PORT:-9707}:9707
-  #   depends_on:
-  #     - sonarr
-
-  # radarr-exporter:
-  #   image: ghcr.io/onedr0p/exportarr:latest
-  #   container_name: radarr-exporter
-  #   command: ["exportarr", "radarr"]
-  #   environment:
-  #     PORT: ${EXPORTARR_RADARR_PORT:-9708}
-  #     URL: ${EXPORTARR_RADARR_URL}
-  #     APIKEY: ${EXPORTARR_RADARR_APIKEY}
-  #     ENABLE_EPISODE_QUALITY_METRICS: ${EXPORTARR_RADARR_METRICS:-false}
-  #   ports:
-  #     - ${EXPORTARR_RADARR_PORT:-9708}:9708
-  #   depends_on:
-  #     - radarr
-
-  # lazylibrarian:
-  #   image: ${LAZY_LIB_IMAGE:-linuxserver/lazylibrarian}
-  #   container_name: ${LAZY_LIB_NAME:-lazylibrarian}
-  #   environment:
-  #     - PUID=${PUID:-1000}
-  #     - PGID=${PGID:-1000}
-  #     - TZ=${TZ:-America/New_York}
-  #   # - DOCKER_MODS=linuxserver/calibra-web:calibre # optional
-  #   volumes:
-  #     - ${LAZY_LIB_CONFIG_DIR:-./apps/lazylibrarian/config}:/config
-  #     - ${BOOKS_DIR:-./apps/lazylibrarian/books}:/downloads
-  #     - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
-  #     # - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
-  #   ports:
-  #     - ${LAZY_LIB_PORT:-5299}:5299
-  #   expose:
-  #     - 5299
-  #   networks:
-  #     - media-net
-  #   links:
-  #     - jackett:jackett
-  #   restart: ${LAZY_LIB_RESTART:-unless-stopped}
-
-  # readarr:
-  #  image: ${READARR_IMAGE:-hotio/readarr:nightly}
-  #   container_name: ${READARR_NAME:-readarr}
-  #   restart: ${READARR_RESTART:-unless-stopped}
-  #   environment:
-  #     - PUID=${PUID:-1000}
-  #     - PGID=${PGID:-1000}
-  #     - TZ=${TZ:-America/New_York}
-  #     - UMASK=${READARR_UMASK:-002}
-  #   volumes:
-  #     - ${READARR_CONFIG_DIR:-./apps/readarr/config}:/config
-  #     - ${READARR_BOOKS_DIR:-./apps/readarr/books}:/books
-  #     - ${BOOKS_DOWNLOAD_DIR:-./apps/readarr/downloads}:/downloads
-  #   ports:
-  #     - ${READARR_PORT:-8787}:8787
-  #    expose:
-  #     - 8787
 
   bazarr:
     image: ${BAZARR_IMAGE:-linuxserver/bazarr}
     container_name: ${BAZARR_NAME:-bazarr}
+    restart: ${BAZARR_RESTART:-unless-stopped}
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID-1000}
       - TZ=${TZ}
       - UMASK_SET=${BAZARR_UMASK:-022}
-    networks:
-      - media-net
     volumes:
       - ${BAZARR_CONFIG_DIR:-./apps/bazarr/data}:/config
       - ${MOVIES_DIR:-./apps/bazarr/movies}:/movies
@@ -166,99 +78,5 @@ services:
       - ${BAZARR_PORT:-6767}:6767
     # expose:
     #   - 6767
-    restart: ${BAZARR_RESTART:-unless-stopped}
-
-  # VPN and torrent client containers
-  # vpn:
-  #   image: ghcr.io/bubuntux/nordvpn
-  #   container_name: vpn
-  #   restart: unless-stopped
-  #   cap_add:
-  #     - NET_ADMIN
-  #   environment:
-  #     - USER=${NORD_USER}
-  #     - "PASS=${NORD_PASS}"
-  #     - CONNECT=${NORD_CONNECT_COUNTRY:-United_States}
-  #     - TECHNOLOGY=${NORD_CONNECT_TECHNOLOGY:-NordLynx}
-  #     - NETWORK=${VPN_LAN_NETWORK}
-  #     - DNS=${NORD_DNS}
-  #     - PORTS=${WHITELIST_PORTS}
-  #   ports:
-  #     # Uncomment only 1 XXX_WEB_PORT
-  #     - ${TRANSMISSION_WEB_PORT:-9091}:9091
-  #     # - ${QBITTORRENT_WEB_PORT:-8080}:8080
-  #     # - ${DELUGE_WEB_PORT:-8112}:8112
-  #     #
-  #     # Uncomment a port pair depending on which
-  #     # torrent client you're using
-  #     #
-  #     # Transmission
-  #     - 51413:51413
-  #     - 51413:51413/udp
-  #     # qBittorrent/deluge
-  #     - 6881:6881
-  #     - 6881:6881/udp
-
-  # qBittorrent
-  # qbittorrent:
-  #   image: ghcr.io/linuxserver/qbittorrent
-  #   container_name: qbittorrent
-  #   restart: unless-stopped
-  #   network_mode: service:vpn
-  #   environment:
-  #     - PUID=${PUID:-1000}
-  #     - PGID=${PGID:-1000}
-  #     - TZ=${TZ}
-  #     - WEBUI_PORT=${QBITTORRENT_WEB_PORT:-8080}
-  #   volumes:
-  #     - ${QBITTORRENT_CONF_DIR:-./apps/qbittorrent/config}:/config
-  #     - ${QBITTORRENT_DOWNLOAD_DIR:-./apps/qbittorrent/downloads}:/downloads
-  #   depends_on:
-  #     - vpn
-
-  # Transmission
-  #  transmission:
-  #  image: ghcr.io/linuxserver/transmission
-  #  container_name: transmission
-  #  network_mode: service:vpn
-  #  restart: unless-stopped
-  #  environment:
-  #    - PUID=${PUID:-1000}
-  #    - PGID=${PGID:-1000}
-  #    - TZ=${TZ:-America/New_York}
-  #    - USER=${TRANSMISSION_USER:-transmission}
-  #    - PASS=${TRANSMISSION_PASSWORD:-transmission}
-  #    - TRANSMISSION_WEB_HOME=${TRANSMISSION_WEB_HOME:-/combustion-release/}
-      # - WHITELIST=${TRANSMISSION_WHITELIST}
-      # - HOST_WHITELIST=${TRANSMISSION_HOST_WHITELIST}
-  #  volumes:
-  #    - ${TRANSMISSION_CONF_DIR:-./apps/transmission/conf}:/config
-  #    - ${TRANSMISSION_DOWNLOAD_DIR:-./apps/transmission/downloads}:/downloads
-  #    - ${TRANSMISSION_WATCH_DIR:-./apps/transmission/watch}:/watch
-    # ports:
-    #   - 9091:9091
-    #   - 51413:51413
-    #   - 51413:51413/udp
-  #  depends_on:
-  #    - vpn
-
-  # Deluge
-  # deluge:
-  #   image: ghcr.io/linuxserver/deluge
-  #   container_name: deluge
-  #   network_mode: service:vpn
-  #   restart: unless-stopped
-  #   environment:
-  #     - PUID=${PUID:-1000}
-  #     - PGID=${PGID:-1000}
-  #     - T${TZ:-America/New_York}
-  #   volumes:
-  #     - ${DELUGE_CONF_DIR:-./deluge/conf}:/config
-  #     - ${DELUGE_DOWNLOAD_DIR:-./deluge/downloads}:/downloads
-  #   # ports:
-  #     # - 8112:8112
-  #     # - 6881:6881
-  #     # - 6881:6881/udp
-  #   depends_on:
-  #     - vpn
-    
+    networks:
+      - media-net

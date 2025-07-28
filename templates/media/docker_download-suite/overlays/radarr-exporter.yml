@@ -1,0 +1,20 @@
+---
+
+services:
+
+  ## For exporting to Grafana
+  radarr-exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    container_name: radarr-exporter
+    command: ["exportarr", "radarr"]
+    environment:
+      PORT: ${EXPORTARR_RADARR_PORT:-9708}
+      URL: ${EXPORTARR_RADARR_URL}
+      APIKEY: ${EXPORTARR_RADARR_APIKEY}
+      ENABLE_EPISODE_QUALITY_METRICS: ${EXPORTARR_RADARR_METRICS:-false}
+    ports:
+      - ${EXPORTARR_RADARR_PORT:-9708}:9708
+    depends_on:
+      - radarr
+    networks:
+      - media-net

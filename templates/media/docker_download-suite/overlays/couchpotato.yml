@@ -1,0 +1,21 @@
+---
+
+services:
+
+  couchpotato:
+    image: lscr.io/linuxserver/couchpotato
+    container_name: couchpotato
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/New_York}
+    volumes:
+      - ${COUCHPOTATO_CONF_DIR:-./apps/couchpotato}:/config
+      - ${COUCHPOTATO_DOWNLOAD_DIR:-./apps/couchpotato/downloads}:/downloads
+      - ${MOVIES_DIR:-./apps/couchpotato/movies}:/movies
+      - ${TV_DIR:-./apps/couchpotato/tv-shows}:/tv-shows
+    ports:
+      - ${COUCHPOTATO_WEB_PORT:-5050}:5050
+    networks:
+      - media-net

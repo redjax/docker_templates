@@ -1,0 +1,35 @@
+---
+
+services:
+
+  vpn:
+    image: ghcr.io/bubuntux/nordvpn
+    container_name: vpn
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - USER=${NORD_USER}
+      - "PASS=${NORD_PASS}"
+      - CONNECT=${NORD_CONNECT_COUNTRY:-United_States}
+      - TECHNOLOGY=${NORD_CONNECT_TECHNOLOGY:-NordLynx}
+      - NETWORK=${VPN_LAN_NETWORK}
+      - DNS=${NORD_DNS}
+      - PORTS=${WHITELIST_PORTS}
+    ports:
+      # Uncomment only 1 XXX_WEB_PORT
+      - ${TRANSMISSION_WEB_PORT:-9091}:9091
+      # - ${QBITTORRENT_WEB_PORT:-8080}:8080
+      # - ${DELUGE_WEB_PORT:-8112}:8112
+      #
+      # Uncomment a port pair depending on which
+      # torrent client you're using
+      #
+      ## Transmission
+      - 51413:51413
+      - 51413:51413/udp
+      ## qBittorrent/deluge
+      # - 6881:6881
+      # - 6881:6881/udp
+    networks:
+      - media-net
