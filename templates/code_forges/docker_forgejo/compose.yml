@@ -1,6 +1,4 @@
 ---
-# volumes:
-#   forgejo_data: {}
 
 networks:
   forgejo_net: {}
@@ -13,7 +11,6 @@ services:
     env_file:
       - ${FORGEJO_ENV_FILE:-./env_files/forgejo/default.env}
     volumes:
-      # - ${FORGEJO_DATA_DIR:-forgejo_data}:/data
       - ${FORGEJO_DATA_DIR:-./data/forgejo}:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
