@@ -17,11 +17,39 @@ networks:
     external: false
 
 services:
+
+  server:
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.6.4}
+    restart: unless-stopped
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: server
+    env_file:
+      - ./env_files/forgejo/authentik.env
+    environment:
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_DB_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_DB_DATABASE:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASS:?database password required}
+    volumes:
+      - ${AUTHENTIK_MEDIA_DIR:-authentik_media}:/media
+      - ${AUTHENTIK_CUSTOM_TEMPLATES_DIR:-authentik_custom_templates}:/templates
+    ports:
+      - "${AUTHENTIK_HTTP_PORT:-9000}:9000"
+      - "${AUTHENTIK_HTTPS_PORT:-9443}:9443"
+    networks:
+      - authentik_net
+
   postgresql:
     image: docker.io/library/postgres:16-alpine
     restart: unless-stopped
     env_file:
-      - ./env_files/authentik.env
+      - ./env_files/forgejo/authentik.env
     environment:
       POSTGRES_PASSWORD: ${AUTHENTIK_DB_PASS:?database password required}
       POSTGRES_USER: ${AUTHENTIK_DB_USER:-authentik}
@@ -52,33 +80,6 @@ services:
       retries: 5
       timeout: 3s
 
-  server:
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.6.4}
-    restart: unless-stopped
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    command: server
-    env_file:
-      - ./env_files/authentik.env
-    environment:
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
-      AUTHENTIK_REDIS__HOST: redis
-      AUTHENTIK_POSTGRESQL__HOST: postgresql
-      AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_DB_USER:-authentik}
-      AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_DB_DATABASE:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASS:?database password required}
-    volumes:
-      - ${AUTHENTIK_MEDIA_DIR:-authentik_media}:/media
-      - ${AUTHENTIK_CUSTOM_TEMPLATES_DIR:-authentik_custom_templates}:/templates
-    ports:
-      - "${AUTHENTIK_HTTP_PORT:-9000}:9000"
-      - "${AUTHENTIK_HTTPS_PORT:-9443}:9443"
-    networks:
-      - authentik_net
-
   worker:
     image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.6.4}
     restart: unless-stopped
@@ -89,7 +90,7 @@ services:
         condition: service_healthy
     command: worker
     env_file:
-      - ./env_files/authentik.env
+      - ./env_files/forgejo/authentik.env
     environment:
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
       AUTHENTIK_REDIS__HOST: redis

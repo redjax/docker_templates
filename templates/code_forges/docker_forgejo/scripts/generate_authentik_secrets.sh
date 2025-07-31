@@ -13,7 +13,7 @@ if [[ -f "$SECRET_OUTPUT_FILE" ]]; then
     echo "[ERROR] $SECRET_OUTPUT_FILE already exists. Skipping secret generation."
 else
     echo "Generating Authentik secret key"
-    AUTHENTIK_SECRET_KEY=$(openssl rand -base64 60)
+    AUTHENTIK_SECRET_KEY=$(openssl rand -base64 60 | tr -dc 'A-Za-z0-9')
 
     echo "$AUTHENTIK_SECRET_KEY" > "$SECRET_OUTPUT_FILE"
     echo "Authentik secret key generated successfully, saved to $SECRET_OUTPUT_FILE"
