@@ -27,8 +27,6 @@ services:
       redis:
         condition: service_healthy
     command: server
-    env_file:
-      - ./env_files/forgejo/authentik.env
     environment:
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
       AUTHENTIK_REDIS__HOST: redis
@@ -48,8 +46,6 @@ services:
   postgresql:
     image: docker.io/library/postgres:16-alpine
     restart: unless-stopped
-    env_file:
-      - ./env_files/forgejo/authentik.env
     environment:
       POSTGRES_PASSWORD: ${AUTHENTIK_DB_PASS:?database password required}
       POSTGRES_USER: ${AUTHENTIK_DB_USER:-authentik}
@@ -89,8 +85,6 @@ services:
       redis:
         condition: service_healthy
     command: worker
-    env_file:
-      - ./env_files/forgejo/authentik.env
     environment:
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
       AUTHENTIK_REDIS__HOST: redis
