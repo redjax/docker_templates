@@ -1,4 +1,5 @@
 ---
+name: forgejo
 
 networks:
   forgejo_net: {}
@@ -6,7 +7,6 @@ networks:
 services:
   forgejo:
     image: codeberg.org/forgejo/forgejo:${FORGEJO_IMG_VER:-11}
-    container_name: forgejo
     restart: always
     env_file:
       - ${FORGEJO_ENV_FILE:-./env_files/forgejo/default.env}
