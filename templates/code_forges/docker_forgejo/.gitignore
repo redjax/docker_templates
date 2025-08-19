@@ -1,5 +1,7 @@
 data/
 logs/
+config/traefik/*
+
 *.env
 
 .authentik_db_pass
