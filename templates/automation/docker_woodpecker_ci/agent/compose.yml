@@ -1,0 +1,20 @@
+---
+name: woodpecker
+
+volumes:
+  woodpecker-agent-config: {}
+
+services:
+  woodpecker-agent:
+    image: woodpeckerci/woodpecker-agent:latest
+    container_name: woodpecker-ci-agent
+    command: agent
+    restart: unless-stopped
+    depends_on:
+      - woodpecker-server
+    volumes:
+      - ${WOODPECKER_AGENT_CONF_DIR:-woodpecker-agent-config}:/etc/woodpecker
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WOODPECKER_SERVER=${WOODPECKER_SERVER_URL}
+      - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
