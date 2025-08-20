@@ -1,0 +1,26 @@
+---
+name: woodpecker
+
+volumes:
+  woodpecker-server-data: {}
+
+services:
+  woodpecker-server:
+    image: woodpeckerci/woodpecker-server:latest
+    container_name: woodpecker-ci-server
+    restart: unless-stopped
+    ports:
+      - ${WOODPECKER_HTTP_PORT:-8000}:8000
+    volumes:
+      - ${WOODPECKER_SERVER_DATA_DIR:-woodpecker-server-data}:/var/lib/woodpecker/
+    environment:
+      WOODPECKER_OPEN: ${WOODPECKER_OPEN:-false}
+      WOODPECKER_ADMIN: ${FORGEJO_ADMIN_USERNAME}
+      WOODPECKER_HOST: ${WOODPECKER_URL}
+      WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+
+      WOODPECKER_FORGEJO_URL: ${WOODPECKER_FORGEJO_URL}
+      WOODPECKER_FORGEJO: true
+      WOODPECKER_FORGEJO_TOKEN: ${WOODPECKER_FORGEJO_TOKEN}
+      WOODPECKER_FORGEJO_CLIENT: ${WOODPECKER_FORGEJO_CLIENT}
+      WOODPECKER_FORGEJO_SECRET: ${WOODPECKER_FORGEJO_SECRET}

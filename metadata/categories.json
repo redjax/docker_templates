@@ -28,7 +28,7 @@
         ]
     },
     {
-        "count": 11,
+        "count": 12,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [],
@@ -64,6 +64,10 @@
             {
                 "name": "docker_semaphore",
                 "path": "templates/automation/docker_semaphore"
+            },
+            {
+                "name": "docker_woodpecker_ci",
+                "path": "templates/automation/docker_woodpecker_ci"
             },
             {
                 "name": "docker_concourse_ci",

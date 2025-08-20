@@ -60,6 +60,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_olivetin](../templates/automation/docker_olivetin)
   - [docker_gh-runner](../templates/automation/docker_gh-runner)
   - [docker_semaphore](../templates/automation/docker_semaphore)
+  - [docker_woodpecker_ci](../templates/automation/docker_woodpecker_ci)
   - [docker_concourse_ci](../templates/automation/docker_concourse_ci)
   - [docker_rundeck](../templates/automation/docker_rundeck)
 - [code_forges](../templates/code_forges)
