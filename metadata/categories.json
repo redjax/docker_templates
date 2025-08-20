@@ -28,10 +28,18 @@
         ]
     },
     {
-        "count": 12,
+        "count": 13,
         "name": "automation",
         "path": "templates/automation",
-        "sub_categories": [],
+        "sub_categories": [
+            {
+                "count": 2,
+                "name": "docker_drone",
+                "path": "templates/automation/docker_drone",
+                "sub_categories": [],
+                "templates": []
+            }
+        ],
         "templates": [
             {
                 "name": "docker_beehive",
@@ -80,18 +88,10 @@
         ]
     },
     {
-        "count": 5,
+        "count": 4,
         "name": "code_forges",
         "path": "templates/code_forges",
-        "sub_categories": [
-            {
-                "count": 2,
-                "name": "docker_drone",
-                "path": "templates/code_forges/docker_drone",
-                "sub_categories": [],
-                "templates": []
-            }
-        ],
+        "sub_categories": [],
         "templates": [
             {
                 "name": "docker_forgejo",
