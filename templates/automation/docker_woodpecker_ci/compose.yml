@@ -15,6 +15,7 @@ services:
       - ${WOODPECKER_SERVER_DATA_DIR:-woodpecker-server-data}:/var/lib/woodpecker/
     environment:
       - WOODPECKER_OPEN=${WOODPECKER_OPEN:-false}
+      - WOODPECKER_ADMIN=${FORGEJO_ADMIN_USERNAME}
       - WOODPECKER_HOST=${WOODPECKER_URL}
       - WOODPECKER_FORGEJO_URL=${WOODPECKER_FORGEJO_URL}
       - WOODPECKER_FORGEJO=true
