@@ -1,0 +1,10 @@
+## Docker Compose overlay to change the behavior of the gickup container.
+#  Run the schedule on-demand and exit
+
+services:
+  gickup:
+    container_name: gickup-runonce
+    restart: "no"
+    volumes:
+      ## Note you must create this file!
+      - ./config/on-demand.yml:/gickup/conf.yml
