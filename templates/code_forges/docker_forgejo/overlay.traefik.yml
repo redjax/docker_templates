@@ -31,6 +31,8 @@ services:
   forgejo:
     environment:
       FORGEJO_DOMAIN: ${TRAEFIK_DOMAIN:-git.example.com}
+    depends_on:
+      - traefik
     # networks:
     #   - traefik_net
     labels:
