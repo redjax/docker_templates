@@ -29,7 +29,7 @@ done
 echo "Creating network $NETWORK_NAME in $NET_MODE mode"
 docker network create --driver=$NET_MODE "$NETWORK_NAME"
 if [ $? -ne 0 ]; then
-    echo "Failed to create network $NETWORK_NAME"
+    echo "[ERROR] Failed to create network $NETWORK_NAME"
     exit 1
 else
     echo "Network $NETWORK_NAME created successfully"
