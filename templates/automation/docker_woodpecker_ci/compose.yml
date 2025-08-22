@@ -1,14 +1,22 @@
 ---
 name: woodpecker
 
+## Disable if using network_mode: host
+networks:
+  woodpecker_net:
+    external: true
+
 volumes:
   woodpecker-server-data: {}
+  woodpecker-agent-config: {}
 
 services:
   woodpecker-server:
     image: woodpeckerci/woodpecker-server:latest
-    container_name: woodpecker-ci-server
+    container_name: woodpecker-server
     restart: unless-stopped
+    ## Disable if using networks: mapping
+    # network_mode: host
     ports:
       - ${WOODPECKER_HTTP_PORT:-8000}:8000
     volumes:
@@ -24,3 +32,25 @@ services:
       WOODPECKER_FORGEJO_TOKEN: ${WOODPECKER_FORGEJO_TOKEN}
       WOODPECKER_FORGEJO_CLIENT: ${WOODPECKER_FORGEJO_CLIENT}
       WOODPECKER_FORGEJO_SECRET: ${WOODPECKER_FORGEJO_SECRET}
+    ## Disable if using network_mode: host
+    networks:
+      - woodpecker_net
+
+  woodpecker-agent:
+    image: woodpeckerci/woodpecker-agent:latest
+    container_name: woodpecker-agent
+    ## Disable if using networks: mapping
+    # network_mode: host
+    command: agent
+    restart: unless-stopped 
+    depends_on:
+      - woodpecker-server
+    volumes:
+      - ${AGENT_CONFIG_DIR:-woodpecker-agent-config}:/etc/woodpecker
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WOODPECKER_SERVER: woodpecker-server:9000
+      WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+    ## Disable if using network_mode: host
+    networks:
+      - woodpecker_net

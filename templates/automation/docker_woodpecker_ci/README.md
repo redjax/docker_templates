@@ -4,6 +4,10 @@ Self-hosted [Woodpecker CI](https://woodpecker-ci.org) server & agent.
 
 ## Setup
 
+### Network
+
+Run the [`create_ci_network.sh` script](./scripts/create_ci_network.sh) to create a `woodpecker_net` "external" Docker network for the server & agent to connect to.
+
 ### Forgejo OAuth2
 
 After enabling OAuth2 in Forgejo by setting the env var `FORGEJO__oauth2__ENABLED=true`, you will find OAuth2 application settings available in the Forgejo UI, under `Settings -> Applications -> Authorized OAuth2 applications`.
