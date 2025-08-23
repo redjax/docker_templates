@@ -35,10 +35,12 @@ services:
       CONCOURSE_POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
       CONCOURSE_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
       CONCOURSE_POSTGRES_DATABASE: ${POSTGRES_DB:-concourse}
+      
       CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
       CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_LOCAL_USER:-admin}:${CONCOURSE_LOCAL_PASS:-test}
       CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM:-main}
-      # instead of relying on the default "detect"
+      
+      ## instead of relying on the default "detect"
       CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
       CONCOURSE_CLIENT_SECRET: ${CONCOURSE_CLIENT_SECRET:-Y29uY291cnNlLXdlYgo=}
       CONCOURSE_TSA_CLIENT_SECRET: ${CONCOURSE_TSA_CLIENT_SECRET:-Y29uY291cnNlLXdvcmtlcgo=}
@@ -46,7 +48,16 @@ services:
       CONCOURSE_CONTENT_SECURITY_POLICY: "*"
       CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
       CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
-      # For ARM-based machine, change the Concourse runtime to "houdini"
+
+      ## Github OAuth
+      CONCOURSE_GITHUB_CLIENT_ID: ${CONCOURSE_GITHUB_CLIENT_ID}
+      CONCOURSE_GITHUB_CLIENT_SECRET: ${CONCOURSE_GITHUB_CLIENT_SECRET}
+
+      ## Gitlab OAuth
+      CONCOURSE_GITLAB_CLIENT_ID: ${CONCOURSE_GITLAB_CLIENT_ID}
+      CONCOURSE_GITLAB_CLIENT_SECRET: ${CONCOURSE_GITLAB_CLIENT_SECRET}
+      
+      ## For ARM-based machine, change the Concourse runtime to "houdini"
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
     networks:
       - concourse_net
