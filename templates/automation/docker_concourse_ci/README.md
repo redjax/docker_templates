@@ -55,6 +55,38 @@ roles:
     teams: ["my-other-org:my-team"]
 ```
 
+### Setup Gitlab OAuth
+
+First, [create an OAuth application on Github](https://github.com/settings/applications/new). Copy the client ID and secret, and set them as the following environment variables:
+
+```bash
+CONCOURSE_GITLAB_CLIENT_ID=myclientid
+CONCOURSE_GITLAB_CLIENT_SECRET=myclientsecret
+
+## If you're self-hosting Gitlab, you need to set this too
+# CONCOURSE_GITLAB_HOST=https://gitlab.example.com
+```
+
+Users, teams, and organization can be authorized for a Concourse team 1 of 2 ways:
+
+CLI:
+
+```shell
+fly set-team -n my-team \
+    --gitlab-user my-gitlab-user \
+    --gitlab-group my-group
+```
+
+Or pipeline config:
+
+```yaml
+roles:
+- name: member
+  gitlab:
+    users: ["my-gitlab-login"]
+    groups: ["my-gitlab-group"]
+```
+
 ## Notes
 
 ### List CI workers
