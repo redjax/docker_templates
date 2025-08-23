@@ -14,6 +14,13 @@ services:
       PGDATA: /database
     networks:
       - concourse_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
 
   concourse:
     image: concourse/concourse
@@ -43,3 +50,10 @@ services:
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
     networks:
       - concourse_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f ${CONCOURSE_URL} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
