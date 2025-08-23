@@ -2,6 +2,9 @@
 networks:
   concourse_net: {}
 
+volumes:
+  concourse_db_data: {}
+
 services:
   db:
     image: postgres
@@ -12,6 +15,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
       POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
       PGDATA: /database
+    volumes:
+      - ${CONCOURSE_DB_DATA_DIR:-concourse_db_data}:/var/lib/postgresql/data
     networks:
       - concourse_net
     healthcheck:
@@ -20,7 +25,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
-
 
   concourse:
     image: concourse/concourse
@@ -37,7 +41,7 @@ services:
       CONCOURSE_POSTGRES_DATABASE: ${POSTGRES_DB:-concourse}
       
       CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
-      CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_LOCAL_USER:-admin}:${CONCOURSE_LOCAL_PASS:-test}
+      CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_LOCAL_USER:-admin:test}
       CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM:-main}
       
       ## instead of relying on the default "detect"
@@ -67,4 +71,3 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-
