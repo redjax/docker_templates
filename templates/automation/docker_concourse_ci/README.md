@@ -20,6 +20,41 @@ fly login -c http://<concourse-url-or-ip>:<concourse-port> -t <councourse target
     - If you can't copy/paste, you can type the token in manually
 - Check your `fly` targets with `fly targets`
 
+### Setup Github OAuth
+
+First, [create an OAuth application on Github](https://github.com/settings/applications/new). Copy the client ID and secret, and set them as the following environment variables:
+
+```bash
+CONCOURSE_GITHUB_CLIENT_ID=<your oauth client id>
+CONCOURSE_GITHUB_CLIENT_SECRET=<your oauth client secret>
+
+## If you're configuring Github Enterprise, set the following too
+# CONCOURSE_GITHUB_HOST=github.example.com
+# CONCOURSE_GITHUB_CA_CERT=/path/to/ca_cert
+```
+
+Users, teams, and organization can be authorized for a Concourse team 1 of 2 ways:
+
+CLI:
+
+```shell
+fly set-team -n my-team \
+    --github-user my-github-login \
+    --github-org my-org \
+    --github-team my-other-org:my-team
+```
+
+Or pipeline config:
+
+```yaml
+roles:
+- name: member
+  github:
+    users: ["my-github-login"]
+    orgs: ["my-org"]
+    teams: ["my-other-org:my-team"]
+```
+
 ## Notes
 
 ### List CI workers
