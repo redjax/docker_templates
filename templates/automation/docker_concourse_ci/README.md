@@ -15,10 +15,18 @@
 fly login -c http://<concourse-url-or-ip>:<concourse-port> -t <councourse target>
 ```
 
+The `-t`/`--target` flag saves your login in a session. You can use whatever name you want. If you've saved multiple targets, you can switch between them using the `FLY_TARGET` env var.
+
+For example, to run a command: `FLY_TARGET=<your-target-name> fly -c <concourse-url> ...`
+
+Or you can set the variable in a direnv `.envrc`, or a pipeline, or set a default one by adding `export FLY_TARGET=<your-target-name>` to your `~/.bashrc`.
+
 - The login command will show you a URL, which you should click
     - On the page that opens, copy the bearer key and paste it into the CLI
     - If you can't copy/paste, you can type the token in manually
 - Check your `fly` targets with `fly targets`
+
+You can also pass `-n <team-name>` to specify a team. You can remove targets with `fly logout -t <target-name>`.
 
 ### Setup Github OAuth
 
