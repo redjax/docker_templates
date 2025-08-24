@@ -4,6 +4,7 @@ networks:
 
 volumes:
   concourse_db_data: {}
+  concourse_worker_data: {}
 
 services:
   db:
@@ -30,7 +31,7 @@ services:
     image: concourse/concourse
     container_name: concourse
     restart: unless-stopped
-    command: quickstart
+    command: web
     privileged: true
     depends_on: [db]
     ports: ["${CONCOURSE_HTTP_PORT:-8080}:8080"]
@@ -45,13 +46,17 @@ services:
       CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM_LOCAL_USERS:-admin,concourse-bot}
       
       ## instead of relying on the default "detect"
-      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
       CONCOURSE_CLIENT_SECRET: ${CONCOURSE_CLIENT_SECRET:-Y29uY291cnNlLXdlYgo=}
       CONCOURSE_TSA_CLIENT_SECRET: ${CONCOURSE_TSA_CLIENT_SECRET:-Y29uY291cnNlLXdvcmtlcgo=}
       CONCOURSE_X_FRAME_OPTIONS: allow
       CONCOURSE_CONTENT_SECURITY_POLICY: "*"
       CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
       CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+
+      CONCOURSE_TSA_HOST_KEY: /concourse-keys/tsa_host_key
+      CONCOURSE_TSA_AUTHORIZED_WORKER_KEYS: /concourse-keys/authorized_worker_keys
+      CONCOURSE_SESSION_SIGNING_KEY: /concourse-keys/session_signing_key
 
       ## Github OAuth
       CONCOURSE_GITHUB_CLIENT_ID: ${CONCOURSE_GITHUB_CLIENT_ID}
@@ -63,10 +68,42 @@ services:
       
       ## For ARM-based machine, change the Concourse runtime to "houdini"
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+    volumes:
+      - ${CONCOURSE_WEB_KEYS_DIR:-./keys/web}:/concourse-keys:ro
     networks:
       - concourse_net
     healthcheck:
       test: ["CMD-SHELL", "curl -f ${CONCOURSE_URL} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  worker:
+    image: concourse/concourse
+    container_name: concourse-worker
+    command: worker
+    privileged: true
+    depends_on:
+      - concourse
+    volumes:
+      - ${CONCOURSE_WORKER_KEYS_DIR:-./keys/worker}:/concourse-keys:ro
+      - ${CONCOURSE_WORKER_DATA_DIR:-concourse_worker_data}:/worker-state
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONCOURSE_TSA_HOST: ${CONCOURSE_WORKER_TSA_HOST:-concourse:2222}
+      CONCOURSE_TSA_PUBLIC_KEY: /concourse-keys/tsa_host_key.pub
+      CONCOURSE_TSA_WORKER_PRIVATE_KEY: /concourse-keys/worker_key
+      ## instead of relying on the default "detect"
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
+      CONCOURSE_CLUSTER_NAME: node1
+      CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+      ## For ARM-based machine, change the Concourse runtime to "houdini"
+      CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+    networks:
+      - concourse_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f ${CONCOURSE_WORKER_HEALTHCHECK_URL:-http://concourse:8888} || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
