@@ -42,7 +42,7 @@ services:
       
       CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
       CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_LOCAL_USER:-admin:test}
-      CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM:-main}
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM_LOCAL_USERS:-admin,concourse-bot}
       
       ## instead of relying on the default "detect"
       CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
