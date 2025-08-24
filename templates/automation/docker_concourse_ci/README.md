@@ -127,6 +127,12 @@ Then, trigger the job (use `--watch` to see output in terminal):
 fly -t <concourse-target-name> trigger-job --job demo-hello/hello-job [--watch]
 ```
 
+You can "intercept" a job to drop your shell into the running pipeline for debugging:
+
+```shell
+fly -t <concourse-target-name> intercept --job <pipeline>/<job>
+```
+
 ## Links
 
 - [How to setup a concourse CI server](https://dev.to/ruanbekker/how-to-setup-a-concourse-ci-server-597g)
