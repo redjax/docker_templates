@@ -106,7 +106,7 @@ services:
       CONCOURSE_TSA_WORKER_PRIVATE_KEY: /concourse-keys/worker_key
       ## instead of relying on the default "detect"
       CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
-      CONCOURSE_CLUSTER_NAME: node1
+      CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
       CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
       ## For ARM-based machine, change the Concourse runtime to "houdini"
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
