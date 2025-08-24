@@ -1,6 +1,7 @@
 ---
 networks:
-  concourse_net: {}
+  concourse_net:
+    driver: bridge
 
 volumes:
   concourse_db_data: {}
@@ -32,7 +33,8 @@ services:
     container_name: concourse
     restart: unless-stopped
     command: web
-    privileged: true
+    # privileged: true
+    links: [db]
     depends_on: [db]
     ports: ["${CONCOURSE_HTTP_PORT:-8080}:8080"]
     environment:
@@ -42,7 +44,7 @@ services:
       CONCOURSE_POSTGRES_DATABASE: ${POSTGRES_DB:-concourse}
       
       CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
-      CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_LOCAL_USER:-admin:test}
+      CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_LOCAL_USER:-admin:concourse}
       CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM_LOCAL_USERS:-admin,concourse-bot}
       
       ## instead of relying on the default "detect"
@@ -72,6 +74,11 @@ services:
       - ${CONCOURSE_WEB_KEYS_DIR:-./keys/web}:/concourse-keys:ro
     networks:
       - concourse_net
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
     healthcheck:
       test: ["CMD-SHELL", "curl -f ${CONCOURSE_URL} || exit 1"]
       interval: 10s
@@ -84,6 +91,8 @@ services:
     container_name: concourse-worker
     command: worker
     privileged: true
+    links:
+      - concourse
     depends_on:
       - concourse
     volumes:
@@ -91,17 +100,24 @@ services:
       - ${CONCOURSE_WORKER_DATA_DIR:-concourse_worker_data}:/worker-state
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      CONCOURSE_CONTAINERD_ALLOW_HOST_ACCESS: true
       CONCOURSE_TSA_HOST: ${CONCOURSE_WORKER_TSA_HOST:-concourse:2222}
       CONCOURSE_TSA_PUBLIC_KEY: /concourse-keys/tsa_host_key.pub
       CONCOURSE_TSA_WORKER_PRIVATE_KEY: /concourse-keys/worker_key
       ## instead of relying on the default "detect"
-      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
       CONCOURSE_CLUSTER_NAME: node1
       CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
       ## For ARM-based machine, change the Concourse runtime to "houdini"
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+      CONCOURSE_GARDEN_DNS_SERVER: 1.1.1.1
+      CONCOURSE_GARDEN_DNS_PROXY_ENABLE: true
+      CONCOURSE_WORKER_GARDEN_DNS_PROXY_ENABLE: "true"
+      CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE: ${CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE:-true}
+      CONCOURSE_CONTAINERD_DNS_SERVER: ${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}
     networks:
       - concourse_net
+    stop_signal: SIGUSR2
     healthcheck:
       test: ["CMD-SHELL", "curl -f ${CONCOURSE_WORKER_HEALTHCHECK_URL:-http://concourse:8888} || exit 1"]
       interval: 10s
