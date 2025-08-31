@@ -1,2 +1,6 @@
 gitlab/
 gitlab-runner/
+
+*.env
+
+!*example*.*

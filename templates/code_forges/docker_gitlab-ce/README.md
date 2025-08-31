@@ -26,7 +26,11 @@ Quick Specs:
 
 ## Omnibus Configuration
 
-[List of Gitlab omnibus config optionss](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md)
+[List of Gitlab omnibus config options](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md)
+
+Much of Gitlab's configuration is done using the `GITLAB_OMNIBUS_CONFIG` environment variable. This can become difficult to work with in the `compose.yml` file, so instead, this setup uses a [`gitlab.env` file](./example.gitlab.env). The [`compose.yml` stack](./compose.yml) looks for `gitlab.env` in the current directory and loads the `GITLAB_OMNIBUS_CONFIG` from there.
+
+Before running this container, copy `example.gitlab.env` -> `gitlab.env` and review the configuration options.
 
 ## Troubleshooting
 

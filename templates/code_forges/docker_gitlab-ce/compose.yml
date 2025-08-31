@@ -13,6 +13,9 @@ services:
     restart: unless-stopped
     shm_size: '256m'
     hostname: ${GITLAB_HOSTNAME:-gitlab.example.com}
+    ## Mount an env file with GITLAB_OMNIBUS_CONFIG
+    env_file:
+      - gitlab.env
     environment:
       GITLAB_ROOT_EMAIL: "${GITLAB_ROOT_EMAIL:-admin@example.com}"
       GITLAB_ROOT_PASSWORD: "${GITLAB_INIT_ROOT_PASSWORD:-Dont4Get7oChangeMe!}"
