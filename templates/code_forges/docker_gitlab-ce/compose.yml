@@ -1,46 +1,29 @@
 ---
-# networks:
-#   unnamed_net: {}
 
 volumes:
-  gitlab_server_conf: {}
+  gitlab_server_config: {}
   gitlab_server_logs: {}
   gitlab_server_data: {}
-  gitlab_runner_conf: {}
+  gitlab_server_backups: {}
 
 services:
-
   gitlab-server:
     image: gitlab/gitlab-ce:latest
     container_name: gitlab-server
     restart: unless-stopped
-    hostname: ${GITLAB_HOSTNAME:-gitlab.example.com}
-    shm_size: "256m"
+    shm_size: '256m'
     environment:
-      GITLAB_ROOT_PASSWORD: ${GITLAB_INIT_ROOT_PASSWORD:-gi7labAdm1n!}
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url '${GITLAB_EXTERNAL_URL}'
-        registry_external_url '${GITLAB_REGISTRY_URL}'
+      GITLAB_ROOT_EMAIL: "${GITLAB_ROOT_EMAIL:-admin@localdomain}"
+      GITLAB_ROOT_PASSWORD: "${GITLAB_INIT_ROOT_PASSWORD:-Dont4Get7oChangeMe!}"
+      TZ: ${GITLAB_HOST_TZ:-Etc/UTC}
+      GITLAB_TIMEZONE: ${GITLAB_TZ:-Etc/UTC}
 
-        gitlab_rails['registry_enabled'] = ${GITLAB_REGISTRY_ENABLED}
-        registry['enable'] = ${GITLAB_REGISTRY_ENABLED}
-        registry_nginx['enable'] = ${GITLAB_REGISTRY_NGINX_ENABLED}
-        registry_nginx['listen_https'] = ${GITLAB_REGISTRY_LISTEN_HTTPS}
-        registry_nginx['listen_port'] = 5050
     ports:
-      - ${GITLAB_HTTP_PORT:-80}:${GITLAB_HTTP_PORT:-80}
-      - ${GITLAB_HTTPS_PORT:-443}:${GITLAB_HTTPS_PORT:-443}
-      - ${GITLAB_SSH_PORT:-2424}:22
-      - ${GITLAB_REGISTRY_PORT:-5050}:5050
+      - '${GITLAB_HTTP_PORT:-80}:80'
+      - '${GITLAB_HTTPS_PORT:-443}:443'
+      - '${GITLAB_SSH_PORT:-222}:22'
     volumes:
-      - ${GITLAB_CONFIG_DIR:-gitlab_server_conf}:/etc/gitlab
-      - ${GITLAB_LOGS_DIR:-gitlab_server_logs}:/var/log/gitlab
-      - ${GITLAB_DATA_DIR:-gitlab_server_data}:/var/opt/gitlab
-
-  gitlab-runner:
-    image: 'gitlab/gitlab-runner:latest'
-    container_name: gitlab-runner
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${GITLAB_RUNNER_CONFIG_DIR:-gitlab_runner_conf}:/etc/gitlab-runner
+      - ${GITLAB_SERVER_CONFIG_DIR:-gitlab_server_config}:/etc/gitlab
+      - ${GITLAB_SERVER_LOGS_DIR:-gitlab_server_logs}:/var/log/gitlab
+      - ${GITLAB_SERVER_DATA_DIR:-gitlab_server_data}:/var/opt/gitlab
+      - ${GITLAB_SERVER_BACKUPS_DIR:-gitlab_server_backups}:/var/opt/gitlab/backups
