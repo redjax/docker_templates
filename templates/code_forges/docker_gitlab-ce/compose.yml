@@ -12,18 +12,22 @@ services:
     container_name: gitlab-server
     restart: unless-stopped
     shm_size: '256m'
+    hostname: ${GITLAB_HOSTNAME:-gitlab.example.com}
     environment:
-      GITLAB_ROOT_EMAIL: "${GITLAB_ROOT_EMAIL:-admin@localdomain}"
+      GITLAB_ROOT_EMAIL: "${GITLAB_ROOT_EMAIL:-admin@example.com}"
       GITLAB_ROOT_PASSWORD: "${GITLAB_INIT_ROOT_PASSWORD:-Dont4Get7oChangeMe!}"
       TZ: ${GITLAB_HOST_TZ:-Etc/UTC}
       GITLAB_TIMEZONE: ${GITLAB_TZ:-Etc/UTC}
-
-    ports:
-      - '${GITLAB_HTTP_PORT:-80}:80'
-      - '${GITLAB_HTTPS_PORT:-443}:443'
-      - '${GITLAB_SSH_PORT:-222}:22'
+      GITLAB_EXTERNAL_URL: "${GITLAB_EXTERNAL_URL:-http://localhost}"
+      GITLAB_REGISTRY_ENABLED: "${GITLAB_REGISTRY_ENABLED:-false}"
+      GITLAB_REGISTRY_URL: "${GITLAB_REGISTRY_URL:-http://registry.example.com}"
     volumes:
       - ${GITLAB_SERVER_CONFIG_DIR:-gitlab_server_config}:/etc/gitlab
       - ${GITLAB_SERVER_LOGS_DIR:-gitlab_server_logs}:/var/log/gitlab
       - ${GITLAB_SERVER_DATA_DIR:-gitlab_server_data}:/var/opt/gitlab
       - ${GITLAB_SERVER_BACKUPS_DIR:-gitlab_server_backups}:/var/opt/gitlab/backups
+    ports:
+      - '${GITLAB_HTTP_PORT:-80}:80'
+      - '${GITLAB_HTTPS_PORT:-443}:443'
+      - '${GITLAB_SSH_PORT:-222}:22'
+      - '${GITLAB_REGISTRY_PORT:-5050}:5050'
