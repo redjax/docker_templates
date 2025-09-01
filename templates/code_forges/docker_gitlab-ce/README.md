@@ -99,18 +99,18 @@ Host domain.com
 To enable the Docker registry feature of Gitlab, you have to set the following configurations:
 
 ```rb
-registry['enable'] = true;
-registry['external_url'] = 'https://registry.domain.com:5050';
 gitlab_rails['registry_enabled'] = true;
-gitlab_rails['registry_host'] = 'registry.domain.com';
-gitlab_rails['registry_port'] = 5050;
-gitlab_rails['registry_api_url'] = 'http://localhost:5050';
+registry['enable'] = true;
+registry_external_url 'https://registry.ingit.dev';
+gitlab_rails['registry_host'] = 'registry.ingit.dev';
+registry_nginx['enable'] = false;
+registry['registry_http_addr'] = '127.0.0.1:5000';
 ```
 
 Edit the [Gitlab env file](./env_files/example.gitlab.env). Add the following to the `GITLAB_OMNIBUS_CONFIG` (or change the settings):
 
 ```plaintext
-GITLAB_OMNIBUS_CONFIG="registry['enable'] = true; ['external_url'] = 'https://registry.domain.com:5050'; ['registry_enabled'] = true; ['registry_host'] = 'registry.domain.com'; ['registry_port'] = 5050; ['registry_api_url'] = 'http://localhost:5050';"
+GITLAB_OMNIBUS_CONFIG="gitlab_rails['registry_enabled'] = true; registry['enable'] = true; registry_external_url 'https://registry.example.com'; gitlab_rails['registry_host'] = 'registry.example.com'; registry_nginx['enable'] = false; registry['registry_http_addr'] = '127.0.0.1:5000'"
 ```
 
 Note that these configurations must all be on 1 line, separated by a semicolon and a space (`; `).
