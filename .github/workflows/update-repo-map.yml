@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   count-templates:
+    if: ${{ ! startsWith(github.head_ref, 'fix/') && ! startsWith(github.head_ref, 'hotfix/') }}
     runs-on: ubuntu-latest
 
     steps:
