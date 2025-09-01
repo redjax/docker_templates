@@ -32,6 +32,7 @@ services:
       - ${GITLAB_SERVER_LOGS_DIR:-gitlab_server_logs}:/var/log/gitlab
       - ${GITLAB_SERVER_DATA_DIR:-gitlab_server_data}:/var/opt/gitlab
       - ${GITLAB_SERVER_BACKUPS_DIR:-gitlab_server_backups}:/var/opt/gitlab/backups
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - '${GITLAB_HTTP_PORT:-80}:80'
       - '${GITLAB_HTTPS_PORT:-443}:443'
@@ -55,5 +56,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${GITLAB_RUNNER_CONFIG_DIR:-gitlab_runner_config}:/etc/gitlab-runner
+      - /etc/timezone:/etc/timezone:ro
     networks:
       - gitlab_net
