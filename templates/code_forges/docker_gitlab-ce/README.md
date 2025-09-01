@@ -9,6 +9,7 @@ Self-hosted Gitlab server & runner.
 - [Troubleshooting](#troubleshooting)
   - [Container permission errors](#container-permission-errors)
 - [Cloudflare Setup](#cloudflare-setup)
+- [Setup Docker Registry](#setup-docker-registry)
 - [Links](#links)
 
 ## Requirements
@@ -92,6 +93,31 @@ Host domain.com
   #    ssh-keygen -t rsa -b 4096 -f ~/.ssh/gitlab_id_rsa -N ""
   IdentityFile ~/.ssh/gitlab_id_rsa
 ```
+
+## Setup Docker Registry
+
+To enable the Docker registry feature of Gitlab, you have to set the following configurations:
+
+```rb
+registry['enable'] = true;
+registry['external_url'] = 'https://registry.domain.com:5050';
+gitlab_rails['registry_enabled'] = true;
+gitlab_rails['registry_host'] = 'registry.domain.com';
+gitlab_rails['registry_port'] = 5050;
+gitlab_rails['registry_api_url'] = 'http://localhost:5050';
+```
+
+Edit the [Gitlab env file](./env_files/example.gitlab.env). Add the following to the `GITLAB_OMNIBUS_CONFIG` (or change the settings):
+
+```plaintext
+GITLAB_OMNIBUS_CONFIG="registry['enable'] = true; ['external_url'] = 'https://registry.domain.com:5050'; ['registry_enabled'] = true; ['registry_host'] = 'registry.domain.com'; ['registry_port'] = 5050; ['registry_api_url'] = 'http://localhost:5050';"
+```
+
+Note that these configurations must all be on 1 line, separated by a semicolon and a space (`; `).
+
+If you are [using Cloudflare](#cloudflare-setup), also add an un-proxied (gray icon) `A` name entry for `registry`, pointed to [your public IP address](https://ipadr.is).
+
+Don't forget to uncomment the registry portions of the [dynamic Traefik config](./config/traefik/dynamic_config.yml) and the [regular Traefik config](./config/traefik/traefik_config.yml).
 
 ## Links
 

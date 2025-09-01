@@ -34,3 +34,11 @@ services:
       - '${GITLAB_HTTPS_PORT:-443}:443'
       - '${GITLAB_SSH_PORT:-222}:22'
       - '${GITLAB_REGISTRY_PORT:-5050}:5050'
+    deploy:
+      resources:
+        reservations:
+          cpus: ${GITLAB_CPU_MIN:-4.0}
+          memory: ${GITLAB_MEMORY_MIN:-2500M}
+        limits:
+          cpus: ${GITLAB_CPU_MAX:-4.0}
+          memory: ${GITLAB_MEMORY_MAX:-12000M}
