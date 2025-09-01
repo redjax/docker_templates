@@ -1,0 +1,16 @@
+---
+volumes:
+  gitlab_runner_config: {}
+
+services:
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${GITLAB_RUNNER_CONFIG_DIR:-gitlab_runner_config}:/etc/gitlab-runner
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      TZ: ${GITLAB_RUNNER_TZ:-Etc/UTC}
