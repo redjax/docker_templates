@@ -1,6 +1,7 @@
 name: Count templates & update metadata, README
 
 on:
+  ## PR to main
   pull_request:
     branches:
       - main
@@ -10,6 +11,7 @@ permissions:
 
 jobs:
   count-templates:
+    if: ${{ ! startsWith(github.head_ref, 'fix/') && ! startsWith(github.head_ref, 'hotfix/') }}
     runs-on: ubuntu-latest
 
     steps:
