@@ -37,7 +37,6 @@ DEST_DIR="/opt/gitlab/backup"
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -s|--src-dir)
-            echo "-s/--src-dir detected. Value: $2"
             if [[ -z $2 ]]; then
                 echo "[ERROR] --src-dir flag provided but no source dir given"
                 exit 1
