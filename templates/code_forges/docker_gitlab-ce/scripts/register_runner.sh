@@ -7,6 +7,9 @@ fi
 
 echo "Registering Gitlab runner"
 echo ""
+echo "[IMPORTANT] If you're registering the runner included with this compose stack,"
+echo "            use http://gitlab-server as the URL."
+echo ""
 
 docker run --rm -it \
   -v $(pwd)/gitlab-runner/config:/etc/gitlab-runner \
