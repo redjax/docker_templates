@@ -1,6 +1,14 @@
 gitlab/
 gitlab-runner/
+traefik/
+
+config/traefik/*
+
+!config/
+!config/traefik/
 
 *.env
 
 !*example*.*
+!*.*example*
+!*.*example*.*

@@ -8,6 +8,7 @@ Self-hosted Gitlab server & runner.
 - [Omnibus Configuration](#omnibus-configuration)
 - [Troubleshooting](#troubleshooting)
   - [Container permission errors](#container-permission-errors)
+- [Cloudflare Setup](#cloudflare-setup)
 - [Links](#links)
 
 ## Requirements
@@ -41,6 +42,55 @@ If this container fails to start due to permission problems try to fix it by exe
 ```bash
 docker exec -it gitlab update-permissions
 docker restart gitlab
+```
+
+## Cloudflare Setup
+
+> [!WARNING]
+> This setup may not work for your needs. If you use Cloudflare and a proxy like Pangolin,
+> you may need a second domain just for SSH. Cloudflare cannot proxy SSH connections,
+> so you would serve Gitlab's web UI over your primary domain, and SSH over the second, un-proxied domain.
+>
+> This setup requires port forwarding on your home router, and requires ports `80` and `443` to be forwarded
+> to the server hosting Gitlab.
+
+Assumptions:
+
+- You have a domain name, and you've set its nameservers to Cloudflare.
+- You have a machine on your LAN running Gitlab, with [the Traefik overlay](./overlays/traefik.yml)
+  - To run the stack with Traefik, use `docker compose -f compose.yml -f overlays/traefik.yml up -d`
+- Ports `80` and `443` are bound to Traefik, so if you have any other router forwarding to a different machine's `80` or `443`, this won't work.
+
+For the sake of this document, `gitlab.domain.com` is the example domain name. Replace `domain.com` with your domain.
+
+In Cloudflare's DNS, create the following entries:
+
+| Record Type | Name | Content | Proxy Status | Notes |
+| ----------- | ---- | ------- | ------------ | ----- |
+| `A` | `git` | Your [public IP address](https://www.ipadr.is) | Proxied (orange cloud) | |
+| `A` | `gitlab` | Your [public IP address](https://www.ipadr.is) | Proxied (orange cloud) | |
+| `A` | `domain.com` | [public IP address](https://www.ipadr.is) | Not proxied (gray cloud) | |
+
+Replace `domain.com` with your domain, and set your [public IP address](https://www.ipadr.is) in the Content field. It is very important to leave the root `domain.com` A record un-proxied.
+
+Edit your [`gitlab.env` file](./env_files/example.gitlab.env). Edit the `GITLAB_OMNIBUS_CONFIG` variable, setting `gitlab_rails['gitlab_ssh_host'] = 'domain.com'`.
+
+Edit your [Traefik `dynamic_config.yml`](./config/traefik/example.dynamic_config.yml), setting the router rule to:
+```yaml
+rule: "Host(`gitlab.ingit.dev`)"
+```
+
+If you create an entry in your `~/.ssh/config`, make sure to use the right port (whatever you set for `GITLAB_SSH_PORT` in the [Gitlab `.env` file](./.env.example)).
+
+```plaintext
+## ~/.ssh/config
+Host domain.com
+  HostName domain.com
+  User git
+  Port 222
+  ## You must create this file and upload it to Gitlab, i.e.
+  #    ssh-keygen -t rsa -b 4096 -f ~/.ssh/gitlab_id_rsa -N ""
+  IdentityFile ~/.ssh/gitlab_id_rsa
 ```
 
 ## Links
