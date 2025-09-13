@@ -6,5 +6,24 @@
 #   volume_name: {}
 
 services:
-
-  ...
+  aska:
+    container_name: aska-server
+    image: luxusburg/aska-server:latest
+    restart: unless-stopped
+    # network_mode: bridge
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PASSWORD: ${ASKA_PASSWORD:-dockerAska}
+      SERVER_NAME: ${ASKA_SERVER_NAME:-Aska for Friends}
+      KEEP_WORLD_ALIVE: ${ASKA_KEEP_WORLD_ALIVE:-false}
+      AUTOSAVE_STYLE: ${ASKA_AUTOSAVE_STYLE:-every morning}
+      CUSTOM_CONFIG: ${ASKA_USE_CUSTOM_CONFIG:-false}
+    volumes:
+      - ${ASKA_SERVER_DIR:-./aska/server}:/home/aska/server_files:rw
+      - ${ASKA_SERVER_DATA_DIR:-./aska/data}:/home/aska/persistent_data:rw
+      ## If using a custom server_properties.txt, uncomment the volume mount
+      #  below and set ASKA_USE_CUSTOM_CONFIG=true in your .env
+      # - ${ASKA_SERVER_PROPERTIES_FILE:-server_properties.txt}:/home/aska/server_files/server_properties.txt:ro
+    ports:
+      - ${ASKA_QUERY_PORT:-27016}:27016/udp
+      - ${ASKA_GAME_PORT:-27015}:27015/udp
