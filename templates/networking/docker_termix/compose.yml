@@ -2,9 +2,18 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  termix_data:
+    driver: local
 
 services:
-
-  ...
+  termix:
+    image: ghcr.io/lukegus/termix:latest
+    container_name: termix
+    restart: unless-stopped
+    ports:
+      - ${TERMIX_HTTP_PORT:-8080}:8080
+    volumes:
+      - ${TERMIX_DATA_DIR:-termix_data}:/app/data
+    environment:
+      PORT: 8080
