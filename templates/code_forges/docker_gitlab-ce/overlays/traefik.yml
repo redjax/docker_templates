@@ -2,7 +2,7 @@
 services:
 
   traefik:
-    image: traefik:v3.3.3
+    image: traefik:v${TRAEFIK_IMG_VER:-3.5.1}
     container_name: traefik
     restart: unless-stopped
     network_mode: host
@@ -27,8 +27,6 @@ services:
       - "${TRAEFIK_HTTPS_PORT:-443}:443"
 
   gitlab-server:
-    depends_on:
-      - traefik
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.gitlab.rule=Host(`${TRAEFIK_DOMAIN}`)"
