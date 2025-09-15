@@ -360,7 +360,7 @@
         ]
     },
     {
-        "count": 5,
+        "count": 4,
         "name": "code_forges",
         "path": "templates/code_forges",
         "sub_categories": [],
@@ -376,10 +376,6 @@
             {
                 "name": "docker_gitea",
                 "path": "templates/code_forges/docker_gitea"
-            },
-            {
-                "name": "docker_gitlab-ce",
-                "path": "templates/code_forges/docker_gitlab-ce"
             }
         ]
     },
