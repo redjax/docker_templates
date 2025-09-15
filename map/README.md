@@ -123,7 +123,6 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_forgejo](../templates/code_forges/docker_forgejo)
   - [docker_coder](../templates/code_forges/docker_coder)
   - [docker_gitea](../templates/code_forges/docker_gitea)
-  - [docker_gitlab-ce](../templates/code_forges/docker_gitlab-ce)
 - [backup](../templates/backup)
   - [kopia](../templates/backup/kopia)
   - [docker_gickup](../templates/backup/docker_gickup)
