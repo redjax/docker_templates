@@ -1,9 +1,14 @@
 name: Update repo map README
 
 on:
-  pull_request:
-    branches:
-      - main
+  # pull_request:
+  #   branches:
+  #     - main
+  ## Manual trigger
+  workflow_dispatch:
+  ## Scheduled trigger
+  schedule:
+    - cron: "0 0,12 * * *"
 
 permissions:
   contents: write
