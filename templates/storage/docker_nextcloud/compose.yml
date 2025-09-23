@@ -1,10 +1,33 @@
 ---
-# networks:
-#   unnamed_net: {}
+## Note:
+#  This compose file assumes you are also using one of the overalys in
+#  the overlays/ directory. For example:
+#    docker compose -f docker-compose.yml -f overlays/lan-only.yml up
+networks:
+  nextcloud_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  nextcloud_aio_mastercontainer: {}
+  nextcloud_data: {}
 
 services:
+  nextcloud-aio-mastercontainer:
+    image: ghcr.io/nextcloud-releases/all-in-one:latest
+    container_name: nextcloud-aio-mastercontainer
+    restart: unless-stopped
+    init: true
+    volumes:
+      - ${NEXTCLOUD_AIO_MASTERCONTAINER_DIR:-nextcloud_aio_mastercontainer}:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${NEXTCLOUD_DATA_DIR:-nextcloud_data}:/mnt/ncdata:Z
+      - ${NEXTCLOUD_MOUNT:-}:/mnt/host_mount:Z
+    environment:
+      - NEXTCLOUD_DATADIR=/mnt/ncdata
+      - NEXTCLOUD_UPLOAD_LIMIT=${NEXTCLOUD_UPLOAD_LIMIT:-16G}
+      - NEXTCLOUD_MAX_TIME=${NEXTCLOUD_MAX_TIME:-3600}
+      - NEXTCLOUD_MEMORY_LIMIT=${NEXTCLOUD_MEMORY_LIMIT:-512M}
+      - APACHE_PORT=${APACHE_PORT:-32323}
+      - APACHE_IP_BINDING=${APACHE_IP_BINDING:-127.0.0.1}
+    networks:
+      - nextcloud_net
 
-  ...
