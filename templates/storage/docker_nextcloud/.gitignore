@@ -1,0 +1,7 @@
+nextcloud/*
+
+!nextcloud/
+!nextcloud/data/
+!nextcloud/host_mount/
+!nextcloud/mastercontainer/
+!.gitkeep

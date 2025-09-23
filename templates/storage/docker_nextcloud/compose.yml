@@ -7,8 +7,10 @@ networks:
   nextcloud_net: {}
 
 volumes:
-  nextcloud_aio_mastercontainer: {}
-  nextcloud_data: {}
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer
+  nextcloud_data:
+    name: nextcloud_data
 
 services:
   nextcloud-aio-mastercontainer:
@@ -20,7 +22,7 @@ services:
       - ${NEXTCLOUD_AIO_MASTERCONTAINER_DIR:-nextcloud_aio_mastercontainer}:/mnt/docker-aio-config
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${NEXTCLOUD_DATA_DIR:-nextcloud_data}:/mnt/ncdata:Z
-      - ${NEXTCLOUD_MOUNT:-}:/mnt/host_mount:Z
+      - ${NEXTCLOUD_HOST_MOUNT:-./nextcloud/host_mount}:/mnt/host_mount:Z
     environment:
       - NEXTCLOUD_DATADIR=/mnt/ncdata
       - NEXTCLOUD_UPLOAD_LIMIT=${NEXTCLOUD_UPLOAD_LIMIT:-16G}
