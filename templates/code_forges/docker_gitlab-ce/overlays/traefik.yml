@@ -6,6 +6,8 @@ services:
     container_name: traefik
     restart: unless-stopped
     network_mode: host
+    depends_on:
+      - gitlab-server
     command:
       - "--configFile=/etc/traefik/traefik_config.yml"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
