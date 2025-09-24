@@ -1,0 +1,28 @@
+---
+networks:
+  nextcloud_net:
+    external: false
+
+services:
+  nextcloud-aio-collabora:
+    image: collabora/code
+    container_name: nextcloud-aio-collabora
+    restart: unless-stopped
+    environment:
+      - domain=${COLLABORA_NEXTCLOUD_DOMAIN_NAME}
+      - username=${COLLABORA_ADMIN_USER:-admin}
+      - password=${COLLABORA_ADMIN_PASSWORD:-collaboraAdmin}
+      - extra_params=--o:ssl.enable=false
+    cap_add:
+      - MKNOD
+    ports:
+      - ${COLLABORA_HTTP_PORT:-9980}:9980
+    networks:
+      - nextcloud_net
+
+  nextcloud-aio-mastercontainer:
+    environment:
+      - COLLABORA_URL=https://your.nextcloud.domain:9980
+      - COLLABORA_SECCOMP_DISABLED=true
+    networks:
+      - nextcloud_net
