@@ -1,0 +1,8 @@
+---
+services:
+  nextcloud-aio-mastercontainer:
+    environment:
+      - SKIP_DOMAIN_VALIDATION=true
+    ports:
+      - "${NEXTCLOUD_PORT_AIO_INTERFACE:-8080}:8080"
+      - ${NEXTCLOUD_APACHE_PORT:-11000}:11000

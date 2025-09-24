@@ -1,0 +1,12 @@
+---
+services:
+  nextcloud-aio-mastercontainer:
+    ports:
+      - "${NEXTCLOUD_PORT_HTTP:-80}:80"
+      - "${NEXTCLOUD_PORT_HTTPS:-8443}:8443"
+      - "${NEXTCLOUD_PORT_AIO_INTERFACE:-8080}:8080"
+      - "${NEXTCLOUD_APACHE_PORT:-11000}:11000"
+    environment:
+      - SKIP_DOMAIN_VALIDATION=false
+      - APACHE_PORT=11000
+      - APACHE_IP_BINDING=127.0.0.1
