@@ -7,7 +7,7 @@ services:
   temporal-ui:
     image: temporalio/ui:latest
     restart: unless-stopped
-    container_name: temporal_ui
+    container_name: temporal-ui
     depends_on:
       - temporal
     environment:
