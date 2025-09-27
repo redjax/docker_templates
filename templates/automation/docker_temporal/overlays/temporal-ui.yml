@@ -13,6 +13,8 @@ services:
     environment:
       TEMPORAL_ADDRESS: ${TEMPORAL_ADDRESS:-temporal:7233}
       TEMPORAL_GRPC_ENDPOINT: temporal:${TEMPORAL_GRPC_PORT:-7233}
+      TEMPORAL_UI_CORS_ALLOW_ORIGINS: ${TEMPORAL_CORS_ALLOW_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080}
+      TEMPORAL_CSRF_COOKIE_INSECURE: ${TEMPORAL_ALLOW_INSECURE:-false}
     ports:
       - "${TEMPORAL_UI_PORT:-8080}:8080"
     networks:
