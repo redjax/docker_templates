@@ -1,10 +1,24 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: temporal
 
-# volumes:
-#   volume_name: {}
+networks:
+  temporal_net:
+    driver: bridge
 
 services:
-
-  ...
+  temporal:
+    image: temporalio/auto-setup:latest
+    restart: unless-stopped
+    container_name: temporal-server
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_USER: ${TEMPORAL_DB_USER:-temporal}
+      POSTGRES_PWD: ${TEMPORAL_DB_PASSWORD:-temporal}
+      POSTGRES_SEEDS: ${TEMPORAL_DB_SEEDS:-temporal-postgres}
+      TEMPORAL_ADDRESS: ${TEMPORAL_ADDRESS:-temporal:7233}
+      TEMPORAL_CLI_ADDRESS: ${TEMPORAL_CLI_ADDRESS:-temporal:7233}
+    ports:
+      - "${TEMPORAL_GRPC_PORT:-7233}:7233"
+    networks:
+      - temporal_net
