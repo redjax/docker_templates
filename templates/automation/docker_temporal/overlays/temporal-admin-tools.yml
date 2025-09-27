@@ -1,0 +1,22 @@
+---
+networks:
+  temporal_net:
+    driver: bridge
+
+services:
+  temporal-admin-tools:
+    image: temporalio/admin-tools:${TEMPORAL_ADMINTOOLS_VERSION}
+    container_name: temporal-admin-tools
+    depends_on:
+      - temporal
+    stdin_open: true
+    tty: true
+    environment:
+      TEMPORAL_ADDRESS: ${TEMPORAL_ADDRESS:-temporal:7233}
+      TEMPORAL_CLI_ADDRESS: ${TEMPORAL_CLI_ADDRESS:-temporal:7233}
+    networks:
+      - temporal_net
+
+  temporal:
+    networks:
+      - temporal_net
