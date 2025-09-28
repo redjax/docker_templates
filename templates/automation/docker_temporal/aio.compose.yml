@@ -65,3 +65,16 @@ services:
       - "${TEMPORAL_UI_PORT:-8080}:8080"
     networks:
       - temporal_net
+
+  temporal-admin-tools:
+    image: temporalio/admin-tools:${TEMPORAL_ADMINTOOLS_VERSION:-latest}
+    container_name: temporal-admin-tools
+    depends_on:
+      - temporal
+    stdin_open: true
+    tty: true
+    environment:
+      TEMPORAL_ADDRESS: ${TEMPORAL_ADDRESS:-temporal:7233}
+      TEMPORAL_CLI_ADDRESS: ${TEMPORAL_CLI_ADDRESS:-temporal:7233}
+    networks:
+      - temporal_net
