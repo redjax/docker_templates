@@ -1,0 +1,15 @@
+---
+networks:
+  gitlab_net: {}
+
+redis-commander:
+  image: rediscommander/redis-commander:latest
+  container_name: redis-commander
+  hostname: redis-commander
+  restart: unless-stopped
+  environment:
+    - REDIS_HOSTS=local:redis:${REDIS_PORT:-6379}
+  ports:
+    - ${GITLAB_SERVER_REDIS_COMMANDER_PORT:-8081}:8081
+  networks:
+    - gitlab_net

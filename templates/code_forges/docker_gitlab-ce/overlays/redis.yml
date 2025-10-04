@@ -1,0 +1,36 @@
+---
+networks:
+  gitlab_net: {}
+
+volumes:
+  redis_data: {}
+
+services:
+  redis:
+    image: redis:latest
+    container_name: gitlab-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${GITLAB_SERVER_REDIS_PASSWORD}"]
+    volumes:
+      - ${GITLAB_SERVER_REDIS_DATA_DIR:-redis_data}:/data
+    expose:
+      - 6379
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    networks:
+      - gitlab_net
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
+
+  gitlab-server:
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        redis['enable'] = true
+        redis['host'] = 'redis'
+        redis['port'] = 6379
+        redis['password'] = '${GITLAB_SERVER_REDIS_PASSWORD:-redis}'
+
