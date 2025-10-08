@@ -1,0 +1,38 @@
+---
+volumes:
+  concourse_worker_data: {}
+
+services:
+
+  worker:
+    image: concourse/concourse
+    container_name: concourse-worker
+    command: worker
+    privileged: true
+    volumes:
+      - ${CONCOURSE_WORKER_KEYS_DIR:-./keys/worker}:/concourse-keys:ro
+      - ${CONCOURSE_WORKER_DATA_DIR:-concourse_worker_data}:/worker-state
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONCOURSE_CONTAINERD_ALLOW_HOST_ACCESS: true
+      CONCOURSE_TSA_HOST: ${CONCOURSE_WORKER_TSA_HOST:-localhost:2222}
+      CONCOURSE_TSA_PUBLIC_KEY: /concourse-keys/tsa_host_key.pub
+      CONCOURSE_TSA_WORKER_PRIVATE_KEY: /concourse-keys/worker_key
+      ## instead of relying on the default "detect"
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
+      CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
+      CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+      ## For ARM-based machine, change the Concourse runtime to "houdini"
+      CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+      CONCOURSE_GARDEN_DNS_SERVER: 1.1.1.1
+      CONCOURSE_GARDEN_DNS_PROXY_ENABLE: true
+      CONCOURSE_WORKER_GARDEN_DNS_PROXY_ENABLE: "true"
+      CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE: ${CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE:-true}
+      CONCOURSE_CONTAINERD_DNS_SERVER: ${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}
+    stop_signal: SIGUSR2
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f ${CONCOURSE_WORKER_HEALTHCHECK_URL:-http://concourse:8888} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

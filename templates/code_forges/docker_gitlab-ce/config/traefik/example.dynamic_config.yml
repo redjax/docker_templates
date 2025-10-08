@@ -1,0 +1,30 @@
+http:
+  routers:
+    gitlab-router:
+      rule: "Host(`gitlab.example.com`)"
+      entryPoints:
+        - websecure
+      service: gitlab-service
+      tls:
+        certResolver: letsencrypt
+
+    ## Uncomment if using the Gitlab Docker registry
+    # registry:
+    #   entryPoints:
+    #     - websecure
+    #   rule: "Host(`registry.example.com`)"
+    #   service: registry
+    #   tls:
+    #     certResolver: letsencrypt
+
+  services:
+    gitlab-service:
+      loadBalancer:
+        servers:
+          - url: "http://gitlab-server:80"
+
+    ## Uncomment if using the Gitlab Docker registry
+    # registry:
+    #   loadBalancer:
+    #     servers:
+    #       - url: "http://gitlab-server:5050"

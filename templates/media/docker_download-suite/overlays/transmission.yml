@@ -1,0 +1,30 @@
+---
+
+services:
+  transmission:
+    image: ghcr.io/linuxserver/transmission
+    container_name: transmission
+    network_mode: service:vpn
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+      - USER=${TRANSMISSION_USER:-transmission}
+      - PASS=${TRANSMISSION_PASSWORD:-transmission}
+      - TRANSMISSION_WEB_HOME=${TRANSMISSION_WEB_HOME:-/combustion-release/}
+      - WHITELIST=${TRANSMISSION_WHITELIST}
+      - HOST_WHITELIST=${TRANSMISSION_HOST_WHITELIST}
+    volumes:
+      - ${TRANSMISSION_CONF_DIR:-./apps/transmission/conf}:/config
+      - ${TRANSMISSION_DOWNLOAD_DIR:-./apps/transmission/downloads}:/downloads
+      - ${TRANSMISSION_WATCH_DIR:-./apps/transmission/watch}:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    ## Uncomment if using a vpn container
+    # depends_on:
+    #   - vpn
+    networks:
+        - media-net

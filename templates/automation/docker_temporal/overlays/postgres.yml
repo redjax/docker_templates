@@ -1,0 +1,31 @@
+---
+volumes:
+  postgres_data: {}
+
+services:
+  temporal-postgres:
+    image: postgres:15
+    restart: unless-stopped
+    container_name: temporal-postgres
+    environment:
+      POSTGRES_USER: ${TEMPORAL_DB_USER:-temporal}
+      POSTGRES_PASSWORD: ${TEMPORAL_DB_PASSWORD:-temporal}
+    volumes:
+      - ${TEMPORAL_DB_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
+    ports:
+      - "${TEMPORAL_DB_PORT:-5432}:5432"
+    networks:
+      - temporal_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TEMPORAL_DB_USER:-temporal}"]
+      interval: 5s
+      retries: 5
+
+  temporal:
+    depends_on:
+      temporal-postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_SEEDS: temporal-postgres
+    networks:
+      - temporal_net

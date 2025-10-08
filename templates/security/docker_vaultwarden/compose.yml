@@ -1,6 +1,7 @@
 ---
 volumes:
   vaultwarden_data: {}
+  lazywarden_config: {}
 
 services:
   vaultwarden:
@@ -23,7 +24,7 @@ services:
     restart: unless-stopped
     hostname: lazywarden
     env_file:
-      - .env
+      - lazywarden.env
     environment:
       UNLOCK_VAULT: "true"
     volumes:
