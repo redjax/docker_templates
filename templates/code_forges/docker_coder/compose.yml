@@ -47,8 +47,8 @@ services:
     # permissions on the docker socket.
     group_add:
       - "${DOCKER_GID:-999}" # docker group on host
-    # volumes:
-    #   - /var/run/docker.sock:/var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       database:
         condition: service_healthy
