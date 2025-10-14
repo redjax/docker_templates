@@ -1,10 +1,22 @@
 ---
-# networks:
-#   unnamed_net: {}
-
-# volumes:
-#   volume_name: {}
+networks:
+  default:
+    name: hoppscotch_net
 
 services:
-
-  ...
+  hoppscotch:
+    image: hoppscotch/hoppscotch:latest
+    container_name: hoppscotch-server
+    restart: unless-stopped
+    env_file: hoppscotch.env
+    environment:
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-hoppscotch}
+      DB_PASSWORD: ${DB_PASSWORD:-hoppscotch}
+      DB_NAME: ${DB_NAME:-hoppscotch}
+      NODE_ENV: production
+    ports:
+      - ${HOPPSCOTCH_WEBUI_PORT:-3000}:3000
+      - ${HOPPSCOTCH_API_PORT:-3170}:3170
+      - ${HOPPSCOTCH_ADMIN_PORT:-3100}:3100

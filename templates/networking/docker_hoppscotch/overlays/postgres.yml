@@ -1,0 +1,25 @@
+---
+networks:
+  default:
+    name: hoppscotch
+
+volumes:
+  db_data: {}
+
+services:
+  db:
+    image: postgres:${PG_IMG_VER:-15}
+    container_name: hoppscotch-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-hoppscotch}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-hoppscotch}
+      POSTGRES_DB: ${DB_NAME:-hoppscotch}
+    volumes:
+      - ${DB_DATA_DIR:-db_data}:/var/lib/postgresql/data
+    networks:
+      - default
+
+  hoppscotch:
+    depends_on:
+      - db
