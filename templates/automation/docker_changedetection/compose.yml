@@ -1,10 +1,23 @@
 ---
+name: changedetection
+
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  changedetection_data: {}
 
 services:
-
-  ...
+  changedetection:
+    image: dgtlmoon/changedetection.io
+    container_name: changedetection
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
+      BASE_URL: ${CHANGEDETECTION_BASE_URL}
+    volumes:
+      - ${CHANGEDETECTION_DATA_DIR:-changedetection_data}:/datadir
+    ports:
+      - ${CHANGEDETECTION_HTTP_PORT:-8080}:5000
