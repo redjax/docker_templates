@@ -1,10 +1,85 @@
 ---
-# networks:
-#   unnamed_net: {}
+networks:
+  default:
+    name: newsblur_net
+    driver: bridge
 
-# volumes:
-#   volume_name: {}
+volumes:
+  postgres_data: {}
+  mongo_data: {}
+  redis_data: {}
 
 services:
+  newsblur_web:
+    image: newsblur/newsblur_python3:latest
+    container_name: newsblur_web
+    restart: unless-stopped
+    depends_on:
+      - db_postgres
+      - db_mongo
+      - db_redis
+    environment:
+      - PYTHONUNBUFFERED=1
+      - NEWSBLUR_POSTGRES_USER=${DB_USER:-newsblur}
+      - NEWSBLUR_POSTGRES_PASSWORD=${DB_PASSWORD:-newsblur}
+      - NEWSBLUR_POSTGRES_DB=${DB_DATABASE:-newsblur}
+      - NEWSBLUR_POSTGRES_HOST=${NEWSBLUR_DB_HOST:-db_postgres}
+      - NEWSBLUR_MONGODB_HOST=${NEWSBLUR_MONGODB_HOST:-db_mongo}
+      - NEWSBLUR_REDIS_HOST=${NEWSBLUR_REDIS_HOST:-db_redis}
+      - DJANGO_SETTINGS_MODULE=newsblur_web.docker_local_settings
+    ports:
+      - ${NEWSBLUR_HTTP_PORT:-8000}:8000
+    # networks:
+    #   - default
 
-  ...
+  newsblur_node:
+    image: newsblur/newsblur_node:latest
+    container_name: newsblur_node
+    restart: unless-stopped
+    depends_on:
+      - db_postgres
+      - db_mongo
+      - db_redis
+    environment:
+      - NODE_ENV=docker
+    ports:
+      - ${NEWSBLUR_NODE_HTTP_PORT:-8008}:8008
+    # networks:
+    # - default
+
+  db_postgres:
+    image: postgres:13
+    container_name: db_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-newsblur}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-newsblur}
+      POSTGRES_DB: ${DB_DATABASE:-newsblur}
+    volumes:
+      - ${POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    # networks:
+    # - default
+
+  db_mongo:
+    image: mongo:4.4
+    container_name: db_mongo
+    restart: unless-stopped
+    volumes:
+      - ${MONGODB_DATA_DIR:-mongo_data}:/data/db
+    ports:
+      - ${MONGODB_PORT:-27017}:27017
+    # networks:
+    # - default
+
+  db_redis:
+    image: redis:6
+    container_name: db_redis
+    restart: unless-stopped
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    volumes:
+      - ${REDIS_DATA_DIR:-redis_data}:/data
+    # networks:
+    # - default
