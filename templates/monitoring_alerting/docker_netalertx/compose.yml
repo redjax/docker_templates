@@ -6,5 +6,15 @@
 #   volume_name: {}
 
 services:
-
-  ...
+  netalertx:
+    container_name: netalertx
+    image: "ghcr.io/jokob-sk/netalertx:latest"
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - ${NETALERTX_CONFIG_DIR:-./netalertx/config}:/app/config
+      - ${NETALERTX_DB_DIR:-./netalertx/db}:/app/db
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PORT: ${NETALERTX_PORT:-20211}
+      LOADED_PLUGINS: ${NETALERTX_PLUGINS}
