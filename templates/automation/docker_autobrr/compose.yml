@@ -2,9 +2,18 @@
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  autobrr_config: {}
 
 services:
-
-  ...
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-Etc/UTC}
+    user: ${PUID:-1000}:${PGID:-1000}
+    volumes:
+      - ${AUTOBRR_CONFIG_DIR:-autobrr_config}:/config
+    ports:
+      - ${AUTOBRR_PORT:-7474}:7474

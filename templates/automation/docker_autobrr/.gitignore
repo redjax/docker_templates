@@ -1,0 +1,8 @@
+autobrr/*
+autobrr/config/*
+
+!.gitkeep
+!autobrr/
+!autobrr/config/
+!autobrr/config/.gitkeep
+
