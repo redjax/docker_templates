@@ -11,7 +11,11 @@ services:
     image: ghcr.io/autobrr/autobrr:latest
     restart: unless-stopped
     environment:
-      - TZ=${TZ:-Etc/UTC}
+      TZ: ${TZ:-Etc/UTC}
+      AUTOBRR__HOST: ${AUTOBRR_HOST_ADDR:-0.0.0.0}
+      AUTOBRR__BASE_URL: ${AUTOBRR_BASE_URL:-/}
+      AUTOBRR__LOG_LEVEL: ${AUTOBRR_LOG_LEVEL:-INFO}
+      # AUTOBRR__SESSION_SECRET: ${AUTOBRR_SESSION_SECRET}
     user: ${PUID:-1000}:${PGID:-1000}
     volumes:
       - ${AUTOBRR_CONFIG_DIR:-autobrr_config}:/config
