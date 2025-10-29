@@ -1,10 +1,31 @@
 ---
-# networks:
-#   unnamed_net: {}
-
-# volumes:
-#   volume_name: {}
+volumes:
+  webtop_config: {}
 
 services:
+  webtop:
+    image: lscr.io/linuxserver/webtop:${WEBTOP_IMG_TAG:-latest}
+    container_name: ${WEBTOP_CONTAINER_NAME:-webtop}
+    restart: unless-stopped
+    privileged: ${WEBTOP_PRIVILEGED:-false}
+    security_opt:
+      - seccomp:unconfined
+    shm_size: ${WEBTOP_SHM_SIZE:-1gb}
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
 
-  ...
+      SUBFOLDER: ${WEBTOP_SUBFOLDER:-/}
+      KEYBOARD: ${WEBTOP_KEYBOARD:-en-us-qwerty}
+      TITLE: ${WEBTOP_PAGE_TITLE:-webtop}
+
+      CUSTOM_USER: ${WEBTOP_HTTP_USER:-abc}
+      PASSWORD: ${WEBTOP_HTTP_PASSWORD}
+    volumes:
+      - ${WEBTOP_CONFIG_DIR:-webtop_config}
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker:/var/lib/docker
+    ports:
+      - ${WEBTOP_HTTP_PORT:-3000}:3000
+      - ${WEBTOP_HTTPS_PORT:-3001}:3001
