@@ -1,12 +1,9 @@
 ---
-version: "3"
-
 networks:
   media-net:
     driver: bridge
 
 services:
-
   calibre:
     image: ghcr.io/linuxserver/calibre
     container_name: ${CALIBRE_NAME:-calibre}
@@ -23,6 +20,7 @@ services:
     ports:
       - ${CALIBRE_HTTP_PORT:-8080}:8080
       - ${CALIBRE_HTTPS_PORT:-8081}:8081
+      - ${CALIBRE_APP_PORT:-8181}:8181
     networks:
       - media-net
 
