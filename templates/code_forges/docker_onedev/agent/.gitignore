@@ -1,0 +1,4 @@
+## Ignore data dir names
+agent_data/
+onedev_agent/
+data/

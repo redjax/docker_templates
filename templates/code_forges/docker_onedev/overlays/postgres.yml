@@ -1,0 +1,21 @@
+---
+name: onedev
+
+volumes:
+  pg_data: {}
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${PG_DATABASE:-onedev}
+      POSTGRES_USER: ${PG_USER:-onedev}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-onedev}
+    volumes:
+      - ${PG_DATA_DIR:-pgdata}:/var/lib/postgresql/data
+
+  onedev:
+    environment:
+      ONEDEV_EXTERNAL_DATABASE_URL: ${ONEDEV_DB_URL:-jdbc:postgresql://postgres:5432/onedev}
+    depends_on:
+      - postgres
