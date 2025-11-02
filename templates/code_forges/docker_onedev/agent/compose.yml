@@ -1,0 +1,17 @@
+---
+volumes:
+  work_data: {}
+
+services:
+  onedev-agent:
+    image: 1dev/agent:latest
+    container_name: onedev-agent
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ONEDEV_AGENT_WORK_DIR:-work_data}:/agent/work
+    environment:
+      serverUrl: ${SERVER_URL}
+      agentToken: ${AGENT_TOKEN}
+      agentName: ${AGENT_NAME:-agent-docker}
+      agentLabels: ${AGENT_LABELS}
