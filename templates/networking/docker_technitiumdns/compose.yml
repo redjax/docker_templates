@@ -34,13 +34,17 @@ services:
       - type: bind
         source: ${TECHNITIUM_DATA_DIR:-technitium_data}
         target: /etc/dns
+      - type: bind
+        source: ./password.txt
+        target: /etc/password.txt
     environment:
       TZ: ${TZ:-Etc/UTC}
       DNS_SERVER_DOMAIN: ${TECHNITIUM_SERVER_DOMAIN:-example.com}
       
       ## You only need to set one of these in your .env
       DNS_SERVER_ADMIN_PASSWORD: ${TECHNITIUM_ADMIN_PASSWORD}
-      DNS_SERVER_ADMIN_PASSWORD_FILE: ${TECHNITIUM_ADMIN_PASSWORD_FILE}
+      # DNS_SERVER_ADMIN_PASSWORD_FILE: ${TECHNITIUM_ADMIN_PASSWORD_FILE}
+      DNS_SERVER_ADMIN_PASSWORD_FILE: /etc/password.txt
       
       DNS_SERVER_PREFER_IPV6: ${TECHNITIUM_PREFER_IPV6:-false}
       # DNS_SERVER_WEB_SERVICE_HTTP_PORT: 5380
