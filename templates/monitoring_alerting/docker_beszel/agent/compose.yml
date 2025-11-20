@@ -1,0 +1,20 @@
+---
+volumes:
+  beszel_agent_data: {}
+
+services:
+  beszel-agent:
+    image: henrygd/beszel-agent
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${AGENT_DATA_DIR:-beszel_agent_data}:/var/lib/beszel-agent
+      # monitor other disks / partitions by mounting a folder in /extra-filesystems
+      # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
+    environment:
+      LISTEN: 45876
+      KEY: "${AGENT_SSH_KEY}"
+      TOKEN: ${AGENT_API_TOKEN}
+      HUB_URL: ${BESZEL_SERVER_URL:-http://beszel.example.com}
