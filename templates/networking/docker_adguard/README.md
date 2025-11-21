@@ -34,7 +34,8 @@ docker compose -f compose.yml -f overlays/unbound.yml up -d
 This will handle creating an internal network for AdGuard Home, Unbound DNS, and a Redis cache for Unbound to use. Once all the containers are online, log into AdGuard and go to Settings -> DNS Settings. Add this to the DNS upstream text box:
 
 ```
-127.0.0.1:5335
+## This should match the unbound container's IP in the networks: declaration of the overlays/unbound.yml
+172.25.0.10:53:5335
 ```
 
 [!NOTE]
@@ -113,3 +114,5 @@ DNSStubListener=no
 - [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/)
 - [Github: klutchell/unbound-docker](https://github.com/klutchell/unbound-docker)
 - [Blog: How to run AdGuard Home with Unbound (Docker)](https://deliberate.world/posts/docker-how-to-run-adguard-home-with-unbound/)
+- [Dev.to: How to use Unbound with AdGuard Home](https://dev.to/nullangst/how-to-use-unbound-with-adguard-home-1o5n)
+- 
