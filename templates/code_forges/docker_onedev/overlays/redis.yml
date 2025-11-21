@@ -1,0 +1,20 @@
+---
+name: onedev
+
+volumes:
+  redis_data: {}
+
+services:
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning"]
+    volumes:
+      - ${REDIS_DATA_DIR:-redis_data}:/data
+
+  onedev:
+    environment:
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
