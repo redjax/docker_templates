@@ -29,6 +29,9 @@ services:
       - DOZZLE_HOSTNAME=${DOZZLE_HOSTNAME:-dozzle}
       # Disable analytics for privacy if desired
       - DOZZLE_NO_ANALYTICS=${DOZZLE_NO_ANALYTICS:-true}
+      ## Comma-separated list of remote hosts running Dozzle in agent mode.
+      #  i.e., DOZZLE_REMOTE_AGENT=agent1-ip:7007,agent2-ip:7007
+      - DOZZLE_REMOTE_AGENT=${DOZZLE_REMOTE_AGENT_STRING}
     healthcheck:
       test: ["CMD", "/dozzle", "healthcheck"]
       interval: 30s
