@@ -12,6 +12,8 @@
 - Bring the container up with `docker compose up -d`.
 - Connect to it with `ssh -i /path/to/id_ed25519 localhost -p 23231` (or whatever private key you created).
 
+You can optionally run the [`initial-setup.sh` script](./scripts/initial-setup.sh) to copy all the .env and config files, which you will then need to edit manually.
+
 ### SSH Setup
 
 Generate an SSH key to use with soft-serve:
