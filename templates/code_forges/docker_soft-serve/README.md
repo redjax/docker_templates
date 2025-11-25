@@ -6,6 +6,8 @@
 
 - Copy the [example .env file](./.env.example) to `.env`.
   - Optionally edit any values you want to change.
+- Copy the [example `soft-serve.yml` server config file](./config/examples/soft-serve.yml) to `./config/soft-serve.yml`.
+  - Optionally, edit any of the server configuration in this file.
 - Do the [SSH setup](#ssh-setup), or if you already have a key, paste the contents of the public key in the `.env` file's `SOFTSERVE_INITIAL_ADMIN_KEYS=` variable.
 - Bring the container up with `docker compose up -d`.
 - Connect to it with `ssh -i /path/to/id_ed25519 localhost -p 23231` (or whatever private key you created).
