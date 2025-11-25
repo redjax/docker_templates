@@ -4,6 +4,12 @@
 
 ## Setup
 
+- Copy the [example .env file](./.env.example) to `.env`.
+  - Optionally edit any values you want to change.
+- Do the [SSH setup](#ssh-setup), or if you already have a key, paste the contents of the public key in the `.env` file's `SOFTSERVE_INITIAL_ADMIN_KEYS=` variable.
+- Bring the container up with `docker compose up -d`.
+- Connect to it with `ssh -i /path/to/id_ed25519 localhost -p 23231` (or whatever private key you created).
+
 ### SSH Setup
 
 Generate an SSH key to use with soft-serve:
@@ -31,3 +37,19 @@ ssh soft repo create
 ```
 
 ## Usage
+
+### Cheat Sheet
+
+| Command                                                                                            | Description                                           |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `ssh <your softserve ip/port/hostname>`                                                            | Connect to soft-serve server.                         |
+| `ssh <your softserve ip/port/hostname> repo create <repository-name>`                              | Create a new repository in soft-serve.                |
+| `ssh <your softserve ip/port/hostname> repo tree <repository-name>`                                | Print the directory tree for a repository.            |
+| `ssh <your softserve ip/port/hostname> repo blob <repository-name> path/in/repo/to/file.ext`       | Print the contents of a specific file.                |
+| `ssh <your softserve ip/port/hostname> repo blob <repository-name> path/in/repo/to/file.ext -c -l` | Print a file with syntax highlighting & line numbers. |
+
+[If you have installed the `soft` CLI](https://github.com/charmbracelet/soft-serve#installation), you can also run most of these commands locally against local git repositories. For example, to browse a local repository:
+
+```shell
+soft browse /path/to/git/repo
+```
