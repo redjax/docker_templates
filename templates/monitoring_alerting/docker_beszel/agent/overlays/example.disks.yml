@@ -1,0 +1,9 @@
+---
+## This overlay adds additional host disk mounts for monitoring in Beszel.
+#  Use like: docker compose -f compose.yml -f overlays/disks.yml up -d
+services:
+  beszel-agent:
+    volumes:
+      # monitor other disks / partitions by mounting a folder in /extra-filesystems
+      - /mnt/extra_data_drive:/extra-filesystems/sda1:ro
+      - /mnt/evo_ssd:/extra-filesystems/sda2:ro

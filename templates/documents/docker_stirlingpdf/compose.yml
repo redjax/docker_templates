@@ -1,0 +1,35 @@
+---
+# networks:
+#   unnamed_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+  stirling-pdf:
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    ports:
+      - "${STIRLING_WEBUI_PORT:-8080}:8080"
+    volumes:
+      ## Required for extra OCR languages
+      - ${STIRLING_TRAINING_DIR:-./StirlingPDF/trainingData}:/usr/share/tessdata
+      - ${STIRLING_EXTRA_CONFIGS_DIR:-./StirlingPDF/extraConfigs}:/configs
+      - ${STIRLING_CUSTOM_FILES_DIR:-./StirlingPDF/customFiles}:/customFiles/
+      - ${STIRLING_LOGS_DIR:-./StirlingPDF/logs}:/logs/
+      - ${STIRLING_PIPELINE_DIR:-./StirlingPDF/pipeline}:/pipeline/
+    environment:
+      DISABLE_ADDITIONAL_FEATURES: ${STIRLING_DISABLE_EXTRA_FEATURE:-false}
+      LANGS: en_US
+      SYSTEM_ENABLEANALYTICS: false
+
+      UI_APPNAME: ${STIRLING_UI_APPNAME:-Stirling PDF}
+      UI_HOMEDESCRIPTION: ${STERLING_HOME_DESCRIPTION:-Your locally hosted one-stop-shop for all your PDF needs.}
+      UI_APPNAVBARNAME: ${STERLING_NAVBAR_NAME:-Stirling PDF}
+
+      SECURITY_ENABLELOGIN: ${STIRLING_ENABLE_LOGIN:-false}
+      SECURITY_INITIALLOGIN_USERNAME: ${STIRLING_ADMIN_USERNAME:-admin}
+      SECURITY_INITIALLOGIN_PASSWORD: ${STIRLING_ADMIN_PASSWORD:-stirling}
+
+      SYSTEM_SHOWUPDATE: ${STIRLING_SHOW_UPDATE_NOTIFICATION:-false}
+      SYSTEM_SHOWUPDATEONLYADMIN: ${STIRLING_SHOW_UPDATE_NOTIFICATION_ADMIN_ONLY:-false}
+      SYSTEM_CUSTOMHTMLFILES: ${STIRLING_USE_CUSTOM_HMTL_FILES:-true}
