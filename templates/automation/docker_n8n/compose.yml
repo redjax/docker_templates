@@ -1,10 +1,11 @@
 ---
+name: n8n
+
 volumes:
   n8n_conf:
   n8n_files:
 
 services:
-
   n8n:
     image: n8nio/n8n
     container_name: n8n
@@ -15,16 +16,18 @@ services:
       - ${N8N_DATA_DIR:-n8n_conf}:/home/node/.n8n
       - ${N8N_WORKFLOW_FILES_DIR:-n8n_files}:/files
     environment:
-      - TZ=${TZ:-America/New_York}
-      - GENERIC_TIMEZONE=${TZ:-America/New_York}
-      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH:-true}
-      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-n8n}
-      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-n8nadmin}
+      TZ: ${TZ:-America/New_York}
+      GENERIC_TIMEZONE: ${TZ:-America/New_York}
+      N8N_BASIC_AUTH_ACTIVE: ${N8N_BASIC_AUTH:-true}
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-n8n}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8nadmin}
+      N8N_SECURE_COOKIE: ${N8N_USE_SECURE_COOKIE:-true}
       # If accessing outside the local network, uncomment below
-      - N8N_HOST=${N8N_HOST}
-      - N8N_PORT=${N8N_PORT:-5678}
-      - N8N_PROTOCOL=${N8N_PROTOCOL:-https}
-      - N8N_NODE_ENV=${N8N_NODE_ENV:-production}
-      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-baglabtbaOgnfabKAHHnanllboabtrjp;}
-      - WEBHOOK_URL=${N8N_WEBHOOK_URL}
-      - N8N_SMTP_SSL=${N8N_SMTP_SSL:-false}
+      N8N_HOST: ${N8N_HOST}
+      N8N_PORT: ${N8N_PORT:-5678}
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-https}
+      N8N_NODE_ENV: ${N8N_NODE_ENV:-production}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-baglabtbaOgnfabKAHHnanllboabtrjp;}
+      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL}
+      N8N_SMTP_SSL: ${N8N_SMTP_SSL:-false}
+      N8N_RUNNERS_ENABLED: true
