@@ -1,0 +1,27 @@
+---
+name: "snipeit"
+
+volumes:
+  snipeit_data: {}
+  snipeit_backups: {}
+
+services:
+  snipeit:
+    image: snipe/snipe-it:latest
+    container_name: snipeit
+    restart: unless-stopped
+    ports:
+      - ${SNIPEIT_HTTP_PORT:-8000}:80
+    volumes:
+      - ${SNIPEIT_STORAGE_DIR:-snipeit_data}:/var/lib/snipeit
+      - ${SNIPEIT_BACKUPS_DIR:-snipeit_backups}:/var/lib/snipeit/backups
+    environment:
+      APP_URL: ${SNIPEIT_URL:-http://localhost:8000}
+      DB_HOST: mariadb
+      DB_DATABASE: ${MYSQL_DATABASE:-snipeit}
+      DB_USERNAME: ${MYSQL_USER:-snipeit}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-snipeit}
+      REDIS_HOST: redis
+      ## Generate SNIPEIT_KEY with:
+      #  docker run --rm grokability/snipe-it php artisan key:generate --show
+      APP_KEY: ${SNIPEIT_KEY}

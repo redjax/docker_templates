@@ -1,0 +1,40 @@
+---
+name: "snipeit"
+
+volumes:
+  db_data: {}
+
+services:
+  mariadb:
+    image: mariadb:${MYSQL_CONTAINER_IMG_VER:-11.4}
+    container_name: snipeit-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-snipeitAdmin!}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-snipeit}
+      MYSQL_USER: ${MYSQL_USER:-snipeit}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-snipeit}
+    volumes:
+      - ${MYSQL_DATA_DIR:-db_data}:/var/lib/mysql
+    ports:
+      - ${MYSQL_PORT:-3306}:3306
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mariadb-admin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${MYSQL_USER:-snipeit}",
+          "-p${MYSQL_PASSWORD:-snipeit}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  snipeit:
+    depends_on:
+      mariadb:
+        condition: service_healthy
