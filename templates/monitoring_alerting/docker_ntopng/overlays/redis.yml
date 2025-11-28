@@ -1,0 +1,17 @@
+---
+name: ntopng
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    network_mode: "host"
+    command: ["redis-server", "--port", "${REDIS_PORT:-6379}"]
+    environment:
+      REDIS_PORT: ${REDIS_PORT:-6379}
+
+  ntopng:
+    environment:
+      REDIS_HOST: ${REDIS_HOST:-127.0.0.1}
+      REDIS_PORT: ${REDIS_PORT:-6379}

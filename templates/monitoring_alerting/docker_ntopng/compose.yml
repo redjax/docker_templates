@@ -1,0 +1,31 @@
+---
+name: ntopng
+
+volumes:
+  ntopng_data:
+  ntop_config:
+
+services:
+  ntopng:
+    image: ntop/ntopng:latest
+    container_name: ntopng
+    restart: unless-stopped
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    ## Use host networking so ntopng can see all interfaces on the host
+    network_mode: "host"
+    entrypoint: ["/usr/local/bin/ntopng-entrypoint.sh"]
+    volumes:
+      - ${NTOPNG_ENTRYPOINT_SCRIPT:-./scripts/ntopng/entrypoint.sh}:/usr/local/bin/ntopng-entrypoint.sh
+      - ${NTOPNG_DATA_DIR:-ntopng_data}:/var/lib/ntopng
+      - ${NTOPNG_CONFIG_DIR:-ntop_config}:/etc/ntopng
+      ## If you have a license file, map it here (optional — community mode should still work):
+      #   - /${NTOPNG_LICENSE_FILE:-ntopng.license}:/etc/ntopng.license:ro
+    environment:
+      NTOPNG_INTERFACES: ${NTOPNG_INTERFACES:-eth0}
+      NTOPNG_WEB_PORT: ${NTOPNG_WEB_PORT:-3000}
+      NTOPNG_ADMIN_PASSWORD: ${NTOPNG_ADMIN_PASSWORD:-admin}
+      TZ: ${TZ:-Etc/UTC}
+      ## Uncomment if using a license file
+      # NTOPNG_LICENSE_FILE: /etc/ntopng.license
