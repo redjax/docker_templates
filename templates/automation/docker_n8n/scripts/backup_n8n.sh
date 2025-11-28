@@ -19,7 +19,7 @@ function usage() {
     echo ""
 }
 
-while [[ $## -gt 0 ]]; do
+while [[ $# -gt 0 ]]; do
   case $1 in
     -o|--output-dir)
       if [[ -z "$2" ]]; then
@@ -77,3 +77,4 @@ docker run --rm \
     bash -c "tar czf /backup/n8n_files.tar.gz -C /files ."
 
 echo "Backup complete: $backup_dir" [attached_file:1]
+
