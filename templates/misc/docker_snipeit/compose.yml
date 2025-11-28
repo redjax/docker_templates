@@ -1,10 +1,80 @@
 ---
+name: "snipeit"
+
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  db_data: {}
+  redis_data: {}
+  snipeit_data: {}
+  snipeit_backups: {}
 
 services:
+  mariadb:
+    image: mariadb:${MYSQL_CONTAINER_IMG_VER:-11.4}
+    container_name: snipeit-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-snipeitAdmin!}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-snipeit}
+      MYSQL_USER: ${MYSQL_USER:-snipeit}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-snipeit}
+    volumes:
+      - ${MYSQL_DATA_DIR:-db_data}:/var/lib/mysql
+    ports:
+      - ${MYSQL_PORT:-3306}:3306
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mariadb-admin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${MYSQL_USER:-snipeit}",
+          "-p${MYSQL_PASSWORD:-snipeit}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  ...
+  redis:
+    image: redis:alpine
+    container_name: snipeit-redis
+    restart: unless-stopped
+    volumes:
+      - ${REDIS_DATA_DIR:-redis_data}:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  snipeit:
+    image: snipe/snipe-it:latest
+    container_name: snipeit
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - ${SNIPEIT_HTTP_PORT:-8000}:80
+    volumes:
+      - ${SNIPEIT_STORAGE_DIR:-snipeit_data}:/var/lib/snipeit
+      - ${SNIPEIT_BACKUPS_DIR:-snipeit_backups}:/var/lib/snipeit/backups
+    environment:
+      APP_URL: ${SNIPEIT_URL:-http://localhost:8000}
+      DB_HOST: mariadb
+      DB_DATABASE: ${MYSQL_DATABASE:-snipeit}
+      DB_USERNAME: ${MYSQL_USER:-snipeit}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-snipeit}
+      REDIS_HOST: redis
+      ## Generate SNIPEIT_KEY with:
+      #  docker run --rm grokability/snipe-it php artisan key:generate --show
+      APP_KEY: ${SNIPEIT_KEY}
