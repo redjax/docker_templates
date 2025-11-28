@@ -3,7 +3,7 @@ name: n8n
 
 volumes:
   n8n_conf:
-  n8n_files:
+  # n8n_files:
 
 services:
   n8n:
@@ -14,10 +14,10 @@ services:
       - ${N8N_PORT:-5678}:5678
     volumes:
       - ${N8N_DATA_DIR:-n8n_conf}:/home/node/.n8n
-      - ${N8N_WORKFLOW_FILES_DIR:-n8n_files}:/files
+      - ${N8N_HOST_FILES_DIR:-./files}:/files
     environment:
-      TZ: ${TZ:-America/New_York}
-      GENERIC_TIMEZONE: ${TZ:-America/New_York}
+      TZ: ${TZ:-Etc/UTC}
+      GENERIC_TIMEZONE: ${TZ:-Etc/UTC}
       N8N_BASIC_AUTH_ACTIVE: ${N8N_BASIC_AUTH:-true}
       N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-n8n}
       N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8nadmin}
