@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	path "local/docker-templates/internal/utils/path"
+
 	"github.com/knadh/koanf/parsers/json"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
@@ -18,6 +20,8 @@ import (
 
 var K = koanf.New(".")
 var Cfg *Config
+
+var DefaultRepoRoot = path.GetCwd()
 
 // type DBConfig struct {
 // 	Driver   string `koanf:"driver"`
@@ -31,6 +35,8 @@ var Cfg *Config
 type Config struct {
 	ConfigFile string `koanf:"config_file"`
 	LogLevel   string `koanf:"log_level"`
+
+	RepoPath string `koanf:"local_repo"`
 
 	Github struct {
 		PAT string `koanf:"pat"`
@@ -49,6 +55,7 @@ func DefaultConfig(configFile string) *Config {
 	return &Config{
 		ConfigFile: configFile,
 		LogLevel:   "info",
+		RepoPath:   DefaultRepoRoot,
 		// DB: DBConfig{
 		// 	Driver:   "sqlite",
 		// 	Host:     "",
