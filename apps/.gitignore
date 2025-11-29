@@ -1,0 +1,6 @@
+dist/*
+
+config/*
+
+!*example*.*
+!*.*example*
