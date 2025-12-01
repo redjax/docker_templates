@@ -26,6 +26,7 @@ files/param/*
 files/params/*
 files/env/*
 files/ssh/*
+files/persist/*
 
 !*example*.*
 !*.*example*
