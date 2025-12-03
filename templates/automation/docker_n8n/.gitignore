@@ -28,6 +28,8 @@ files/env/*
 files/ssh/*
 files/persist/*
 
+ntfy/*
+
 !*example*.*
 !*.*example*
 
