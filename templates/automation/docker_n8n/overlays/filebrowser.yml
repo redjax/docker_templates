@@ -1,0 +1,22 @@
+---
+name: n8n
+
+volumes:
+  filebrowser_db: {}
+
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    restart: unless-stopped
+    ports:
+      - ${N8N_FILEBROWSER_WEBUI_PORT:-8081}:80
+    volumes:
+      ## Uses the same files directory as the n8n container
+      - ${N8N_HOST_FILES_DIR:-./files}:/srv
+      - ${FILEBROWSER_DB_DIR:-filebrowser_db}:/database
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - FB_DATABASE=/database/database.db
