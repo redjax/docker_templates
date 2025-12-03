@@ -39,6 +39,7 @@ Quickstart steps for running a local/LAN only instance of n8n with no bells & wh
 - Run `docker compose pull && docker compose up -d`
 - Access the `n8n` webUI at `http://192.168.1.xxx:5678` (or whatever port you set)
   - Login to the admin account (default: `n8n`/`n8nadmin`)
+- If you want to start any [overlays](#overlays), i.e. a [filebrowser container](./overlays/filebrowser.yml), run `docker compose -f compose.yml -f overlays/<overlay-name>.yml up -d`.
 
 ### LAN Setup
 
