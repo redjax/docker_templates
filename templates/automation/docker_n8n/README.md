@@ -10,6 +10,7 @@
   - [Proxied Setup](#proxied-setup)
 - [Overlays](#overlays)
   - [Traefik](#traefik)
+  - [Filebrowser](#filebrowser)
   - [NocoDB](#nocodb)
     - [Test Connectivity](#test-connectivity)
 
@@ -53,6 +54,28 @@ You can run `n8n` on its own with just `docker compose up -d`, but there are a n
 ### Traefik
 
 *[traefik overlay](./overlays/traefik.yml)*
+
+### Filebrowser
+
+*[filebrowser overlay](./overlays/filebrowser.yml)
+
+Starts a [`filebrowser`](https://github.com/filebrowser/filebrowser) container that mounts the `n8n` container's `/files` path to serve them via a webUI. This allows for convenient editing of param/variable files, downloading files output by `n8n` and saved somewhere in `/files`, etc.
+
+> [!WARNING]
+> It is not recommended to serve this container over the Internet, if you are doing that with `n8n`. If you want to do that, you should set it up behind a reverse proxy like [Pangolin](https://github.com/fosrl/pangolin) and protect it with SSO.
+> Otherwise, just serve this container on your LAN or behind an internal VPN.
+
+Run `docker compose -f compose -f overlays/filebrowser.yml up -d` to start the `filebrowser` container.
+
+Get the `filebrowser` admin password by running the [filebrowser/`get_login.sh` script](./scripts/filebrowser/get_login.sh) to search the container's logs for the admin password line and print it to the console.
+
+You can also just run this:
+
+```shell
+docker logs filebrowser 2>&1 | grep -i "password\|admin" | grep -v "grep"
+```
+
+Navigate to `http://192.168.1.xxx:8081`; if you set `FILEBROWSER_WEBUI_PORT` to something other than `8081`, use that instead of `:8081`. Login with `admin/<password>`, where `<password>` is the output from the command above.
 
 ### NocoDB
 
