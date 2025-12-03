@@ -64,6 +64,9 @@ The overlay includes a Postgres database for the NocoDB backend. To use it with 
 
 For the NocoDB URL, you can use the container's hostname, i.e. `http://nocodb:8080`.
 
+> [!TIP]
+> To simplify some of the setup, there is a [`first_run.sh` script](./scripts/nocodb/first_run.sh) that helps to get up and running by generating passwords and optionally creating the host volume mount ahead of time (to avoid permission errors).
+
 #### Test Connectivity
 
 After creating a credential in `n8n` for NocoDB, paste this into a new workflow (replace `"NocoDB Token account"` with the name you gave the credentials in `n8n`):
