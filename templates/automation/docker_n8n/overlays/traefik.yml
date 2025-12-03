@@ -1,0 +1,33 @@
+---
+name: n8n
+
+networks:
+  n8n_net: {}
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: n8n-traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true" # Disable in prod
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - ${TRAEFIK_HTTP_PORT:-80}:80
+      - ${TRAEFIK_DASHBOARD_PORT:-8080}:8080
+    volumes:
+      - ${TRAEFIK_CONFIG_FILE:-./config/traefik/traefik.yml}:/etc/traefik/traefik.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - n8n_net
+
+  n8n:
+    networks:
+      - n8n_net
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.n8n.rule: "Host(`${N8N_DOMAIN_NAME}`)"
+      traefik.http.routers.n8n.entrypoints: "web"
+      traefik.http.services.n8n.loadbalancer.server.port: "5678"
