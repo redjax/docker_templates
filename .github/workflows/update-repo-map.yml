@@ -10,6 +10,10 @@ on:
   schedule:
     - cron: "0 0,12 * * *"
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-repo-map:
     name: Update repo map and create PR if needed
@@ -59,22 +63,21 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Update template metadata from GitHub Actions"
-          title: "Update template metadata and README"
+          commit-message: "Update repo map README and metadata"
+          title: "Update repo map README and categories"
           body: |
-            Automated updates to template metadata and README:
-            - `./metadata/templates_count`
+            Automated updates to repo map:
+            - `./map/README.md`
+            - `./metadata/categories.json`
             - `./metadata/templates.json`
-            - `./metadata/templates.csv`
-            - `./README.md`
+
             Triggered by: ${{ github.event_name }}
-          branch: update-templates-${{ github.run_number }}-${{ github.run_id }}
+          branch: update-repo-map-${{ github.run_number }}-${{ github.run_id }}
           base: main
           add-paths: |
-            ./metadata/templates_count
+            ./map/README.md
+            ./metadata/categories.json
             ./metadata/templates.json
-            ./metadata/templates.csv
-            ./README.md
           labels: automated,documentation
           assignees: redjax
 
@@ -84,19 +87,24 @@ jobs:
     needs: update-repo-map
     if: needs.update-repo-map.outputs.pr_number != ''
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
 
       - name: Auto-merge PR
         env:
-          GH_TOKEN: ${{ secrets.GH_READWRITE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr merge ${{ needs.update-repo-map.outputs.pr_number }} --auto --squash
 
       - name: Check if PR merged
         id: pr-status
         env:
-          GH_TOKEN: ${{ secrets.GH_READWRITE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           state=$(gh pr view ${{ needs.update-repo-map.outputs.pr_number }} --json state -q '.state')
           if [ "$state" = "MERGED" ]; then
@@ -108,7 +116,7 @@ jobs:
       - name: Delete branch if PR merged successfully
         if: steps.pr-status.outputs.merged == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GH_READWRITE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Deleting branch update-repo-map-${{ github.run_number }}-${{ github.run_id }} because PR was merged"
           gh api -X DELETE repos/$GITHUB_REPOSITORY/git/refs/heads/update-repo-map-${{ github.run_number }}-${{ github.run_id }} || true

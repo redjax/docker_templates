@@ -90,6 +90,11 @@ jobs:
     needs: count-templates
     if: needs.count-templates.outputs.pr_number != ''
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - name: Install GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
 
@@ -116,5 +121,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Deleting branch update-templates-${{ github.run_number }}-${{ github.run_id }} because PR was merged"
-          gh api -X DELETE repos/$GITHUB_REPOSITORY/git/refs/heads/update-templates-${{ github.run_number }}-${{ github.run_id }} || true
+          echo "Deleting PR branch because merged successfully"
+          gh api -X DELETE repos/$GITHUB_REPOSITORY/git/refs/heads/${{ needs.count-templates.result.pr_branch }} || true  # ← Use PR branch name
