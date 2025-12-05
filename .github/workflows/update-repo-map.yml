@@ -12,18 +12,19 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   count-templates:
-    if: ${{ ! startsWith(github.head_ref, 'fix/') && ! startsWith(github.head_ref, 'hotfix/') }}
+    # if: ${{ ! startsWith(github.head_ref, 'fix/') && ! startsWith(github.head_ref, 'hotfix/') }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ## Checkout the incoming PR branch
-          ref: ${{ github.event.pull_request.head.ref }}
+          # ## Checkout the incoming PR branch
+          # ref: ${{ github.event.pull_request.head.ref }}
           persist-credentials: true
           ## Fetch all history for diffing
           fetch-depth: 0
@@ -47,16 +48,29 @@ jobs:
           uv run scripts/update_repo_map.py --save-json --log-level debug
 
       - name: Check for changes
+        id: changes
         run: |
           if [[ -n "$(git status --porcelain ./map/README.md ./metadata/categories.json ./metadata/templates.json)" ]]; then
-            echo "changes=true" >> $GITHUB_ENV
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push changes
-        if: env.changes == 'true'
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add ./map/README.md ./metadata/categories.json ./metadata/templates.json
-          git commit -m "Update template metadata from GitHub Actions"
-          git push
+      - name: Create Pull Request
+        if: steps.changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update repo map README and metadata"
+          title: "Update repo map README and categories"
+          body: |
+            Automated updates to repo map:
+            - `./map/README.md`
+            - `./metadata/categories.json`
+            - `./metadata/templates.json`
+
+            Triggered by: ${{ github.event_name }}
+          branch: update-repo-map-${{ github.run_number }}-${{ github.run_id }}
+          delete-branch: true
+          labels: automated,documentation
+          assignees: redjax
