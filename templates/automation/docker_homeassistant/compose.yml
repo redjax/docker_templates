@@ -1,0 +1,21 @@
+---
+name: homeassistant
+
+volumes:
+  hass_config: {}
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      TZ: ${TZ:-America/New_York}
+    volumes:
+      - ${HA_CONF_DIR:-hass_config}:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    # ports:
+    #   - ${HA_HTTP_PORT:-8123}:8123

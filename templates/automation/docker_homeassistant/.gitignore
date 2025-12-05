@@ -1,0 +1,10 @@
+logs/
+*.log
+*.log.*
+
+data/*
+config/homeassistant/*
+
+!config/
+!config/homeassistant/
+!.gitkeep

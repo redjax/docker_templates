@@ -1,0 +1,19 @@
+---
+name: homeassistant
+
+volumes:
+  hass_config: {}
+
+services:
+  hass-configurator:
+    ## Allows editing HomeAssistant's config from the browser
+    image: "causticlab/hass-configurator-docker:latest"
+    container_name: homeassistant-configurator
+    restart: unless-stopped
+    ports:
+      - "${HA_CONFIGURATOR_WEB_PORT:-3218}:3218/tcp"
+    environment:
+      TZ: ${TZ:-America/New_York}
+    volumes:
+      - "${HA_CONFIGURATOR_CONFIG_DIR:-./config/homeassistant-configurator}:/config"
+      - "${HA_CONF_DIR:-hass_config}:/hass-config"
