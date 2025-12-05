@@ -11,6 +11,10 @@ on:
   schedule:
     - cron: "0 0,12 * * *"
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   count-templates:
     name: Count templates and create PR if needed
@@ -59,7 +63,7 @@ jobs:
         if: steps.changes.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GH_READWRITE_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Update template metadata from GitHub Actions"
           title: "Update template metadata and README"
           body: |
@@ -91,14 +95,14 @@ jobs:
 
       - name: Auto-merge PR
         env:
-          GH_TOKEN: ${{ secrets.GH_READWRITE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr merge ${{ needs.count-templates.outputs.pr_number }} --auto --squash
 
       - name: Check if PR merged
         id: pr-status
         env:
-          GH_TOKEN: ${{ secrets.GH_READWRITE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           state=$(gh pr view ${{ needs.count-templates.outputs.pr_number }} --json state -q '.state')
           if [ "$state" = "MERGED" ]; then
@@ -110,7 +114,7 @@ jobs:
       - name: Delete branch if PR merged successfully
         if: steps.pr-status.outputs.merged == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GH_READWRITE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Deleting branch update-templates-${{ github.run_number }}-${{ github.run_id }} because PR was merged"
           gh api -X DELETE repos/$GITHUB_REPOSITORY/git/refs/heads/update-templates-${{ github.run_number }}-${{ github.run_id }} || true

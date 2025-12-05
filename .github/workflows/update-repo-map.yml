@@ -58,22 +58,23 @@ jobs:
         if: steps.changes.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GH_READWRITE_PAT }}
-          commit-message: "Update repo map README and metadata"
-          title: "Update repo map README and categories"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update template metadata from GitHub Actions"
+          title: "Update template metadata and README"
           body: |
-            Automated updates to repo map:
-            - `./map/README.md`
-            - `./metadata/categories.json`
+            Automated updates to template metadata and README:
+            - `./metadata/templates_count`
             - `./metadata/templates.json`
-
+            - `./metadata/templates.csv`
+            - `./README.md`
             Triggered by: ${{ github.event_name }}
-          branch: update-repo-map-${{ github.run_number }}-${{ github.run_id }}
+          branch: update-templates-${{ github.run_number }}-${{ github.run_id }}
           base: main
           add-paths: |
-            ./map/README.md
-            ./metadata/categories.json
+            ./metadata/templates_count
             ./metadata/templates.json
+            ./metadata/templates.csv
+            ./README.md
           labels: automated,documentation
           assignees: redjax
 
