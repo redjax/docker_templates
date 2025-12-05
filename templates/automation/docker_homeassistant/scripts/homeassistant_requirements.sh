@@ -3,18 +3,19 @@
 ## https://pimylifeup.com/home-assistant-docker-compose/#setting-up-a-basic-home-assistant-config
 
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT=$(realpath -m "$THIS_DIR/../../../")
+PROJECT_ROOT=$(realpath -m "$THIS_DIR/..")
 
-if [[ ! -d $PROJECT_ROOT/config/homeassistant ]]; then
-  echo "Creating HomeAssistant config directory"
-  mkdir -pv $PROJECT_ROOT/config/homeassistant
-fi
+function setup_homeassistant() {
+  if [[ ! -d $PROJECT_ROOT/config/homeassistant ]]; then
+    echo "Creating HomeAssistant config directory"
+    mkdir -pv $PROJECT_ROOT/config/homeassistant
+  fi
 
-if [[ ! -f $PROJECT_ROOT/config/homeassistant/configuration.yml ]]; then
-  HOST_IP=$(hostname -I | cut -f1 -d' ')
+  if [[ ! -f $PROJECT_ROOT/config/homeassistant/configuration.yml ]]; then
+    HOST_IP=$(hostname -I | cut -f1 -d' ')
 
-  echo "Creating HomeAssistant config file"
-  cat <<EOF >$PROJECT_ROOT/config/homeassistant/configuration.yml
+    echo "Creating HomeAssistant config file"
+    cat <<EOF >$PROJECT_ROOT/config/homeassistant/configuration.yml
 # Loads default set of integrations. Do not remove.
 default_config:
 
@@ -38,4 +39,10 @@ panel_iframe:
     url: http://${HOST_IP}:1880/
     require_admin: true
 EOF
+
+  fi
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  setup_homeassistant
 fi
