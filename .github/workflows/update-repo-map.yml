@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   ## Scheduled trigger
   schedule:
-    - cron: "0 0,12 * * *"
+    - cron: "0 0 * * *"
 
 permissions:
   contents: write
