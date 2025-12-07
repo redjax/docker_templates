@@ -1,10 +1,20 @@
 ---
+name: loki
+
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  loki_data: {}
 
 services:
-
-  ...
+  loki:
+    image: grafana/loki
+    container_name: loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/config.yaml
+    ports:
+      - ${LOKI_HTTP_PORT:-3100}:3100
+    volumes:
+      - ${LOKI_CONFIG_FILE:-./config/loki.yaml}:/etc/loki/config.yaml:ro
+      - ${LOKI_DATA_DIR:-loki_data}:/var/loki
