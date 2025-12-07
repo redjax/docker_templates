@@ -1,7 +1,2 @@
-config/*
-
-!config/
-!config/examples
-
 !*example*.*
 !*.*example*
