@@ -1,0 +1,114 @@
+//
+// This example config only sort of works, all logs will say
+// unknown_service in the 'service_name' column until I can figure that out.
+//
+
+local.file_match "syslog" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/syslog" }]
+}
+
+local.file_match "auth" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/auth.log" }]
+}
+
+local.file_match "ufw" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/ufw.log" }]
+}
+
+local.file_match "fail2ban" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/fail2ban.log" }]
+}
+
+local.file_match "lynis" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/lynis.log" }]
+}
+
+local.file_match "rkhunter" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/rkhunter.log" }]
+}
+
+local.file_match "kern" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/kern.log" }]
+}
+
+local.file_match "mail" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/mail.log" }]
+}
+
+local.file_match "mailerr" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/mail.err" }]
+}
+
+local.file_match "cloudinit" {
+  path_targets = [{ __address__ = "localhost", __path__ = "/var/log/cloud-init.log" }]
+}
+
+loki.source.file "syslog" {
+  targets               = local.file_match.syslog.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-syslog.yaml"
+}
+
+loki.source.file "auth" {
+  targets               = local.file_match.auth.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-auth.yaml"
+}
+
+loki.source.file "ufw" {
+  targets               = local.file_match.ufw.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-ufw.yaml"
+}
+
+loki.source.file "fail2ban" {
+  targets               = local.file_match.fail2ban.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-fail2ban.yaml"
+}
+
+loki.source.file "lynis" {
+  targets               = local.file_match.lynis.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-lynis.yaml"
+}
+
+loki.source.file "rkhunter" {
+  targets               = local.file_match.rkhunter.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-rkhunter.yaml"
+}
+
+loki.source.file "kern" {
+  targets               = local.file_match.kern.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-kern.yaml"
+}
+
+loki.source.file "mail" {
+  targets               = local.file_match.mail.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-mail.yaml"
+}
+
+loki.source.file "mailerr" {
+  targets               = local.file_match.mailerr.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-mailerr.yaml"
+}
+
+loki.source.file "cloudinit" {
+  targets               = local.file_match.cloudinit.targets
+  forward_to            = [loki.write.default.receiver]
+  legacy_positions_file = "/tmp/positions-cloudinit.yaml"
+}
+
+loki.write "default" {
+  endpoint {
+    url = sys.env("LOKI_URL") + "/loki/api/v1/push"
+  }
+
+  external_labels = {
+    node = sys.env("NODE_NAME"),
+  }
+}
