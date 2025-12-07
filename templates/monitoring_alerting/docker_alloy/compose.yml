@@ -1,10 +1,36 @@
----
-# networks:
-#   unnamed_net: {}
-
-# volumes:
-#   volume_name: {}
-
 services:
+  alloy:
+    restart: always
+    user: root
+    image: grafana/alloy:latest
 
-  ...
+    environment:
+      NODE_NAME: ${ALLOY_NODE_NAME:-${HOSTNAME:-unknown-host}}
+      LOKI_URL: ${ALLOY_LOKI_URL:-http://localhost:3100}
+    volumes:
+      - type: bind
+        source: ./config/config.alloy
+        target: /etc/alloy/config.alloy
+      - type: bind
+        source: /var/log
+        target: /var/log
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+      - type: bind
+        source: /
+        target: /host/rootfs
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /host/sys
+        read_only: true
+    ports:
+      - ${ALLOY_PORT:-12345}:12345
+    entrypoint:
+      - /bin/alloy
+      - run
+      - --server.http.listen-addr=0.0.0.0:${ALLOY_PORT:-12345}
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy

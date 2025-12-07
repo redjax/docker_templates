@@ -1,4 +1,3 @@
-# Grafana Alloy
+# Alloy
 
-[Alloy](https://github.com/grafana/alloy) is a log collector, meant to replace promtail. It can forward logs from your systems to a centralized Loki database.
-
+[Alloy](https://github.com/grafana/alloy) is an OpenTelemetry collector. Combined with Loki, it can be a powerfull system, application, & container log collector, sending results to a backend like Loki.
