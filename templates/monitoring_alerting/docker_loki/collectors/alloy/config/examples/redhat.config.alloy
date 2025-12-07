@@ -10,7 +10,6 @@ local.file_match "system" {
   }]
 }
 
-
 loki.source.file "system" {
   targets               = local.file_match.system.targets
   forward_to            = [loki.write.default.receiver]
