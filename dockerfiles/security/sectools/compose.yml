@@ -1,0 +1,32 @@
+---
+
+services:
+  gitleaks:
+    build: .
+    image: sectools:latest
+    container_name: gitleaks
+    environment:
+      - TOOL=gitleaks
+    volumes:
+      - ${SCAN_TARGET_PATH:-./}:/scan:ro
+      - ${SCAN_RESULTS_DIR:-./results}:/results
+
+  trufflehog:
+    build: .
+    image: sectools:latest
+    container_name: trufflehog
+    environment:
+      - TOOL=trufflehog
+    volumes:
+      - ${SCAN_TARGET_PATH:-./}:/scan:ro
+      - ${SCAN_RESULTS_DIR:-./results}:/results
+
+  osv-scanner:
+    build: .
+    image: sectools:latest
+    container_name: osv-scanner
+    environment:
+      - TOOL=osv-scanner
+    volumes:
+      - ${SCAN_TARGET_PATH:-./}:/scan:ro
+      - ${SCAN_RESULTS_DIR:-./results}:/results
