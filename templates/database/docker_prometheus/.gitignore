@@ -2,6 +2,17 @@ config/*
 
 !config/
 !config/examples/
+
+grafana/*
+grafana/provision/*
+grafana/provision/**
+
+!grafana/
+!grafana/provision/
+!grafana/provision/datasources/
+
+!*-default.yml
+
 !example.*
 !example.*.*
 !*.example
