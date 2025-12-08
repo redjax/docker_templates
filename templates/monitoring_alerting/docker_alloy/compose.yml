@@ -3,16 +3,16 @@ name: alloy
 
 services:
   alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
     restart: always
     user: root
-    image: grafana/alloy:latest
-
     environment:
       NODE_NAME: ${ALLOY_NODE_NAME:-${HOSTNAME:-unknown-host}}
       LOKI_URL: ${ALLOY_LOKI_URL:-http://localhost:3100}
     volumes:
       - type: bind
-        source: ./config/config.alloy
+        source: ${ALLOY_CONFIG_FILE:-./config/config.alloy}
         target: /etc/alloy/config.alloy
       - type: bind
         source: /var/log
