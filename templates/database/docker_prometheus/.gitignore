@@ -8,6 +8,7 @@ grafana/provision/*
 grafana/provision/**
 
 !grafana/
+!grafana/examples/
 !grafana/provision/
 !grafana/provision/datasources/
 
