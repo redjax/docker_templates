@@ -1,3 +1,6 @@
+---
+name: alloy
+
 services:
   alloy:
     restart: always
@@ -34,3 +37,4 @@ services:
       - --server.http.listen-addr=0.0.0.0:${ALLOY_PORT:-12345}
       - --storage.path=/var/lib/alloy/data
       - /etc/alloy/config.alloy
+
