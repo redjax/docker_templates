@@ -574,7 +574,7 @@
         ]
     },
     {
-        "count": 9,
+        "count": 11,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
         "sub_categories": [
@@ -601,6 +601,10 @@
                 "path": "templates/monitoring_alerting/docker_netalertx"
             },
             {
+                "name": "docker_alloy",
+                "path": "templates/monitoring_alerting/docker_alloy"
+            },
+            {
                 "name": "docker_beszel",
                 "path": "templates/monitoring_alerting/docker_beszel"
             },
@@ -611,6 +615,10 @@
             {
                 "name": "docker_graylog",
                 "path": "templates/monitoring_alerting/docker_graylog"
+            },
+            {
+                "name": "docker_loki",
+                "path": "templates/monitoring_alerting/docker_loki"
             },
             {
                 "name": "docker_monitoring",
