@@ -1,0 +1,17 @@
+apiVersion: 1
+# datasources:
+#   - name: Loki
+#     type: loki
+#     access: proxy
+#     url: http://loki:3100
+#     ## If Loki requires authentication,
+#     #  uncomment below
+#     # basicAuth: true
+#     # basicAuthUser: admin
+#     # basicAuthPassword: supersecret
+#     isDefault: false
+#     jsonData:
+#       ## Lines per query
+#       maxLines: 1000
+#       ## Query timeout (seconds)
+#       timeout: 30
