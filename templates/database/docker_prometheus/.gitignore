@@ -1,11 +1,7 @@
-data/*
-data/prometheus/*
+config/*
 
-!data/prometheus/
-
-!data/prometheus/example.*
-!data/prometheus/example.*.*
-
+!config/
+!config/examples/
 !example.*
 !example.*.*
 !*.example

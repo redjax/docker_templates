@@ -13,7 +13,7 @@ services:
       - ${PROMETHEUS_PORT:-9090}:9090
     volumes:
       - ${PROMETHEUS_CONFIG_FILE:-./config/prometheus.yml}:/etc/prometheus/prometheus.yml
-      - ${PROMETHEUS_ALERT_RULES_FILE:-./config/alert.rules}:/alertmanager/alert.rules
+      - ${PROMETHEUS_ALERT_RULES_FILE:-./config/alert.rules}:/etc/prometheus/alert.rules
       - ${PROMETHEUS_DATA_DIR:-prometheus_data}:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
