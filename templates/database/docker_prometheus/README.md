@@ -4,6 +4,17 @@
 
 ## Example Queries
 
+> [!NOTE]
+> You can filter logs using `{curly braces}` and a filter name/value. For example, to show only metrics for a single host with IP `192.168.1.16` running `node_exporter` on port `9100`, you could use:
+>
+> `{instance="192.168.1.16:9100"}`
+>
+> This is an example query that shows available memory as a % of the total for just `192.168.1.16`:
+> 
+> ```promql
+> (1 - (node_memory_MemAvailable_bytes{instance="192.168.1.16:9100"} / node_memory_MemTotal_bytes{instance="192.168.1.16:9100"})) * 100
+> ```
+
 Show non-idle CPU % per core, averaged over 5 minutes:
 
 ```promql
