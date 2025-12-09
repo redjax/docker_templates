@@ -171,6 +171,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_alloy](../templates/monitoring_alerting/docker_alloy)
   - [docker_beszel](../templates/monitoring_alerting/docker_beszel)
   - [docker_watchtower](../templates/monitoring_alerting/docker_watchtower)
+  - [docker_node_exporter](../templates/monitoring_alerting/docker_node_exporter)
   - [docker_graylog](../templates/monitoring_alerting/docker_graylog)
   - [docker_loki](../templates/monitoring_alerting/docker_loki)
   - [docker_monitoring](../templates/monitoring_alerting/docker_monitoring)
