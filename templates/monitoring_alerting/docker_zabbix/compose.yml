@@ -32,7 +32,6 @@ services:
     depends_on:
       - postgres
     ports:
-      - ${ZABBIX_SERVER_AGENT_CHECKS_PORT:-10050}:10050
       - ${ZABBIX_SERVER_PORT:-10051}:10051
     environment:
       DB_SERVER_HOST: ${ZABBIX_SERVER_DB_HOST:-postgres}
