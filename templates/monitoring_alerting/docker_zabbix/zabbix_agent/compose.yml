@@ -1,6 +1,10 @@
 ---
 name: zabbix-agent
 
+networks:
+  zabbix_net:
+    driver: bridge
+
 services:
   zabbix-agent2:
     image: zabbix/zabbix-agent2:${ZABBIX_VERSION:-latest}
@@ -30,3 +34,5 @@ services:
     volumes:
       - /:/hostfs:ro
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - zabbix_net
