@@ -85,6 +85,8 @@ if [[ -d "$CONFIG_DIR" ]]; then
         if [[ $ans =~ ^[Yy]$ ]]; then
             sudo rm -rf "$CONFIG_DIR"
             echo "Deleted $CONFIG_DIR"
+
+            break
         elif [[ $ans =~ ^[Nn]$ ]]; then
             echo "Keeping dir: $CONFIG_DIR"
             break
@@ -104,6 +106,8 @@ if [[ -d "$LOG_DIR" ]]; then
         if [[ $ans2 =~ ^[Yy]$ ]]; then
             sudo rm -rf "$LOG_DIR"
             echo "Deleted $LOG_DIR"
+
+            break
         elif [[ $ans2 =~ ^[Yy]$ ]]; then
             echo "Keeping logs"
             break
