@@ -148,15 +148,13 @@ function install_zabbix_repo_and_agent() {
         amazon|amzn)    repo_path="rhel" ;;
         fedora)
           ## Fedora maps to closest RHEL version
-          major="${OS_VERSION_ID%%.*}"
-          case "${major}" in
-            3[0-9]) el_ver="8" ;;
-            4[0-2]) el_ver="9" ;;
-            *)      el_ver="9" ;;
-          esac
-          repo_path="${OS_ID}${el_ver}"
+          repo_path="rhel"
+          el_major="9"
           ;;
-        *) repo_path="rhel" ;;
+        *)
+          echo "[ERROR] This script cannot install the Zabbix gent for OS: ${OS_ID}"
+          exit 1s
+          ;;
       esac
 
       ## Install repo RPM
