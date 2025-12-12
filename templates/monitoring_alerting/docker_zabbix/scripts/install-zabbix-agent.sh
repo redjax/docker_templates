@@ -148,12 +148,10 @@ function install_zabbix_repo_and_agent() {
         amazon|amzn)    repo_path="rhel" ;;
         fedora)
           ## Fedora maps to closest RHEL version
-          repo_path="rhel"
-          el_major="9"
+          repo_path="rhel/9"
           ;;
         *)
-          echo "[ERROR] This script cannot install the Zabbix gent for OS: ${OS_ID}"
-          exit 1s
+          repo_path="rhel/9"
           ;;
       esac
 
@@ -321,23 +319,6 @@ EOF
   sudo chmod 644 "${conf}"
   
   echo "Config: ${conf} (owned by zabbix:zabbix)"
-}
-
-function restart_agent() {
-  ## Reload + start
-  sudo systemctl daemon-reload
-  sudo systemctl enable "${ZBX_AGENT_SVC}"
-  sudo systemctl start "${ZBX_AGENT_SVC}"
-  
-  sleep 3
-  if systemctl is-active --quiet "${ZBX_AGENT_SVC}"; then
-    echo "${ZBX_AGENT_SVC} is ACTIVE"
-  else
-    echo "FAILED. Status:"
-    sudo systemctl status "${ZBX_AGENT_SVC}" -l
-
-    exit 1
-  fi
 }
 
 function restart_agent() {
