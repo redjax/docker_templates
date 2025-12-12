@@ -149,7 +149,7 @@ install_zabbix_repo_and_agent() {
       fi
       ;;
 
-    rhel|centos|rocky|alma|ol|oraclelinux|amazon|amzn)
+    rhel|fedora|centos|rocky|alma|ol|oraclelinux|amazon|amzn)
       ## RHEL-like family (RHEL, CentOS, Rocky, Alma, Oracle, Amazon Linux).
       base_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/release"
       
