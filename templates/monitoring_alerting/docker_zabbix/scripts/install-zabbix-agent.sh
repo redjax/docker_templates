@@ -111,18 +111,20 @@ function install_zabbix_repo_and_agent() {
 
   case "${OS_ID}" in
     debian|ubuntu|raspbian)
-      ## Use official Zabbix repo package for Debian/Ubuntu/Raspbian. 
+      ## Debian-family repo
       if ! command -v wget >/dev/null 2>&1; then
         sudo apt-get update
         sudo apt-get install -y wget
       fi
 
       base_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/debian/pool/main/z/zabbix-release/"
-      wget -O /tmp/zabbix-release.deb "${base_url}zabbix-release_latest+${OS_ID}${OS_VERSION_ID}_all.deb"
+      deb_pkg="zabbix-release_latest+${OS_ID}${OS_VERSION_ID}_all.deb"
+
+      echo "Installing Zabbix repo: ${base_url}${deb_pkg}"
+      wget -O /tmp/zabbix-release.deb "${base_url}${deb_pkg}"
       sudo dpkg -i /tmp/zabbix-release.deb
       sudo apt-get update
-      
-      ## Prefer agent2 if available, fall back to agent
+
       if apt-cache show zabbix-agent2 >/dev/null 2>&1; then
         sudo apt-get install -y zabbix-agent2
         ZBX_AGENT_CONF="/etc/zabbix/zabbix_agent2.conf"
@@ -134,39 +136,33 @@ function install_zabbix_repo_and_agent() {
       fi
       ;;
 
-    rhel|fedora|centos|rocky|alma|ol|oraclelinux|amazon|amzn)
-      ## RHEL-like family (RHEL, CentOS, Rocky, Alma, Oracle, Amazon Linux).
+    rhel|centos|rocky|alma|ol|oraclelinux|amzn|amazon|fedora)
+      ## Zabbix ONLY publishes "rhel/<major>" — all RHEL-like distros use it.
       base_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/rhel"
-      
-      ## Map distro to repo path
-      case "${OS_ID}" in
-        rocky)    repo_path="rocky" ;;
-        alma)     repo_path="alma" ;;
-        centos)   repo_path="centos" ;;
-        rhel)     repo_path="rhel" ;;
-        ol|oraclelinux) repo_path="oracle" ;;
-        amazon|amzn)    repo_path="rhel" ;;
-        fedora)
-          ## Fedora maps to closest RHEL version
-          repo_path="rhel/9"
-          ;;
-        *)
-          repo_path="rhel/9"
-          ;;
-      esac
 
-      ## Install repo RPM
+      ## Determine appropriate EL major
       major="${OS_VERSION_ID%%.*}"
-      case "${major}" in
-        3[0-9]) el_major="8" ;;
-        4[0-2]) el_major="9" ;;
-        *)      el_major="9" ;;
-      esac
-      
-      repo_rpm_url="${base_url}/${repo_path}/${el_major}/noarch/zabbix-release-latest-${ZBX_VERSION}.el${el_major}.noarch.rpm"
+
+      ## Fedora → map to closest EL
+      if [[ "${OS_ID}" == "fedora" ]]; then
+        if (( major >= 40 )); then
+          major=9   # Fedora 40+ corresponds closest to EL9 ABI
+        else
+          major=8
+        fi
+      fi
+
+      ## Oracle / Amazon sometimes report weird VERSION_ID → normalize
+      if ! [[ "${major}" =~ ^[0-9]+$ ]]; then
+        major=9
+      fi
+
+      repo_rpm_url="${base_url}/${major}/noarch/zabbix-release-latest-${ZBX_VERSION}.el${major}.noarch.rpm"
+
       echo "Installing Zabbix repo from: ${repo_rpm_url}"
-      
-      sudo rpm -Uvh "${repo_rpm_url}" || true
+      sudo rpm -Uvh "${repo_rpm_url}"
+
+      ## Install agent2 if possible
       if command -v dnf >/dev/null 2>&1; then
         sudo dnf clean all
         sudo dnf install -y zabbix-agent2 || sudo dnf install -y zabbix-agent
@@ -174,7 +170,7 @@ function install_zabbix_repo_and_agent() {
         sudo yum clean all
         sudo yum install -y zabbix-agent2 || sudo yum install -y zabbix-agent
       fi
-      
+
       if [[ -f /etc/zabbix/zabbix_agent2.conf ]]; then
         ZBX_AGENT_CONF="/etc/zabbix/zabbix_agent2.conf"
         ZBX_AGENT_SVC="zabbix-agent2"
@@ -187,6 +183,7 @@ function install_zabbix_repo_and_agent() {
     sles|suse|opensuse*)
       if command -v zypper >/dev/null 2>&1; then
         sudo zypper -n install zabbix-agent2 || sudo zypper -n install zabbix-agent
+
         if [[ -f /etc/zabbix/zabbix_agent2.conf ]]; then
           ZBX_AGENT_CONF="/etc/zabbix/zabbix_agent2.conf"
           ZBX_AGENT_SVC="zabbix-agent2"
@@ -195,30 +192,28 @@ function install_zabbix_repo_and_agent() {
           ZBX_AGENT_SVC="zabbix-agent"
         fi
       else
-        echo "zypper not found; cannot install Zabbix agent on ${OS_ID}." >&2
+        echo "zypper not available, cannot install Zabbix on ${OS_ID}" >&2
         exit 1
       fi
       ;;
 
     *)
-      echo "Unknown OS_ID=${OS_ID}, attempting generic install from OS repos."
+      echo "Unknown OS_ID=${OS_ID}, attempting generic installation."
 
       if command -v apt-get >/dev/null 2>&1; then
         sudo apt-get update
         sudo apt-get install -y zabbix-agent2 || sudo apt-get install -y zabbix-agent
-      elif command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
-        if command -v dnf >/dev/null 2>&1; then
-          sudo dnf install -y zabbix-agent2 || sudo dnf install -y zabbix-agent
-        else
-          sudo yum install -y zabbix-agent2 || sudo yum install -y zabbix-agent
-        fi
+      elif command -v dnf >/dev/null 2>&1; then
+        sudo dnf install -y zabbix-agent2 || sudo dnf install -y zabbix-agent
+      elif command -v yum >/dev/null 2>&1; then
+        sudo yum install -y zabbix-agent2 || sudo yum install -y zabbix-agent
       elif command -v zypper >/dev/null 2>&1; then
         sudo zypper -n install zabbix-agent2 || sudo zypper -n install zabbix-agent
       else
-        echo "No supported package manager found." >&2
+        echo "No supported package manager found."
         exit 1
       fi
-      
+
       if [[ -f /etc/zabbix/zabbix_agent2.conf ]]; then
         ZBX_AGENT_CONF="/etc/zabbix/zabbix_agent2.conf"
         ZBX_AGENT_SVC="zabbix-agent2"
