@@ -182,6 +182,14 @@ install_zabbix_repo_and_agent() {
 
       ## Major version for elN
       major="${OS_VERSION_ID%%.*}"
+
+      ## Map Fedora to closest RHEL version (Fedora 42 -> el9)
+      case "${major}" in
+        3[0-9]) major="8" ;;
+        4[0-2]) major="9" ;;
+        *)      major="9" ;;
+      esac
+
       repo_rpm_url="${base_url}/${repo_path}/${major}/noarch/zabbix-release-latest-${ZBX_VERSION}.el${major}.noarch.rpm"
       
       echo "Installing Zabbix repo from: ${repo_rpm_url}"
