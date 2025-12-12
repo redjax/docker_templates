@@ -108,11 +108,55 @@ if [[ -d "$LOG_DIR" ]]; then
             echo "Deleted $LOG_DIR"
 
             break
-        elif [[ $ans2 =~ ^[Yy]$ ]]; then
+        elif [[ $ans2 =~ ^[Nn]$ ]]; then
             echo "Keeping logs"
             break
         else
             echo "Invalid choice: $ans2, please use 'y' or 'n'"
+        fi
+    done
+fi
+
+## Prompt to remove zabbix user/group if they exist
+echo ""
+echo "[ Remove zabbix user/group ]"
+echo ""
+
+if id "zabbix" &>/dev/null; then
+    echo "Found zabbix user (UID $(id -u zabbix))"
+    while true; do
+        read -r -n 1 -p "Delete zabbix user? (y/N): " ans_user
+        echo ""
+        if [[ $ans_user =~ ^[Yy]$ ]]; then
+            ## Stop any processes, remove home dir, then user
+            sudo pkill -u zabbix || true
+            sudo rm -rf /var/lib/zabbix /home/zabbix || true
+            sudo userdel --force zabbix || true
+            echo "Deleted zabbix user"
+            break
+        elif [[ $ans_user =~ ^[Nn]$ ]]; then
+            echo "Keeping zabbix user"
+            break
+        else
+            echo "Please use 'y' or 'n'"
+        fi
+    done
+fi
+
+if getent group zabbix &>/dev/null; then
+    echo "Found zabbix group (GID $(getent group zabbix | cut -d: -f3))"
+    while true; do
+        read -r -n 1 -p "Delete zabbix group? (y/N): " ans_group
+        echo ""
+        if [[ $ans_group =~ ^[Yy]$ ]]; then
+            sudo groupdel zabbix || true
+            echo "Deleted zabbix group"
+            break
+        elif [[ $ans_group =~ ^[Nn]$ ]]; then
+            echo "Keeping zabbix group"
+            break
+        else
+            echo "Please use 'y' or 'n'"
         fi
     done
 fi
