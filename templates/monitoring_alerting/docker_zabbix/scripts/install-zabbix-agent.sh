@@ -106,24 +106,42 @@ function detect_os() {
   fi
 }
 
+#
+# Robust installer for Zabbix repo + agent across distros.
+# Downloads the repo package to /tmp then installs via rpm/dpkg as appropriate.
+#
 function install_zabbix_repo_and_agent() {
   detect_os
+
+  # simple arch mapping for repo path
+  case "$(uname -m)" in
+    x86_64|amd64) arch="x86_64" ;;
+    aarch64|arm64) arch="aarch64" ;;
+    *) arch="$(uname -m)" ;; # fallback - may or may not exist on repo
+  esac
 
   case "${OS_ID}" in
     debian|ubuntu|raspbian)
       ## Debian-family repo
-      if ! command -v wget >/dev/null 2>&1; then
+      if ! command -v wget >/dev/null 2>&1 && ! command -v curl >/dev/null 2>&1; then
         sudo apt-get update
-        sudo apt-get install -y wget
+        sudo apt-get install -y wget ca-certificates
       fi
 
       base_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/debian/pool/main/z/zabbix-release/"
       deb_pkg="zabbix-release_latest+${OS_ID}${OS_VERSION_ID}_all.deb"
 
       echo "Installing Zabbix repo: ${base_url}${deb_pkg}"
-      wget -O /tmp/zabbix-release.deb "${base_url}${deb_pkg}"
-      sudo dpkg -i /tmp/zabbix-release.deb
-      sudo apt-get update
+      tmpfile="/tmp/zabbix-release.deb"
+      if command -v curl >/dev/null 2>&1; then
+        sudo rm -f "${tmpfile}" || true
+        curl -fL -o "${tmpfile}" "${base_url}${deb_pkg}"
+      else
+        wget -O "${tmpfile}" "${base_url}${deb_pkg}"
+      fi
+
+      sudo dpkg -i "${tmpfile}"
+      sudo apt-get update -y
 
       if apt-cache show zabbix-agent2 >/dev/null 2>&1; then
         sudo apt-get install -y zabbix-agent2
@@ -137,37 +155,103 @@ function install_zabbix_repo_and_agent() {
       ;;
 
     rhel|centos|rocky|alma|ol|oraclelinux|amzn|amazon|fedora)
-      ## Zabbix ONLY publishes "rhel/<major>" — all RHEL-like distros use it.
+      ## RHEL-family uses repo.zabbix.com/zabbix/<VER>/rhel/<EL_MAJOR>/<arch>/zabbix-release-...noarch.rpm
       base_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/rhel"
 
-      ## Determine appropriate EL major
-      major="${OS_VERSION_ID%%.*}"
-
-      ## Fedora → map to closest EL
+      # parse a numeric major if possible
+      raw_major="${OS_VERSION_ID%%.*}"
       if [[ "${OS_ID}" == "fedora" ]]; then
-        if (( major >= 40 )); then
-          major=9   # Fedora 40+ corresponds closest to EL9 ABI
+        # Map Fedora releases to closest EL major
+        # Fedora 40+ -> EL9; else EL8 (tunable)
+        if [[ "${raw_major}" =~ ^[0-9]+$ ]] && (( raw_major >= 40 )); then
+          el_major=9
         else
-          major=8
+          el_major=8
+        fi
+      else
+        if [[ "${raw_major}" =~ ^[0-9]+$ ]]; then
+          # Amazon/Oracle often report odd values; normalize common cases
+          if [[ "${OS_ID}" =~ ^(amzn|amazon)$ ]]; then
+            # Amazon Linux 2 -> use EL7/8? modern Amazon Linux 2022 -> EL8/9 mapping is distro-specific; choose EL9 if unknown
+            if (( raw_major >= 2022 )); then
+              el_major=9
+            else
+              el_major=8
+            fi
+          elif [[ "${OS_ID}" =~ ^(ol|oraclelinux)$ ]]; then
+            # Oracle Linux version may be like 8.6 -> keep 8/9 mapping
+            if (( raw_major >= 9 )); then el_major=9; else el_major=8; fi
+          else
+            # default: attempt to map numeric raw_major directly if small (7/8/9). Otherwise fallback to 9.
+            if (( raw_major >= 9 )); then el_major=9
+            elif (( raw_major >= 8 )); then el_major=8
+            else el_major=8
+            fi
+          fi
+        else
+          el_major=9
         fi
       fi
 
-      ## Oracle / Amazon sometimes report weird VERSION_ID → normalize
-      if ! [[ "${major}" =~ ^[0-9]+$ ]]; then
-        major=9
+      # Candidate EL majors to try (try chosen first, then fallback 9 then 8)
+      candidates=("${el_major}")
+      [[ "${el_major}" != "9" ]] && candidates+=("9")
+      [[ "${el_major}" != "8" ]] && candidates+=("8")
+
+      tmpfile="/tmp/zabbix-release.rpm"
+      success=false
+      for m in "${candidates[@]}"; do
+        repo_rpm_url="${base_url}/${m}/${arch}/zabbix-release-latest-${ZBX_VERSION}.el${m}.noarch.rpm"
+        echo "Trying repo URL: ${repo_rpm_url}"
+        # download with curl or wget to check for 200
+        if command -v curl >/dev/null 2>&1; then
+          if curl -fL -o "${tmpfile}" "${repo_rpm_url}"; then
+            success=true
+            break
+          else
+            rm -f "${tmpfile}" || true
+            echo "  -> not found or failed (curl)"
+          fi
+        elif command -v wget >/dev/null 2>&1; then
+          if wget -O "${tmpfile}" "${repo_rpm_url}"; then
+            success=true
+            break
+          else
+            rm -f "${tmpfile}" || true
+            echo "  -> not found or failed (wget)"
+          fi
+        else
+          echo "curl/wget not found; installing curl"
+          if command -v dnf >/dev/null 2>&1; then
+            sudo dnf install -y curl
+          else
+            sudo yum install -y curl
+          fi
+          # then retry this iteration
+          if curl -fL -o "${tmpfile}" "${repo_rpm_url}"; then
+            success=true
+            break
+          else
+            rm -f "${tmpfile}" || true
+            echo "  -> not found after installing curl"
+          fi
+        fi
+      done
+
+      if [[ "${success}" != "true" ]]; then
+        echo "[ERROR] Could not download any zabbix-release RPM for ${OS_ID} (tried: ${candidates[*]} / arch=${arch})." >&2
+        exit 1
       fi
 
-      repo_rpm_url="${base_url}/${major}/noarch/zabbix-release-latest-${ZBX_VERSION}.el${major}.noarch.rpm"
-
-      echo "Installing Zabbix repo from: ${repo_rpm_url}"
-      sudo rpm -Uvh "${repo_rpm_url}"
+      echo "Installing Zabbix repo package from ${tmpfile}"
+      sudo rpm -Uvh "${tmpfile}"
 
       ## Install agent2 if possible
       if command -v dnf >/dev/null 2>&1; then
-        sudo dnf clean all
+        sudo dnf clean all || true
         sudo dnf install -y zabbix-agent2 || sudo dnf install -y zabbix-agent
       else
-        sudo yum clean all
+        sudo yum clean all || true
         sudo yum install -y zabbix-agent2 || sudo yum install -y zabbix-agent
       fi
 
@@ -231,20 +315,20 @@ function fix_fedora_service() {
   ## Fedora/RHEL fix: Ensure service unit paths are correct and reload
   if command -v systemctl >/dev/null 2>&1 && [[ "${OS_ID}" == @(fedora|rhel|centos|rocky|alma) ]]; then
     svc_unit="/usr/lib/systemd/system/${ZBX_AGENT_SVC}.service"
-    
+
     ## Fix binary path if needed (some Fedora builds use /usr/bin)
     if grep -q "/usr/sbin/${ZBX_AGENT_SVC}" "${svc_unit}" 2>/dev/null && \
        [[ ! -x /usr/sbin/${ZBX_AGENT_SVC} && -x /usr/bin/${ZBX_AGENT_SVC} ]]; then
       echo "[INFO] Fixing ExecStart binary path for ${ZBX_AGENT_SVC}..."
       sudo sed -i "s|/usr/sbin/${ZBX_AGENT_SVC}|/usr/bin/${ZBX_AGENT_SVC}|g" "${svc_unit}"
     fi
-    
+
     ## Ensure config condition exists
     if ! grep -q "ConditionPathExists=" "${svc_unit}" 2>/dev/null; then
       echo "[INFO] Adding config existence check to ${ZBX_AGENT_SVC} service..."
       sudo systemctl edit --full "${ZBX_AGENT_SVC}" >/dev/null 2>&1 || true
     fi
-    
+
     sudo systemctl daemon-reload
   fi
 }
@@ -274,7 +358,7 @@ function configure_agent() {
 
   local meta_str=$(IFS=' '; echo "${ZBX_METADATA[*]:-}")
   local tls_block=""
-  
+
   if [[ "${ZBX_ENABLE_TLS}" == "true" ]]; then
     read -rp "Enter TLS PSK identity: " TLS_ID
     read -rsp "Enter TLS PSK (hex string, 32 bytes): " TLS_PSK && echo
@@ -283,7 +367,7 @@ function configure_agent() {
     sudo chmod 600 "${psk_file}"
     sudo chown zabbix:zabbix "${psk_file}"
     sudo chmod 755 /var/log/zabbix /run/zabbix /var/lib/zabbix
-    
+
     tls_block="
 TLSConnect=psk
 TLSAccept=psk
@@ -312,13 +396,13 @@ EOF
   ## Fix ownership/permissions
   sudo chown zabbix:zabbix "${conf}"
   sudo chmod 644 "${conf}"
-  
+
   echo "Config: ${conf} (owned by zabbix:zabbix)"
 }
 
 function restart_agent() {
   fix_fedora_service
-  
+
   if command -v systemctl >/dev/null 2>&1; then
     echo "Starting ${ZBX_AGENT_SVC} service"
 
@@ -326,7 +410,7 @@ function restart_agent() {
     sudo systemctl enable "${ZBX_AGENT_SVC}"
     sudo systemctl reset-failed "${ZBX_AGENT_SVC}" || true
     sudo systemctl start "${ZBX_AGENT_SVC}"
-    
+
     ## Start Zabbix agent service
     for i in {1..5}; do
       sleep 2
@@ -336,12 +420,12 @@ function restart_agent() {
       fi
       echo "Waiting for ${ZBX_AGENT_SVC} to start... (${i}/5)"
     done
-    
+
     echo "[ERROR] ${ZBX_AGENT_SVC} failed to start after 10s!"
-    
+
     echo "Service status:"
     sudo systemctl status "${ZBX_AGENT_SVC}" --no-pager -l
-    
+
     echo "Recent logs:"
     sudo journalctl -u "${ZBX_AGENT_SVC}" -n 30 --no-pager -p err
 
@@ -363,7 +447,7 @@ function main() {
   echo "  Service:      ${ZBX_AGENT_SVC}"
   echo "  Server:       ${ZBX_SERVER}:${ZBX_PORT}"
   echo "  Hostname:     ${ZBX_HOSTNAME}"
-  
+
   [[ -n "${ZBX_METADATA_STR}" ]] && echo "  Metadata:     ${ZBX_METADATA_STR}"
   [[ "${ZBX_ENABLE_TLS}" == "true" ]] && echo "  TLS:          PSK enabled"
   [[ -n "${ZBX_REG_KEY}" ]] && echo "  Reg key:      ${ZBX_REG_KEY}"
