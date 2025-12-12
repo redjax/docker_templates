@@ -380,10 +380,19 @@ EOF
 
 restart_agent() {
   if command -v systemctl >/dev/null 2>&1; then
-    sudo systemctl restart "${ZBX_AGENT_SVC}"
-    sudo systemctl enable "${ZBX_AGENT_SVC}" || true
+    sudo systemctl daemon-reload
+    sudo systemctl enable "${ZBX_AGENT_SVC}"
+    sudo systemctl start "${ZBX_AGENT_SVC}"
   else
-    sudo service "${ZBX_AGENT_SVC}" restart || true
+    sudo service "${ZBX_AGENT_SVC}" start || true
+  fi
+  
+  ## Verify it's running
+  if systemctl is-active --quiet "${ZBX_AGENT_SVC}"; then
+    echo "${ZBX_AGENT_SVC} is active and running"
+  else
+    echo "[ERROR] ${ZBX_AGENT_SVC} failed to start. Check: journalctl -u ${ZBX_AGENT_SVC} -xe"
+    exit 1
   fi
 }
 
