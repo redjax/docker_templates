@@ -10,7 +10,7 @@ ZBX_METADATA=(autoregister)
 ZBX_ENABLE_TLS="false"
 ZBX_REG_KEY=""
 
-usage() {
+function usage() {
   cat <<EOF
 Usage: $0 [options]
 
@@ -95,7 +95,7 @@ if [[ ${#ZBX_METADATA[@]} -gt 0 ]]; then
 fi
 
 ## Detect OS
-detect_os() {
+function detect_os() {
   if [[ -f /etc/os-release ]]; then
     . /etc/os-release
 
@@ -108,7 +108,7 @@ detect_os() {
   fi
 }
 
-install_zabbix_repo_and_agent() {
+function install_zabbix_repo_and_agent() {
   detect_os
 
   case "${OS_ID}" in
@@ -285,7 +285,7 @@ install_zabbix_repo_and_agent() {
   export ZBX_AGENT_SVC
 }
 
-configure_agent() {
+function configure_agent() {
   local conf="${ZBX_AGENT_CONF}"
 
   ## Detect correct config file and service name for the installed agent
@@ -378,7 +378,7 @@ EOF
   [[ "${ZBX_ENABLE_TLS}" == "true" ]] && echo "  TLS: PSK enabled"
 }
 
-restart_agent() {
+function restart_agent() {
   if command -v systemctl >/dev/null 2>&1; then
     echo "Starting ${ZBX_AGENT_SVC} service"
     sudo systemctl daemon-reload
@@ -401,7 +401,7 @@ restart_agent() {
   fi
 }
 
-main() {
+function main() {
   install_zabbix_repo_and_agent
   configure_agent
   restart_agent
