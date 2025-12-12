@@ -382,11 +382,10 @@ function restart_agent() {
   if command -v systemctl >/dev/null 2>&1; then
     echo "Starting ${ZBX_AGENT_SVC} service"
     sudo systemctl daemon-reload
-
     sudo systemctl enable "${ZBX_AGENT_SVC}"
     sudo systemctl start "${ZBX_AGENT_SVC}"
     
-    ## Wait and verify
+    # Wait and verify
     sleep 2
     if systemctl is-active --quiet "${ZBX_AGENT_SVC}"; then
       echo "${ZBX_AGENT_SVC} is active and running"
