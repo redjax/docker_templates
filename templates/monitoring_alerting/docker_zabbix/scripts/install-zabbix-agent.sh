@@ -115,14 +115,36 @@ function install_agent() {
       sudo rpm -Uvh "$repo_url"
       sudo dnf install -y zabbix-agent2
       ;;
-    debian|ubuntu)
-      echo "[INFO] Debian-based detected"
+    debian)
+      case "$OS_VERSION_ID" in
+        10) deb_ver="debian10" ;;  # buster
+        11) deb_ver="debian11" ;;  # bullseye
+        12) deb_ver="debian11" ;;  # bookworm, use bullseye repo
+        *) echo "[ERROR] Unsupported Debian version: $OS_VERSION_ID"; exit 1 ;;
+      esac
+
+      deb="zabbix-release_latest+${deb_ver}_all.deb"
+      url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/debian/pool/main/z/zabbix-release/${deb}"
+
+      echo "[INFO] Installing Zabbix repo: $url"
       
       sudo apt-get update
       sudo apt-get install -y wget gnupg
       
-      deb="zabbix-release_latest+${OS_ID}${OS_VERSION_ID}_all.deb"
+      wget -O /tmp/zabbix-release.deb "$url"
+      
+      sudo dpkg -i /tmp/zabbix-release.deb
+      sudo apt-get update
+      sudo apt-get install -y zabbix-agent2
+      ;;
+    ubuntu)
+      deb="zabbix-release_latest+ubuntu${OS_VERSION_ID}_all.deb"
       url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/debian/pool/main/z/zabbix-release/${deb}"
+
+      echo "[INFO] Installing Zabbix repo: $url"
+      
+      sudo apt-get update
+      sudo apt-get install -y wget gnupg
       
       wget -O /tmp/zabbix-release.deb "$url"
       
