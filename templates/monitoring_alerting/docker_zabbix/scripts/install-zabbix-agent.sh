@@ -41,7 +41,24 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ -z "$ZBX_SERVER" ]] && { echo "Server required"; exit 1; }
+if [[ -z "$ZBX_SERVER" ]]; then
+  echo "Missing a server address"
+
+  while true; do
+    read -n 1 -r -p "Server IP or FQDN: " server_input
+    echo ""
+
+    if [[ -z "$server_input" ]]; then
+      echo "You must input a server IP or FQDN."
+    else
+      ZBX_SERVER="$server_input"
+      echo "Using server address: $ZBX_SERVER"
+      break
+    fi
+  done
+fi
+
+## Set agent hostname
 [[ -z "$ZBX_HOSTNAME" ]] && ZBX_HOSTNAME="$(hostname -f 2>/dev/null || hostname)"
 
 META_STR="${ZBX_METADATA[*]:-}"
