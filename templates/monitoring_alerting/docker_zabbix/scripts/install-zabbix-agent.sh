@@ -96,6 +96,15 @@ if [[ -z "$ZBX_AGENT_IP" ]]; then
   done
 fi
 
+## Detect if agent is being installed on the same host as the server
+if [[ "$ZBX_SERVER" == "127.0.0.1" || "$ZBX_SERVER" == "localhost" || "$ZBX_SERVER" == "$(hostname -I | awk '{print $1}')" ]]; then
+    echo "[INFO] Installing agent on the same host as the server"
+    ## Listen on all interfaces
+    ZBX_AGENT_IP="0.0.0.0"
+    ## Use loopback for server communication
+    ZBX_SERVER="127.0.0.1"
+fi
+
 ## Detect OS
 . /etc/os-release
 OS_ID="$ID"
