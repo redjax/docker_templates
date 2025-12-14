@@ -6,7 +6,7 @@ ZBX_VERSION="7.4"
 ZBX_SERVER=""
 ZBX_PORT="10051"
 ZBX_HOSTNAME=""
-ZBX_METADATA=()
+ZBX_METADATA=("autoregister" "os=linux")
 ZBX_ENABLE_TLS="false"
 ZBX_REG_KEY=""
 
@@ -65,6 +65,7 @@ fi
 ## Build string from input metadata
 META_STR="${ZBX_METADATA[*]}"
 [ -n "$META_STR" ] && META_LINE="HostMetadata=${META_STR}" || META_LINE=""
+[ -n "$META_STR" ] && echo "Using metadata: ${META_STR}" && echo ""
 
 ## Detect the local IP used to reach the Zabbix server
 ZBX_AGENT_IP="$(ip route get "$ZBX_SERVER" 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')"
@@ -133,7 +134,7 @@ function install_agent() {
       sudo apt-get install -y wget gnupg
 
       wget -O "/tmp/${pkg}" "$url"
-      
+
       sudo dpkg -i "/tmp/${pkg}"
       sudo apt-get update
       sudo apt-get install -y zabbix-agent2
