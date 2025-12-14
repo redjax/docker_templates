@@ -60,7 +60,9 @@ fi
 ## Set agent hostname
 [[ -z "$ZBX_HOSTNAME" ]] && ZBX_HOSTNAME="$(hostname -f 2>/dev/null || hostname)"
 
-META_STR="${ZBX_METADATA[*]:-}"
+## Build string from input metadata
+META_STR="${ZBX_METADATA[*]}"
+[ -n "$META_STR" ] && META_LINE="HostMetadata=${META_STR}" || META_LINE=""
 
 ## Detect OS
 . /etc/os-release
@@ -108,11 +110,6 @@ function configure_agent() {
   CONF="/etc/zabbix/zabbix_agent2.conf"
   SVC="zabbix-agent2"
 
-  if [[ -n "$ZBX_REG_KEY" ]]; then
-    echo "[WARN] HostRegistrationKey is NOT a valid agent parameter."
-    echo "[WARN] Configure auto-registration keys on the Zabbix server instead."
-  fi
-
   sudo useradd --system --home /var/lib/zabbix --shell /sbin/nologin zabbix 2>/dev/null || true
   sudo mkdir -p /var/log/zabbix /run/zabbix
   sudo chown zabbix:zabbix /var/log/zabbix /run/zabbix
@@ -140,13 +137,14 @@ TLSPSKFile=/etc/zabbix/zabbix_agent.psk"
 Hostname=${ZBX_HOSTNAME}
 Server=${ZBX_SERVER}
 ServerActive=${ZBX_SERVER}:${ZBX_PORT}
-HostMetadata=${META_STR}
-ListenPort=10050
-ListenIP=0.0.0.0
+${META_LINE}
+
 LogFile=/var/log/zabbix/zabbix_agent2.log
 PidFile=/run/zabbix/zabbix_agent2.pid
 Timeout=30
+
 ${TLS_BLOCK}
+
 Include=/etc/zabbix/zabbix_agent2.d/
 EOF
 
