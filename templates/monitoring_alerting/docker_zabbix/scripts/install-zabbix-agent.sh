@@ -45,7 +45,7 @@ if [[ -z "$ZBX_SERVER" ]]; then
   echo "Missing a server address"
 
   while true; do
-    read -n 1 -r -p "Server IP or FQDN: " server_input
+    read -r -p "Server IP or FQDN: " server_input
     echo ""
 
     if [[ -z "$server_input" ]]; then
