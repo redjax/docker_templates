@@ -52,8 +52,10 @@ if [[ -z "$ZBX_SERVER" ]]; then
       ZBX_SERVER="$server_input"
       echo "Using server address: $ZBX_SERVER"
       echo ""
+
       break
     fi
+
   done
 fi
 
@@ -63,6 +65,35 @@ fi
 ## Build string from input metadata
 META_STR="${ZBX_METADATA[*]}"
 [ -n "$META_STR" ] && META_LINE="HostMetadata=${META_STR}" || META_LINE=""
+
+## Detect the local IP used to reach the Zabbix server
+ZBX_AGENT_IP="$(ip route get "$ZBX_SERVER" 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')"
+
+if [[ -z "$ZBX_AGENT_IP" ]]; then
+  echo "[WARN] Could not automatically determine source IP."
+  echo "Available network interfaces:"
+
+  mapfile -t IFACES < <(ip -o -4 addr show scope global | awk '{print $2, $4}' | sed 's#/.*##')
+
+  for i in "${!IFACES[@]}"; do
+    printf "  [%d] %s (%s)\n" "$i" ${IFACES[$i]}
+  done
+
+  while true; do
+    read -r -p "Select interface number to use for Zabbix agent: " choice
+    echo ""
+
+    if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 0 && choice < ${#IFACES[@]} )); then
+      ZBX_AGENT_IP="$(echo "${IFACES[$choice]}" | awk '{print $2}')"
+      echo "Using IP address: $ZBX_AGENT_IP"
+      echo ""
+
+      break
+    else
+      echo "Invalid selection. Please choose a valid number."
+    fi
+  done
+fi
 
 ## Detect OS
 . /etc/os-release
@@ -108,23 +139,22 @@ function install_agent() {
 
 function configure_agent() {
   CONF="/etc/zabbix/zabbix_agent2.conf"
-  SVC="zabbix-agent2"
 
   sudo useradd --system --home /var/lib/zabbix --shell /sbin/nologin zabbix 2>/dev/null || true
   sudo mkdir -p /var/log/zabbix /run/zabbix
   sudo chown zabbix:zabbix /var/log/zabbix /run/zabbix
-
   sudo cp -a "$CONF" "$CONF.bak.$(date +%s)" || true
 
   TLS_BLOCK=""
   if [[ "$ZBX_ENABLE_TLS" == "true" ]]; then
     read -rp "TLS PSK Identity: " TLS_ID
     read -rsp "TLS PSK (hex): " TLS_PSK; echo
-
+    
     echo "$TLS_PSK" | sudo tee /etc/zabbix/zabbix_agent.psk >/dev/null
+    
     sudo chmod 600 /etc/zabbix/zabbix_agent.psk
     sudo chown zabbix:zabbix /etc/zabbix/zabbix_agent.psk
-
+    
     TLS_BLOCK="
 TLSConnect=psk
 TLSAccept=psk
@@ -132,19 +162,18 @@ TLSPSKIdentity=${TLS_ID}
 TLSPSKFile=/etc/zabbix/zabbix_agent.psk"
   fi
 
+  ## Generate Zabbix agent config file
   sudo tee "$CONF" >/dev/null <<EOF
 ### Generated $(date)
 Hostname=${ZBX_HOSTNAME}
 Server=${ZBX_SERVER}
 ServerActive=${ZBX_SERVER}:${ZBX_PORT}
+ListenIP=${ZBX_AGENT_IP}
 ${META_LINE}
-
 LogFile=/var/log/zabbix/zabbix_agent2.log
 PidFile=/run/zabbix/zabbix_agent2.pid
 Timeout=30
-
 ${TLS_BLOCK}
-
 Include=/etc/zabbix/zabbix_agent2.d/
 EOF
 
@@ -158,9 +187,11 @@ function start_agent() {
   sudo systemctl restart zabbix-agent2
 
   sleep 2
+
   systemctl is-active --quiet zabbix-agent2 || {
     echo "[ERROR] Agent failed to start"
     sudo journalctl -u zabbix-agent2 -n 50 --no-pager
+
     exit 1
   }
 }
@@ -174,6 +205,7 @@ echo ""
 echo "Zabbix Agent installed"
 echo "  Server:   ${ZBX_SERVER}:${ZBX_PORT}"
 echo "  Hostname: ${ZBX_HOSTNAME}"
+echo "  ListenIP: ${ZBX_AGENT_IP}"
 echo "  Service:  zabbix-agent2"
 echo ""
 echo "Check:"
