@@ -132,44 +132,60 @@ LOG_DIR="/var/log/zabbix"
 ## Check if config dir should be removed, if it exists
 if [[ -d "$CONFIG_DIR" ]]; then
     echo "Found configuration directory at $CONFIG_DIR"
-    
-    while true; do
-        read -n 1 -r -p "Delete this directory? (y/N): " ans
-        echo ""
 
-        if [[ $ans =~ ^[Yy]$ ]]; then
-            sudo rm -rf "$CONFIG_DIR"
-            echo "Deleted $CONFIG_DIR"
+    if [[ "$FORCE" == "false" ]]; then
 
-            break
-        elif [[ $ans =~ ^[Nn]$ ]]; then
-            echo "Keeping dir: $CONFIG_DIR"
-            break
-        else
-            echo "Invalid choice: $ans, please use 'y' or 'n'"
-        fi
-    done
+        while true; do
+
+            read -n 1 -r -p "Delete this directory? (y/N): " ans
+            echo ""
+
+            if [[ $ans =~ ^[Yy]$ ]]; then
+                sudo rm -rf "$CONFIG_DIR"
+                echo "Deleted $CONFIG_DIR"
+
+                break
+            elif [[ $ans =~ ^[Nn]$ ]]; then
+                echo "Keeping dir: $CONFIG_DIR"
+                break
+            else
+                echo "Invalid choice: $ans, please use 'y' or 'n'"
+            fi
+
+        done
+
+    else
+        sudo rm -rf "$CONFIG_DIR"
+        echo "Deleted $CONFIG_DIR"
+    fi
 fi
 
 if [[ -d "$LOG_DIR" ]]; then
     echo "Found logs at $LOG_DIR"
 
-    while true; do
-        read -r -n 1 -p "Delete log files? (y/N): " ans2
-        echo ""
+    if [[ "$FORCE" == "false" ]]; then
 
-        if [[ $ans2 =~ ^[Yy]$ ]]; then
-            sudo rm -rf "$LOG_DIR"
-            echo "Deleted $LOG_DIR"
+        while true; do
+            read -r -n 1 -p "Delete log files? (y/N): " ans2
+            echo ""
 
-            break
-        elif [[ $ans2 =~ ^[Nn]$ ]]; then
-            echo "Keeping logs"
-            break
-        else
-            echo "Invalid choice: $ans2, please use 'y' or 'n'"
-        fi
-    done
+            if [[ $ans2 =~ ^[Yy]$ ]]; then
+                sudo rm -rf "$LOG_DIR"
+                echo "Deleted $LOG_DIR"
+
+                break
+            elif [[ $ans2 =~ ^[Nn]$ ]]; then
+                echo "Keeping logs"
+                break
+            else
+                echo "Invalid choice: $ans2, please use 'y' or 'n'"
+            fi
+        done
+
+    else
+        sudo rm -rf "$LOG_DIR"
+        echo "Deleted $LOG_DIR"
+    fi
 fi
 
 ## Prompt to remove zabbix user/group if they exist
@@ -179,41 +195,62 @@ echo ""
 
 if id "zabbix" &>/dev/null; then
     echo "Found zabbix user (UID $(id -u zabbix))"
-    while true; do
-        read -r -n 1 -p "Delete zabbix user? (y/N): " ans_user
-        echo ""
-        if [[ $ans_user =~ ^[Yy]$ ]]; then
-            ## Stop any processes, remove home dir, then user
-            sudo pkill -u zabbix || true
-            sudo rm -rf /var/lib/zabbix /home/zabbix || true
-            sudo userdel --force zabbix || true
-            echo "Deleted zabbix user"
-            break
-        elif [[ $ans_user =~ ^[Nn]$ ]]; then
-            echo "Keeping zabbix user"
-            break
-        else
-            echo "Please use 'y' or 'n'"
-        fi
-    done
+
+    if [[ "$FORCE" == "false" ]]; then
+        while true; do
+            read -r -n 1 -p "Delete zabbix user? (y/N): " ans_user
+            echo ""
+
+            if [[ $ans_user =~ ^[Yy]$ ]]; then
+                ## Stop any processes, remove home dir, then user
+                sudo pkill -u zabbix || true
+                sudo rm -rf /var/lib/zabbix /home/zabbix || true
+                sudo userdel --force zabbix || true
+                
+                echo "Deleted zabbix user"
+                
+                break
+            elif [[ $ans_user =~ ^[Nn]$ ]]; then
+                echo "Keeping zabbix user"
+                break
+            else
+                echo "Please use 'y' or 'n'"
+            fi
+        done
+    else
+        ## Stop any processes, remove home dir, then user
+        sudo pkill -u zabbix || true
+        sudo rm -rf /var/lib/zabbix /home/zabbix || true
+        sudo userdel --force zabbix || true
+        
+        echo "Deleted zabbix user"
+    fi
 fi
 
 if getent group zabbix &>/dev/null; then
     echo "Found zabbix group (GID $(getent group zabbix | cut -d: -f3))"
-    while true; do
-        read -r -n 1 -p "Delete zabbix group? (y/N): " ans_group
-        echo ""
-        if [[ $ans_group =~ ^[Yy]$ ]]; then
-            sudo groupdel zabbix || true
-            echo "Deleted zabbix group"
-            break
-        elif [[ $ans_group =~ ^[Nn]$ ]]; then
-            echo "Keeping zabbix group"
-            break
-        else
-            echo "Please use 'y' or 'n'"
-        fi
-    done
+
+    if [[ "$FORCE" == "false" ]]; then
+        while true; do
+            read -r -n 1 -p "Delete zabbix group? (y/N): " ans_group
+            echo ""
+
+            if [[ $ans_group =~ ^[Yy]$ ]]; then
+                sudo groupdel zabbix || true
+                echo "Deleted zabbix group"
+                
+                break
+            elif [[ $ans_group =~ ^[Nn]$ ]]; then
+                echo "Keeping zabbix group"
+                break
+            else
+                echo "Please use 'y' or 'n'"
+            fi
+        done
+    else
+        sudo groupdel zabbix || true
+        echo "Deleted zabbix group"
+    fi
 fi
 
 ## Clean leftover service files
