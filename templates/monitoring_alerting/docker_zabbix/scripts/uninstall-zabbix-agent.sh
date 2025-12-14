@@ -1,10 +1,65 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
+FORCE=false
+
 echo ""
 echo "[ Zabbix Agent Uninstall ]"
 echo " ------------------------ "
 echo ""
+
+function usage() {
+  echo ""
+  echo "Usage: $0 [OPTIONS]"
+  echo ""
+  echo "Options:"
+  echo "  -h, --help  Show this help menu"
+  echo ""
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -f|--force)
+      FORCE=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "[ERROR] Invalid option: $1"
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if [[ "$FORCE" == "false" ]]; then
+    echo "!! WARNING!!"
+    echo "   This script will completely remove the Zabbix agent, configuration, & logs"
+    echo "   if they are installed on the system."
+    echo ""
+
+    while true; do
+        read -r -n 1 -p "Do you want to proceed with purging the Zabbix agent? (y/n) " choice
+        echo ""
+
+        case $choice in
+            [Yy])
+            echo "Proceeding with agent uninstall."
+            break
+            ;;
+            [Nn])
+            echo "Cancelling uninstall."
+            exit 0
+            ;;
+            *)
+            echo "Invalid choice: "$choice", please use 'y' or 'n'."
+            ;;
+        esac
+    done
+fi
 
 echo "Detecting OS"
 
@@ -21,7 +76,7 @@ echo "  Detected distribution: $PRETTY_NAME"
 echo ""
 
 ## Stop services if running
-stop_service() {
+function stop_service() {
     local svc=$1
 
     if systemctl list-units --type=service | grep -q "$svc"; then
