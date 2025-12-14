@@ -1,0 +1,100 @@
+---
+networks:
+  zabbix_net:
+    driver: bridge
+
+volumes:
+  zbx_db_data: {}
+  zbx_server_data: {}
+  zbx_web_data: {}
+  zbx_snmptraps: {}
+
+services:
+  postgres:
+    image: postgres:${POSTGRES_IMG_VER:-16}
+    container_name: zabbix-db
+    restart: unless-stopped
+    ports:
+      - ${ZABBIX_DB_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${ZABBIX_DB_USER:-zabbix}
+      POSTGRES_PASSWORD: ${ZABBIX_DB_PASSWORD:-zabbix}
+      POSTGRES_DB: ${ZABBIX_DB_NAME:-zabbix}
+    volumes:
+      - ${ZABBIX_DB_DATA_DIR:-zbx_db_data}:/var/lib/postgresql/data
+    networks:
+      - zabbix_net
+
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:${ZABBIX_VERSION:-latest}
+    container_name: zabbix-server
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - ${ZABBIX_SERVER_PORT:-10051}:10051
+    environment:
+      DB_SERVER_HOST: ${ZABBIX_SERVER_DB_HOST:-postgres}
+      DB_SERVER_PORT: ${ZABBIX_SERVER_DB_PORT:-5432}
+      POSTGRES_USER: ${ZABBIX_DB_USER:-zabbix}
+      POSTGRES_PASSWORD: ${ZABBIX_DB_PASSWORD:-zabbix}
+      POSTGRES_DB: ${ZABBIX_DB_NAME:-zabbix}
+      ZBX_ENABLE_SMTP_TRAPS: ${ZABBIX_SERVER_ENABLE_SMP_TRAPS:-true}
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - zabbix_net
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-pgsql:${ZABBIX_VERSION:-latest}
+    container_name: zabbix-web
+    restart: unless-stopped
+    depends_on:
+      - zabbix-server
+      - postgres
+    environment:
+      DB_SERVER_HOST: ${ZABBIX_SERVER_DB_HOST:-postgres}
+      DB_SERVER_PORT: ${ZABBIX_SERVER_DB_PORT:-5432}
+      POSTGRES_USER: ${ZABBIX_DB_USER:-zabbix}
+      POSTGRES_PASSWORD: ${ZABBIX_DB_PASSWORD:-zabbix}
+      POSTGRES_DB: ${ZABBIX_DB_NAME:-zabbix}
+      ZBX_SERVER_HOST: ${ZABBIX_WEB_SERVER_HOST:-zabbix-server}
+      PHP_TZ: ${ZABBIX_WEB_TZ:-UTC}
+    ports:
+      - ${ZABBIX_WEB_HTTP_PORT:-8080}:8080
+      - ${ZABBIX_WEB_HTTPS_PORT:-8443}:8443
+    volumes:
+      - ${ZABBIX_WEB_DATA_DIR:-zbx_web_data}:/var/lib/zabbix/web
+    networks:
+      - zabbix_net
+
+  snmptraps:
+    image: zabbix/zabbix-snmptraps:${ZABBIX_VERSION:-latest}
+    container_name: zabbix-snmptraps
+    restart: unless-stopped
+    volumes:
+      - ${ZABBIX_SNMPTRAPS_DATA_DIR:-zbx_snmptraps}:/var/lib/zabbix/snmptraps
+    ports:
+      - ${ZABBIX_SNMPTRAPS_TRAP_PORT:-162}:162/udp
+    networks:
+      - zabbix_net
+
+  zabbix-agent-local:
+    image: zabbix/zabbix-agent2:${ZABBIX_VERSION:-latest}
+    container_name: zabbix-agent-local
+    restart: unless-stopped
+    environment:
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_SERVER_ACTIVE: zabbix-server:10051
+      ZBX_HOSTNAME: ${ZABBIX_AGENT_HOSTNAME_OVERRIDE:-}
+      ZBX_HOSTNAMEITEM: system.hostname
+      ZBX_METADATA: autoregister
+      ZBX_REGISTRATION_KEY: ${ZABBIX_AGENT_REGISTRATION_KEY:-}
+      ZBX_DEBUGLEVEL: ${ZABBIX_AGENT_DEBUG_LEVEL:-3}
+    volumes:
+      - /:/hostfss:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - zabbix_net
