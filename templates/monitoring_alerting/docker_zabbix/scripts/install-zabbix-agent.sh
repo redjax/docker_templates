@@ -53,6 +53,7 @@ if [[ -z "$ZBX_SERVER" ]]; then
     else
       ZBX_SERVER="$server_input"
       echo "Using server address: $ZBX_SERVER"
+      echo ""
       break
     fi
   done
