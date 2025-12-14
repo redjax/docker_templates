@@ -110,6 +110,11 @@ function configure_agent() {
   CONF="/etc/zabbix/zabbix_agent2.conf"
   SVC="zabbix-agent2"
 
+  if [[ -n "$ZBX_REG_KEY" ]]; then
+    echo "[WARN] HostRegistrationKey is NOT a valid agent parameter."
+    echo "[WARN] Configure auto-registration keys on the Zabbix server instead."
+  fi
+
   sudo useradd --system --home /var/lib/zabbix --shell /sbin/nologin zabbix 2>/dev/null || true
   sudo mkdir -p /var/log/zabbix /run/zabbix
   sudo chown zabbix:zabbix /var/log/zabbix /run/zabbix
@@ -120,9 +125,11 @@ function configure_agent() {
   if [[ "$ZBX_ENABLE_TLS" == "true" ]]; then
     read -rp "TLS PSK Identity: " TLS_ID
     read -rsp "TLS PSK (hex): " TLS_PSK; echo
+
     echo "$TLS_PSK" | sudo tee /etc/zabbix/zabbix_agent.psk >/dev/null
     sudo chmod 600 /etc/zabbix/zabbix_agent.psk
     sudo chown zabbix:zabbix /etc/zabbix/zabbix_agent.psk
+
     TLS_BLOCK="
 TLSConnect=psk
 TLSAccept=psk
@@ -136,7 +143,6 @@ Hostname=${ZBX_HOSTNAME}
 Server=${ZBX_SERVER}
 ServerActive=${ZBX_SERVER}:${ZBX_PORT}
 HostMetadata=${META_STR}
-HostRegistrationKey=${ZBX_REG_KEY}
 ListenPort=10050
 ListenIP=0.0.0.0
 LogFile=/var/log/zabbix/zabbix_agent2.log
