@@ -118,24 +118,23 @@ function install_agent() {
     debian|ubuntu)
       echo "[INFO] Debian/Ubuntu based — installing Zabbix repo"
 
-      ## Determine Debian/Ubuntu release string
+      # Build correct filename for Debian/Ubuntu
       if [[ "$OS_ID" == "debian" ]]; then
-        deb_os="debian${OS_VERSION_ID}"
+        pkg="zabbix-release_latest+debian${OS_VERSION_ID}_all.deb"
       else
-        deb_os="ubuntu${OS_VERSION_ID}"
+        pkg="zabbix-release_latest+ubuntu${OS_VERSION_ID}_all.deb"
       fi
 
-      deb_pkg="zabbix-release_${ZBX_VERSION}-1+${deb_os}_all.deb"
-      url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/debian/pool/main/z/zabbix-release/${deb_pkg}"
+      url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/debian/pool/main/z/zabbix-release/${pkg}"
 
       echo "[INFO] Installing Zabbix repo package: $url"
 
       sudo apt-get update
       sudo apt-get install -y wget gnupg
-
-      wget -O /tmp/${deb_pkg} "$url"
       
-      sudo dpkg -i /tmp/${deb_pkg}
+      wget -O "/tmp/${pkg}" "$url"
+
+      sudo dpkg -i "/tmp/${pkg}"
       sudo apt-get update
       sudo apt-get install -y zabbix-agent2
       ;;
