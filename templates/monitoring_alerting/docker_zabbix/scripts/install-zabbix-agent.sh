@@ -21,7 +21,6 @@ Options:
   -m, --metadata <value>  Metadata (repeatable)
   -v, --version <ver>     Zabbix version (default: 7.4)
       --enable-tls        Enable PSK TLS
-  -k, --registration-key  Host registration key
       --help              Show this help
 EOF
 }
@@ -35,7 +34,6 @@ while [[ $# -gt 0 ]]; do
     -m|--metadata) ZBX_METADATA+=("$2"); shift 2 ;;
     -v|--version) ZBX_VERSION="$2"; shift 2 ;;
     --enable-tls) ZBX_ENABLE_TLS="true"; shift ;;
-    -k|--registration-key) ZBX_REG_KEY="$2"; shift 2 ;;
     --help) usage; exit 0 ;;
     *) echo "Unknown arg: $1"; usage; exit 1 ;;
   esac
