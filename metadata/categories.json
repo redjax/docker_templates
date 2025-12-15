@@ -574,7 +574,7 @@
         ]
     },
     {
-        "count": 12,
+        "count": 13,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
         "sub_categories": [
@@ -596,6 +596,10 @@
             }
         ],
         "templates": [
+            {
+                "name": "docker_zabbix",
+                "path": "templates/monitoring_alerting/docker_zabbix"
+            },
             {
                 "name": "docker_netalertx",
                 "path": "templates/monitoring_alerting/docker_netalertx"
