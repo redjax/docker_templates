@@ -81,20 +81,21 @@ services:
     networks:
       - zabbix_net
 
-  zabbix-agent-local:
-    image: zabbix/zabbix-agent2:${ZABBIX_VERSION:-latest}
-    container_name: zabbix-agent-local
-    restart: unless-stopped
-    environment:
-      ZBX_SERVER_HOST: zabbix-server
-      ZBX_SERVER_ACTIVE: zabbix-server:10051
-      ZBX_HOSTNAME: ${ZABBIX_AGENT_HOSTNAME_OVERRIDE:-}
-      ZBX_HOSTNAMEITEM: system.hostname
-      ZBX_METADATA: autoregister
-      ZBX_REGISTRATION_KEY: ${ZABBIX_AGENT_REGISTRATION_KEY:-}
-      ZBX_DEBUGLEVEL: ${ZABBIX_AGENT_DEBUG_LEVEL:-3}
-    volumes:
-      - /:/hostfss:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - zabbix_net
+  ## It's better to install the Zabbix agent directly on the host
+  # zabbix-agent-local:
+  #   image: zabbix/zabbix-agent2:${ZABBIX_VERSION:-latest}
+  #   container_name: zabbix-agent-local
+  #   restart: unless-stopped
+  #   environment:
+  #     ZBX_SERVER_HOST: zabbix-server
+  #     ZBX_SERVER_ACTIVE: zabbix-server:10051
+  #     ZBX_HOSTNAME: ${ZABBIX_AGENT_HOSTNAME_OVERRIDE:-}
+  #     ZBX_HOSTNAMEITEM: system.hostname
+  #     ZBX_METADATA: autoregister
+  #     ZBX_REGISTRATION_KEY: ${ZABBIX_AGENT_REGISTRATION_KEY:-}
+  #     ZBX_DEBUGLEVEL: ${ZABBIX_AGENT_DEBUG_LEVEL:-3}
+  #   volumes:
+  #     - /:/hostfs:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - zabbix_net
