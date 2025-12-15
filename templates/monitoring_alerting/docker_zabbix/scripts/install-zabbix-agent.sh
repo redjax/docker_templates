@@ -107,7 +107,6 @@ if [[ "$ZBX_SERVER" == "127.0.0.1" || "$ZBX_SERVER" == "localhost" || "$ZBX_SERV
     ZBX_SERVER="$HOST_LAN_IP"
 fi
 
-
 ## Detect OS
 . /etc/os-release
 OS_ID="$ID"
