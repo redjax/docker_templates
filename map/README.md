@@ -167,6 +167,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_traefik](../templates/networking/docker_traefik)
   - [docker_cloudflare-tunnel](../templates/networking/docker_cloudflare-tunnel)
 - [monitoring_alerting](../templates/monitoring_alerting)
+  - [docker_zabbix](../templates/monitoring_alerting/docker_zabbix)
   - [docker_netalertx](../templates/monitoring_alerting/docker_netalertx)
   - [docker_alloy](../templates/monitoring_alerting/docker_alloy)
   - [docker_beszel](../templates/monitoring_alerting/docker_beszel)

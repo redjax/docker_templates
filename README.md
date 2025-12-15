@@ -28,7 +28,7 @@
   <!-- ![GitHub commits since latest release](https://img.shields.io/github/commits-since/redjax/docker_templates/latest) -->
   <!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/redjax/docker_templates/tests.yml) -->
 </p>
-  Templates: 163
+  Templates: 164
   <span>(counted with <a href="./scripts/count_templates.py">count_templates.py</a>)</span>
 </p>
 
