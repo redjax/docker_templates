@@ -19,7 +19,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres:${SEMAPHORE_POSTGRES_CONTAINER_VERSION:-14}
+    image: postgres:${SEMAPHORE_POSTGRES_CONTAINER_VERSION:-16}
     container_name: semaphore_postgres
     restart: unless-stopped
     hostname: postgres
