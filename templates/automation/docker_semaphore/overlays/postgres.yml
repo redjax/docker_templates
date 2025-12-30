@@ -1,0 +1,33 @@
+---
+name: ${STACK_NAME:-semaphore}
+
+networks:
+  semaphore_net: {}
+
+volumes:
+  semaphore_postgres: {}
+
+services:
+  semaphore:
+    environment:
+      SEMAPHORE_DB_HOST: postgres
+      SEMAPHORE_DB_PORT: 5432
+      SEMAPHORE_DB_DIALECT: postgres
+    # networks:
+    #   - semaphore_net
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:${SEMAPHORE_POSTGRES_CONTAINER_VERSION:-14}
+    container_name: semaphore_postgres
+    restart: unless-stopped
+    hostname: postgres
+    volumes:
+      - ${SEMAPHORE_POSTGRES_DATA_DIR:-semaphore_postgres}:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${SEMAPHORE_DB_USER:-semaphore}
+      POSTGRES_PASSWORD: ${SEMAPHORE_DB_PASSWORD:-semaphore}
+      POSTGRES_DB: ${SEMAPHORE_DB_DATABASE:-semaphore}
+    # networks:
+    #   - semaphore_net
