@@ -17,6 +17,11 @@ A UI for Ansible, Terraform/OpenTofu, Powershell, & more.
 - Visit your web UI at `https://your-server-ip-or-hostname:3000` and log in with your admin username and password
   - If you changed the value of `SEMAPHORE_WEBUI_PORT`, use that port instead of `:3000`
 
+> [!NOTE]
+> You can also use the [`docker_cmd.sh` script](./scripts/docker_cmd.sh) to run Docker operations. The script accepts args like `--db postgres` and `-o [start|stop|restart|logs <service-name>]`, and will concatenate your options into a `docker compose` command. This is purely a convenience, you can just as easily run the commands by hand.
+>
+> Run `./scripts/docker_cmd.sh -h` for the help menu.
+
 ## Links
 
 - [Docker Hub: Sempahore](https://hub.docker.com/r/semaphoreui/semaphore)
