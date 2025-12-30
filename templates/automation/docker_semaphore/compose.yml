@@ -9,7 +9,8 @@ services:
     image: semaphoreui/semaphore:latest
     container_name: semaphore
     restart: unless-stopped
-    user: "${PUID:-1000}:${PGID:-1000}"
+    ## Uncomment if using a host volume mount for /etc/semaphore
+    # user: "${PUID:-1000}:${PGID:-1000}"
     ports:
       - ${SEMAPHORE_WEBUI_PORT:-3000}:3000
     volumes:
