@@ -252,7 +252,7 @@
         ]
     },
     {
-        "count": 4,
+        "count": 5,
         "name": "misc",
         "path": "templates/misc",
         "sub_categories": [
@@ -294,6 +294,10 @@
             {
                 "name": "docker_snipeit",
                 "path": "templates/misc/docker_snipeit"
+            },
+            {
+                "name": "docker_linkora_server",
+                "path": "templates/misc/docker_linkora_server"
             },
             {
                 "name": "docker_omnitools",
@@ -574,7 +578,7 @@
         ]
     },
     {
-        "count": 13,
+        "count": 14,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
         "sub_categories": [
@@ -607,6 +611,10 @@
             {
                 "name": "docker_alloy",
                 "path": "templates/monitoring_alerting/docker_alloy"
+            },
+            {
+                "name": "docker_librenms",
+                "path": "templates/monitoring_alerting/docker_librenms"
             },
             {
                 "name": "docker_beszel",
