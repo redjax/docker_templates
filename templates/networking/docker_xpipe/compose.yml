@@ -1,10 +1,22 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: xpipe
 
-# volumes:
-#   volume_name: {}
+volumes:
+  xpipe_data: {}
 
 services:
-
-  ...
+  xpipe-webtop:
+    image: ghcr.io/xpipe-io/xpipe-webtop:latest
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    environment:
+      SUBFOLDER: ${XPIPE_SUBFOLDER:-/}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+    volumes:
+      - ${XPIPE_DATA_DIR:-xpipe_data}:/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - ${XPIPE_WEBUI_PORT:-3000}:3000
+      - ${XPIPE_WEBSOCKET_PORT:-3001}:3001
