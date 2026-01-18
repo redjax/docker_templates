@@ -7,7 +7,7 @@ volumes:
 
 services:
   ntopng:
-    image: ntop/ntopng:latest
+    image: ${NTOPNG_CONTAINER_IMG:-ntop/ntopng:latest}
     container_name: ntopng
     restart: unless-stopped
     cap_add:
