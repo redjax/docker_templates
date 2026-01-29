@@ -69,6 +69,7 @@ services:
       DATABASE_URL: postgresql://postgres:${PG_PASSWORD:-postgres}@postgres:5432/postgres
       AUTH_SECRET: ${AUTH_SECRET}
       PRINTER_ENDPOINT: http://printer:3000
+      FLAG_DISABLE_SIGNUPS: ${FLAG_DISABLE_SIGNUPS:-false}
     volumes:
       - app_data:/app/data
     # networks:
