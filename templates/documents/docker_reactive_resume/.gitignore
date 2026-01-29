@@ -1,0 +1,7 @@
+env_files/*
+secrets_DELETE_ME
+Caddyfile
+
+!env_files/
+!*example*.*
+!*.*example*
