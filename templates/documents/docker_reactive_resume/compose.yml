@@ -65,7 +65,7 @@ services:
     image: amruthpillai/reactive-resume:latest
     restart: unless-stopped
     environment:
-      APP_URL: http://192.168.1.7
+      APP_URL: ${APP_URL:-http://localhost}
       DATABASE_URL: postgresql://postgres:${PG_PASSWORD:-postgres}@postgres:5432/postgres
       AUTH_SECRET: ${AUTH_SECRET}
       PRINTER_ENDPOINT: http://printer:3000

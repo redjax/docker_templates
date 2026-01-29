@@ -10,3 +10,5 @@
 - Run `docker compose up -d`
 - Navigate to `http://your-ip-or-fqdn`
   - If you changed `CADDY_HTTP_PORT`, i.e. to `8080`, add it to the end of the url like `http://your-ip-or-fqdn:8080`
+- If you are accessing Reactive Resume from another machine on the network or over the internet, make sure to set the `APP_URL` variable.
+- Run the stack with `docker compose up -d` and navigate to the `APP_URL` you set.
