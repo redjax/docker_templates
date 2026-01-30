@@ -120,7 +120,7 @@
         ]
     },
     {
-        "count": 9,
+        "count": 10,
         "name": "documents",
         "path": "templates/documents",
         "sub_categories": [],
@@ -156,6 +156,10 @@
             {
                 "name": "docker_bentopdf",
                 "path": "templates/documents/docker_bentopdf"
+            },
+            {
+                "name": "docker_reactive_resume",
+                "path": "templates/documents/docker_reactive_resume"
             }
         ]
     },

@@ -81,6 +81,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_docspell](../templates/documents/docker_docspell)
   - [docker_paperless-ngx](../templates/documents/docker_paperless-ngx)
   - [docker_bentopdf](../templates/documents/docker_bentopdf)
+  - [docker_reactive_resume](../templates/documents/docker_reactive_resume)
 - [dashboards](../templates/dashboards)
   - [docker_squirrel_server_manager](../templates/dashboards/docker_squirrel_server_manager)
   - [docker_dashy](../templates/dashboards/docker_dashy)
