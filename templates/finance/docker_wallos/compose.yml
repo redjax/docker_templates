@@ -1,0 +1,24 @@
+---
+name: wallos
+
+volumes:
+  db_data: {}
+  logos: {}
+
+services:
+  wallos:
+    image: bellamy/wallos:latest
+    container_name: wallos
+    restart: unless-stopped
+    ports:
+      - ${WALLOS_PORT:-8282}:80/tcp
+    environment:
+      TZ: ${WALLOS_TZ:-Etc/UTC}
+      WALLOS_APP_URL: ${WALLOS_APP_URL:-}
+      FIXER_API_KEY: ${WALLOS_FIXER_API_KEY:-}
+      OIDC_CLIENT_ID: ${WALLOS_OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${WALLOS_OIDC_CLIENT_SECRET:-}
+      OIDC_ISSUER_URL: ${WALLOS_OIDC_ISSUER_URL:-}
+    volumes:
+      - ${WALLOS_DB_DIR:-db_data}:/var/www/html/db
+      - ${WALLOS_LOGOS_DIR:-logos}:/var/www/html/images/uploads/logos
