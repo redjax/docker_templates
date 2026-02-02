@@ -655,6 +655,22 @@
         ]
     },
     {
+        "count": 3,
+        "name": "finance",
+        "path": "templates/finance",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_subtrackr",
+                "path": "templates/finance/docker_subtrackr"
+            },
+            {
+                "name": "docker_wallos",
+                "path": "templates/finance/docker_wallos"
+            }
+        ]
+    },
+    {
         "count": 11,
         "name": "database",
         "path": "templates/database",
