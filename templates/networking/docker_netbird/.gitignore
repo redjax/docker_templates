@@ -1,0 +1,8 @@
+config/*
+config/netbird/*
+
+!config/*example*.*
+!config/*.*example*
+!config/.gitkeep
+!config/netbird/
+!config/netbird/.gitkeep

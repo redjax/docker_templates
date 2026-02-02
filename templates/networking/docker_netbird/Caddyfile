@@ -1,0 +1,7 @@
+{$ZITADEL_EXTERNAL_DOMAIN}:{$CADDY_HTTP_PORT} {
+    reverse_proxy netbird-zitadel:8080 {
+        header_up Host {$ZITADEL_EXTERNAL_DOMAIN}
+        header_up X-Forwarded-Proto http
+        header_up X-Forwarded-Port 80
+    }
+}

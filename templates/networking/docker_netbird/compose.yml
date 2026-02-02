@@ -1,10 +1,129 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: netbird
 
-# volumes:
-#   volume_name: {}
+volumes:
+  db_data: {}
+  mgmt_data: {}
+  logs_management: {}
+  logs_signal: {}
+  logs_dashboard: {}
+  zitadel_data: {}
+
+networks:
+  netbird:
+    driver: bridge
 
 services:
+  postgres:
+    image: postgres:${PG_CONTAINER_VER:-15}
+    container_name: netbird-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PG_DATABASE:-netbird}
+      POSTGRES_USER: ${PG_USERNAME:-netbird}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-netbird}
+    volumes:
+      - ${PG_DB_DIR:-db_data}:/var/lib/postgresql/data
+    networks:
+      - netbird
 
-  ...
+  management:
+    image: netbirdio/management:latest
+    container_name: netbird-management
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    env_file:
+      - ./env_files/netbird.env
+    command: >
+      /go/bin/netbird-management
+      --port ${NETBIRD_MGMT_PORT:-33073}
+      --log-level ${LOG_LEVEL:-info}
+      --disable-anonymous-metrics=${DISABLE_ANONYMOUS_METRICS:-true}
+      --config-file /etc/netbird/management.json
+    volumes:
+      - ${NETBIRD_MGMT_DATA_DIR:-mgmt_data}:/var/lib/netbird
+      - ${NETBIRD_MGMT_CONFIG_DIR:-./config/netbird}:/etc/netbird
+      - ${NETBIRD_MGMT_LOGS_DIR:-logs_management}:/var/log/netbird
+    ports:
+      - "${NETBIRD_MGMT_PORT:-33073}:${NETBIRD_MGMT_PORT:-33073}"
+    networks:
+      - netbird
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+  signal:
+    image: netbirdio/signal:latest
+    container_name: netbird-signal
+    restart: unless-stopped
+    ports:
+      - "${NETBIRD_SIGNAL_PORT:-10000}:10000"
+    networks:
+      - netbird
+    volumes:
+      - logs_signal:/var/log/netbird
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+  zitadel:
+    image: ghcr.io/zitadel/zitadel:${ZITADEL_IMG_VER:-latest}
+    container_name: netbird-zitadel
+    restart: unless-stopped
+    command: ${ZITADEL_START_CMD:-start-from-init} --masterkey "${ZITADEL_MASTER_KEY}" --tlsMode disabled
+    environment:
+      ZITADEL_EXTERNAL_DOMAIN: ${ZITADEL_EXTERNAL_DOMAIN:-localhost}
+      ZITADEL_EXTERNAL_SECURE: ${ZITADEL_EXTERNAL_SECURE:-false}
+      ZITADEL_TLS_ENABLED: false
+      ZITADEL_ADMIN_USERNAME: ${ZITADEL_ADMIN_USER:-admin}
+      ZITADEL_ADMIN_PASSWORD: ${ZITADEL_ADMIN_PASSWORD:-zitadelAdmin}
+      ZITADEL_MASTER_KEY: ${ZITADEL_MASTER_KEY:-$(openssl rand -base64 24)}
+      ZITADEL_DATABASE_POSTGRES_HOST: ${ZITADEL_DB_HOST:-postgres}
+      ZITADEL_DATABASE_POSTGRES_PORT: ${ZITADEL_DB_PORT:-5432}
+      ZITADEL_DATABASE_POSTGRES_DATABASE: ${ZITADEL_DB_NAME:-zitadel}
+      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: ${ZITADEL_DB_ADMIN_USER:-netbird}
+      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: ${ZITADEL_DB_ADMIN_PASS:-netbird}
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: ${ZITADEL_DB_USER:-zitadel}
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: ${ZITADEL_DB_USER_PASS:-zitadel}
+    ports:
+      - "${ZITADEL_WEBUI_PORT:-8080}:8080"
+    volumes:
+      - ${ZITADEL_DATA_DIR:-zitadel_data}:/zitadel/data
+    networks:
+      - netbird
+
+  caddy:
+    image: caddy:2
+    container_name: netbird-caddy
+    restart: unless-stopped
+    ports:
+      - "${CADDY_HTTP_PORT:-8542}:80"
+    networks:
+      - netbird
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+
+  dashboard:
+    image: netbirdio/dashboard:latest
+    container_name: netbird-dashboard
+    restart: unless-stopped
+    depends_on:
+      - management
+    env_file:
+      - ./env_files/netbird.env
+    ports:
+      - "${NETBIRD_WEBUI_PORT:-8080}:80"
+    networks:
+      - netbird
+    volumes:
+      - logs_dashboard:/var/log/netbird
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"

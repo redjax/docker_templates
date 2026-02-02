@@ -1,0 +1,41 @@
+{
+    "Stuns": [],
+    "TURNConfig": {
+        "Turns": [],
+        "TimeBasedCredentials": false,
+        "CredentialsTTL": "12h",
+        "Secret": ""
+    },
+    "Relay": {
+        "Addresses": [],
+        "CredentialsTTL": "24h",
+        "Secret": ""
+    },
+    "Signal": {
+        "ListenAddress": ":10000"
+    },
+    "Datadir": "/var/lib/netbird",
+    "DataStoreEncryptionKey": "<generate a secure storage encryption key>",
+    "HttpConfig": {
+        "Address": "0.0.0.0:33073",
+        "AuthAudience": "netbird",
+        "CLIAuthAudience": "",
+        "AuthIssuer": "http://zitadel:8080",
+        "AuthUserIDClaim": "sub",
+        "OIDCConfigEndpoint": "http://zitadel:8080/.well-known/openid-configuration",
+        "IdpSignKeyRefreshEnabled": true
+    },
+    "IdpManagerConfig": {
+        "ManagerType": "zitadel",
+        "ClientConfig": {
+            "Issuer": "http://zitadel:8080",
+            "TokenEndpoint": "http://zitadel:8080/oauth/v2/token",
+            "ClientID": "netbird-client",
+            "ClientSecret": "<paste-netbird-client-secret-here>",
+            "GrantType": "client_credentials"
+        }
+    },
+    "StoreConfig": {
+        "Engine": "postgres"
+    }
+}
