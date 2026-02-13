@@ -1,10 +1,20 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: crontab-guru
 
-# volumes:
-#   volume_name: {}
+volumes:
+  cronitor_data: {}
 
 services:
-
-  ...
+  crontab-guru:
+    restart: unless-stopped
+    container_name: crontab-guru
+    build:
+      context: .
+      args:
+        DASHBOARD_USERNAME: ${CRONITOR_USERNAME:-cron}
+        DASHBOARD_PASSWORD: ${CRONITOR_PASSWORD:-cronSecret}
+    ports:
+      - ${CRONTAB_GURU_PORT:-9000}:9000
+    volumes:
+      - ${CRONTAB_GURU_DATA_DIR:-cronitor_data}:/root/.config/cronitor
+      - ${CRONTAB_GURU_CRONTABS_DIR:-./crontabs}:/var/spool/cron/crontabs
