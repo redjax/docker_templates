@@ -1,10 +1,20 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: collabora
 
-# volumes:
-#   volume_name: {}
+volumes:
+  collabora_config: {}
 
 services:
-
-  ...
+  collabora:
+    image: collabora/code:latest
+    container_name: collabora
+    restart: unless-stopped
+    ports:
+      - "${COLLABORA_PORT:-9980}:9980" # Change 127.0.0.1 to 0.0.0.0 to expose to LAN
+    environment:
+      domain: ${COLLABORA_DOMAIN}
+      username: ${COLLABORA_ADMIN_USER:-admin}
+      password: ${COLLABORA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ${COLLABORA_CONFIG_DIR:-collabora_config}:/etc/loolwsd
+    shm_size: "${COLLABORA_SHM_SIZE:-2g}"
