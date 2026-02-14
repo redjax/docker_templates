@@ -1,6 +1,8 @@
 .env
 .env.*
 
+huginn_secret-DELETE-ME
+
 !example.*
 !*.example
 !example_*
