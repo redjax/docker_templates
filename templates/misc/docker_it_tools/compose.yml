@@ -1,10 +1,10 @@
 ---
-# networks:
-#   unnamed_net: {}
-
-# volumes:
-#   volume_name: {}
+name: it-tools
 
 services:
-
-  ...
+  it-tools:
+    image: corentinth/it-tools:latest
+    container_name: it-tools
+    restart: unless-stopped
+    ports:
+      - ${IT_TOOLS_WEBUI_PORT:-8080}:80
