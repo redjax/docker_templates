@@ -20,6 +20,10 @@ if [[ ! -f "${USERS_FILE}" ]]; then
     exit 1
 fi
 
+echo "Radicale users"
+cut -d: -f1 "${USERS_FILE}"
+echo ""
+
 read -rp "Enter username to change password: " USERNAME
 
 if ! grep -q "^${USERNAME}:" "${USERS_FILE}"; then
