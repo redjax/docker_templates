@@ -1,10 +1,16 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: radicale
 
-# volumes:
-#   volume_name: {}
+volumes:
+  radicale_data: {}
 
 services:
-
-  ...
+  radicale:
+    image: ghcr.io/kozea/radicale:stable
+    container_name: radicale
+    restart: unless-stopped
+    ports:
+      - "${RADICALE_PORT:-5232}:5232"
+    volumes:
+      - ${RADICALE_DATA_DIR:-radicale_data}:/var/lib/radicale
+      - ${RADICALE_CONF_DIR:-./config}:/etc/radicale:ro
