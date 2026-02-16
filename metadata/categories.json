@@ -188,7 +188,7 @@
         ]
     },
     {
-        "count": 5,
+        "count": 6,
         "name": "misc",
         "path": "templates/misc",
         "sub_categories": [
@@ -230,6 +230,10 @@
             {
                 "name": "docker_omnitools",
                 "path": "templates/misc/docker_omnitools"
+            },
+            {
+                "name": "docker_it_tools",
+                "path": "templates/misc/docker_it_tools"
             },
             {
                 "name": "docker_linkora_server",
@@ -527,6 +531,18 @@
             {
                 "name": "docker_minecraft_server",
                 "path": "templates/games/docker_minecraft_server"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "dav",
+        "path": "templates/dav",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_davis",
+                "path": "templates/dav/docker_davis"
             }
         ]
     },
