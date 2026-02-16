@@ -1,0 +1,7 @@
+config/*
+backups/*
+
+!config/
+!config/*example*.*
+!config/*.*example*
+
