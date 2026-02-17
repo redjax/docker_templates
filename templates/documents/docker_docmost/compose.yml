@@ -1,10 +1,49 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: docmost
 
-# volumes:
-#   volume_name: {}
+volumes:
+  docmost: {}
+  db_data: {}
+  redis_data: {}
 
 services:
+  docmost:
+    image: docmost/docmost:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    environment:
+      APP_URL: ${DOCMOST_APP_URL:-http://localhost:3000}
+      APP_SECRET: ${DOCMOST_APP_SECRET}
+      DATABASE_URL: "postgresql://docmost:${DB_PASSWORD:-docmost}@db:${DB_PORT:-5432}/${DB_DATABASE:-docmost}"
+      REDIS_URL: "redis://redis:6379"
+    ports:
+      - ${DOCMOST_WEBUI_PORT:-3000}:3000
 
-  ...
+    volumes:
+      - ${DOCMOST_DATA_DIR:-docmost}:/app/data/storage
+
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-docmost}
+      POSTGRES_USER: ${DB_USER:-docmost}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-docmost}
+    volumes:
+      - ${DB_DATA_DIR:-db_data}:/var/lib/postgresql
+
+  redis:
+    image: redis:8
+    restart: unless-stopped
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--maxmemory-policy",
+        "noeviction",
+      ]
+    volumes:
+      - ${REDIS_DATA_DIR:-redis_data}:/data
