@@ -1,13 +1,9 @@
 ---
 name: bookstack
 
-volumes:
-  bookstack_data: {}
-  bookstack_db_data: {}
-
 services:
   bookstack:
-    image: lscr.io/linuxserver/bookstack:latest
+    image: lscr.io/linuxserver/bookstack:${BOOKSTACK_IMG_VER:-25.07.3}
     restart: unless-stopped
     environment:
       PUID: ${PUID:-1000}
@@ -21,15 +17,14 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-bookstack}
       DB_DATABASE: ${DB_DATABASE:-bookstackapp}
     volumes:
-      - ${BOOKSTACK_DATA_DIR:-bookstack_data}:/config
+      - ${BOOKSTACK_DATA_DIR:-./data/bookstack}:/config
     ports:
       - ${BOOKSTACK_WEBUI_PORT:-8080}:80
     depends_on:
-      bookstack_db:
-        condition: service_healthy
+      - bookstack_db
 
   bookstack_db:
-    image: lscr.io/linuxserver/mariadb:latest
+    image: mariadb:11
     restart: unless-stopped
     environment:
       PUID: ${PUID:-1000}
@@ -40,10 +35,4 @@ services:
       MYSQL_USER: ${DB_USERNAME:-bookstack}
       MYSQL_PASSWORD: ${DB_PASSWORD:-bookstack}
     volumes:
-      - ${DB_DATA_DIR:-bookstack_db_data}:/config
-    healthcheck:
-      test: ["CMD", "mariadb-admin", "--protocol=tcp", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 60s
+      - ${DB_DATA_DIR:-./data/db}:/var/lib/mysql
