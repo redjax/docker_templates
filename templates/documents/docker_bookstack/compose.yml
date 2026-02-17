@@ -1,10 +1,47 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: bookstack
 
-# volumes:
-#   volume_name: {}
+volumes:
+  bookstack_data: {}
+  bookstack_db_data: {}
 
 services:
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:latest
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      APP_URL: ${BOOKSTACK_APP_URL:-http://localhost:8080}
+      APP_KEY: ${BOOKSTACK_APP_KEY}
+      DB_HOST: ${DB_HOSTNAME:-bookstack_db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USERNAME: ${DB_USERNAME:-bookstack}
+      DB_PASSWORD: ${DB_PASSWORD:-bookstack}
+      DB_DATABASE: ${DB_DATABASE:-bookstackapp}
+    volumes:
+      - ${BOOKSTACK_DATA_DIR:-bookstack_data}:/config
+    ports:
+      - ${BOOKSTACK_WEBUI_PORT:-8080}:80
+    depends_on:
+      bookstack_db:
+        condition: service_healthy
 
-  ...
+  bookstack_db:
+    image: lscr.io/linuxserver/mariadb:latest
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-bookstackAdmin!}
+      MYSQL_DATABASE: ${DB_DATABASE:-bookstackapp}
+      MYSQL_USER: ${DB_USERNAME:-bookstack}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-bookstack}
+    volumes:
+      - ${DB_DATA_DIR:-bookstack_db_data}:/config
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "--protocol=tcp", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
