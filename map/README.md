@@ -164,6 +164,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_minecraft_server](../templates/games/docker_minecraft_server)
 - [dav](../templates/dav)
   - [docker_davis](../templates/dav/docker_davis)
+  - [docker_radicale](../templates/dav/docker_radicale)
 - [media](../templates/media)
   - [docker_plex](../templates/media/docker_plex)
   - [docker_emby](../templates/media/docker_emby)
