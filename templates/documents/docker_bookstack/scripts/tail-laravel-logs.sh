@@ -6,4 +6,4 @@ if ! command -v docker compose &>/dev/null; then
   exit 1
 fi
 
-docker compose exec -it bookstack tail -n 400 /app/www/storage/logs/laravel.log | grep '\[20' -A 3
+docker compose exec -it bookstack tail -f -n 400 /app/www/storage/logs/laravel.log | grep '\[20' -A 3
