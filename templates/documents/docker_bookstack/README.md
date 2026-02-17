@@ -46,3 +46,10 @@ id $USER
 ```
 
 Copy the `uid=` and `gid=` into `PUID=` and `PGID=`, then restart the container.
+
+### LAN access login page loads but home page doesn't
+
+This has happened to me when running Bookstack on my LAN, where I have DNS entries for hosts like `host1.home`. Make sure you are navigating to the exact same URL you set in `APP_URL`.
+
+For example, if `APP_URL=bookstack.home:8080`, and `bookstack.home` resolves to `192.168.1.10`, if you navigate to `http://192.168.1.10` but the redirect to `bookstack.home:8080` might break. Use `http://bookstack.home:8080` instead.
+
