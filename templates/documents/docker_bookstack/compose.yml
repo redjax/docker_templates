@@ -16,6 +16,15 @@ services:
       DB_USERNAME: ${DB_USERNAME:-bookstack}
       DB_PASSWORD: ${DB_PASSWORD:-bookstack}
       DB_DATABASE: ${DB_DATABASE:-bookstackapp}
+
+      MAIL_DRIVER: ${BOOKSTACK_MAIL_DRIVER:-log}
+      MAIL_HOST: ${BOOKSTACK_SMTP_HOST:-}
+      MAIL_PORT: ${BOOKSTACK_SMTP_PORT:-587}
+      MAIL_USERNAME: ${BOOKSTACK_SMTP_USERNAME:-}
+      MAIL_PASSWORD: ${BOOKSTACK_SMTP_PASSWORD:-}
+      MAIL_ENCRYPTION: ${BOOKSTACK_SMTP_ENCRYPTION:-tls}
+      MAIL_FROM: ${BOOKSTACK_SMTP_MAIL_FROM:-noreply@local}
+      MAIL_FROM_NAME: ${BOOKSTACK_SMTP_MAIL_FROM_NAME:-BookStack}
     volumes:
       - ${BOOKSTACK_DATA_DIR:-./data/bookstack}:/config
     ports:
