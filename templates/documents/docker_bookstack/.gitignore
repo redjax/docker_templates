@@ -1,0 +1,7 @@
+data/*
+data/**/*
+backups/*
+
+db_root_pass-DELETE-ME
+app_secret-DELETE-ME
+
