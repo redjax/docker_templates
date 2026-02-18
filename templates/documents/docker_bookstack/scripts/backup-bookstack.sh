@@ -4,6 +4,23 @@ set -euo pipefail
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT=$(realpath -m "$THIS_DIR/..")
 
+## Safe .env parser - handles APP_KEY base64 values, comments, quotes
+function load_dotenv() {
+  local env_file="${PROJECT_ROOT}/.env"
+  if [[ ! -f "${env_file}" ]]; then
+    echo "[INFO] No .env file found at ${env_file}" >&2
+    return 0
+  fi
+
+  echo "[INFO] Loading .env from ${env_file}" >&2
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    # Skip comments, empty lines
+    [[ "${line}" =~ ^[[:space:]]*# || -z "${line// }" ]] && continue
+    # Export line directly (handles quotes, base64, special chars)
+    export "${line%%#*}"  # Strip inline comments
+  done < "${env_file}"
+}
+
 OUTPUT_DIR="./backups"
 COMPOSE_CMD="docker compose"
 DB_SERVICE="bookstack_db"
@@ -14,6 +31,9 @@ DB_NAME="${DB_DATABASE:-bookstackapp}"
 DATA_DIR="./data/bookstack"
 
 ORIGINAL_PATH=$(pwd)
+
+# Load .env
+load_dotenv
 
 function usage() {
   echo ""
