@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT=$(realpath -m "$THIS_DIR/..")
+
 OUTPUT_DIR="./backups"
 COMPOSE_CMD="docker compose"
 DB_SERVICE="bookstack_db"
@@ -9,6 +12,8 @@ DB_USER="${DB_USERNAME:-bookstack}"
 DB_PASS="${DB_PASSWORD:-bookstack}"
 DB_NAME="${DB_DATABASE:-bookstackapp}"
 DATA_DIR="./data/bookstack"
+
+ORIGINAL_PATH=$(pwd)
 
 function usage() {
   echo ""
@@ -58,6 +63,14 @@ timestamp="$(date +%Y%m%d_%H%M%S)"
 backup_name="bookstack_backup_${timestamp}"
 tmp_dir="$(mktemp -d)"
 sql_dump="${tmp_dir}/bookstack_db_${timestamp}.sql"
+
+function cleanup() {
+  rm -rf "$tmp_dir"
+  cd "$ORIGINAL_PATH"
+}
+trap cleanup EXIT
+
+cd "$PROJECT_ROOT"
 
 echo "[*] Using output dir: ${OUTPUT_DIR}"
 mkdir -p "${OUTPUT_DIR}"
