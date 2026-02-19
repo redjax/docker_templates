@@ -81,6 +81,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_gickup](../templates/backup/docker_gickup)
 - [documents](../templates/documents)
   - [docker_docspell](../templates/documents/docker_docspell)
+  - [docker_bookstack](../templates/documents/docker_bookstack)
   - [docker_mayan-edms](../templates/documents/docker_mayan-edms)
   - [docker_kiwix_server](../templates/documents/docker_kiwix_server)
   - [docker_bentopdf](../templates/documents/docker_bentopdf)
