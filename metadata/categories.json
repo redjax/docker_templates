@@ -144,7 +144,7 @@
         ]
     },
     {
-        "count": 10,
+        "count": 11,
         "name": "documents",
         "path": "templates/documents",
         "sub_categories": [],
@@ -152,6 +152,10 @@
             {
                 "name": "docker_docspell",
                 "path": "templates/documents/docker_docspell"
+            },
+            {
+                "name": "docker_bookstack",
+                "path": "templates/documents/docker_bookstack"
             },
             {
                 "name": "docker_mayan-edms",
