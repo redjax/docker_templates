@@ -41,6 +41,102 @@ You can store secrets from the CLI with:
 docker compose exec -it openbao bao kv put secret/hello value="Hello World"
 ```
 
+## Key/Token Rotation
+
+> [!NOTE]
+> You should rotate your keys every 3-6 months, at minimum. See the [rotation checklist]() for instructions
+
+### Rotate unseal keys
+
+Run the following command to generate a new set of unseal keys, overwriting the old ones.
+
+```shell
+docker compose exec -it openbao bao operator rekey
+```
+
+### Rotate root token
+
+Login as root:
+
+```shell
+docker compose exec -it openbao bao login
+```
+
+Generate a neww token (`-orphan` ensures it's independent of the current root token):
+
+```shell
+docker exec -it openbao bao token create -policy=admin -orphan
+```
+
+Revoke the old token:
+
+```shell
+docker exec -it openbao bao token revoke <old-root-token>
+```
+
+### Rotation Checklist
+
+- Make sure OpenBao is running and unsealed
+
+  ```shell
+  docker compose ps
+  docker compose exec -it openbao bao status
+  ```
+
+  - You should see `Sealed: false`
+- Rotate the root token
+  
+  ```shell
+  docker compose exec -it openbao bao login
+  ```
+
+  - Create a new root token
+    
+    ```shell
+    docker compose exec -it openbao bao token create -policy=admin -orphan
+    ```
+
+  - Revoke old root token
+
+    ```shell
+    docker exec -it openbao bao token revoke <old-root-token>
+    ```
+
+- Rotate unseal keys ("rekey")
+
+  ```shell
+  docker compose exec -it openbao bao operator rekey
+  ```
+
+  - After unsealing with 3 of the 5 existing keys, OpenBao will print the new keys.
+  - Save these in a password manager.
+
+- Test unsealing with the new keys
+  - Re-seal the vault
+
+  ```shell
+  docker compose exec -it openbao bao operator seal
+  ```
+
+  - Unseal using the new keys:
+
+  ```shell
+  docker compose exec -it openbao bao operator unseal
+  ```
+
+  - Enter 3 of the 5 new unseal keys
+  - Check that the vault is `Sealed: false`
+
+  ```shell
+  docker compose exec -it openbao bao status
+  ```
+
+- Make sure the new root token has the expected policies:
+
+```shell
+docker compose exec -it openbao bao token lookup <new-token>
+```
+
 ## Links
 
 - [OpenBao home](https://openbao.org)
