@@ -29,13 +29,12 @@ After initializing OpenBao, you can use the following steps to unseal the vault.
 > [!NOTE]
 > You will need to do this each time you restart the container unless you enable auto-unseal.
 
-- Unseal the vault with:
+- Unseal the vault by running the following command 3 times, using a different unseal key each time:
 
   ```shell
   docker compose exec -it openbao bao operator unseal
   ```
 
-  - You will be prompted for a key 3 times; enter a different key from the original 5 at each prompt.
 - Log into the vault:
 
   ```shell
