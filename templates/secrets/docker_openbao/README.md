@@ -5,6 +5,7 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Setup Steps](#setup-steps)
+  - [Create non-root admin user](#create-non-root-admin-user)
 - [Key/Token Rotation](#keytoken-rotation)
   - [Rotate unseal keys](#rotate-unseal-keys)
   - [Rotate root token](#rotate-root-token)
@@ -47,6 +48,36 @@ You can store secrets from the CLI with:
 
 ```shell
 docker compose exec -it openbao bao kv put secret/hello value="Hello World"
+```
+
+### Create non-root admin user
+
+The root token should *rarely* be used (basically only in emergencies). You should create a non-root admin user for management tasks, and per-app/script tokens.
+
+First, create a [`superuser.hcl` policy](./config/policies/superuser.hcl):
+
+```hcl
+path "*" {
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+```
+
+Load the policy in OpenBao:
+
+```shell
+docker compose exec -it openbao bao policy write superuser /etc/openbao/policies/superuser.hcl
+```
+
+Create a new  token using the policy:
+
+```shell
+docker compose exec -it openbao bao token create -policy=superuser -orphan
+```
+
+Login with the new token, and stop using the root token for login via CLI or webUI:
+
+```shell
+docker compose exec -it openbao bao login
 ```
 
 ## Key/Token Rotation
