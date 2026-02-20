@@ -1,6 +1,15 @@
-# OpenBao
+# OpenBao <!-- omit in toc -->
 
 [OpenBao](https://openbao.org) is an open-source fork of Hashicorp Vault.
+
+## Table of Contents <!-- omit in toc -->
+
+- [Setup Steps](#setup-steps)
+- [Key/Token Rotation](#keytoken-rotation)
+  - [Rotate unseal keys](#rotate-unseal-keys)
+  - [Rotate root token](#rotate-root-token)
+  - [Rotation Checklist](#rotation-checklist)
+- [Links](#links)
 
 ## Setup Steps
 
