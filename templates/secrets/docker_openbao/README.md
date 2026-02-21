@@ -10,6 +10,7 @@
   - [Rotate unseal keys](#rotate-unseal-keys)
   - [Rotate root token](#rotate-root-token)
   - [Rotation Checklist](#rotation-checklist)
+- [Notes](#notes)
 - [Links](#links)
 
 ## Setup Steps
@@ -175,6 +176,14 @@ docker exec -it openbao bao token revoke <old-root-token>
 ```shell
 docker compose exec -it openbao bao token lookup <new-token>
 ```
+
+## Notes
+
+- List secrets: `docker compose exec -it openbao bao secrets list`
+- Enable KV engine: `docker compose exec -it openbao bao secrets enable -path=secret kv-v2`
+- Write a secret to KV engine: `docker compose exec -it openbao bao kv put secret/app1 db_password="supersecret"`
+- Create namespace: `docker compose exec -it openbao bao namespace create homelab.dev`
+- Create a group: `bao write identity/group name="admins" policies="superuser"`
 
 ## Links
 
