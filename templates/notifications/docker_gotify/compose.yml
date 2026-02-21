@@ -1,10 +1,18 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: gotify
 
-# volumes:
-#   volume_name: {}
+volumes:
+  server_data: {}
 
 services:
-
-  ...
+  gotify:
+    image: gotify/server
+    ports:
+      - ${GOTIFY_PORT:-80}:80
+    environment:
+      GOTIFY_DEFAULTUSER_PASS: ${GOTIFY_DEFAULTUSER_PASS:-admin}
+    volumes:
+      - ${GOTIFY_DATA_DIR:-server_data}:/app/data
+    # to run gotify as a dedicated user:
+    # sudo chown -R 1234:1234 ./gotify_data
+    # user: "1234:1234"
