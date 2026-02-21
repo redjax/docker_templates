@@ -13,7 +13,7 @@ services:
     #  sudo chown -R 1234:1234 ./gotify_data
     #  user: "1234:1234"
     ports:
-      - ${GOTIFY_PORT:-80}:80
+      - ${GOTIFY_PORT:-8080}:80
     environment:
       GOTIFY_SERVER_KEEPALIVEPERIODSECONDS: ${GOTIFY_SERVER_KEEPALIVEPERIODSECONDS:-0}
       GOTIFY_SERVER_LISTENADDR: ${GOTIFY_SERVER_LISTENADDR:-}
