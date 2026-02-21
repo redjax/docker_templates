@@ -55,3 +55,7 @@ services:
     volumes:
       - ${GOTIFY_DATA_DIR:-server_data}:/app/data
       - ${GOTIFY_PLUGINS_DIR:-./plugins}:/app/data/plugins
+    deploy:
+      resources:
+        limits:
+          memory: ${GOTIFY_MEMORY_LIMIT:-128M}
