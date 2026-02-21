@@ -54,3 +54,4 @@ services:
       GOTIFY_LOG_LEVEL: ${GOTIFY_LOG_LEVEL:-info}
     volumes:
       - ${GOTIFY_DATA_DIR:-server_data}:/app/data
+      - ${GOTIFY_PLUGINS_DIR:-./plugins}:/app/data/plugins
