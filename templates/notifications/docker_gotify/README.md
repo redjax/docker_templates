@@ -82,4 +82,14 @@ Gotify also supports ["message extras"](https://gotify.net/docs/msgextras), whic
     -O /dev/null
   ```
 
-## Serve
+## Create new app with curl
+
+In Gotify, an application is a notification source. Each application gets its own token. You can create new apps with cURL:
+
+```shel
+curl -u admin:your-password \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Server Alerts", "description": "Critical server notifications"}' \
+  http://localhost:8070/application
+```
