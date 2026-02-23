@@ -60,6 +60,18 @@
         ]
     },
     {
+        "count": 2,
+        "name": "project_management",
+        "path": "templates/project_management",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_peppermint",
+                "path": "templates/project_management/docker_peppermint"
+            }
+        ]
+    },
+    {
         "count": 7,
         "name": "media",
         "path": "templates/media",
