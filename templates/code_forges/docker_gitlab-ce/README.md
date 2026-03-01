@@ -87,7 +87,7 @@ Edit your [`gitlab.env` file](./env_files/example.gitlab.env). Edit the `GITLAB_
 Edit your [Traefik `dynamic_config.yml`](./config/traefik/example.dynamic_config.yml), setting the router rule to:
 
 ```yaml
-rule: "Host(`gitlab.ingit.dev`)"
+rule: "Host(`gitlab.example.com`)"
 ```
 
 If you create an entry in your `~/.ssh/config`, make sure to use the right port (whatever you set for `GITLAB_SSH_PORT` in the [Gitlab `.env` file](./.env.example)).
@@ -105,21 +105,29 @@ Host domain.com
 
 ## Setup Docker Registry
 
+> [!NOTE]
+> I have configured a working registry. Until this warning is removed, do not expect the steps below to work.
+> I am updating them as I try new things and will remove this message when the instructions are valid.
+
 To enable the Docker registry feature of Gitlab, you have to set the following configurations:
 
 ```rb
 gitlab_rails['registry_enabled'] = true;
 registry['enable'] = true;
-registry_external_url 'https://registry.ingit.dev';
-gitlab_rails['registry_host'] = 'registry.ingit.dev';
+registry_external_url 'https://registry.example.com';
+gitlab_rails['registry_host'] = 'registry.example.com';
 registry_nginx['enable'] = false;
 registry['registry_http_addr'] = '127.0.0.1:5000';
+letsencrypt['enable'] = true;
+letsencrypt['contact_emails'] = ['you@example.com'];
+registry_nginx['listen_https'] = false;
 ```
 
 Edit the [Gitlab env file](./env_files/example.gitlab.env). Add the following to the `GITLAB_OMNIBUS_CONFIG` (or change the settings):
 
 ```plaintext
-GITLAB_OMNIBUS_CONFIG="gitlab_rails['registry_enabled'] = true; registry['enable'] = true; registry_external_url 'https://registry.example.com'; gitlab_rails['registry_host'] = 'registry.example.com'; registry_nginx['enable'] = false; registry['registry_http_addr'] = '127.0.0.1:5000'"
+GITLAB_OMNIBUS_CONFIG="gitlab_rails['registry_enabled'] = true; registry['enable'] = true; registry_external_url 'https://registry.example.com'; gitlab_rails['registry_host'] = 'registry.example.com'; registry_nginx['enable'] = false; registry['registry_http_addr'] = '127.0.0.1:5000'; letsencrypt['enable'] = true
+letsencrypt['contact_emails'] = ['you@example.com']"
 ```
 
 Note that these configurations must all be on 1 line, separated by a semicolon and a space (`; `).
