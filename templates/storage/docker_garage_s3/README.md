@@ -19,3 +19,15 @@
 
 Before you can actually use Garage, you need to initialize the layout. In the webUI, navigate to `cluster` and make note of the `Capacity` column. You need to initialize the node for storage by clicking the 3-dot menu on your node, then clicking "Assign." In the pop-up window, set `Capacity` to a number less than or equal to the value in the `Capactity` column on the previous screen. Optionally, add it to a zone and/or give the node tag(s).
 
+## Use a local data dir
+
+Create a directory, i.e. `./data`, and set the owner to `999:999`:
+
+```shell
+mkdir -p ./data
+sudo chown -R 999:999 ./data
+sudo chmod -R 755 ./data
+```
+
+Then, set `GARAGE_DATA_DIR=./data`.
+
