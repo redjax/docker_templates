@@ -16,5 +16,5 @@ api_bind_addr = "[::]:3900"
 root_domain = ".s3.lan"
 
 [admin]
-api_bind_addr  = "[::]:3903"
+api_bind_addr  = "0.0.0.0:3903"
 
