@@ -1,0 +1,93 @@
+groups:
+- name: node_alerts
+  rules:
+  ## High CPU usage
+  - alert: HighCPUUsage
+    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU usage on {{ $labels.instance }}"
+      description: "CPU usage above 80% for 5m."
+
+  ## CPU spike (sudden jump)
+  - alert: CPUSpike
+    expr: rate(node_cpu_seconds_total[1m]) > (rate(node_cpu_seconds_total[5m]) * 3)
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "CPU spike detected on {{ $labels.instance }}"
+      description: "CPU rate tripled in last minute vs 5m average."
+
+  ## High RAM usage
+  - alert: HighMemoryUsage
+    expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory usage on {{ $labels.instance }}"
+      description: "Memory usage above 85% for 5m."
+
+  ## Low available RAM
+  - alert: LowAvailableMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Low available memory on {{ $labels.instance }}"
+      description: "Less than 10% memory available."
+
+  ## High disk I/O (read/write)
+  - alert: HighDiskIO
+    expr: rate(node_disk_read_bytes_total[5m]) + rate(node_disk_written_bytes_total[5m]) > 1e9
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High disk I/O on {{ $labels.instance }} ({{ $labels.device }})"
+      description: "Disk I/O rate >1GB/s for 5m."
+
+  ## Disk I/O spike
+  - alert: DiskIOSpike
+    expr: rate(node_disk_read_bytes_total[1m]) > (rate(node_disk_read_bytes_total[5m]) * 5) or 
+          rate(node_disk_written_bytes_total[1m]) > (rate(node_disk_written_bytes_total[5m]) * 5)
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Disk I/O spike on {{ $labels.instance }} ({{ $labels.device }})"
+      description: "Disk I/O 5x higher than 5m average."
+
+  ## Low disk space
+  - alert: LowDiskSpace
+    expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Low disk space on {{ $labels.instance }}"
+      description: "Root filesystem >85% full."
+
+  ## High network traffic
+  - alert: HighNetworkTraffic
+    expr: rate(node_network_receive_bytes_total[5m]) + rate(node_network_transmit_bytes_total[5m]) > 125e6
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High network traffic on {{ $labels.instance }} ({{ $labels.device }})"
+      description: "Network I/O >100MB/s sustained."
+
+  ## Node down
+  - alert: NodeDown
+    expr: up{job="nodes"} == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $labels.instance }} is down"
+      description: "Node exporter not responding."

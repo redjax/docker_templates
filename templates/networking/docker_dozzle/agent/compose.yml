@@ -1,0 +1,15 @@
+---
+## Dozzle in agent mode
+#  To connect to an agent on the server, add it to the DOZZLE_REMOTE_AGENT env var.
+name: "dozzle-agent"
+
+services:
+  dozzle-agent:
+    image: ghcr.io/amir20/dozzle:latest
+    container_name: dozzle-agent
+    restart: unless-stopped
+    command: agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - ${DOZZLE_AGENT_PORT:-7007}:7007

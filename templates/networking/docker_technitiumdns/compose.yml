@@ -1,4 +1,6 @@
 ---
+name: technitium
+
 # networks:
 #   unnamed_net: {}
 
@@ -17,30 +19,34 @@ services:
         limits:
           memory: ${TECHNITIUM_CONTAINER_MEMORY:-512M}
     hostname: technitium-dns
-    network_mode: "host"
+    # network_mode: "host"
     ports:
       - ${TECHNITIUM_WEBUI_PORT:-5380}:5380
-      # - ${TECHNITIUM_WEBUI_HTTPS_PORT:-53443}:53443/tcp
+      - ${TECHNITIUM_WEBUI_HTTPS_PORT:-53443}:53443/tcp
       - ${TECHNITIUM_DNS_PORT:-53}:53/udp
       - ${TECHNITIUM_DNS_PORT:-53}:53/tcp
-      # - ${TECHNITIUM_DNS_OVER_QUIC_PORT:-853}:853/udp
-      # - ${TECHNITIUM_DNS_OVER_TLS_PORT:-853}:853/tcp
-      # - ${TECHNITIUM_DNS_OVER_HTTPS_PORT:-443}:443/udp
-      # - ${TECHNITIUM_DNS_OVER_HTTPS_PORT:-443}:443/tcp
-      # - ${TECHNITIUM_DNS_OVER_HTTP_PORT:-80}:80/tcp
-      # - ${TECHNITIUM_DNS_OVER_HTTP_PROXY_PORT:-8053}:8053/tcp
-      # - ${TECHNITIUM_DHCP_PORT:-67}:67/udp
+      - ${TECHNITIUM_DNS_OVER_QUIC_PORT:-853}:853/udp
+      - ${TECHNITIUM_DNS_OVER_TLS_PORT:-853}:853/tcp
+      - ${TECHNITIUM_DNS_OVER_HTTPS_PORT:-443}:443/udp
+      - ${TECHNITIUM_DNS_OVER_HTTPS_PORT:-443}:443/tcp
+      - ${TECHNITIUM_DNS_OVER_HTTP_PORT:-80}:80/tcp
+      - ${TECHNITIUM_DNS_OVER_HTTP_PROXY_PORT:-8053}:8053/tcp
+      - ${TECHNITIUM_DHCP_PORT:-67}:67/udp
     volumes:
       - type: bind
         source: ${TECHNITIUM_DATA_DIR:-technitium_data}
         target: /etc/dns
+      - type: bind
+        source: ./password.txt
+        target: /etc/password.txt
     environment:
       TZ: ${TZ:-Etc/UTC}
       DNS_SERVER_DOMAIN: ${TECHNITIUM_SERVER_DOMAIN:-example.com}
       
       ## You only need to set one of these in your .env
       DNS_SERVER_ADMIN_PASSWORD: ${TECHNITIUM_ADMIN_PASSWORD}
-      DNS_SERVER_ADMIN_PASSWORD_FILE: ${TECHNITIUM_ADMIN_PASSWORD_FILE}
+      # DNS_SERVER_ADMIN_PASSWORD_FILE: ${TECHNITIUM_ADMIN_PASSWORD_FILE}
+      DNS_SERVER_ADMIN_PASSWORD_FILE: /etc/password.txt
       
       DNS_SERVER_PREFER_IPV6: ${TECHNITIUM_PREFER_IPV6:-false}
       # DNS_SERVER_WEB_SERVICE_HTTP_PORT: 5380

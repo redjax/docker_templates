@@ -1,0 +1,50 @@
+---
+name: davis
+
+volumes:
+  davis_data: {}
+  db_data: {}
+
+services:
+  db:
+    image: mariadb:11
+    container_name: davis-db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "--protocol=tcp", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  davis:
+    image: ghcr.io/tchapi/davis-standalone:latest
+    container_name: davis
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}?charset=utf8mb4
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      AUTH_REALM: ${AUTH_REALM:-Davis Server}
+      AUTH_METHOD: ${AUTH_METHOD:-Basic}
+      CALDAV_ENABLED: ${CALDAV_ENABLED:-true}
+      CARDDAV_ENABLED: ${CARDDAV_ENABLED:-true}
+      PUBLIC_CALENDARS_ENABLED: ${PUBLIC_CALENDARS_ENABLED:-true}
+      INVITE_FROM_ADDRESS: ${INVITE_FROM_ADDRESS:-davis@example.com}
+      APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
+    volumes:
+      - davis_data:/data
+    ports:
+      - "${DAVIS_PORT:-9000}:9000"

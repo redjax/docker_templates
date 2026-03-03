@@ -1,0 +1,13 @@
+---
+## User definitions for Dozzle
+#  You can generate a user with:
+#    docker run -it --rm amir20/dozzle generate --name $NAME --email $EMAIL --password secret $USERNAME
+users:
+  admin:
+    email: admin@example.com
+    name: Admin
+    ## You can generate a password with:
+    #
+    password: $2a$11$9ho4vY2LdJ/WBopFcsAS0uORC0x2vuFHQgT/yBqZyzclhHsoaIkzK
+    filter: ""
+    roles: ""

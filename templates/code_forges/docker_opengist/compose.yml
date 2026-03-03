@@ -1,0 +1,48 @@
+---
+name: "opengist"
+
+volumes:
+  opengist-data:
+    name: "data"
+
+services:
+  opengist:
+    image: ghcr.io/thomiceli/opengist:1
+    container_name: opengist
+    restart: unless-stopped
+    ports:
+      - ${OPENGIST_HTTP_PORT:-6157}:6157
+      - ${OPENGIST_SSH_PORT:-2222}:2222
+    volumes:
+      - ${OPENGIST_DATA_DIR:-data}:/opengist
+      ## Uncomment to use a config file instead of env vars
+      #  You must create this file before running this stack
+      # - ${OPENGIST_CONFIG_FILE:-./config/opengist-config.yml}:/config.yml
+    environment:
+      OG_CUSTOM_NAME: ${OPENGIST_SITE_NAME:-Gists}
+      OG_LOG_LEVEL: ${OPENGIST_LOG_LEVEL:-info}
+      OG_EXTERNAL_URL: ${OPENGIST_ACCESS_URL}
+      OG_SSH_EXTERNAL_DOMAIN: ${OPENGIST_SSH_EXTERNAL_DOMAIN}
+      OG_SECRET_KEY: ${OPENGIST_SECRET_KEY}
+
+      ## Database
+
+      # Use a plain filename for SQLite.
+      # Use postgres://postgres:passwd@localhost:5432/opengist_db for Postgres.
+      # Use mysql://root:passwd@localhost:3306/opengist_db for MySQL
+      OG_DB_URI: ${OPENGIST_DB_URI:-opengist.db}
+      OG_SQLITE_JOURNAL_MODE: WAL
+
+      ## OAUTH
+
+      # Github
+      OG_GITHUB_CLIENT_KEY: ${OPENGIST_GITHUB_CLIENT_KEY}
+      OG_GITHUB_SECRET: ${OPENGIST_GITHUB_SECRET}
+
+      # Gitlab
+      OG_GITLAB_URL: ${OPENGIST_GITLAB_URL:-https://gitlab.com}
+      OG_GITLAB_CLIENT_KEY: ${OPENGIST_GITLAB_CLIENT_KEY}
+      OG_GITLAB_CLIENT_SECRET: ${OPENGIST_GITLAB_CLIENT_SECRET}
+
+      # UID: 1001
+      # GID: 1001

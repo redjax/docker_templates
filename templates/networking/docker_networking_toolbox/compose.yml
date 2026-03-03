@@ -1,10 +1,19 @@
 ---
-# networks:
-#   unnamed_net: {}
-
-# volumes:
-#   volume_name: {}
+name: networking-toolbox
 
 services:
-
-  ...
+  app:
+    image: lissy93/networking-toolbox:latest
+    restart: unless-stopped
+    ports:
+      - ${WEBUI_PORT:-3000}:3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

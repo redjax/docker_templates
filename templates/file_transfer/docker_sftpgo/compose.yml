@@ -12,15 +12,18 @@ services:
     ports:
       - ${SFTPGO_HTTP_PORT:-8080}:8080
       - ${SFTPGO_SSH_PORT:-2022}:2022
+      - ${SFTPGO_DAV_PORT:-8090}:8090
     volumes:
       - ${SFTPGO_DATA_DIR:-sftpgo_data}:/srv/sftpgo
       - ${SFTPGO_HOME_DIR:-sftpgo_home}:/var/lib/sftpgo
       - ${SFTPGO_BACKUPS_DIR:-sftpgo_backups}:/var/lib/sftpgo/backups
       ## Mount a custom config file
-      #  - ${SFTPGO_CONFIG_FILE:-./config/sftpgo.json}:/var/lib/sftgo/.config/sftpgo/sftpgo.json
+      # - ${SFTPGO_CONFIG_FILE:-./config/sftpgo.json}:/var/lib/sftgo/.config/sftpgo/sftpgo.json
     environment:
       SFTPGO_LOG_LEVEL: ${SFTPGO_LOG_LEVEL:-info}
       SFTPGO_GRACE_TIME: ${SFTPGO_GRACE_TIME:-10}
+      ## Set WebDAV port
+      SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8090
 
       ## Configure SFTPGo via environment variable by prepending any
       #  SFTPGo configuration option with SFTPGO_<option>__<value>

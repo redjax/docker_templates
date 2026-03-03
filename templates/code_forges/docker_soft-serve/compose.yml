@@ -1,0 +1,23 @@
+---
+name: "soft-serve"
+volumes:
+  softserve_data:
+    name: data
+
+services:
+  soft-serve:
+    image: charmcli/soft-serve:latest
+    container_name: ${SOFTSERVE_CONTAINER_NAME:-soft-serve}
+    restart: unless-stopped
+    volumes:
+      - ${SOFTSERVE_DATA_DIR:-softserve_data}:/soft-serve
+      ## Mount custom config.yml server config
+      - ${SOFTSERVE_CONFIG_FILE:-./config/soft-serve.yml}:/soft-serve-config/config.yml:ro
+    ports:
+      - ${SOFTSERVE_SSH_PORT:-23231}:23231
+      - ${SOFTSERVE_HTTP_PORT:-23232}:23232
+      - ${SOFTSERVE_GIT_PORT:-9418}:9418
+    environment:
+      SOFT_SERVE_INITIAL_ADMIN_KEYS: ${SOFTSERVE_INITIAL_ADMIN_KEYS}
+      ## Path in container where custom config.yml should be mounted
+      SOFT_SERVE_CONFIG_LOCATION: /soft-serve-config/config.yml
