@@ -1,1 +1,9 @@
 adguardhome/
+unbound/*
+unbound/config.d/*
+
+!unbound/
+!unbound/config.d/
+!unbound/config.d/cachedb.conf
+!unbound/config.d/config.conf
+!unbound/config.d/*example*
