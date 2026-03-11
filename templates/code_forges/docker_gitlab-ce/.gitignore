@@ -1,6 +1,7 @@
 gitlab/
 gitlab-runner/
 traefik/
+redis/
 
 config/traefik/*
 
@@ -12,3 +13,4 @@ config/traefik/*
 !*example*.*
 !*.*example*
 !*.*example*.*
+
