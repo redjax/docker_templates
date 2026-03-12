@@ -740,11 +740,15 @@
         ]
     },
     {
-        "count": 2,
+        "count": 3,
         "name": "notifications",
         "path": "templates/notifications",
         "sub_categories": [],
         "templates": [
+            {
+                "name": "docker_gotify",
+                "path": "templates/notifications/docker_gotify"
+            },
             {
                 "name": "docker_ntfy",
                 "path": "templates/notifications/docker_ntfy"
