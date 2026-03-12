@@ -206,6 +206,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_coder](../templates/code_forges/docker_coder)
   - [docker_opengist](../templates/code_forges/docker_opengist)
 - [notifications](../templates/notifications)
+  - [docker_gotify](../templates/notifications/docker_gotify)
   - [docker_ntfy](../templates/notifications/docker_ntfy)
 - [dashboards](../templates/dashboards)
   - [docker_dashy](../templates/dashboards/docker_dashy)
