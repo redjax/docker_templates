@@ -1,10 +1,51 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: vikunja
 
-# volumes:
-#   volume_name: {}
+volumes:
+  db-data: {}
 
 services:
+  postgresql:
+    image: postgres:${DB_IMG_TAG:-16-alpine}
+    container_name: vikunja-db
+    restart: unless-stopped
+    volumes:
+      - ${DB_DATA_DIR:-db-data}:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER:-vikunja}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-vikunja}
+      POSTGRES_DB: ${DB_DATABASE:-vikunja}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pg_isready -U $${DB_USER} -d $${DB_DATABASE}"
+      interval: 10s
+      timeout: 20s
+      retries: 20
+      start_period: 40s
+    env_file:
+      - .env
 
-  ...
+  vikunja:
+    image: vikunja/vikunja
+    container_name: vikunja
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: ${VIKUNJA_PUBLIC_URL:-http://localhost:3456}
+      VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_JWT_SECRET}
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: "${VIKUNJA_ENABLE_REGISTRATION:-true}"
+      VIKUNJA_DATABASE_TYPE: postgres
+      VIKUNJA_DATABASE_HOST: ${VIKUNJA_DB_HOST:-postgresql}
+      VIKUNJA_DATABASE_PASSWORD: "${DB_PASSWORD:-vikunja}"
+      VIKUNJA_DATABASE_USER: "${DB_USER:-vikunja}"
+      VIKUNJA_DATABASE_DATABASE: "${DB_DATABASE:-vikunja}"
+      POSTGRESQL_DATABASE: "${DB_DATABASE:-vikunja}"
+    volumes:
+      - ${VIKUNJA_DATA_DIR:-./vikunja/data}:/app/vikunja/files/
+      - ${VIKUNJA_CACHE_DIR:-./vikunja/cache}:/app/vikunja/cache/
+    ports:
+      - ${VIKUNJA_WEBUI_PORT:-3456}:3456
+    depends_on:
+      postgresql:
+        condition: service_healthy
