@@ -15,8 +15,6 @@ services:
       - ${SEMAPHORE_WEBUI_PORT:-3000}:3000
     volumes:
       - ${SEMAPHORE_CONFIG_DIR:-semaphore_config}:/etc/semaphore
-    volumes:
-      - ${SEMAPHORE_CONFIG_DIR:-semaphore_config}:/etc/semaphore
     environment:
       SEMAPHORE_DB_USER: ${SEMAPHORE_DB_USER:-semaphore}
       SEMAPHORE_DB_PASS: ${SEMAPHORE_DB_PASSWORD:-semaphore}
