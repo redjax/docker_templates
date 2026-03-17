@@ -84,3 +84,12 @@ destination:
   #     force: true
   #     visibility:
   #       repositories: private
+
+  ## Backup to Onedev project
+  # onedev:
+  #   ## Only use 1 of the token values below, file OR plaintext value
+  #   - token: some-token
+  #     token_file: path/to/token.txt
+  #     url: http(s)://your-onedev-instance.com
+  #     organization: your-onedev-orgname
+  #     force: true

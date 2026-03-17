@@ -1,61 +1,59 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Get current dir. TODO: get path to script, not relative path.
-# this_dir=${PWD}
-this_dir="$HOME/docker/docker_templates/templates/docker_postgresql"
+this_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Image to use for temporary backup container
+## Image to use for temporary backup container
 backup_container_image="busybox"
-# Number of db dumps & script backups to keep
+## Number of db dumps & script backups to keep
 backup_retention="3"
 
-# Name of docker project, which is prepended to volume names
+## Name of docker project, which is prepended to volume names
 docker_proj_name="docker_postgresql"
-# Top level backup directory
+## Top level backup directory
 backup_dir="$this_dir/backup"
 
-# Postgres container name
+## Postgres container name
 pg_container="postgres"
-# Postgres container user. Must match value in .env
+## Postgres container user. Must match value in .env
 pg_container_user="postgres"
-# Name of postgres data volume
+## Name of postgres data volume
 pgdata_vol_name="postgres_data"
-# Path in postgres container to data dir
+## Path in postgres container to data dir
 pgdata_container_path="/var/lib/postgresql/data"
 
-# Name of pgadmin container
+## Name of pgadmin container
 pgadmin_container="pgadmin"
-# Name of pgadmin data volume
+## Name of pgadmin data volume
 pgadmindata_vol_name="pgadmin_data"
-# Path in pgadmin container to data dir
+## Path in pgadmin container to data dir
 pgadmindata_container_path="/var/lib/pgadmin"
 pgadmin_scripts_container_path="/var/lib/pgadmin/storage"
 
-# Path to postgres data backup on host
+## Path to postgres data backup on host
 pg_backup_dir="$backup_dir/$pgdata_vol_name"
 pg_db_backup_dir="$pg_backup_dir/db_dumps"
-# Path to pgadmin data backup on host
+## Path to pgadmin data backup on host
 pgadmin_backup_dir="$backup_dir/$pgadmindata_vol_name"
 
 function check_dirs_exist() {
-    # Ensure directories needed for script exist
+    ## Ensure directories needed for script exist
 
     declare -a dirs=("$backup_dir" "$pg_backup_dir/" "$pgadmin_backup_dir/" "$pg_db_backup_dir" "$pgadmin_backup_dir/scripts")
 
-    # Loop over 'dirs' array
+    ## Loop over 'dirs' array
     for dir in "${dirs[@]}"; do
         # Check if dir exists
         if [[ ! -d $dir ]]; then
             echo "$dir does not exist. Creating."
 
-            # Create  $dir
+            ## Create  $dir
             mkdir -pv $dir
         fi
     done
 }
 
 function trim_backup() {
-    # Delete oldest db backup, retaining num in $'pg_db_backup_retention' var at top of script
+    ## Delete oldest db backup, retaining num in $'pg_db_backup_retention' var at top of script
 
     declare -a backup_trim_dirs=("$pg_db_backup_dir" "$pgadmin_backup_dir/scripts")
 
@@ -67,51 +65,51 @@ function trim_backup() {
 
             echo "[DEBUG] DIR: $dir"
 
-            # Initialize loop counter
+            ## Initialize loop counter
             pg_db_loop_count=0
-            # Get count of files in pg_backup_dir
+            ## Get count of files in pg_backup_dir
             pg_db_file_count=$(ls $dir/ | wc -l)
 
             echo ""
             echo "Found $pg_db_file_count file(s) in $dir"
             echo ""
 
-            # If number of files in backup dir is greater than or equal to retention value
+            ## If number of files in backup dir is greater than or equal to retention value
             if [[ $pg_db_file_count -ge $backup_retention ]]; then
                 echo "Trimming backups from $dir"
 
-                # Loop until number of files is less than retention num
+                ## Loop until number of files is less than retention num
                 while [ $pg_db_file_count -gt $backup_retention ]; do
 
-                    # Get pg_db files, remove oldest
+                    ## Get pg_db files, remove oldest
                     stat --printf='%Y %n\0' $dir/*.sql | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
-                    # Re-set file_count after file deletion
+                    ## Re-set file_count after file deletion
                     pg_db_file_count=$(ls $pg_db_backup_dir/ | wc -l)
                 done
             fi
         else
             echo "[DEBUG] DIR: $dir"
-            # Initialize loop counter
+            ## Initialize loop counter
             pga_script_loop_count=0
-            # Get count of files in pg_backup_dir
+            ## Get count of files in pg_backup_dir
             pga_script_file_count=$(ls $dir/ | wc -l)
 
             echo ""
             echo "Found $pga_script_file_count file(s) in $dir"
             echo ""
 
-            # If number of files in backup dir is greater than or equal to retention value
+            ## If number of files in backup dir is greater than or equal to retention value
             if [[ $pga_script_file_count -ge $backup_retention ]]; then
                 echo "[DEBUG] pgAdmin scripts count: $pga_script_file_count"
 
                 echo "Trimming backups from $dir"
 
                 while [[ $pga_script_file_count -gt $backup_retention ]]; do
-                    # Get pga script files, remove oldest
+                    ## Get pga script files, remove oldest
                     stat --printf='%Y %n\0' $dir/* | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
-                    # Re-set file_count after file deletion
+                    ## Re-set file_count after file deletion
                     pga_script_file_count=$(ls $pg_db_backup_dir/ | wc -l)
                 done
             fi
@@ -121,17 +119,17 @@ function trim_backup() {
 }
 
 function backup_container_data() {
-    # $1=container name
+    ## $1=container name
 
     case $1 in
     "postgres")
-        # Set postgres backup variables
+        ## Set postgres backup variables
         source_container=$pg_container
         backup_dir="$pg_backup_dir/"
         container_path=$pgdata_container_path
         ;;
     "pgadmin")
-        # Set pgadmin backup variables
+        ## Set pgadmin backup variables
         source_container=$pgadmin_container
         backup_dir=$pgadmin_backup_dir
         container_path=$pgadmindata_container_path
@@ -145,12 +143,12 @@ function backup_container_data() {
 
     echo "[DEBUG] source_container: $source_container"
 
-    # Backup command
+    ## Backup command
     docker_cmd="docker run --rm --volumes-from $source_container -v $backup_dir:/backup $backup_container_image tar czvf /backup/postgres_data_backup.tar.gz $container_path"
 
     echo ""
     echo "Stopping $source_container"
-    # Stop container
+    ## Stop container
     docker compose stop $source_container
 
     echo ""
@@ -158,7 +156,7 @@ function backup_container_data() {
     echo "$docker_cmd"
     echo ""
 
-    # Run docker backup using intermediary $'backup_container_image'
+    ## Run docker backup using intermediary $'backup_container_image'
     exec $docker_cmd &
     wait
 
@@ -166,7 +164,7 @@ function backup_container_data() {
     echo "Restarting container"
     echo ""
 
-    # Restart container after backup
+    ## Restart container after backup
     docker compose restart $source_container
 
 }
@@ -236,7 +234,7 @@ function pga_backup_select() {
 
 function pgadmin_scripts_backup() {
 
-    # Temporary dir to store scripts before tar
+    ## Temporary dir to store scripts before tar
     backup_tmp="backup_tmp"
     echo ""
     echo "Copying scripts out of pgadmin:$pgadmin_scripts_container_path"
@@ -281,31 +279,31 @@ function pgadmin_scripts_backup() {
 }
 
 function full_backup() {
-    # Run all backup jobs
+    ## Run all backup jobs
 
     echo ""
     echo "Backup: $pg_container"
     echo ""
-    # Backup postgres data
+    ## Backup postgres data
     backup_container_data $pg_container
 
-    # Trim backups
+    ## Trim backups
     trim_backup
 
     echo ""
     echo "Backup $pgadmin_container"
     echo ""
-    # Backup pgadmin data
+    ## Backup pgadmin data
     backup_container_data $pgadmin_container
 
 }
 
 function restore_container_data() {
-    # $1=container name
+    ## $1=container name
 
     case $1 in
     "postgres")
-        # Set postgres backup variables
+        ## Set postgres backup variables
         target_container=$pg_container
         backup_dir="$pg_backup_dir/"
         container_path=$pgdata_container_path
@@ -313,7 +311,7 @@ function restore_container_data() {
         pg_db_restore
         ;;
     "pgadmin")
-        # Set pgadmin backup variables
+        ## Set pgadmin backup variables
         target_container=$pgadmin_container
         backup_dir=$pgadmin_backup_dir
         container_path=$pgadmindata_container_path
@@ -331,16 +329,16 @@ function restore_container_data() {
 }
 
 function pg_db_backup() {
-    # Backup postgres databases
+    ## Backup postgres databases
     echo "Backing up $pg_container db dump to $pg_db_backup_dir/$dump_name"
 
-    # Prepare backup name
+    ## Prepare backup name
     dump_name="dump_$(date +%Y-%m-%d_%H_%M_%S).sql"
-    # Run docker backup command
+    ## Run docker backup command
     docker exec -t $pg_container pg_dumpall -c -U postgres >"$pg_db_backup_dir/$dump_name" &
     wait
 
-    # Trim backups
+    ## Trim backups
     trim_backup
 }
 
@@ -392,7 +390,7 @@ function pg_restore_select() {
 }
 
 function pg_db_restore() {
-    # Restore postgres backup dump
+    ## Restore postgres backup dump
 
     ## Build numbered list of files for user to select from
     #    https://askubuntu.com/a/682104
@@ -400,14 +398,14 @@ function pg_db_restore() {
     # Read input from find command, null-delimeted
     while IFS= read -r -d $'\0' file; do
 
-        # Get filename from path
+        ## Get filename from path
         #   https://stackoverflow.com/a/965072
         filename="${file##*/}"
 
-        # Add find files to array "options," increment i
+        ## Add find files to array "options," increment i
         options[i++]="$filename"
 
-        # Finish loop, run find command & feed into IFS
+        ## Finish loop, run find command & feed into IFS
     done < <(find $pg_db_backup_dir/ -maxdepth 1 -type f -name "*.sql" -print0)
 
     ## Select menu (from link above)
@@ -426,7 +424,7 @@ function pg_db_restore() {
             echo ""
             echo "Bringing down stack temporarily"
             echo ""
-            # Bring docker stack down
+            ## Bring docker stack down
             docker compose down &
             wait
 
@@ -435,15 +433,15 @@ function pg_db_restore() {
             echo ""
             echo "Restarting $pg_container"
             echo ""
-            # Restart container with env var POSTGRES_HOST_AUTH_METHOD='trust'
+            ## Restart container with env var POSTGRES_HOST_AUTH_METHOD='trust'
             docker compose -f docker-compose.yml run --rm --name $pg_container -e POSTGRES_HOST_AUTH_METHOD='trust' -d $pg_container &
             wait
 
-            # Cat contents of dump into psql command
+            ## Cat contents of dump into psql command
             # cat $file | docker exec -i $pg_container psql -U postgres
             # cat $file | docker compose exec -d -i $pg_container psql -U $pg_container_user
 
-            # Copy backup contents into container
+            ## Copy backup contents into container
             docker_cp_cmd="docker cp $backup_full_path $pg_container:/backup/$opt"
 
             # echo "[DEBUG] Docker cp command: $docker_cp_cmd"
@@ -455,7 +453,7 @@ function pg_db_restore() {
             eval $docker_cp_cmd &
             wait
 
-            # Restore db
+            ## Restore db
             cat $backup_full_path | docker exec -i $pg_container psql -U $pg_container_user
 
             echo ""
@@ -565,7 +563,7 @@ function main() {
 
             "a" | "A")
                 container_choice="pgadmin"
-                # backup_container_data $container_choice
+                ## backup_container_data $container_choice
                 pga_backup_select
                 ;;
             *)
