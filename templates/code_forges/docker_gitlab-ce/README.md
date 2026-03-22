@@ -45,6 +45,14 @@ docker exec -it gitlab update-permissions
 docker restart gitlab
 ```
 
+### Personal Access Tokens
+
+When creating a Personal Access Token (PAT), you may see a generic error like this:
+
+![gitlab_pat_err](.assets/img/gitlab_pat_err.png)
+
+To fix this, make sure your `GITLAB_EXTERNAL_URL` value matches the URL you're accessing the Gitlab UI from. For example, in a LAN-only deployment you would need to set `GITLAB_EXTERNAL_URL=http://192.168.1.x:80` (or whatever your `GITLAB_HTTP_PORT` is), or with a reverse proxy you would set `GITLAB_EXTERNAL_URL=https://gitlab.example.com`.
+
 ## Cloudflare Setup
 
 > [!WARNING]
@@ -77,8 +85,9 @@ Replace `domain.com` with your domain, and set your [public IP address](https://
 Edit your [`gitlab.env` file](./env_files/example.gitlab.env). Edit the `GITLAB_OMNIBUS_CONFIG` variable, setting `gitlab_rails['gitlab_ssh_host'] = 'domain.com'`.
 
 Edit your [Traefik `dynamic_config.yml`](./config/traefik/example.dynamic_config.yml), setting the router rule to:
+
 ```yaml
-rule: "Host(`gitlab.ingit.dev`)"
+rule: "Host(`gitlab.example.com`)"
 ```
 
 If you create an entry in your `~/.ssh/config`, make sure to use the right port (whatever you set for `GITLAB_SSH_PORT` in the [Gitlab `.env` file](./.env.example)).
@@ -96,21 +105,29 @@ Host domain.com
 
 ## Setup Docker Registry
 
+> [!NOTE]
+> I have configured a working registry. Until this warning is removed, do not expect the steps below to work.
+> I am updating them as I try new things and will remove this message when the instructions are valid.
+
 To enable the Docker registry feature of Gitlab, you have to set the following configurations:
 
 ```rb
 gitlab_rails['registry_enabled'] = true;
 registry['enable'] = true;
-registry_external_url 'https://registry.ingit.dev';
-gitlab_rails['registry_host'] = 'registry.ingit.dev';
+registry_external_url 'https://registry.example.com';
+gitlab_rails['registry_host'] = 'registry.example.com';
 registry_nginx['enable'] = false;
 registry['registry_http_addr'] = '127.0.0.1:5000';
+letsencrypt['enable'] = true;
+letsencrypt['contact_emails'] = ['you@example.com'];
+registry_nginx['listen_https'] = false;
 ```
 
 Edit the [Gitlab env file](./env_files/example.gitlab.env). Add the following to the `GITLAB_OMNIBUS_CONFIG` (or change the settings):
 
 ```plaintext
-GITLAB_OMNIBUS_CONFIG="gitlab_rails['registry_enabled'] = true; registry['enable'] = true; registry_external_url 'https://registry.example.com'; gitlab_rails['registry_host'] = 'registry.example.com'; registry_nginx['enable'] = false; registry['registry_http_addr'] = '127.0.0.1:5000'"
+GITLAB_OMNIBUS_CONFIG="gitlab_rails['registry_enabled'] = true; registry['enable'] = true; registry_external_url 'https://registry.example.com'; gitlab_rails['registry_host'] = 'registry.example.com'; registry_nginx['enable'] = false; registry['registry_http_addr'] = '127.0.0.1:5000'; letsencrypt['enable'] = true
+letsencrypt['contact_emails'] = ['you@example.com']"
 ```
 
 Note that these configurations must all be on 1 line, separated by a semicolon and a space (`; `).
@@ -118,6 +135,45 @@ Note that these configurations must all be on 1 line, separated by a semicolon a
 If you are [using Cloudflare](#cloudflare-setup), also add an un-proxied (gray icon) `A` name entry for `registry`, pointed to [your public IP address](https://ipadr.is).
 
 Don't forget to uncomment the registry portions of the [dynamic Traefik config](./config/traefik/dynamic_config.yml) and the [regular Traefik config](./config/traefik/traefik_config.yml).
+
+## Upgrade Gitlab
+
+When you pull the latest Gitlab image and run the update container, you might get an error like `It seems you are upgrading from 18.3.1 to 18.9.1. It is required to upgrade to the latest 18.8.x version first before proceeding`:
+
+```log
+gitlab-server  | Thank you for using GitLab Docker Image!
+gitlab-server  | Current version: gitlab-ce=18.9.1-ce.0
+gitlab-server  | 
+gitlab-server  | Configure GitLab for your system by editing /etc/gitlab/gitlab.rb file
+gitlab-server  | And restart this container to reload settings.
+gitlab-server  | To do it use docker exec:
+gitlab-server  | 
+gitlab-server  |   docker exec -it gitlab editor /etc/gitlab/gitlab.rb
+gitlab-server  |   docker restart gitlab
+gitlab-server  | 
+gitlab-server  | For a comprehensive list of configuration options please see the Omnibus GitLab readme
+gitlab-server  | https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md
+gitlab-server  | 
+gitlab-server  | If this container fails to start due to permission problems try to fix it by executing:
+gitlab-server  | 
+gitlab-server  |   docker exec -it gitlab update-permissions
+gitlab-server  |   docker restart gitlab
+gitlab-server  | 
+gitlab-server  | Cleaning stale PIDs & sockets
+gitlab-server  | It seems you are upgrading from 18.3.1 to 18.9.1.
+gitlab-server  | It is required to upgrade to the latest 18.8.x version first before proceeding.
+gitlab-server  | Please follow the upgrade documentation at https://docs.gitlab.com/ee/update/#upgrade-paths
+```
+
+To fix this, you need to upgrade to an intermediate version first. Check the [container release tags](https://hub.docker.com/r/gitlab/gitlab-ce/tags) to find an intermediary version.
+
+Edit the `.env` file and change the `GITLAB_IMG_TAG` env var, i.e. `GITLAB_IMG_TAG=18.8.5-ce.0`.
+
+Run `docker compose pull` and `docker compose up -d`. You may have to repeat this for a few intermediary versions. For example, going from `18.3.x` to `18.9.1`, I had to update from `18.3.x` -> `18.5.x` -> `18.8.x` -> `latest (18.9.x)`.
+
+Each time you bring the container stack back up, you must wait for the container to do database migrations. Wait until the webUI is available again before upgrading to the next version.
+
+Once you are on the latest release, you can set `GITLAB_IMG_TAG=` in the `.env` file to use the default `latest` tag.
 
 ## Links
 
