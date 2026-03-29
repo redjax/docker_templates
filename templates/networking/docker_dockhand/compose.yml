@@ -1,10 +1,16 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: dockhand
 
-# volumes:
-#   volume_name: {}
+volumes:
+  dockhand_data: {}
 
 services:
-
-  ...
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    ports:
+      - ${DOCKHAND_PORT:-3000}:3000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKHAND_DATA_DIR:-dockhand_data}:/app/data
