@@ -1,0 +1,14 @@
+---
+## This is for running Hawser in "standard" mode
+#  https://dockhand.pro/manual/#hawser-docker-install
+name: dockhand_hawser
+
+services:
+  hawser:
+    image: ghcr.io/finsys/hawser:${HAWSER_IMG_TAG:-latest}
+    container_name: hawser-agent
+    restart: unless-stopped
+    environment:
+      TOKEN: ${HAWSER_TOKEN:-}
+    ports:
+      - ${HAWSER_PORT:-2376}
