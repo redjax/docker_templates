@@ -164,14 +164,8 @@ COPY --chown=$USERNAME:$USERNAME config/zellij/zellij.kdl /home/$USERNAME/.confi
 RUN mkdir -p ~/.config/nvim
 COPY --chown=$USERNAME:$USERNAME config/neovim/ /home/$USERNAME/.config/nvim/
 
-## Install syst bash completions
-RUN mkdir -p ~/.local/share/bash-completion/completions && \
-    syst completion bash > ~/.local/share/bash-completion/completions/syst
-
 ## Initialize atuin for bash
 RUN echo 'eval "$(atuin init bash)"' >> ~/.bashrc
-## Source syst completions
-RUN echo 'source ~/.local/share/bash-completion/completions/syst' >> ~/.bashrc
 
 WORKDIR /workspace
 
