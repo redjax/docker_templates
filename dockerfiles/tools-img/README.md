@@ -20,8 +20,6 @@ A Docker container with some tools pre-installed.
 
 ## Build
 
-You can use the [included `build.ps1` script](./build.ps1), or run the following command to build the container:
-
 ```shell
 docker build `
     -t tools:latest `
@@ -38,6 +36,25 @@ docker build `
 ```
 
 The `--build-arg` flags are optional; if you do not pass them, the Dockerfile will use whatever predefined `ARG` lines there are. You can also override individual versions, providing only a few specific versions.
+
+### Build with build.sh
+
+The [`build.sh` script](./build.sh) builds the Docker container with optional args/inputs:
+
+```shell
+./build.sh \
+  --tag tools:latest \
+  --python-version 3.13 \
+  --terraform-version 1.9.8
+```
+
+### Build with build.ps1
+
+You can use the [included `build.ps1` script](./build.ps1), or run the following command to build the container:
+
+```powershell
+.\build.ps1 -Tag "tools:latest" -PythonVersion "3.13"
+```
 
 ## Run
 
@@ -58,6 +75,54 @@ docker run -it --rm -v ${PWD}:/workspace tools:latest
 ```
 
 You can mount any volumes you want with `-v`, but you should use absolute paths, i.e. `C:\Path\to\Mount`, instead of relative paths like `..\..\Some\Path`.
+
+## Using the run.sh script
+
+The [`run.sh` script](./run.sh) provides a wrapper around docker run.
+
+- Interactive shell (no args)
+
+  ```shell
+  ./run.sh
+  ```
+
+- Interactive shell with volum mounts
+  - Mount the current directory:
+
+    ```shell
+    ./run.sh -v "$(pwd):/workspace"
+    ```
+  
+  - Mount multiple volumes
+
+    ```shell
+    ./run.sh -v "/projects:/workspace" -v "/data:/data"
+    ```
+
+- Execute a command
+  - Run a command without mounting volumes
+
+    ```shell
+    ./run.sh -c "terraform --version"
+    ```
+
+  - Run a command with a volume mount
+
+    ```shell
+    ./run.sh -v "$(pwd):/workspace" -c "terraform init"
+    ```
+
+  - Run a command within a specific directory in the container
+
+    ```shell
+    ./run.sh -v "$(pwd):/workspace" -w /workspace -c "terraform validate"
+    ```
+
+  - Run a complex command
+
+    ```shell
+    ./run.sh -v "$(pwd):/workspace" -c "pwsh -c 'Get-ChildItem; terraform --version'"
+    ```
 
 ### Using the run.ps1 script
 
