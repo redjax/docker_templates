@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 ## Defaults
 TAG="tools:latest"
-DOCKERFILE="Dockerfile"
+DOCKERFILE="${SCRIPT_DIR}/Dockerfile"
 PYTHON_VERSION="3.13"
 UV_VERSION="0.9.18"
 GITLEAKS_VERSION="8.18.1"
@@ -73,7 +76,7 @@ if ! docker build \
   --build-arg TFSEC_VER="$TFSEC_VERSION" \
   --build-arg TFLINT_VER="$TFLINT_VERSION" \
   --build-arg GO_VER="$GO_VERSION" \
-  "$SCRIPT_DIR"
+  "$REPO_ROOT"
 then
   echo "Docker build failed." >&2
   exit 1

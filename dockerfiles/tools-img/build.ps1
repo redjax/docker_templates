@@ -15,6 +15,8 @@ Param(
 
 ## Resolve paths relative to script location
 $ScriptDir = $PSScriptRoot
+$RepoRoot = Resolve-Path (Join-Path $ScriptDir "..\..\..")
+
 if (-not [System.IO.Path]::IsPathRooted($Dockerfile)) {
     $Dockerfile = Join-Path $ScriptDir $Dockerfile
 }
@@ -32,7 +34,7 @@ if ( -Not ( Test-Path $Dockerfile ) ) {
 
 Write-Host ""
 Write-Host "Building container '$Tag' with Dockerfile at path '$Dockerfile'" -ForegroundColor Cyan
-Write-Host "Build context: $ScriptDir" -ForegroundColor Cyan
+Write-Host "Build context: $RepoRoot" -ForegroundColor Cyan
 Write-Host ""
 
 try {
@@ -48,7 +50,7 @@ try {
         --build-arg TFSEC_VER="$TFSecVersion" `
         --build-arg TFLINT_VER="$TFLintVersion" `
         --build-arg GO_VER="$GoVersion" `
-        $ScriptDir
+        $RepoRoot
 } catch {
     Write-Error "Failed to build the Docker image: $_"
     exit 1

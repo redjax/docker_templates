@@ -97,7 +97,7 @@ RUN wget "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION
     chmod +x /usr/local/bin/osv-scanner
 
 ## Install Terraform + helpers
-COPY scripts/install-terraform-tools.sh /tmp/
+COPY dockerfiles/tools-img/scripts/install-terraform-tools.sh /tmp/
 RUN chmod +x /tmp/install-terraform-tools.sh && \
     TERRAFORM_VERSION=${TERRAFORM_VERSION} \
     TERRAFORM_LS_VERSION=${TERRAFORM_LS_VERSION} \
@@ -158,11 +158,11 @@ USER $USERNAME
 
 ## Copy zellij config
 RUN mkdir -p ~/.config/zellij
-COPY --chown=$USERNAME:$USERNAME config/zellij/zellij.kdl /home/$USERNAME/.config/zellij/config.kdl
+COPY --chown=$USERNAME:$USERNAME dockerfiles/shared/config/zellij/zellij.kdl /home/$USERNAME/.config/zellij/config.kdl
 
 ## Copy neovim config
 RUN mkdir -p ~/.config/nvim
-COPY --chown=$USERNAME:$USERNAME config/neovim/ /home/$USERNAME/.config/nvim/
+COPY --chown=$USERNAME:$USERNAME dockerfiles/shared/config/neovim/ /home/$USERNAME/.config/nvim/
 
 ## Initialize atuin for bash
 RUN echo 'eval "$(atuin init bash)"' >> ~/.bashrc
