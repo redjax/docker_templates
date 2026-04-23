@@ -46,7 +46,7 @@ services:
       - ${GERBIL_HTTP_PORT:-80}:80
 
   traefik:
-    image: traefik:v3.3.3
+    image: traefik:v3.6.13
     container_name: traefik
     restart: unless-stopped
     ## Ports appear on the gerbil service
