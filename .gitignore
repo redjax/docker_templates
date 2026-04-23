@@ -2,6 +2,11 @@
 **/.env.*
 *.env
 
+*.local.*
+*.local
+
+github_token.txt
+
 !**/.env.*.example
 !**/*example*.env
 
