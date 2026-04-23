@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 TAG="aqua-tools:latest"
-DOCKERFILE="./Dockerfile"
-GITHUB_TOKEN_FILE="./github_token.txt"
+DOCKERFILE="$SCRIPT_DIR/Dockerfile"
+GITHUB_TOKEN_FILE="$SCRIPT_DIR/github_token.txt"
 PYTHON_VERSION="3.13"
 AQUA_INSTALLER_VERSION="v4.0.4"
 AQUA_VERSION="v2.55.3"
 
-usage() {
+function usage() {
   cat <<'EOF'
 Usage:
   ./build.sh [options]
@@ -29,7 +32,10 @@ function resolve_path() {
   if command -v realpath >/dev/null 2>&1; then
     realpath "$path"
   else
-    (cd "$(dirname "$path")" && pwd)/"$(basename "$path")"
+    local dir base
+    dir="$(dirname "$path")"
+    base="$(basename "$path")"
+    cd "$dir" && printf '%s/%s\n' "$(pwd)" "$base"
   fi
 }
 
@@ -76,12 +82,12 @@ if ! command -v docker >/dev/null 2>&1; then
   exit 1
 fi
 
+DOCKERFILE="$(resolve_path "$DOCKERFILE")"
+
 if [[ ! -f "$DOCKERFILE" ]]; then
   echo "Dockerfile not found at path: $DOCKERFILE" >&2
   exit 1
 fi
-
-DOCKERFILE="$(resolve_path "$DOCKERFILE")"
 
 BUILD_ARGS=(
   --build-arg "PYTHON_VERSION=$PYTHON_VERSION"
@@ -110,8 +116,8 @@ if ! docker build \
   "${SECRET_ARGS[@]}" \
   "${BUILD_ARGS[@]}" \
   -t "$TAG" \
-  --file "$DOCKERFILE" \
-  .
+  -f "$DOCKERFILE" \
+  "$REPO_ROOT"
 then
   echo "Docker build failed." >&2
   exit 1

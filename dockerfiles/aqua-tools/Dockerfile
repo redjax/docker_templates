@@ -5,10 +5,9 @@ ARG AQUA_VERSION=v2.55.3
 
 FROM python:${PYTHON_VERSION}-slim-bookworm
 
-# https://github.com/aquaproj/aqua-installer/releases
-ARG AQUA_INSTALLER_VERSION=v4.0.4
-# https://github.com/aquaproj/aqua/releases
-ARG AQUA_VERSION=v2.56.7
+## Re-declare build args after FROM so they are available in this stage
+ARG AQUA_INSTALLER_VERSION
+ARG AQUA_VERSION
 
 ## Install minimal system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -30,13 +29,13 @@ ENV PATH="/root/.local/share/aquaproj-aqua/bin:/root/.local/bin:${PATH}" \
     AQUA_GLOBAL_CONFIG="/root/.config/aquaproj-aqua/aqua.yaml"
 
 ## Copy aqua configuration to global location
-COPY aqua.yaml /root/.config/aquaproj-aqua/aqua.yaml
+COPY dockerfiles/aqua-tools/aqua.yaml /root/.config/aquaproj-aqua/aqua.yaml
 
 ## Copy config files
-COPY config/ /root/.config/
+COPY dockerfiles/shared/config /root/.config/
 
 ## Copy Python tools installation script
-COPY scripts/install-python-tools.sh /usr/local/bin/install-python-tools.sh
+COPY dockerfiles/aqua-tools/scripts/install-python-tools.sh /usr/local/bin/install-python-tools.sh
 RUN dos2unix /usr/local/bin/install-python-tools.sh && \
     chmod +x /usr/local/bin/install-python-tools.sh
 
