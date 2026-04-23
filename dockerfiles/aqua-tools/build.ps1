@@ -8,6 +8,9 @@ Param(
     [string]$AquaVersion = "v2.55.3"
 )
 
+$ScriptDir = $PSScriptRoot
+$RepoRoot = Resolve-Path (Join-Path $ScriptDir "..\..\..")
+
 if ( -Not ( Get-Command docker -ErrorAction SilentlyContinue ) ) {
     Write-Error "Docker is not installed or not available in the system PATH."
     exit 1
@@ -17,6 +20,9 @@ if ( -Not ( Test-Path $Dockerfile ) ) {
     Write-Error "Dockerfile not found at path: $Dockerfile"
     exit 1
 }
+
+$Dockerfile = (Resolve-Path $Dockerfile).Path
+$GitHubTokenFile = Join-Path $ScriptDir "github_token.txt"
 
 # Build arguments
 $buildArgs = @(
@@ -42,7 +48,7 @@ Write-Host "  Aqua Installer: $AquaInstallerVersion" -ForegroundColor Cyan
 Write-Host "  Aqua CLI: $AquaVersion" -ForegroundColor Cyan
 Write-Host ""
 
-$dockerArgs = @("build") + $secretArgs + $buildArgs + @("-t", $Tag, "--file", $Dockerfile, ".")
+$dockerArgs = @("build") + $secretArgs + $buildArgs + @("-t", $Tag, "--file", $Dockerfile, $RepoRoot)
 
 try {
     & docker @dockerArgs
