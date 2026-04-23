@@ -28,7 +28,7 @@ RUN apk add --no-cache \
 RUN curl https://mise.run | sh
 
 ## Copy mise configuration to global location
-COPY .mise.toml /root/.config/mise/config.toml
+COPY dockerfiles/mise-tools/.mise.toml /root/.config/mise/config.toml
 
 ## Install all tools from global config
 WORKDIR /root
@@ -46,11 +46,11 @@ RUN --mount=type=secret,id=github_token \
 
 ## Copy zellij config
 RUN mkdir -p ~/.config/zellij
-COPY config/zellij/zellij.kdl /root/.config/zellij/config.kdl
+COPY dockerfiles/shared/config/zellij/zellij.kdl /root/.config/zellij/config.kdl
 
 ## Copy neovim config
 RUN mkdir -p ~/.config/nvim
-COPY config/neovim/ /root/.config/nvim/
+COPY dockerfiles/shared/config/neovim/ /root/.config/nvim/
 
 ## Add mise shims to PATH and activate mise in bashrc, then initialize atuin
 RUN echo 'export PATH="/root/.local/share/mise/shims:/root/.local/bin:$PATH"' >> ~/.bashrc && \
@@ -61,7 +61,7 @@ RUN echo 'export PATH="/root/.local/share/mise/shims:/root/.local/bin:$PATH"' >>
 ENV PATH="/root/.local/share/mise/shims:/root/.local/bin:${PATH}"
 
 ## Copy and set entrypoint script
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY dockerfiles/mise-tools/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /workspace

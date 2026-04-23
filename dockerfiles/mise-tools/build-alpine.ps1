@@ -5,8 +5,6 @@ Param(
     [string]$GitHubTokenFile = ".\github_token.txt"
 )
 
-$Dockerfile = (Resolve-Path $Dockerfile).Path
-
 if ( -Not ( Get-Command docker -ErrorAction SilentlyContinue ) ) {
     Write-Error "Docker is not installed or not available in the system PATH."
     exit 1
@@ -17,7 +15,8 @@ if ( -Not ( Test-Path $Dockerfile ) ) {
     exit 1
 }
 
-# Check if GitHub token file exists
+$Dockerfile = (Resolve-Path $Dockerfile).Path
+
 $useGitHubToken = $false
 if ( Test-Path $GitHubTokenFile ) {
     $GitHubTokenFile = (Resolve-Path $GitHubTokenFile).Path

@@ -4,8 +4,12 @@ set -euo pipefail
 TAG="mise-tools:alpine"
 DOCKERFILE="./Dockerfile.alpine"
 GITHUB_TOKEN_FILE="./github_token.txt"
+DISABLE_CACHE=false
 
 USE_GITHUB_TOKEN=false
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 function usage() {
   cat <<'EOF'
@@ -13,10 +17,11 @@ Usage:
   ./build.sh [options]
 
 Options:
-  --tag VALUE              Image tag (default: mise-tools:alpine)
-  --dockerfile PATH        Dockerfile path (default: ./Dockerfile.alpine)
-  --github-token-file PATH GitHub token file path (default: ./github_token.txt)
-  -h, --help               Show this help
+  --tag VALUE               Image tag (default: mise-tools:alpine)
+  --dockerfile PATH         Dockerfile path (default: ./Dockerfile.alpine)
+  --github-token-file PATH   GitHub token file path (default: ./github_token.txt)
+  --no-cache                Build with a fresh cache
+  -h, --help                Show this help
 EOF
 }
 
@@ -33,6 +38,10 @@ while [[ $# -gt 0 ]]; do
     --github-token-file)
       GITHUB_TOKEN_FILE="$2"
       shift 2
+      ;;
+    --no-cache)
+      DISABLE_CACHE=true
+      shift
       ;;
     -h|--help)
       usage
@@ -58,8 +67,10 @@ fi
 
 DOCKERFILE="$(cd "$(dirname "$DOCKERFILE")" && pwd)/$(basename "$DOCKERFILE")"
 
+SECRET_ARGS=()
 if [[ -f "$GITHUB_TOKEN_FILE" ]]; then
   GITHUB_TOKEN_FILE="$(cd "$(dirname "$GITHUB_TOKEN_FILE")" && pwd)/$(basename "$GITHUB_TOKEN_FILE")"
+  SECRET_ARGS=(--secret "id=github_token,src=$GITHUB_TOKEN_FILE")
   USE_GITHUB_TOKEN=true
   echo "Using GitHub token from: $GITHUB_TOKEN_FILE"
 else
@@ -67,29 +78,27 @@ else
   echo "Building without GitHub token (may hit rate limits)"
 fi
 
+NO_CACHE_ARGS=()
+if [[ "$DISABLE_CACHE" == true ]]; then
+  NO_CACHE_ARGS=(--no-cache)
+  echo "Building without cache"
+fi
+
 echo ""
 echo "Building Alpine-based mise container '$TAG'"
 echo ""
 
-if [[ "$USE_GITHUB_TOKEN" == true ]]; then
-  if ! docker build \
-    --secret "id=github_token,src=$GITHUB_TOKEN_FILE" \
-    -t "$TAG" \
-    --file "$DOCKERFILE" \
-    .
-  then
-    echo "Failed to build the Docker image." >&2
-    exit 1
-  fi
-else
-  if ! docker build \
-    -t "$TAG" \
-    --file "$DOCKERFILE" \
-    .
-  then
-    echo "Failed to build the Docker image." >&2
-    exit 1
-  fi
+cd "${REPO_ROOT}"
+
+if ! docker build \
+  "${NO_CACHE_ARGS[@]}" \
+  "${SECRET_ARGS[@]}" \
+  -t "$TAG" \
+  --file "$DOCKERFILE" \
+  "$REPO_ROOT"
+then
+  echo "Failed to build the Docker image." >&2
+  exit 1
 fi
 
 echo ""
