@@ -172,6 +172,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_meshping](../templates/networking/docker_meshping)
   - [docker_unifi-controller](../templates/networking/docker_unifi-controller)
   - [docker_portainer](../templates/networking/docker_portainer)
+  - [docker_dockhand](../templates/networking/docker_dockhand)
   - [docker_newt-tunnel](../templates/networking/docker_newt-tunnel)
   - [docker_traefik](../templates/networking/docker_traefik)
   - [docker_headscale](../templates/networking/docker_headscale)
