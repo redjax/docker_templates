@@ -531,7 +531,7 @@
         ]
     },
     {
-        "count": 20,
+        "count": 21,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -591,6 +591,10 @@
             {
                 "name": "docker_portainer",
                 "path": "templates/networking/docker_portainer"
+            },
+            {
+                "name": "docker_dockhand",
+                "path": "templates/networking/docker_dockhand"
             },
             {
                 "name": "docker_newt-tunnel",
