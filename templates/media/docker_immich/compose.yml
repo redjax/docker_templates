@@ -12,8 +12,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - ${IMMICH_SERVER_PORT:-2283}:2283
+    ## Leave commented when using the caddy proxy container
+    # ports:
+    #   - ${IMMICH_SERVER_PORT:-2283}:2283
     volumes:
       - ${UPLOAD_LOCATION:-server-uploads}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
