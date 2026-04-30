@@ -12,7 +12,7 @@ compose_files=(
   "compose.yml"
   "overlays/postgres.yml"
   "overlays/redis.yml"
-  "overlays/web.yml"
+  "overlays/caddy.yml"
 )
 
 cmd=(docker compose)

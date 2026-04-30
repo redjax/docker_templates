@@ -6,7 +6,7 @@ volumes:
 
 services:
   database:
-    image: ghcr.io/immich-app/postgres:${POSTGRES_IMAGE_TAG:-pg14-v0.2.0}
+    image: docker.io/tensorchord/pgvecto-rs:${POSTGRES_IMAGE_TAG:-pg14-v0.2.0}
     container_name: immich_postgres
     restart: unless-stopped
     environment:
