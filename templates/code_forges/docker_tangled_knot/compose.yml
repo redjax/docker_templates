@@ -15,7 +15,7 @@ services:
     volumes:
       - ${KNOT_KEYS_DIR:-./knot/keys}:/etc/ssh/keys
       - ${KNOT_REPOS_DIR:-./knot/repositories}:/home/git/repositories
-      - ${KNOW_SERVER_DIR:-./knot/server}:/app
+      - ${KNOT_SERVER_DIR:-./knot/server}:/app
     environment:
       KNOT_SERVER_HOSTNAME: ${KNOT_SERVER_HOSTNAME}
       KNOT_SERVER_OWNER: ${KNOT_SERVER_OWNER}
