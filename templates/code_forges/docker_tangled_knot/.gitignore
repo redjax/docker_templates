@@ -1,2 +1,9 @@
 knot/*
 
+!knot/
+!knot/.gitkeep
+!knot/keys/
+!knot/repositories/
+!knot/server/
+!knot/**/.gitkeep
+
