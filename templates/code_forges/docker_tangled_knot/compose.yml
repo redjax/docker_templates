@@ -1,10 +1,43 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: knot
 
-# volumes:
-#   volume_name: {}
+volumes:
+  caddy_data: {}
 
 services:
+  knot:
+    image: atcr.io/tangled.org/knot:latest
+    container_name: knot
+    restart: unless-stopped
+    ports:
+      - ${KNOT_LISTEN_PORT:-5555}:5555
+      - ${KNOT_SSH_PORT:-2222}:22
+    volumes:
+      - ${KNOT_KEYS_DIR:-./knot/keys}:/etc/ssh/keys
+      - ${KNOT_REPOS_DIR:-./knot/repositories}:/home/git/repositories
+      - ${KNOW_SERVER_DIR:-./knot/server}:/app
+    environment:
+      KNOT_SERVER_HOSTNAME: ${KNOT_SERVER_HOSTNAME}
+      KNOT_SERVER_OWNER: ${KNOT_SERVER_OWNER}
+      KNOT_SERVER_DB_PATH: /app/knotserver.db
+      KNOT_REPO_SCAN_PATH: /home/git/repositories
+      KNOT_SERVER_INTERNAL_LISTEN_ADDR: localhost:5444
 
-  ...
+  frontend:
+    image: caddy/alpine
+    container_name: frontend
+    restart: unless-stopped
+    depends_on:
+      - knot
+    command: >
+      caddy
+      reverse-proxy
+      --from ${KNOT_SERVER_HOSTNAME}
+      --to knot:5555
+    ports:
+      - ${KNOT_FRONTEND_PORT:-443}:443
+      - ${KNOT_FRONTEND_PORT:-443}:443/udp
+    volumes:
+      - ${CADDY_DATA_DIR:-caddy_data}:/data
+    profiles:  ["caddy"]
+
