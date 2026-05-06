@@ -1,0 +1,34 @@
+---
+name: unifi
+networks:
+  unifi-net: {}
+
+volumes:
+  unifi_logs: {}
+
+services:
+  rsyslog:
+    image: rsyslog/rsyslog:latest
+    container_name: unifi-rsyslog
+    restart: unless-stopped
+    command: rsyslogd -n -f /etc/rsyslog.conf
+    cap_add:
+      - SYSLOG
+    volumes:
+      - ${UNIFI_SYSLOG_LOGS_DIR:-unifi_logs}:/var/log/rsyslog
+      - ${UNIFI_SYSLOG_CONFIG_FILE:-./config/rsyslog.conf}:/etc/rsyslog.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - ${UNIFI_SYSLOG_PORT:-514}:514/udp
+    networks:
+      - unifi-net
+
+  unifi-network-application:
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:514"
+        syslog-facility: "local0"
+        tag: "unifi-app"
+    networks:
+      - unifi-net
