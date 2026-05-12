@@ -24,7 +24,7 @@ services:
       APPRISE_WORKER_COUNT: ${APPRISE_WORKER_COUNT:-2}
       APPRISE_CONFIG_DIR: /config
       APPRISE_ADMIN: ${APPRISE_ADMIN:-y}
-      APPRISE_CONFIG_LOCK: yes
+      APPRISE_CONFIG_LOCK: ${APPRISE_CONFIG_LOCK:-yes}
       APPRISE_THEME: ${APPRISE_THEME:-default}
     volumes:
       - ${APPRISE_CONFIG_DIR:-./config}:/config

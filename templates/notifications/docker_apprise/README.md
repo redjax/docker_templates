@@ -19,6 +19,21 @@
 
 The `config/apprise.yml` file can source from other YAML configs. This allows for creating service-specific configuration files, like `config/ntfy.yml` and `config/gotify.yml`.
 
-With this architecture, you can add multipl Ntfy topics/Gotify apps, and 'source' them in the `apprise.yml` file.
+With this architecture, you can add multiple Ntfy topics/Gotify apps, and 'source' them in the `apprise.yml` file.
 
-See one of the [example configs](./config/examples/) for syntax.
+See one of the [example configs](./config/examples/) for syntax. Also see the [Apprise URL builder](https://appriseit.com/url-builder/) for the syntax Apprise needs.
+
+## Sending notifications
+
+In the Apprise webUI (port :8000), open "Configuration List." Find the configuration for the service you want to use, i.e. Gotify. You will see a `CONFIG ID` at the top of the page. This becomes the URL to that channel in Apprise.
+
+For example, to send a message on the Gotify channel:
+
+```shell
+curl -X POST \
+  -F "body=Test Message" \
+  -F "tags=all" \
+  http://apprise.mydomain.com/notify/gotify
+```
+
+The configuration page will have more examples if you scroll down.
