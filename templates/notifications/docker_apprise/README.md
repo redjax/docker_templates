@@ -1,3 +1,3 @@
 # Apprise
 
-[Apprise](https://github.com/caronc/apprise) is a push notification server with many integrations & clients.
+[Apprise](https://appriseit.com) is a push notification server with many integrations & clients.
