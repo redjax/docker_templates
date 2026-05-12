@@ -1,0 +1,9 @@
+---
+tag: example-global
+
+urls:
+  - ntfy://ntfy.mydomain.com/home
+  - ntfy://ntfy.mydomain.com/servers
+  - ntfy://ntfy.mydomain.com/alerts?header=Authorization:Bearer%20TOKEN_VALUE:
+      tag:
+        - authenticated

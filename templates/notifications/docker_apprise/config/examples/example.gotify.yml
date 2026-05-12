@@ -1,0 +1,7 @@
+---
+urls:
+  - gotify://gotify1.mydomain.com/TOKEN_A
+  - gotify://gotify2.mydomain.com/TOKEN_B:
+      tag:
+        - after-hours
+        - personal
