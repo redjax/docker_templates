@@ -1,10 +1,24 @@
 ---
-# networks:
-#   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+name: "joplin"
 
 services:
 
-  ...
+  joplin:
+    image: joplin/server:${JOPLIN_TAG:-latest}
+    container_name: joplin-server
+    restart: unless-stopped
+    ports:
+      - ${JOPLIN_WEBUI_PORT:-22300}:22300
+    environment:
+      APP_PORT: 22300
+      APP_BASE_URL: ${JOPLIN_BASE_URL:-http://localhost:22300}
+
+      DB_CLIENT: pg
+      POSTGRES_HOST: ${DB_HOST:-}
+      POSTGRES_PORT: ${DB_PORT:-5432}
+      POSTGRES_USER: ${DB_USER:-joplin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-joplin}
+      POSTGRES_DATABASE: ${DB_NAME:-joplin}
+
+      MAILER_ENABLED: ${JOPLIN_MAILER_ENABLED:-0}
