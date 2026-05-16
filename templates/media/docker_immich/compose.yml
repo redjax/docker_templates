@@ -31,3 +31,10 @@ services:
       - ${MODEL_CACHE_DIR:-model-cache}:/cache
     healthcheck:
       disable: false
+    deploy:
+      resources:
+        limits:
+          cpus: "${IMMICH_ML_CPU_LIMIT:-1.0}"
+          memory: "${IMMICH_ML_MEMORY_LIMIT:-2g}"
+    mem_limit: "${IMMICH_ML_MEMORY_LIMIT:-2g}"
+    cpus: "${IMMICH_ML_CPU_LIMIT:-1.0}"
