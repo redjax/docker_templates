@@ -1,0 +1,10 @@
+---
+# networks:
+#   unnamed_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+
+  ...
