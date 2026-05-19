@@ -1,0 +1,10 @@
+---
+name: crontab-guru
+
+services:
+  crontab-guru:
+    volumes:
+      ## Mount host cron dirs to let cronitor manage them
+      - /etc/cron.d:/etc/cron.d
+      - /var/spool/cron:/var/spool/cron
+      - /etc/crontab:/etc/crontab
