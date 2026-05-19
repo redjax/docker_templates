@@ -68,6 +68,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_netalertx](../templates/monitoring_alerting/docker_netalertx)
   - [docker_node_exporter](../templates/monitoring_alerting/docker_node_exporter)
   - [docker_zabbix](../templates/monitoring_alerting/docker_zabbix)
+  - [docker_crontab_guru](../templates/monitoring_alerting/docker_crontab_guru)
   - [docker_netdata](../templates/monitoring_alerting/docker_netdata)
     - [agent](../templates/monitoring_alerting/docker_netdata/agent)
     - [server](../templates/monitoring_alerting/docker_netdata/server)
