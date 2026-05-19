@@ -24,7 +24,7 @@
         ]
     },
     {
-        "count": 14,
+        "count": 15,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
         "sub_categories": [
@@ -93,6 +93,10 @@
             {
                 "name": "docker_zabbix",
                 "path": "templates/monitoring_alerting/docker_zabbix"
+            },
+            {
+                "name": "docker_crontab_guru",
+                "path": "templates/monitoring_alerting/docker_crontab_guru"
             }
         ]
     },
