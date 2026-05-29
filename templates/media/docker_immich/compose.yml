@@ -1,0 +1,40 @@
+---
+name: immich
+
+volumes:
+  model-cache: {}
+  server-uploads: {}
+
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    container_name: immich_server
+    restart: unless-stopped
+    env_file:
+      - .env
+    ## Leave commented when using the caddy proxy container
+    # ports:
+    #   - ${IMMICH_SERVER_PORT:-2283}:2283
+    volumes:
+      - ${UPLOAD_LOCATION:-server-uploads}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      disable: false
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    container_name: immich_machine_learning
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ${MODEL_CACHE_DIR:-model-cache}:/cache
+    healthcheck:
+      disable: false
+    deploy:
+      resources:
+        limits:
+          cpus: "${IMMICH_ML_CPU_LIMIT:-1.0}"
+          memory: "${IMMICH_ML_MEMORY_LIMIT:-2g}"
+    mem_limit: "${IMMICH_ML_MEMORY_LIMIT:-2g}"
+    cpus: "${IMMICH_ML_CPU_LIMIT:-1.0}"

@@ -1,0 +1,45 @@
+# aqua - Declarative CLI Version Manager
+# https://aquaproj.github.io/
+
+registries:
+  - type: standard
+    # Check versions at:
+    #   https://github.com/aquaproj/aqua-registry/releases
+    ref: v4.476.0 # renovate: depName=aquaproj/aqua-registry
+
+# Find tools at: https://github.com/aquaproj/aqua-registry
+packages:
+  # Programming languages
+  - name: golang/go@go1.26.0
+  
+  # Go tools
+  - name: golang.org/x/tools/gopls@v0.21.1
+  
+  # Python tools
+  - name: astral-sh/uv@0.10.7
+  - name: astral-sh/ruff@0.15.4
+  
+  # Terminal utilities
+  - name: atuinsh/atuin@v18.12.1
+  - name: zellij-org/zellij@v0.43.1
+  - name: jesseduffield/lazygit@v0.59.0
+  - name: direnv/direnv@v2.37.1
+  - name: getsops/sops@v3.12.1
+
+  # GitHub CLI
+  - name: cli/cli@v2.87.3
+  
+  # Azure CLI
+  - name: Azure/azure-dev@azure-dev-cli_1.23.7
+  
+  # Terraform tools
+  - name: hashicorp/terraform@v1.14.6
+  - name: hashicorp/terraform-ls@v0.38.4
+  - name: terraform-linters/tflint@v0.61.0
+  
+  # Linters
+  - name: rhysd/actionlint@v1.7.11
+  
+  # Security/scanning tools
+  - name: gitleaks/gitleaks@v8.30.0
+  - name: google/osv-scanner@v2.3.3

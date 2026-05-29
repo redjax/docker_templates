@@ -1,0 +1,45 @@
+---
+name: immich
+
+volumes:
+  db-data: {}
+
+services:
+  database:
+    image: docker.io/tensorchord/pgvecto-rs:${POSTGRES_IMAGE_TAG:-pg14-v0.2.0}
+    container_name: immich_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE_NAME:-immich}
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - ${DB_DATA_LOCATION:-db-data}:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready --dbname='${DB_DATABASE_NAME:-immich}'
+            --username='${DB_USERNAME:-postgres}' || exit 1",
+        ]
+      interval: 5m
+      start_period: 5m
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=vectors.so
+      - -c
+      - search_path=public,vectors
+      - -c
+      - logging_collector=on
+      - -c
+      - max_wal_size=2GB
+      - -c
+      - shared_buffers=512MB
+      - -c
+      - wal_compression=on
+
+  immich-server:
+    depends_on:
+      - database
