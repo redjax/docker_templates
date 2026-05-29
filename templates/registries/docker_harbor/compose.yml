@@ -1,0 +1,74 @@
+---
+name: harbor
+
+# networks:
+#   unnamed_net: {}
+
+volumes:
+  db_data: {}
+  registry_data: {}
+  core_data: {}
+  jobservice_data: {}
+  portal_data: {}
+
+services:
+  harbor-db:
+    image: goharbor/harbor-db:v${HARBOR_VERSION:-2.14.2}
+    container_name: harbor-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-HarborDBPass}
+    volumes:
+      - ${DB_DATA_DIR:-db_data}:/var/lib/postgresql/data
+
+  harbor-redis:
+    image: goharbor/redis-photon:v${HARBOR_VERSION:-2.14.2}
+    container_name: harbor-redis
+    restart: unless-stopped
+
+  harbor-registry:
+    image: goharbor/registry-photon:v${HARBOR_VERSION:-2.14.2}
+    container_name: harbor-registry
+    restart: unless-stopped
+    environment:
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data/registry
+    volumes:
+      - ${REGISTRY_DATA_DIR:-registry_data}:/data/registry
+      - ${HARBOR_YML_FILE:-./config/harbor.yml}:/etc/harbor/harbor.yml:ro
+    ports:
+      - ${REGISTRY_PORT:-5000}:5000
+
+  harbor-core:
+    image: goharbor/harbor-core:v${HARBOR_VERSION:-2.14.2}
+    container_name: harbor-core
+    restart: unless-stopped
+    depends_on:
+      - harbor-db
+      - harbor-redis
+      - harbor-registry
+    environment:
+      CORE_SECRET: ${CORE_SECRET}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-HarborDBPass}
+      REGISTRY_URL: ${CORE_REGISTRY_URL:-http://harbor-registry:5000}
+      HARBOR_ADMIN_PASSWORD: ${CORE_ADMIN_PASSWORD:-HarborAdmin}
+    ports:
+      - ${CORE_HTTP_PORT:-8080}:8080
+    volumes:
+      - ${CORE_DATA_DIR:-core_data}:/data/core
+      - ${HARBOR_YML_FILE:-./config/harbor.yml}:/etc/harbor/harbor.yml:ro
+
+  harbor-jobservice:
+    image: goharbor/harbor-jobservice:v${HARBOR_VERSION:-2.14.2}
+    container_name: harbor-jobservice
+    restart: unless-stopped
+    volumes:
+      - ${HARBOR_YML_FILE:-./config/harbor.yml}:/etc/harbor/harbor.yml:ro
+    depends_on:
+      - harbor-core
+
+  harbor-portal:
+    image: goharbor/harbor-portal:v${HARBOR_VERSION:-2.14.2}
+    container_name: harbor-portal
+    restart: unless-stopped
+    volumes:
+      - ${HARBOR_YML_FILE:-./config/harbor.yml}:/etc/harbor/harbor.yml:ro
