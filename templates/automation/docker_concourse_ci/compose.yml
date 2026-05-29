@@ -35,7 +35,9 @@ services:
     command: web
     # privileged: true
     links: [db]
-    depends_on: [db]
+    depends_on:
+      db:
+        condition: service_healthy
     ports: ["${CONCOURSE_HTTP_PORT:-8080}:8080"]
     environment:
       CONCOURSE_POSTGRES_HOST: db
@@ -79,12 +81,6 @@ services:
       options:
         max-file: "5"
         max-size: "10m"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f ${CONCOURSE_URL} || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
   worker:
     image: concourse/concourse
@@ -92,8 +88,6 @@ services:
     command: worker
     privileged: true
     links:
-      - concourse
-    depends_on:
       - concourse
     volumes:
       - ${CONCOURSE_WORKER_KEYS_DIR:-./keys/worker}:/concourse-keys:ro
@@ -119,11 +113,9 @@ services:
       - concourse_net
     stop_signal: SIGUSR2
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -f ${CONCOURSE_WORKER_HEALTHCHECK_URL:-http://concourse:8888} || exit 1",
-        ]
+      test: [
+        "CMD-SHELL", "pgrep concourse >/dev/null || exit 1"
+      ]
       interval: 10s
       timeout: 5s
       retries: 5
