@@ -1,0 +1,19 @@
+---
+name: immich
+
+volumes:
+  redis_data: {}
+
+services:
+  redis:
+    image: docker.io/valkey/valkey:${REDIS_IMG_TAG:-latest}
+    container_name: immich_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping || exit 1" ]
+
+  immich-server:
+    depends_on:
+      - redis
