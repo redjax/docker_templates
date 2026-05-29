@@ -18,7 +18,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
       PGDATA: /database
     volumes:
-      - ${CONCOURSE_DB_DATA_DIR:-concourse_db_data}:/var/lib/postgresql/data
+      - ${CONCOURSE_DB_DATA_DIR:-concourse_db_data}:/database
     networks:
       - concourse_net
     healthcheck:
