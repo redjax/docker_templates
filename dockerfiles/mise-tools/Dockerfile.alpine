@@ -1,0 +1,70 @@
+FROM alpine:latest
+
+## Install dependencies for mise and basic tools
+RUN apk add --no-cache \
+    bash \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    neovim \
+    jq \
+    direnv \
+    gcc \
+    g++ \
+    make \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    bzip2-dev \
+    zlib-dev \
+    readline-dev \
+    sqlite-dev \
+    xz-dev \
+    linux-headers \
+    && update-ca-certificates
+
+## Install mise
+RUN curl https://mise.run | sh
+
+## Copy mise configuration to global location
+COPY dockerfiles/mise-tools/.mise.toml /root/.config/mise/config.toml
+
+## Install all tools from global config
+WORKDIR /root
+RUN --mount=type=secret,id=github_token \
+    /root/.local/bin/mise trust && \
+    if [ -f /run/secrets/github_token ]; then export GITHUB_TOKEN="$(cat /run/secrets/github_token)"; fi && \
+    /root/.local/bin/mise install -y && \
+    /root/.local/bin/mise reshim && \
+    ## Clean up mise caches and build artifacts to reduce image size
+    rm -rf /root/.cache/mise && \
+    find /root/.local/share/mise -type f -name "*.tar.gz" -delete && \
+    find /root/.local/share/mise -type f -name "*.zip" -delete && \
+    find /root/.local/share/mise -type d -name "build" -exec rm -rf {} + 2>/dev/null || true && \
+    find /root/.local/share/mise -type d -name ".git" -exec rm -rf {} + 2>/dev/null || true
+
+## Copy zellij config
+RUN mkdir -p ~/.config/zellij
+COPY dockerfiles/shared/config/zellij/zellij.kdl /root/.config/zellij/config.kdl
+
+## Copy neovim config
+RUN mkdir -p ~/.config/nvim
+COPY dockerfiles/shared/config/neovim/ /root/.config/nvim/
+
+## Add mise shims to PATH and activate mise in bashrc, then initialize atuin
+RUN echo 'export PATH="/root/.local/share/mise/shims:/root/.local/bin:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(/root/.local/bin/mise activate bash)"' >> ~/.bashrc && \
+    echo 'eval "$(atuin init bash)"' >> ~/.bashrc
+
+## Set PATH for non-interactive shells
+ENV PATH="/root/.local/share/mise/shims:/root/.local/bin:${PATH}"
+
+## Copy and set entrypoint script
+COPY dockerfiles/mise-tools/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["bash"]
