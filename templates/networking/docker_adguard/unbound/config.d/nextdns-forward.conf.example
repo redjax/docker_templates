@@ -1,0 +1,8 @@
+forward-zone:
+    name: "."
+    forward-tls-upstream: yes
+    
+    # Encrypted NextDNS DoT first (primary + backup anycast)
+    forward-addr: 45.90.28.0@853#YOUR_ID.dns1.nextdns.io
+    forward-addr: 45.90.30.0@853#YOUR_ID.dns2.nextdns.io
+    forward-addr: 2a07:a8c0::@853#YOUR_ID.dns1.nextdns.io

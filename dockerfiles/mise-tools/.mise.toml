@@ -1,0 +1,22 @@
+[tools]
+# Programming languages
+python = "3.13"
+go = "1.26.0"
+golangci-lint = "latest"
+goreleaser = "latest"
+
+# Python tools
+uv = "latest"
+
+# Azure tools
+azure-cli = "latest"
+
+# Terminal utilities
+atuin = "latest"
+zellij = "latest"
+btop = "latest"
+lazygit = "latest"
+
+# Security/scanning tools
+gitleaks = "latest"
+osv-scanner = "latest"

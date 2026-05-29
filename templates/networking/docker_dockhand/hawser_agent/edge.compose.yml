@@ -1,0 +1,14 @@
+---
+## This is for running Hawser in edge mode
+#  https://dockhand.pro/manual/#hawser-docker-install
+name: hawser
+
+services:
+  hawser:
+    image: ghcr.io/finsys/hawser:${HAWSER_IMG_TAG:-latest}
+    container_name: hawser-agent
+    restart: unless-stopped
+    environment:
+      TOKEN: ${HAWSER_TOKEN:-}
+      AGENT_NAME: ${HAWSER_AGENT_NAME:-}
+      DOCKHAND_SERVER_URL: ${HAWSER_DOCKHAND_SERVER:-wss://ip-or-fqdn.com/api/hawser/connect}
