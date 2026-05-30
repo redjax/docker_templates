@@ -166,6 +166,18 @@
         ]
     },
     {
+        "count": 2,
+        "name": "secrets",
+        "path": "templates/secrets",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_openbao",
+                "path": "templates/secrets/docker_openbao"
+            }
+        ]
+    },
+    {
         "count": 15,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
@@ -275,7 +287,7 @@
         ]
     },
     {
-        "count": 21,
+        "count": 22,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -303,6 +315,10 @@
             {
                 "name": "docker_networking_toolbox",
                 "path": "templates/networking/docker_networking_toolbox"
+            },
+            {
+                "name": "docker_xpipe",
+                "path": "templates/networking/docker_xpipe"
             },
             {
                 "name": "docker_pangolin",
@@ -527,6 +543,22 @@
             {
                 "name": "docker_concourse_ci",
                 "path": "templates/automation/docker_concourse_ci"
+            }
+        ]
+    },
+    {
+        "count": 3,
+        "name": "registries",
+        "path": "templates/registries",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_sonatype_nexus",
+                "path": "templates/registries/docker_sonatype_nexus"
+            },
+            {
+                "name": "docker_harbor",
+                "path": "templates/registries/docker_harbor"
             }
         ]
     },
