@@ -9,7 +9,7 @@ services:
     network_mode: host
 
     env_file:
-      - smb.env
+      - envs/smb.env
 
     environment:
       TZ: ${TZ:-Etc/UTC}
@@ -22,5 +22,5 @@ services:
           valid users = ${SAMBA_SHARED_shared_VALIDUSERS:-}
           force user = root
     volumes:
-      - ${SAMBA_SHARED_DIR:-/srv/shared}:/shares/shared
+      - ${SAMBA_SHARED_DIR:-/srv/shares}:/shares
 
