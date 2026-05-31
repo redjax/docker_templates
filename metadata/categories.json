@@ -824,7 +824,7 @@
         ]
     },
     {
-        "count": 2,
+        "count": 3,
         "name": "file_transfer",
         "path": "templates/file_transfer",
         "sub_categories": [],
@@ -832,6 +832,10 @@
             {
                 "name": "docker_sftpgo",
                 "path": "templates/file_transfer/docker_sftpgo"
+            },
+            {
+                "name": "docker_samba",
+                "path": "templates/file_transfer/docker_samba"
             }
         ]
     },

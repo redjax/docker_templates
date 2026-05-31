@@ -228,6 +228,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_photoprism](../templates/media/docker_photoprism)
 - [file_transfer](../templates/file_transfer)
   - [docker_sftpgo](../templates/file_transfer/docker_sftpgo)
+  - [docker_samba](../templates/file_transfer/docker_samba)
 - [backup](../templates/backup)
   - [docker_backrest](../templates/backup/docker_backrest)
   - [kopia](../templates/backup/kopia)
