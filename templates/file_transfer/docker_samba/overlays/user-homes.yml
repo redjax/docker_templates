@@ -1,0 +1,20 @@
+---
+name: samba
+
+####################################################
+# Give each user a directory in /homes/.           #
+# The signed-in user will only see their directory #
+####################################################
+
+services:
+  samba:
+    environment:
+      SAMBA_VOLUME_CONFIG_homes: |
+        [homes]
+          path = /shares/home/%U
+          browseable = no
+          read only = no
+          valid users = %S
+          create mask = 0700
+          directory mask = 0700
+
