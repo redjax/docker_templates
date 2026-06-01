@@ -1,0 +1,18 @@
+---
+name: miniflux
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+  miniflux:
+    ports: []
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.miniflux.rule=Host(`rss.${TRAEFIK_DOMAIN:-localhost}`)"
+      - "traefik.http.routers.miniflux.entrypoints=websecure"
+      - "traefik.http.routers.miniflux.tls.certresolver=letsencrypt"
+      - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
+    networks:
+      - traefik-net
