@@ -1,6 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+#########################################################################
+# Dump the Miniflux database to a backup file                           #
+#                                                                       #
+# Assumes you are running the included overlays/postgres.yml stack.     #
+#                                                                       #
+# If your database is on an external server, database dumping may       #
+# need to be done from the database host, or using a different command. #
+#########################################################################
+
 THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 DOCKER_ROOT=$(realpath -m "${THIS_DIR}/..")
 
