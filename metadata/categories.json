@@ -712,7 +712,7 @@
         ]
     },
     {
-        "count": 7,
+        "count": 8,
         "name": "rss",
         "path": "templates/rss",
         "sub_categories": [],
@@ -736,6 +736,10 @@
             {
                 "name": "docker_freshrss",
                 "path": "templates/rss/docker_freshrss"
+            },
+            {
+                "name": "docker_miniflux",
+                "path": "templates/rss/docker_miniflux"
             },
             {
                 "name": "docker_feedless",
