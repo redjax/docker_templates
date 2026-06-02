@@ -41,6 +41,7 @@ fi
 ## Configuration defaults
 COMPOSE_FILE="${COMPOSE_FILE:-compose.yml}"
 POSTGRES_OVERLAY="${POSTGRES_OVERLAY:-overlays/postgres.yml}"
+HEALTHCHECK_OVERLAY="${HEALTHCHECK_OVERLAY:-overlays/healthcheck.yml}"
 PG_USER="${PG_USER:-miniflux}"
 PG_DB="${PG_DB:-miniflux}"
 
@@ -175,7 +176,7 @@ echo
 echo "Ensuring Miniflux container is stopped"
 echo
 
-docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY stop miniflux
+docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY -f $HEALTHCHECK_OVERLAY stop miniflux
 
 ## Optionally drop and recreate database
 if [ "${DROP_DB:-}" = "1" ]; then
@@ -191,9 +192,9 @@ if [ "${DROP_DB:-}" = "1" ]; then
     " || true
   fi
   
-  # Connect to 'postgres' database to drop the target database
+  ## Connect to 'postgres' database to drop the target database
   if ! docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T -e PGPASSWORD="$PG_PASSWORD" db psql -U "$PG_USER" -d postgres -c "DROP DATABASE IF EXISTS ${PG_DB};" 2>&1 | tee /dev/stderr | grep -q "cannot drop"; then
-    : # Success or already dropped
+    : ## Success or already dropped
   elif [ "${KILL_CONNECTIONS:-}" != "1" ]; then
     handle_db_access_error
   fi
@@ -204,20 +205,20 @@ fi
 ## Restore database from backup
 echo "Restoring database"
 if ! $DECOMPRESS "$BACKUP_FILE" | docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T -e PGPASSWORD="$PG_PASSWORD" db psql -U "$PG_USER" "$PG_DB" 2>&1 | tee /dev/stderr | grep -q "database is being accessed"; then
-    : # Success
+    : ## Success
 else
     handle_db_access_error
 fi
 
-if [[ "${RESTART_CONTAINERS}" == "true" ]]; then
+if [[ "${RESTART_CONTAINERS:-}" == "1" ]]; then
   echo
   echo "Restarting Miniflux container"
   echo
 
-  docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY restart miniflux
+  docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY -f $HEALTHCHECK_OVERLAY up -d
 else
   echo "You many need to manually restart Miniflux, i.e.:"
-  echo "  docker compose -f ${COMPOSE_FILE} -f ${POSTGRES_OVERLAY} up -d"
+  echo "  docker compose -f ${COMPOSE_FILE} -f ${POSTGRES_OVERLAY} -f ${HEALTHCHECK_OVERLAY} up -d"
   echo
 fi
 
