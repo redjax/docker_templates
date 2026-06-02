@@ -207,6 +207,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_tinytinyrss](../templates/rss/docker_tinytinyrss)
   - [docker_commafeed](../templates/rss/docker_commafeed)
   - [docker_freshrss](../templates/rss/docker_freshrss)
+  - [docker_miniflux](../templates/rss/docker_miniflux)
   - [docker_feedless](../templates/rss/docker_feedless)
 - [bookmarking](../templates/bookmarking)
   - [docker_shiori](../templates/bookmarking/docker_shiori)
