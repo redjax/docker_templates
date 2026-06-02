@@ -1,2 +1,3 @@
 backups/*
+exports/*
 *.sql.gz
