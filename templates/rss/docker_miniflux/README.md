@@ -35,6 +35,18 @@ Examples:
 - The [Python release feed](https://docs.rsshub.app/routes/python): `http://your-server:1200/python/release`
 - A [Discord channel](https://docs.rsshub.app/routes/discord): `http://your-server:1200/discord/channel/950465850056536084`
 
+## FiveFilters
+
+The [`fivefilters.yml` overlay](./overlays/fivefilters.yml) provides text extraction and adblocking via [FiveFilters](https://www.fivefilters.org). This is provided through the [unofficial `heussd/fivefilters-full-text-rss-docker` container](https://github.com/heussd/fivefilters-full-text-rss-docker).
+
+You can run the overlay with the Miniflux container using:
+
+```shell
+docker comose -f compose.yml -f overlays/fivefilters.yml
+```
+
+Then in Miniflux, add a feed like: `http://fivefilters/makefulltextfeed.php?url=https://example.com/feed.xml`
+
 ## Links
 
 - [Miniflux home](https://miniflux.app)

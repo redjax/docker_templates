@@ -1,0 +1,18 @@
+---
+name: miniflux
+
+volumes:
+  fivefilters-data: {}
+
+services:
+  fivefilters:
+    image: heussd/fivefilters-full-text-rss:latest
+    container_name: fivefilters
+    restart: unless-stopped
+    # ports:
+    #   - ${FIVEFILTERS_PORT:-8081}:80
+    environment:
+      FTR_ADMIN_PASSWORD: ${FIVEFILTERS_ADMIN_PASSWORD:-changeme}
+    volumes:
+      - ${FIVEFILTERS_DATA_DIR:-fivefilters-data}:/var/www/html/cache
+
