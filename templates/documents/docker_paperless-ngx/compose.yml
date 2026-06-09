@@ -61,7 +61,7 @@ services:
       - paperless_backend
 
   db:
-    image: postgres:13
+    image: postgres:${PG_IMG_TAG:-16}
     container_name: paperless-db
     restart: unless-stopped
     volumes:
@@ -135,3 +135,4 @@ services:
     restart: unless-stopped
     networks:
       - paperless_backend
+
