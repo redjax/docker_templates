@@ -1,0 +1,16 @@
+env/*
+.env/*
+*.env
+*.env.*
+
+*.local
+*.local.*
+
+temp/*
+tmp/*
+*.tmp
+*.temp
+
+!*example*.*
+!*.*example*
+
