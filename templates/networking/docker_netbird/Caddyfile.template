@@ -18,7 +18,7 @@ ${NETBIRD_DOMAIN} {
     reverse_proxy netbird-server:80
   }
 
-  handle_path /oauth2/* {
+  handle /oauth2/* {
     reverse_proxy netbird-server:80
   }
 
