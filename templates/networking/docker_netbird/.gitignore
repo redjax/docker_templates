@@ -11,6 +11,9 @@ tmp/*
 *.tmp
 *.temp
 
+config.yaml
+dashboard.env
+
 !*example*.*
 !*.*example*
 
