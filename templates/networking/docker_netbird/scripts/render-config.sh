@@ -14,6 +14,9 @@ CONFIG_RENDERED="${REPO_ROOT}/config.yaml"
 DASHBOARD_TEMPLATE="${REPO_ROOT}/dashboard.env.template"
 DASHBOARD_RENDERED="${REPO_ROOT}/dashboard.env"
 
+CADDYFILE_TEMPLATE="${REPO_ROOT}/Caddyfile.template"
+CADDYFILE_RENDERED="${REPO_ROOT}/Caddyfile"
+
 : "${NETBIRD_DOMAIN:?missing NETBIRD_DOMAIN}"
 : "${NETBIRD_AUTH_SECRET:?missing NETBIRD_AUTH_SECRET}"
 : "${NETBIRD_STORE_ENCRYPTION_KEY:?missing NETBIRD_STORE_ENCRYPTION_KEY}"
@@ -37,6 +40,15 @@ fi
 
 envsubst < "${DASHBOARD_TEMPLATE}" > "${DASHBOARD_RENDERED}"
 echo "[OK] Wrote ${DASHBOARD_RENDERED}"
+
+## Render Caddyfile
+if [[ ! -f "${CADDYFILE_TEMPLATE}" ]]; then
+  echo "[ERROR] Missing Caddyfile template: ${CADDYFILE_TEMPLATE}" >&2
+  exit 1
+fi
+
+envsubst < "${CADDYFILE_TEMPLATE}" > "${CADDYFILE_RENDERED}"
+echo "[OK] Wrote ${CADDYFILE_RENDERED}"
 
 echo "[DONE] All NetBird templates rendered"
 
