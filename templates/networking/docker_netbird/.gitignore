@@ -13,6 +13,7 @@ tmp/*
 
 config.yaml
 dashboard.env
+Caddyfile
 
 !*example*.*
 !*.*example*
