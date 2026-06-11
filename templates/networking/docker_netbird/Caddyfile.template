@@ -1,6 +1,6 @@
 {
   # global options block (must be first if used at all)
-  email admin@localhost
+  email ${CADDY_LETSENCRYPT_EMAIL}
 }
 
 ${NETBIRD_DOMAIN} {
