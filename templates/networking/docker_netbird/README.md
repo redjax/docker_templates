@@ -2,6 +2,12 @@
 
 [Netbird](https://netbird.io) is a Wireguard-based overlay network with zero trust network access (similar to Tailscale).
 
+## Requirements
+
+- Docker
+- A domain name
+- DNS `A` record pointing your domain, i.e. `vpn.example.com`, to your server/VPS
+
 ## Setup
 
 The initial setup for Netbird is a little bit complicated, but I wrote some scripts that make the process easier.
