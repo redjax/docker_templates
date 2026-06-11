@@ -10,8 +10,8 @@ echo "Generating NetBird secrets"
 echo
 
 ## NetBird core secrets
-NETBIRD_AUTH_SECRET=$(openssl rand -base64 32 | tr -d '\n')
-NETBIRD_STORE_ENCRYPTION_KEY=$(openssl rand -base64 32 | tr -d '\n' )
+NETBIRD_AUTH_SECRET=$(openssl rand -hex 32 | tr -d '[:space:]')
+NETBIRD_STORE_ENCRYPTION_KEY=$(openssl rand 32 | base64 | tr -d '\n')
 
 ## Optional Postgres secret
 POSTGRES_PASSWORD=$(openssl rand -hex 24)
