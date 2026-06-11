@@ -18,6 +18,11 @@
 
 ## Setup
 
+> [!NOTE]
+> There are a few different configurations for Netbird, which their [install script will walk you through](https://docs.netbird.io/selfhosted/selfhosted-quickstart#installation-script), if you use it. Netbird also supports a number of [identity providers](https://docs.netbird.io/selfhosted/identity-providers), including a new one built into the Netbird server.
+>
+> This container assumes you're using the built-in idP and Caddy for a proxy.
+
 The initial setup for Netbird is a little bit complicated, but I wrote some scripts that make the process easier.
 
 The [template files](./templates) were created by running the [`bootstrap-netbird.sh` script](./scripts/bootstrap-netbird.sh).
