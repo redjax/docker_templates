@@ -2,6 +2,14 @@
 
 [Netbird](https://netbird.io) is a Wireguard-based overlay network with zero trust network access (similar to Tailscale).
 
+## Table of Contents <!-- omit in toc -->
+
+- [Requirements](#requirements)
+- [Setup](#setup)
+  - [Steps](#steps)
+  - [Initial webUI setup](#initial-webui-setup)
+- [Links](#links)
+
 ## Requirements
 
 - Docker
