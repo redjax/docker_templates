@@ -1,0 +1,19 @@
+---
+name: netbird-client
+
+volumes:
+  client_data: {}
+
+services:
+  netbird-client:
+    image: netbirdio/netbird:latest
+    container_name: netbird-client
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    environment:
+      NB_SETUP_KEY: ${NETBIRD_CLIENT_SETUP_KEY:-}
+      NB_MANAGEMENT_URL: ${NETBIRD_CLIENT_SERVER_URL:-}
+    volumes:
+      - ${NETBIRD_CLIENT_DATA_DIR:-client_data}:/var/lib/netbird
+
