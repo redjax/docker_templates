@@ -7,14 +7,15 @@ set -euo pipefail
 
 THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(realpath "${THIS_DIR}/..")"
+TEMPLATES_DIR="${REPO_ROOT}/templates"
 
-CONFIG_TEMPLATE="${REPO_ROOT}/config.yaml.template"
+CONFIG_TEMPLATE="${TEMPLATES_DIR}/config.yaml.template"
 CONFIG_RENDERED="${REPO_ROOT}/config.yaml"
 
-DASHBOARD_TEMPLATE="${REPO_ROOT}/dashboard.env.template"
+DASHBOARD_TEMPLATE="${TEMPLATES_DIR}/dashboard.env.template"
 DASHBOARD_RENDERED="${REPO_ROOT}/dashboard.env"
 
-CADDYFILE_TEMPLATE="${REPO_ROOT}/Caddyfile.template"
+CADDYFILE_TEMPLATE="${TEMPLATES_DIR}/Caddyfile.template"
 CADDYFILE_RENDERED="${REPO_ROOT}/Caddyfile"
 
 : "${NETBIRD_DOMAIN:?missing NETBIRD_DOMAIN}"
