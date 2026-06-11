@@ -17,6 +17,8 @@ services:
     command:
       - --config
       - /etc/netbird/config.yaml
+    environment:
+      NETBIRD_DISABLE_ANONYMOUS_METRICS: ${NETBIRD_DISABLE_DATA_COLLECTION:-true}
     volumes:
       - ${NETBIRD_SERVER_CONFIG_FILE:-./config.yaml}:/etc/netbird/config.yaml:ro
       - ${NETBIRD_DATA_DIR:-netbird_data}:/var/lib/netbird
