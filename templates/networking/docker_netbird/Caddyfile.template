@@ -6,15 +6,15 @@
 ${NETBIRD_DOMAIN} {
 
   # API + control endpoints
-  handle_path /api/* {
+  handle /api/* {
     reverse_proxy netbird-server:80
   }
 
-  handle_path /relay* {
+  handle /relay* {
     reverse_proxy netbird-server:80
   }
 
-  handle_path /ws-proxy/* {
+  handle /ws-proxy/* {
     reverse_proxy netbird-server:80
   }
 
