@@ -51,3 +51,10 @@ You are free to repeat this process to setup Netbird, but the template files her
 After bringing the compose stack up, navigate to `https://vpn.yourdomain.com`. You should be redirected to the initial account creation page. Setup an admin user with a strong password (you can create a separate user account for yourself later).
 
 Follow the setup instructions to install the app, or skip them and do it later. It is recommended you enable MFA in the settings, then log out and back in to trigger the MFA setup.
+
+## Links
+
+- [Netbird home](https://netbird.io)
+- [Netbird docs](https://docs.netbird.io/)
+  - [Netbird selfhosted docs](https://docs.netbird.io/selfhosted/selfhosted-quickstart)
+- [Netbird Github](https://github.com/netbirdio/netbird)
