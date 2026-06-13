@@ -1,10 +1,36 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: homebox
 
-# volumes:
-#   volume_name: {}
+volumes:
+  homebox-data:
+    driver: local
 
 services:
+  homebox:
+    image: ghcr.io/sysadminsmedia/homebox:${HOMEBOX_IMG_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      HBOX_MODE: ${HOMEBOX_MODE:-development}
+      HBOX_HOST: ${HOMEBOX_HOST_ADDR:-0.0.0.0}      
+      HBOX_OPTIONS_ALLOW_REGISTRATION: ${HOMEBOX_ALLOW_REGISTRATION:-true}
 
-  ...
+      ## Logging
+      HBOX_LOG_LEVEL: ${HOMEBOX_LOG_LEVEL:-info}
+      HBOX_LOG_FORMAT: ${HOMEBOX_LOG_FORMAT:-text}
+
+      HBOX_WEB_MAX_UPLOAD_SIZE: ${HOMEBOX_UPLOAD_SIZE:-10}
+      HBOX_OPTIONS_ALLOW_ANALYTICS: ${HOMEBOX_ENABLE_ANALYTICS:-false}
+      HBOX_AUTH_API_KEY_PEPPER: ${HOMEBOX_API_KEY_PEPPER:-}
+      
+      ## SMTP settings
+      HBOX_MAILER_HOST: ${HOMEBOX_SMTP_HOST:-}
+      HBOX_MAILER_PORT: ${HOMEBOX_SMTP_PORT:-587}
+      HBOX_MAILER_USERNAME: ${HOMEBOX_SMTP_USERNAME:-}
+      HBOX_MAILER_PASSWORD: ${HOMEBOX_SMTP_PASSWORD:-}
+      HBOX_MAILER_FROM: ${HOMEBOX_SMTP_FROM:-}
+    volumes:
+      - ${HOMEBOX_DATA_DIR:-homebox-data}:/data/
+    ports:
+      - ${HOMEBOX_HTTP_PORT:-3100}:7745
+
+
