@@ -830,7 +830,7 @@
         ]
     },
     {
-        "count": 6,
+        "count": 7,
         "name": "misc",
         "path": "templates/misc",
         "sub_categories": [
@@ -876,6 +876,10 @@
             {
                 "name": "docker_it_tools",
                 "path": "templates/misc/docker_it_tools"
+            },
+            {
+                "name": "docker_homebox",
+                "path": "templates/misc/docker_homebox"
             },
             {
                 "name": "docker_snipeit",
