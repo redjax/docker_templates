@@ -231,6 +231,7 @@ Map of the repository's template categories. This page is automatically rendered
 - [misc](../templates/misc)
   - [docker_linkora_server](../templates/misc/docker_linkora_server)
   - [docker_it_tools](../templates/misc/docker_it_tools)
+  - [docker_homebox](../templates/misc/docker_homebox)
   - [docker_snipeit](../templates/misc/docker_snipeit)
   - [docker_omnitools](../templates/misc/docker_omnitools)
   - [project_templates](../templates/misc/project_templates)
