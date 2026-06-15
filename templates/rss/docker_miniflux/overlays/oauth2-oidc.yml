@@ -1,0 +1,19 @@
+---
+########################################################
+# OAuth2 overlay for "sign in with ..." button         #
+#                                                      #
+# Enabling this allows users to sign into the instance #
+# using a Google, Authentik, etc OAuth2 account.       #
+########################################################
+name: miniflux
+
+services:
+  miniflux:
+    environment:
+      OAUTH2_PROVIDER: ${OAUTH2_PROVIDER:-oidc}
+      OAUTH2_CLIENT_ID: ${OAUTH2_CLIENT_ID}
+      OAUTH2_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
+      OAUTH2_REDIRECT_URL: ${OAUTH2_REDIRECT_URL}
+      OAUTH2_OIDC_DISCOVERY_ENDPOINT: ${OAUTH2_OIDC_DISCOVERY_ENDPOINT}
+      OAUTH2_USER_CREATION: ${OAUTH2_USER_CREATION:-1}
+      OAUTH2_OIDC_PROVIDER_NAME: ${OAUTH2_OIDC_PROVIDER_NAME:-OpenID Connect}

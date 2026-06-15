@@ -1,2 +1,7 @@
 karakeep/*
 meilisearch/*
+env/*
+
+!env/
+!env/*example*.*
+!env/*.*example*

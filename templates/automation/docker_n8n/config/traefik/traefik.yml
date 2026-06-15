@@ -1,0 +1,15 @@
+api:
+  insecure: true
+  dashboard: true
+
+log:
+  level: INFO
+
+entryPoints:
+  web:
+    address: ":80"
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: n8n_net

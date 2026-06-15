@@ -1,0 +1,28 @@
+---
+name: prometheus
+
+volumes:
+  grafana_data: {}
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - ${GRAFANA_PORT:-3000}:3000
+    volumes:
+      - ${GRAFANA_DATA_DIR:-grafana_data}:/var/lib/grafana
+      - ${GRAFANA_PROVISIONING_DIR:-./grafana/provision}:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+
+      ## Set to true to allow anonymous access
+      - GF_AUTH_ANONYMOUS_ENABLED=${GRAFANA_ALLOW_ANONYMOUS_ACCESS:-true}
+      ## Options: Admin, Editor, Viewer
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=${GRAFANA_ANONYMOUS_AUTH_ROLE:-Admin}
+      - GF_AUTH_DISABLE_LOGIN_FORM=${GRAFANA_DISABLE_LOGIN_FORM:-true}
+      - GF_AUTH_BASIC_ENABLED=${GRAFANA_BASIC_AUTH_ENABLED:-false}
+      - GF_USERS_ALLOW_SIGN_UP=${GRAFANA_ALLOW_SIGNUPS:-false}
+    depends_on:
+      - prometheus
