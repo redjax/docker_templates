@@ -8,6 +8,7 @@ Description:
 import json
 import logging
 from datetime import datetime
+from pathlib import Path
 import argparse
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
@@ -91,6 +92,9 @@ def main(backup_json_file: str, output_html_file: str):
         json_data = json.load(file)
 
     html_content = json_to_netscape_html(json_data)
+
+    if not Path(output_html_file).parent.exists():
+        Path(output_html_file).parent.mkdir(exist_ok=True, parents=True)
 
     with open(output_html_file, 'w', encoding='utf-8') as file:
         file.write(html_content)
