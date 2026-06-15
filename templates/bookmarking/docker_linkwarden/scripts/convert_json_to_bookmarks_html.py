@@ -8,8 +8,19 @@ Description:
 import json
 import logging
 from datetime import datetime
+import argparse
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Convert a backup.json file exported from Linkwarden into a browser compatible bookmarks.html file.")
+
+    parser.add_argument("-f", "--json-file", type=str, default="backup.json", help="Path to a backup.json file exported from Linkwarden")
+
+    parser.add_argument("-o", "--output-file", type=str, default="bookmarks.html", help="Path where bookmarks.html file will be saved")
+
+    return parser.parse_args()
+
 
 def date_to_timestamp(date_str):
     try:
@@ -73,14 +84,21 @@ def json_to_netscape_html(json_data):
     
     return '\n'.join(html_output)
 
-# Main
-with open('backup.json', 'r', encoding='utf-8') as file:
-    json_data = json.load(file)
+def main(backup_json_file: str, output_html_file: str):
+    print(f"Backup file: {backup_json_file}, output file: {output_html_file}")
 
-html_content = json_to_netscape_html(json_data)
+    with open(backup_json_file, 'r', encoding='utf-8') as file:
+        json_data = json.load(file)
 
-with open('bookmarks.html', 'w', encoding='utf-8') as file:
-    file.write(html_content)
+    html_content = json_to_netscape_html(json_data)
 
-print("NetScape HTML file generated successfully.")
+    with open(output_html_file, 'w', encoding='utf-8') as file:
+        file.write(html_content)
+
+    print("NetScape HTML file generated successfully.")
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(backup_json_file=args.json_file, output_html_file=args.output_file)
 
