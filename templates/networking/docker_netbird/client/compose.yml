@@ -8,6 +8,8 @@ services:
   netbird-client:
     image: netbirdio/netbird:latest
     container_name: netbird-client
+    network_mode: host
+    privileged: true
     hostname: ${NETBIRD_CLIENT_HOSTNAME:-}
     restart: unless-stopped
     cap_add:
@@ -20,4 +22,6 @@ services:
       NB_ALLOW_SERVER_SSH: ${NETBIRD_ENABLE_SSH:-false}
     volumes:
       - ${NETBIRD_CLIENT_DATA_DIR:-client_data}:/var/lib/netbird
+    devices:
+      - /dev/net/tun:/dev/net/tun
 
