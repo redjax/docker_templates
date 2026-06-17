@@ -1,0 +1,9 @@
+---
+tag: example-global
+
+urls:
+  - ntfy://ntfy.mydomain.com/home
+  - ntfy://ntfy.mydomain.com/servers
+  - ntfys://ntfyusername:tk_xxXXxXxxXxXX@ntfy.mydomain.com/apprise:
+      tag:
+        - authenticated

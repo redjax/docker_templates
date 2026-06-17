@@ -1,0 +1,37 @@
+---
+name: "apprise"
+
+# networks:
+#   unnamed_net: {}
+
+volumes:
+  attachments: {}
+
+services:
+  apprise:
+    image: caronc/apprise:${APPRISE_IMG_TAG:-latest}
+    container_name: apprise
+    restart: unless-stopped
+    ports:
+      - "${APPRISE_WEBUI_PORT:-8000}:8000"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      APPRISE_API_HOST: ${APPRISE_API_HOST:-0.0.0.0}
+      APPRISE_API_PORT: 8000
+      APPRISE_API_ONLY: ${APPRISE_DISABLE_WEBUI:-false}
+      APPRISE_STATEFUL_MODE: ${APPRISE_STATEFUL_MODE:-simple}
+      APPRISE_LOG_LEVEL: ${APPRISE_LOG_LEVEL:-INFO}
+      APPRISE_ATTACH_SIZE: ${APPRISE_ATTACH_SIZE:-25}
+      APPRISE_WORKER_COUNT: ${APPRISE_WORKER_COUNT:-2}
+      APPRISE_CONFIG_DIR: /config
+      APPRISE_ADMIN: ${APPRISE_ADMIN:-y}
+      APPRISE_CONFIG_LOCK: ${APPRISE_CONFIG_LOCK:-yes}
+      APPRISE_THEME: ${APPRISE_THEME:-default}
+    volumes:
+      - ${APPRISE_CONFIG_DIR:-./config}:/config
+      - ${APPRISE_ATTACHMENTS_DIR:-attachments}:/attachments
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
