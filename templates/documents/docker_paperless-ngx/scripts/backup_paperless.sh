@@ -8,6 +8,13 @@ EXPORT_HOST_MOUNT="${PROJECT_ROOT}/data/paperless/export"
 
 DO_CLEANUP="false"
 
+CWD=$(pwd)
+
+function cleanup() {
+  cd "${CWD}"
+}
+trap cleanup EXIT
+
 function logger() {
     echo "[$(date +'%F %H:%M:%S')] ${@}"
 }
@@ -118,6 +125,8 @@ fi
 
 EXPORT_FILENAME="$(date +'%Y%m%d%H%M%S')_paperless-ngx_export"
 EXPORT_FILE_PATH="${EXPORT_HOST_MOUNT}/${EXPORT_FILENAME}.zip"
+
+cd "$PROJECT_ROOT"
 
 echo ""
 logger "Creating Paperless NGX export"
