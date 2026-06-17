@@ -37,3 +37,13 @@ curl -X POST \
 ```
 
 The configuration page will have more examples if you scroll down.
+
+## Protect webUI with reverse proxy
+
+If using a reverse proxy that supports securing routes behind authentication (i.e. Pangolin, Netbird, etc), you can protect the webUI with login, while still exposing important routes calling services will need.
+
+If your proxy supports bypassing auth on specific paths, add the following:
+
+- `status`
+- `api/*`
+
