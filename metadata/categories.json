@@ -64,11 +64,15 @@
         ]
     },
     {
-        "count": 3,
+        "count": 4,
         "name": "notifications",
         "path": "templates/notifications",
         "sub_categories": [],
         "templates": [
+            {
+                "name": "docker_apprise",
+                "path": "templates/notifications/docker_apprise"
+            },
             {
                 "name": "docker_ntfy",
                 "path": "templates/notifications/docker_ntfy"

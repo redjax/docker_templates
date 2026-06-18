@@ -66,6 +66,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_peppermint](../templates/project_management/docker_peppermint)
   - [docker_vikunja](../templates/project_management/docker_vikunja)
 - [notifications](../templates/notifications)
+  - [docker_apprise](../templates/notifications/docker_apprise)
   - [docker_ntfy](../templates/notifications/docker_ntfy)
   - [docker_gotify](../templates/notifications/docker_gotify)
 - [web_scraping](../templates/web_scraping)
