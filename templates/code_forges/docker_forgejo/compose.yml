@@ -19,4 +19,3 @@ services:
       - ${FORGEJO_SSH_PORT:-222}:22
     networks:
       - forgejo_net
-
