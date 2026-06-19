@@ -2,6 +2,8 @@
 
 [Forgejo](https://forgejo.org) code for (alternative to Github).
 
+[Forgejo releases](https://forgejo.org/releases/).
+
 ## Table of Contents <!-- omit in toc -->
 
 - [Setup](#setup)
