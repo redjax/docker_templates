@@ -6,6 +6,13 @@ log:
 runner:
   file: .runner
   capacity: 1
+  ## Set runner's container image using a label. You can pass multiple
+  #  labels and use `runs-on:` label in your workflow.
+  labels:
+    ## Debian
+    - debian:docker://docker.io/library/debian:latest
+    ## catthehacker/ubuntu
+    - ubuntu:docker://ghcr.io/catthehacker/ubuntu:act-24.04
 
 cache:
   enabled: true
