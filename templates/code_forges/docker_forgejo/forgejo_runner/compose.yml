@@ -1,0 +1,36 @@
+---
+name: forgejo-runner
+
+volumes:
+  data: {}
+  cache: {}
+
+services:
+  docker-in-docker:
+    image: docker:dind
+    container_name: 'docker_dind'
+    restart: 'unless-stopped'
+    privileged: 'true'
+    command: ['dockerd', '-H', 'tcp://0.0.0.0:2375']
+
+  runner:
+    ## https://code.forgejo.org/forgejo/runner/tags
+    image: 'data.forgejo.org/forgejo/runner:${FORGEJO_RUNNER_IMG_TAG:-12}'
+    container_name: 'runner'
+    restart: 'unless-stopped'
+    ## User without root privileges, but with access to `./data`.
+    # user: 1001:1001
+    command: 'forgejo-runner daemon --config /config/runner-config.yml'
+    depends_on:
+      docker-in-docker:
+        condition: service_started
+    ports:
+      - ${FORGEJO_RUNNER_PORT:-8080}:8080
+    environment:
+      DOCKER_HOST: tcp://docker-in-docker:2375
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${FORGEJO_RUNNER_DATA_DIR:-data}:/data
+      - ${FORGEJO_RUNNER_CACHE_DIR:-cache}:/cache
+      - ${FORGEJO_RUNNER_CONFIG_DIR:-./config}:/config
+
