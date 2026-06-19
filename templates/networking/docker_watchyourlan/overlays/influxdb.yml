@@ -1,0 +1,22 @@
+---
+name: watchyourlan
+
+volumes:
+  influxdb_data: {}
+
+services:
+  influxdb:
+    image: influxdb:2
+    container_name: ${INFLUXDB_CONTAINER_NAME:-influxdb}
+    restart: unless-stopped
+    ports:
+      - ${INFLUXDB_HTTP_PORT:-8086}:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: ${INFLUXDB_INIT_MODE:-setup}
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_INIT_USERNAME:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_INIT_PASSWORD:-influxAdmin}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_INIT_ORG:-influxDefault}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_INIT_BUCKET:-influxDefaultBucket}
+    volumes:
+      - ${INFLUXDB_DATA_DIR:-influxdb_data}:/var/lib/influxdb2
+      - ${INFLUXDB_CONFIG_DIR:-./config/influxdb}:/etc/influxdb2
