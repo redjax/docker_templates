@@ -1,0 +1,27 @@
+---
+---
+log:
+  level: info
+  job_level: info
+
+runner:
+  file: .runner
+  capacity: 1
+
+cache:
+  enabled: true
+  dir: /cache
+  port: 8080
+
+container:
+  network: docker_default
+  privileged: true
+  docker_host: tcp://docker-in-docker:2375
+  options: --env=DOCKER_HOST=tcp://docker-in-docker:2375 --env=DOCKER_BUILDKIT=1
+
+server:
+  connections:
+    forgejo:
+      url: https://forgejo.example.com/
+      uuid: YOUR_FORGEJO_RUNNER_UUID
+      token: YOUR_FORGEJO_RUNNER_TOKEN
