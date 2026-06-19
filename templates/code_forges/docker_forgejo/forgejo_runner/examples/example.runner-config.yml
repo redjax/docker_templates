@@ -1,5 +1,4 @@
 ---
----
 log:
   level: info
   job_level: info
