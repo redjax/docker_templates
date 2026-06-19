@@ -11,7 +11,7 @@ services:
     container_name: 'docker_dind'
     restart: 'unless-stopped'
     privileged: 'true'
-    command: ['dockerd', '-H', 'tcp://0.0.0.0:2375']
+    command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', "--tls=false"]
 
   runner:
     ## https://code.forgejo.org/forgejo/runner/tags
