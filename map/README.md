@@ -93,6 +93,7 @@ Map of the repository's template categories. This page is automatically rendered
 - [networking](../templates/networking)
   - [docker_nginx-proxy-manager](../templates/networking/docker_nginx-proxy-manager)
   - [docker_portainer](../templates/networking/docker_portainer)
+  - [docker_watchyourlan](../templates/networking/docker_watchyourlan)
   - [docker_unbound_dns](../templates/networking/docker_unbound_dns)
   - [docker_netbird](../templates/networking/docker_netbird)
   - [docker_portall](../templates/networking/docker_portall)

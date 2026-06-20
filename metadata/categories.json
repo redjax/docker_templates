@@ -184,7 +184,7 @@
         ]
     },
     {
-        "count": 23,
+        "count": 24,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -204,6 +204,10 @@
             {
                 "name": "docker_portainer",
                 "path": "templates/networking/docker_portainer"
+            },
+            {
+                "name": "docker_watchyourlan",
+                "path": "templates/networking/docker_watchyourlan"
             },
             {
                 "name": "docker_unbound_dns",
