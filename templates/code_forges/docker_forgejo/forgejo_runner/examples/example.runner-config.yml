@@ -20,7 +20,7 @@ cache:
   port: 8080
 
 container:
-  network: docker_default
+  network: bridge
   privileged: true
   docker_host: tcp://docker-in-docker:2375
   options: --env=DOCKER_HOST=tcp://docker-in-docker:2375 --env=DOCKER_BUILDKIT=1
