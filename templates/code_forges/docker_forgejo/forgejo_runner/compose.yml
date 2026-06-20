@@ -1,6 +1,10 @@
 ---
 name: forgejo-runner
 
+networks:
+  default:
+    driver: bridge
+
 volumes:
   data: {}
   cache: {}
@@ -28,9 +32,9 @@ services:
       - ${FORGEJO_RUNNER_PORT:-8080}:8080
     environment:
       DOCKER_HOST: tcp://docker-in-docker:2375
+      DOCKER_TLS_CERTDIR: ""  # Disable TLS for Docker 20.10+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${FORGEJO_RUNNER_DATA_DIR:-data}:/data
       - ${FORGEJO_RUNNER_CACHE_DIR:-cache}:/cache
       - ${FORGEJO_RUNNER_CONFIG_DIR:-./config}:/config
-
