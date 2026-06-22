@@ -17,6 +17,9 @@ services:
     privileged: 'true'
     command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', "--tls=false"]
 
+    cpus: ${DIND_MAX_CPU:-4}
+    mem_limit: ${DIND_MEM_LIMIT:-8g}
+
   runner:
     ## https://code.forgejo.org/forgejo/runner/tags
     image: 'data.forgejo.org/forgejo/runner:${FORGEJO_RUNNER_IMG_TAG:-12}'
@@ -38,4 +41,7 @@ services:
       - ${FORGEJO_RUNNER_DATA_DIR:-data}:/data
       - ${FORGEJO_RUNNER_CACHE_DIR:-cache}:/home/runner/.cache/actcache
       - ${FORGEJO_RUNNER_CONFIG_DIR:-./config}:/config
+
+    cpus: ${FORGEJO_RUNNER_MAX_CPU:-2}
+    mem_limit: ${FORGEJO_RUNNER_MEM_LIMIT:-1g}
 
