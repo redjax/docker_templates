@@ -18,5 +18,10 @@ services:
     environment:
       WOODPECKER_SERVER: ${WOODPECKER_SERVER_URL}
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+    logging:
+      driver: json-file
+      options:
+        max-size: "${WOODPECKER_AGENT_LOG_MAX_SIZE:-10m}"
+        max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/healthz"]

@@ -35,6 +35,11 @@ services:
     ## Disable if using network_mode: host
     networks:
       - woodpecker_net
+    logging:
+      driver: json-file
+      options:
+        max-size: "${WOODPECKER_SERVER_LOG_MAX_SIZE:-10m}"
+        max-file: "${WOODPECKER_SERVER_LOG_MAX_FILE:-5}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8000/healthz"]
       interval: 30s
@@ -59,5 +64,10 @@ services:
     ## Disable if using network_mode: host
     networks:
       - woodpecker_net
+    logging:
+      driver: json-file
+      options:
+        max-size: "${WOODPECKER_AGENT_LOG_MAX_SIZE:-10m}"
+        max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/healthz"]
