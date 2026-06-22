@@ -6,7 +6,7 @@ volumes:
 
 services:
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-latest}
+    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-v3}
     container_name: woodpecker-ci-agent
     command: agent
     restart: unless-stopped

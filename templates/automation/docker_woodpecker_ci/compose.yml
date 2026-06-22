@@ -12,7 +12,7 @@ volumes:
 
 services:
   woodpecker-server:
-    image: woodpeckerci/woodpecker-server:${WOODPECKER_SERVER_IMG_TAG:-latest}
+    image: woodpeckerci/woodpecker-server:${WOODPECKER_SERVER_IMG_TAG:-v3}
     container_name: woodpecker-server
     restart: unless-stopped
     ## Disable if using networks: mapping
@@ -47,7 +47,7 @@ services:
       retries: 3
 
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-latest}
+    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-v3}
     container_name: woodpecker-agent
     ## Disable if using networks: mapping
     # network_mode: host
@@ -59,7 +59,7 @@ services:
       - ${WOODPECKER_AGENT_CONFIG_DIR:-woodpecker-agent-config}:/etc/woodpecker
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      WOODPECKER_SERVER: woodpecker-server:9000
+      WOODPECKER_SERVER: ${WOODPECKER_SERVER_URL:-woodpecker-server:9000}
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
       WOODPECKER_MAX_WORKFLOWS: ${WOODPECKER_AGENT_MAX_WORKFLOWS:-2}
     ## Disable if using network_mode: host
