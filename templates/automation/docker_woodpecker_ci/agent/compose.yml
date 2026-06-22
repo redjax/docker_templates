@@ -18,3 +18,5 @@ services:
     environment:
       WOODPECKER_SERVER: ${WOODPECKER_SERVER_URL}
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/healthz"]
