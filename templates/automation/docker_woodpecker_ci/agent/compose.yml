@@ -26,3 +26,8 @@ services:
         max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/healthz"]
+    deploy:
+      resources:
+        limits:
+          cpus: '${WOODPECKER_AGENT_CPUS:-2}'
+          memory: ${WOODPECKER_AGENT_MEMORY:-2G}
