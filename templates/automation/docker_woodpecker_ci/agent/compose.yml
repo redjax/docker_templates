@@ -13,7 +13,7 @@ services:
     ports:
       - ${WOODPECKER_AGENT_HEALTHCHECK_PORT:-3000}:3000
     volumes:
-      - ${WOODPECKER_AGENT_CONF_DIR:-woodpecker-agent-config}:/etc/woodpecker
+      - ${WOODPECKER_AGENT_CONFIG_DIR:-woodpecker-agent-config}:/etc/woodpecker
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       WOODPECKER_SERVER: ${WOODPECKER_SERVER_URL}
