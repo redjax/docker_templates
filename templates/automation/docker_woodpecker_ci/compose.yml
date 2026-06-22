@@ -61,6 +61,7 @@ services:
     environment:
       WOODPECKER_SERVER: woodpecker-server:9000
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+      WOODPECKER_MAX_WORKFLOWS: ${WOODPECKER_AGENT_MAX_WORKFLOWS:-2}
     ## Disable if using network_mode: host
     networks:
       - woodpecker_net

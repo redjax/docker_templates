@@ -18,6 +18,7 @@ services:
     environment:
       WOODPECKER_SERVER: ${WOODPECKER_SERVER_URL}
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+      WOODPECKER_MAX_WORKFLOWS: ${WOODPECKER_AGENT_MAX_WORKFLOWS:-2}
     logging:
       driver: json-file
       options:
