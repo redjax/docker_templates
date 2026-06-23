@@ -6,15 +6,26 @@ volumes:
 
 services:
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:latest
+    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-v3}
     container_name: woodpecker-ci-agent
     command: agent
     restart: unless-stopped
     ports:
       - ${WOODPECKER_AGENT_HEALTHCHECK_PORT:-3000}:3000
     volumes:
-      - ${WOODPECKER_AGENT_CONF_DIR:-woodpecker-agent-config}:/etc/woodpecker
+      - ${WOODPECKER_AGENT_CONFIG_DIR:-woodpecker-agent-config}:/etc/woodpecker
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       WOODPECKER_SERVER: ${WOODPECKER_SERVER_URL}
       WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET}
+      WOODPECKER_MAX_WORKFLOWS: ${WOODPECKER_AGENT_MAX_WORKFLOWS:-2}
+    logging:
+      driver: json-file
+      options:
+        max-size: "${WOODPECKER_AGENT_LOG_MAX_SIZE:-10m}"
+        max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
+    deploy:
+      resources:
+        limits:
+          cpus: '${WOODPECKER_AGENT_CPUS:-2}'
+          memory: ${WOODPECKER_AGENT_MEMORY:-2G}
