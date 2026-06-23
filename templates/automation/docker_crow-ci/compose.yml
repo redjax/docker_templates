@@ -7,7 +7,7 @@ volumes:
 
 services:
   server:
-    image: codefloe.com/crowci/crow-server:v${CROW_IMG_TAG:-5-13}
+    image: codefloe.com/crowci/crow-server:v${CROW_IMG_TAG:-5.13}
     container_name: crow-server
     ports:
       - ${CROW_SERVER_HTTP_PORT:-8000}:8000
@@ -24,7 +24,7 @@ services:
       CROW_FORGEJO_SECRET: ${CROW_FORGEJO_SECRET}
 
   agent:
-    image: codefloe.com/crowci/crow-agent:${CROW_IMG_TAG:-v5-13}
+    image: codefloe.com/crowci/crow-agent:${CROW_IMG_TAG:-v5.13}
     container_name: crow-agent
     depends_on:
       - server
