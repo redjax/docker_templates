@@ -12,7 +12,7 @@ volumes:
 
 services:
   woodpecker-server:
-    image: woodpeckerci/woodpecker-server:${WOODPECKER_SERVER_IMG_TAG:-latest}
+    image: woodpeckerci/woodpecker-server:${WOODPECKER_SERVER_IMG_TAG:-v3}
     container_name: woodpecker-server
     restart: unless-stopped
     ## Disable if using networks: mapping
@@ -32,6 +32,8 @@ services:
       WOODPECKER_FORGEJO_TOKEN: ${WOODPECKER_FORGEJO_TOKEN}
       WOODPECKER_FORGEJO_CLIENT: ${WOODPECKER_FORGEJO_CLIENT}
       WOODPECKER_FORGEJO_SECRET: ${WOODPECKER_FORGEJO_SECRET}
+      WOODPECKER_GRPC_ADDR: 0.0.0.0:9000
+      WOODPECKER_SERVER_ADDR: 0.0.0.0:8000
     ## Disable if using network_mode: host
     networks:
       - woodpecker_net
@@ -40,14 +42,9 @@ services:
       options:
         max-size: "${WOODPECKER_SERVER_LOG_MAX_SIZE:-10m}"
         max-file: "${WOODPECKER_SERVER_LOG_MAX_FILE:-5}"
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8000/healthz"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-latest}
+    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-v3}
     container_name: woodpecker-agent
     ## Disable if using networks: mapping
     # network_mode: host
@@ -70,8 +67,6 @@ services:
       options:
         max-size: "${WOODPECKER_AGENT_LOG_MAX_SIZE:-10m}"
         max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/healthz"]
     deploy:
       resources:
         limits:

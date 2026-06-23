@@ -6,7 +6,7 @@ volumes:
 
 services:
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-latest}
+    image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-v3}
     container_name: woodpecker-ci-agent
     command: agent
     restart: unless-stopped
@@ -24,8 +24,6 @@ services:
       options:
         max-size: "${WOODPECKER_AGENT_LOG_MAX_SIZE:-10m}"
         max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/healthz"]
     deploy:
       resources:
         limits:
