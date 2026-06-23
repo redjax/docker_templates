@@ -22,7 +22,7 @@ services:
       CROW_FORGEJO_URL: ${CROW_FORGEJO_URL:-"https://codeberg.org"}
       CROW_FORGEJO_CLIENT: ${CROW_FORGEJO_CLIENT}
       CROW_FORGEJO_SECRET: ${CROW_FORGEJO_SECRET}
-      CROW_MAX_WORKFLOWS: ${WOODPECKER_AGENT_MAX_WORKFLOWS:-2}
+      CROW_MAX_WORKFLOWS: ${CROW_AGENT_MAX_WORKFLOWS:-2}
 
   agent:
     image: codefloe.com/crowci/crow-agent:${CROW_IMG_TAG:-v5.13}
