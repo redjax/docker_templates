@@ -23,6 +23,11 @@ services:
       CROW_FORGEJO_CLIENT: ${CROW_FORGEJO_CLIENT}
       CROW_FORGEJO_SECRET: ${CROW_FORGEJO_SECRET}
       CROW_MAX_WORKFLOWS: ${CROW_AGENT_MAX_WORKFLOWS:-2}
+    logging:
+      driver: json-file
+      options:
+        max-size: "${CROW_SERVER_LOG_MAX_SIZE:-10m}"
+        max-file: "${CROW_SERVER_LOG_MAX_FILE:-5}"
 
   agent:
     image: codefloe.com/crowci/crow-agent:${CROW_IMG_TAG:-v5.13}
@@ -35,3 +40,13 @@ services:
     environment:
       CROW_SERVER: "server:9000"
       CROW_AGENT_SECRET: ${CROW_AGENT_SECRET}
+    logging:
+      driver: json-file
+      options:
+        max-size: "${CROW_AGENT_LOG_MAX_SIZE:-10m}"
+        max-file: "${CROW_AGENT_LOG_MAX_FILE:-5}"
+    deploy:
+      resources:
+        limits:
+          cpus: "${CROW_AGENT_CPUS:-2}"
+          memory: ${CROW_AGENT_MEMORY:-2G}
