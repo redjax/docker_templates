@@ -164,6 +164,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_prefect_server](../templates/automation/docker_prefect_server)
   - [docker_windmill](../templates/automation/docker_windmill)
   - [docker_rundeck](../templates/automation/docker_rundeck)
+  - [docker_crow-ci](../templates/automation/docker_crow-ci)
   - [docker_semaphore](../templates/automation/docker_semaphore)
   - [docker_changedetection](../templates/automation/docker_changedetection)
   - [docker_autobrr](../templates/automation/docker_autobrr)
