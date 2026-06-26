@@ -12,6 +12,18 @@
 
 The Renovate container supports [multiple code forges](https://docs.renovatebot.com/modules/platform/), but each Docker instance can only target a single platform. If you want to target multiple forges, i.e. Github and Gitlab, you need to run 2 instances of this container.
 
+### Schedule
+
+This container uses `restart: no` to prevent the container from running continuously. When this value is `always` or `unless-stopped`, the container runs, exits, then immediately restarts.
+
+This can lead to rate limits and other problems. You should leave `restart: no` and instead write a script or cron job to execute the container on a schedule. You can also run it manually with `docker compose run --rm renovate`, or the [`run-renovate.sh` script](./scripts/run-renovate.sh).
+
+Example cron job:
+
+```plaintext
+0 1 * * * cd /path/to/renovate && docker compose run --rm renovate
+```
+
 ### Github Setup
 
 On Github, you must create a fine-grained token to grant Renovate permissions to operate on your repositories. You should create 2 tokens, a "read only" version with minimal read access, and a "read/write" token that Renovate will use to manage issues, pull requests, etc.
