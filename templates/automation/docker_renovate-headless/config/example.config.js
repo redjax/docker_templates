@@ -5,8 +5,8 @@ For example, change the platform to 'gitlab'
 */
 
 module.exports = {
-    // Supported values:
-    //   github, gitlab, forgejo, gitea, azure, bitbucket, bitbucket-server.
+    // Supported platforms: https://docs.renovatebot.com/modules/platform/
+    // Examples: github, gitlab, forgejo, gitea, azure, bitbucket, bitbucket-server
     // Use one platform per bot instance.
     platform: 'github',
     // Whether Renovate should create onboarding PRs for repos that do not yet
