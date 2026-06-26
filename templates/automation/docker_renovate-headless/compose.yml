@@ -8,7 +8,7 @@ services:
   renovate:
     image: renovate/renovate:${RENOVATE_IMG_TAG:-latest}
     container_name: renovate
-    restart: unless-stopped
+    restart: no
     environment:
       LOG_LEVEL: ${RENOVATE_LOG_LEVEL:-info}
       LOG_FORMAT: ${RENOVATE_LOG_FORMAT:-json}
