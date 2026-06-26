@@ -2,6 +2,8 @@
 
 [Renovate](https://www.mend.io/renovate/) is a tool for scanning repositories across git forges and automating dependency bumping. This template runs the [Renovate CLI](https://github.com/renovatebot/renovate).
 
+- [Renovate docs](https://docs.renovatebot.com)
+
 ## Setup
 
 - Copy the [example `.env` file](./.example.env) to `.env` and edit it. At minimum you need to provide:
@@ -31,3 +33,119 @@ Create tokens for the following env vars:
 ## Configuration
 
 You will need to [configure your Renovate server](https://docs.renovatebot.com/config-overview/) according to your individual needs. Do this by copying the [example `.config.js`](./config/example.config.js) to `config/config.js` and edit it.
+
+## Repository-local renovate.json
+
+Individual repositories can override Renovate's default config by putting a `renovate.json` file at the root of the repository.
+
+### Default/minimal
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true
+}
+```
+
+### Python
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "enabledManagers": ["pep621", "pip_requirements", "pip-compile", "poetry", "pre-commit"],
+  "packageRules": [
+    {
+      "matchManagers": ["pep621"],
+      "groupName": "Python dependencies"
+    }
+  ]
+}
+```
+
+### Go
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "enabledManagers": ["gomod"],
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "groupName": "Go dependencies"
+    }
+  ]
+}
+```
+
+### Github Actions
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "enabledManagers": ["github-actions"],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    }
+  ]
+}
+```
+
+### Docker
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "enabledManagers": ["dockerfile", "docker-compose"],
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "groupName": "Docker dependencies"
+    }
+  ]
+}
+```
+
+### Terraform
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "enabledManagers": ["terraform", "terraform-version", "terragrunt", "terragrunt-version", "tflint-plugin"],
+  "packageRules": [
+    {
+      "matchManagers": ["terraform", "terragrunt"],
+      "groupName": "Terraform"
+    }
+  ]
+}
+```
+
+### Node
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "dependencyDashboard": true,
+  "enabledManagers": ["npm", "nvm", "mise"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "groupName": "Node dependencies"
+    }
+  ]
+}
+```
