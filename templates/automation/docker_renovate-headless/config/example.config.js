@@ -26,67 +26,78 @@ module.exports = {
     // Uncomment to restrict Renovate to only these manager types.
     // All managers: https://docs.renovatebot.com/modules/manager/
     // enabledManagers: [
-    //   'uv',
-    //   'github-actions',
-    //   'azure-pipelines',
-    //   'gitlabci',
-    //   'forgejo-actions',
-    //   'gitea-actions',
-    //   'dockerfile',
-    //   'docker-compose',
-    //   'npm',
-    //   'pip_requirements',
-    //   'poetry',
-    //   'pip-compile',
-    //   'gomod',
-    //   'go-mod-directive',
+    //     'ansible',
+    //     'ansible-galaxy',
+    //     'crow',
+    //     'droneci',
+    //     'github-actions',
+    //     'gitlabci',
+    //     'gitlabci-include',
+    //     'woodpecker',
+    //     'uv',
+    //     'devcontainer',
+    //     'docker-compose',
+    //     'dockerfile',
+    //     'gomod',
+    //     'terraform',
+    //     'terraform-version',
+    //     'terragrunt',
+    //     'terragrunt-version',
+    //     'tflint-plugin',
+    //     'nvm',
+    //     'pip_requirements',
+    //     'pre-commit',
+    //     'git-submodules',
+    //     'mise',
+    //     'renovate-config'
     // ],
 
     // Uncomment and tailor these rules as needed.
     // Package manager docs: https://docs.renovatebot.com/configuration-options/#packagerules
     // packageRules: [
-    //   {
-    //     matchManagers: ['uv'],
-    //     groupName: 'Python (uv)',
-    //   },
-    //   {
-    //     matchManagers: ['github-actions'],
-    //     groupName: 'GitHub Actions',
-    //   },
-    //   {
-    //     matchManagers: ['azure-pipelines'],
-    //     groupName: 'Azure Pipelines',
-    //   },
-    //   {
-    //     matchManagers: ['gitlabci'],
-    //     groupName: 'GitLab CI',
-    //   },
-    //   {
-    //     matchManagers: ['dockerfile', 'docker-compose'],
-    //     groupName: 'Docker',
-    //   },
-    //   {
-    //     matchManagers: ['gomod'],
-    //     groupName: 'Go modules',
-    //   },
-    //   {
-    //     matchManagers: ['npm'],
-    //     groupName: 'Node.js',
-    //   },
-    //   {
-    //     matchManagers: ['github-actions'],
-    //     matchPackageNames: ['actions/*'],
-    //     groupName: 'GitHub Actions core',
-    //   },
-    //   {
-    //     matchManagers: ['npm'],
-    //     matchUpdateTypes: ['major'],
-    //     groupName: 'Node major updates',
-    //   },
-    //   {
-    //     matchManagers: ['gomod'],
-    //     matchUpdateTypes: ['major'],
-    //     groupName: 'Go major updates',
-    //   },
-    // ],
+    //     {
+    //         matchManagers: ['uv'],
+    //         groupName: 'Python dependencies',
+    //     },
+    //     {
+    //         matchManagers: ['github-actions'],
+    //         groupName: 'GitHub Actions',
+    //     },
+    //     {
+    //         matchManagers: ['dockerfile', 'docker-compose'],
+    //         groupName: 'Docker',
+    //     },
+    //     {
+    //         matchManagers: ['gomod'],
+    //         groupName: 'Go dependencies',
+    //     },
+    //     {
+    //         matchManagers: ['terraform', 'terraform-version', 'terragrunt', 'terragrunt-version', 'tflint-plugin'],
+    //         groupName: 'Terraform',
+    //     },
+    //     {
+    //         matchManagers: ['nvm'],
+    //         groupName: 'Node runtime',
+    //     },
+    //     {
+    //         matchManagers: ['pip_requirements', 'pre-commit', 'mise'],
+    //         groupName: 'Python tooling',
+    //     },
+    //     {
+    //         matchManagers: ['ansible', 'ansible-galaxy'],
+    //         groupName: 'Ansible',
+    //     },
+    //     {
+    //         matchManagers: ['crow', 'droneci', 'gitlabci', 'gitlabci-include', 'woodpecker'],
+    //         groupName: 'CI pipelines',
+    //     },
+    //     {
+    //         matchManagers: ['devcontainer', 'renovate-config'],
+    //         groupName: 'Dev tooling',
+    //     },
+    //     {
+    //         matchManagers: ['git-submodules'],
+    //         groupName: 'Submodules',
+    //     },
+    // ]
 };
