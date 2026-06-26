@@ -14,6 +14,8 @@ module.exports = {
     // true  = create onboarding PRs.
     // false = skip onboarding PRs and run using the global bot config.
     onboarding: false,
+    // Set a git author to avoid Github auto-flagging commits by the default Renovate bot
+    gitAuthor: 'Renovate Bot <renovate-bot@git-username.example>',
     // Controls whether a repo must already have its own Renovate config file.
     // required = only run on repos that already have config.
     // optional = run even if the repo has no config file yet.
@@ -21,6 +23,8 @@ module.exports = {
     requireConfig: 'optional',
     // Creates a dashboard issue in the repo & keeps it updated with dependency changes
     dependencyDashboard: true,
+    // Leave the global automerge set to false, change in packageRules per-rule
+    automerge: false,
     // List of repositories to scan
     repositories: ["username/repo1", "username/repo2"],
     // Uncomment to restrict Renovate to only these manager types.
@@ -34,7 +38,6 @@ module.exports = {
     //     'gitlabci',
     //     'gitlabci-include',
     //     'woodpecker',
-    //     'uv',
     //     'devcontainer',
     //     'docker-compose',
     //     'dockerfile',
@@ -46,10 +49,13 @@ module.exports = {
     //     'tflint-plugin',
     //     'nvm',
     //     'pip_requirements',
+    //     'pip-compile',
+    //     'poetry',
     //     'pre-commit',
     //     'git-submodules',
     //     'mise',
-    //     'renovate-config'
+    //     'renovate-config',
+    //     'pep621',
     // ],
 
     // Uncomment and tailor these rules as needed.
