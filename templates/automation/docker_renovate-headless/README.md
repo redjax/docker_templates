@@ -35,11 +35,17 @@ Create tokens for the following env vars:
   - `Contents`: Read-only
   - `Metadata`: Read-only
 
-- `RENOVATE_TOKEN`: Read/write access
-  - `Contents`: Read and write
-  - `Pull requests`: Read and write
-  - `Metadata`: Read-only
+- `RENOVATE_TOKEN`: Read and write
+  - `Code quality`: Read-only
+  - `Code scanning alerts`: Read-only
   - `Commit statuses`: Read and write
+  - `Contents`: Read and write
+  - `Dependabot alerts`: Read-only (if using Dependabot. This may not be required)
+  - `Issues`: Read and write
+  - `Metadata`: Read-only
+  - `Pull requests`: Read and write
+  - `Repository security advisories`: Read and write
+  - `Secret scanning alerts`: Read-only (may not be required)
   - `Workflows`: Read and write, if you want Renovate to update files under `.github/workflows/` and create PRs that touch workflow files
 
 ## Configuration
