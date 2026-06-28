@@ -1,3 +1,6 @@
+server:
+  module-config: "validator iterator"
+
 forward-zone:
   name: "."
   forward-tls-upstream: yes

@@ -18,7 +18,7 @@ services:
       - adguardhome
 
   unbound:
-    image: klutchell/unbound
+    image: mvance/unbound:latest
     container_name: unbound
     hostname: unbound
     restart: unless-stopped
