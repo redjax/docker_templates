@@ -1,0 +1,15 @@
+forward-zone:
+  name: "."
+  forward-tls-upstream: yes
+
+  ## DNS-over-TLS
+
+  ## ControlD
+  # forward-addr: <controld-dns-over-tls-ip>
+  # forward-addr: <controld-dns-over-tls-ip>
+
+  ## NextDNS
+  # forward-addr: <nextdns-anycast-addr>@853#<nextdns-configuration-or-profile-id>.dns1.nextdns.io
+  # forward-addr: <nextdns-anycast-addr>@853#<nextdns-configuration-or-profile-id>.dns2.nextdns.io
+  # forward-addr: 2a07:a8c0::@853#<nextdns-configuration-or-profile-id>.dns1.nextdns.io
+
