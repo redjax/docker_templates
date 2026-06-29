@@ -1,0 +1,21 @@
+---
+
+services:
+
+  readarr:
+    image: ${READARR_IMAGE:-hotio/readarr:nightly}
+    container_name: ${READARR_NAME:-readarr}
+    restart: ${READARR_RESTART:-unless-stopped}
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+      - UMASK=${READARR_UMASK:-002}
+    volumes:
+      - ${READARR_CONFIG_DIR:-./apps/readarr/config}:/config
+      - ${READARR_BOOKS_DIR:-./apps/readarr/books}:/books
+      - ${BOOKS_DOWNLOAD_DIR:-./apps/readarr/downloads}:/downloads
+    ports:
+      - ${READARR_PORT:-8787}:8787
+    networks:
+      - media-net

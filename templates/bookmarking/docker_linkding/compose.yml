@@ -1,0 +1,25 @@
+---
+name: linkding
+
+volumes:
+  linkding-data: {}
+
+services:
+  linkding:
+    image: sissbruecker/linkding:latest
+    container_name: linkding-server
+    restart: unless-stopped
+    environment:
+      LD_SUPERUSER_NAME: ${LINKDING_SUPERUSER:-admin}
+      LD_SUPERUSER_PASSWORD: ${LINKDING_SUPERUSER_PASSWORD:-linkding}
+    ports:
+      - "${LINKDING_HTTP_PORT:-9090}:9090"
+    volumes:
+      - "${LINKDING_DATA_DIR:-linkding-data}:/etc/linkding/data"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+

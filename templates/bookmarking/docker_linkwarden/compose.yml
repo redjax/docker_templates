@@ -1,0 +1,49 @@
+---
+networks:
+  linkwarden_net: {}
+
+volumes:
+  linkwarden_data: {}
+  linkwarden_db_data: {}
+  meilisearch_data: {}
+  
+services:
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    container_name: linkwarden
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    restart: unless-stopped
+    ports:
+      - ${LINKWARDEN_WEBUI_PORT:-3000}:3000
+    volumes:
+      - ${LINKWARDEN_DATA_DIR:-linkwarden_data}:/data/data
+    depends_on:
+      - postgres
+      - meilisearch
+    networks:
+      - linkwarden_net
+
+  postgres:
+    image: postgres:${DB_CONTAINER_IMG_VERSION:-16-alpine}
+    container_name: linkwarden-db
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - ${DB_DATA_DIR:-linkwarden_db_data}:/var/lib/postgresql/data
+    networks:
+      - linkwarden_net
+
+  meilisearch:
+    ## Check version at:
+    #  https://hub.docker.com/r/getmeili/meilisearch/tags?page=1&ordering=last_pushed
+    image: getmeili/meilisearch:${MEILISEARCH_CONTAINER_IMG_VERSION:-v1.12.8}
+    container_name: linkwarden-meilisearch
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ${MEILISEARCH_DATA_DIR:-meilisearch_data}:/meili_data
+    networks:
+      - linkwarden_net

@@ -37,7 +37,7 @@ VENV_DIR = Path("./.venv").resolve()
 
 ## At minimum, these paths will be checked by your linters
 #  Add new paths with nox_utils.append_lint_paths(extra_paths=["..."],)
-DEFAULT_LINT_PATHS: list[str] = []
+DEFAULT_LINT_PATHS: list[str] = ["scripts"]
 ## Set directory for requirements.txt file output
 REQUIREMENTS_OUTPUT_DIR: Path = Path("./")
 
@@ -103,30 +103,30 @@ def run_linter(
     """Nox session to run black code linting."""
     session.install("black")
 
-    # log.info("Linting code")
-    # for d in lint_paths:
-    #     if not Path(d).exists():
-    #         log.warning(f"Skipping lint path '{d}', could not find path")
-    #         pass
-    #     else:
-    #         lint_path: Path = Path(d)
-    #         log.info(f"Running ruff imports sort on '{d}'")
-    #         session.run(
-    #             "ruff",
-    #             "check",
-    #             lint_path,
-    #             "--select",
-    #             "I",
-    #             "--fix",
-    #         )
+    log.info("Linting code")
+    for d in lint_paths:
+        if not Path(d).exists():
+            log.warning(f"Skipping lint path '{d}', could not find path")
+            pass
+        else:
+            lint_path: Path = Path(d)
+            log.info(f"Running ruff imports sort on '{d}'")
+            session.run(
+                "ruff",
+                "check",
+                lint_path,
+                "--select",
+                "I",
+                "--fix",
+            )
 
-    #         log.info(f"Running ruff checks on '{d}' with --fix")
-    #         session.run(
-    #             "ruff",
-    #             "check",
-    #             lint_path,
-    #             "--fix",
-    #         )
+            log.info(f"Running ruff checks on '{d}' with --fix")
+            session.run(
+                "ruff",
+                "check",
+                lint_path,
+                "--fix",
+            )
 
     log.info("Linting noxfile.py")
     session.run(

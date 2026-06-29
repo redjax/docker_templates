@@ -1,12 +1,24 @@
+## Secrets
+
 **/.env
 **/.env.*
+*.env
+
+*.local.*
+*.local
+
+github_token.txt
 
 !**/.env.*.example
+!**/*example*.env
+
+## Dirs
 
 backup/*
 db/*
 docs/*
 solr/*
+rustdesk/*
 
 !**/empty
 !**/*.example
@@ -15,14 +27,22 @@ solr/*
 !**/example_*
 !**/example_*.*
 
+## Python
 build/
 *.pyc
 __pycache__/
 .venv
 .python-version
 
-## Ignore direnv environment files
+## Direnv
 .direnv/.*
 .direnv/**/.*
 .secrets
 !.direnv/*.*example*
+
+## Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm

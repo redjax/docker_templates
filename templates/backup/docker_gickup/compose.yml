@@ -25,32 +25,16 @@ services:
       - ${GICKUP_GITHUB_PAT_FILE}:/root/.ssh/github_token:ro
       ## Mount a gitea/forgejo/codeberg PAT
       - ${GICKUP_CODEBERG_PAT_FILE}:/root/.ssh/codeberg_token:ro
+      ## Mount a onedev PAT
+      - ${GICKUP_ONEDEV_PAT_FILE}:/root/.ssh/onedev_token:ro
       ## If you get errors about the container not being able to find a known_hosts file,
       #  create a file called 'known_hosts' in the same path as the compose.yml file and
       #  uncomment this volume mount.
       - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/root/.ssh/known_hosts
+      ## Mount host's timezone
+      - /etc/timezone:/etc/timezone:ro
     command: ["/gickup/conf.yml"]
     environment:
       TZ: ${TZ:-Etc/UTC}
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - gickup_net
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower_gickup
-    restart: unless-stopped
-    pull_policy: always
-    environment:
-      ## Remove old images after updating
-      WATCHTOWER_CLEANUP: "true"
-      ## Only update containers with the
-      #  "com.centurylinklabs.watchtower.enable=true" label
-      WATCHTOWER_LABEL_ENABLE: "true"
-      ## Check for updates every 300 seconds (5 minutes)
-      WATCHTOWER_POLL_INTERVAL: 300
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - gickup_net

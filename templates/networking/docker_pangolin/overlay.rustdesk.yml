@@ -1,0 +1,7 @@
+---
+## Add RustDesk ports to Gerbil service
+services:
+  gerbil:
+    ports:
+      - 21117:21117
+

@@ -16,3 +16,11 @@ Dockerized [Kiwix server](https://github.com/kiwix/kiwix-tools), which can serve
 
 - [Kiwix Library](https://library.kiwix.org/)
 - [Kiwix .zim FTP directory](https://download.kiwix.org/zim/)
+
+## Fix Permission Errors in Containers
+
+The containers run with `PUID` and `PGID` `=1000`. This means if you let the container create volume mounts on the host, they will be owned by root and you will get permission errors in the container.
+
+Before running any of the containers in this stack, create any host volume mounts (if you modified these in your `.env`), and use `chown -R 1000:1000 $HOST_VOLUME`, where `$HOST_VOLUME` is your path.
+
+For example, if you change `TRANSMISSION_CONFIG_DIR`, before running the container you should run `mkdir -pv data/transmission/config` and `chown -R 1000:1000 data/transmission/config`.

@@ -7,4 +7,25 @@
 
 services:
 
-  ...
+  backrest:
+    image: garethgeorge/backrest:latest
+    container_name: backrest
+    restart: unless-stopped
+    hostname: backrest
+    volumes:
+      - ${BACKREST_DATA_DIR:-./backrest/data}:/data
+      - ${BACKREST_CONFIG_DIR:-./backrest/config}:/config
+      - ${BACKREST_CACHE_DIR:-./backrest/cache}:/cache
+      - ${BACKREST_TMP_DIR:-./backrest/tmp}:/tmp
+      - ${BACKREST_RCLONE_DIR:-./backrest/rclone}:/root/.config/rclone
+      - ${BACKREST_BACKUP_DATA:-./backrest/userdata}:/userdata
+      - ${BACKREST_LOCAL_REPOS_DIR:-./backrest/repos}:/repos
+    environment:
+      - BACKREST_DATA=/data
+      - BACKREST_CONFIG=/config/config.json
+      - XDG_CACHE_HOME=/cache
+      - TMPDIR=/tmp
+      - TZ=${TZ:-Etc/UTC}
+    ports:
+      - ${BACKREST_PORT:-9898}:9898
+

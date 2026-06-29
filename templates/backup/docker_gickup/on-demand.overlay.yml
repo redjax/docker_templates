@@ -1,0 +1,34 @@
+## Docker Compose overlay to change the behavior of the gickup container.
+#  Run the schedule on-demand and exit
+volumes:
+  gickup-runonce_logs: {}
+
+services:
+  gickup:
+    image: buddyspencer/gickup:${GICKUP_VERSION:-ubuntu-latest}
+    container_name: gickup-runonce
+    restart: "no"
+    volumes:
+      ## Note you must create this file!
+      - ./config/on-demand.yml:/gickup/conf.yml
+      ## If using /backup/ in the container for local destination,
+      #  mount it in a volume for persistence
+      - ${GICKUP_BACKUP_DIR:-gickup_local_backups}:/backup
+      ## Mount an SSH key, i.e. ~/.ssh/gickup_id_rsa
+      #  Create a key with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/gickup_id_rsa -N ""
+      - ${GICKUP_SSH_KEY}:/root/.ssh/id_rsa:ro
+      ## Mount logging path to persist logs
+      - ${GICKUP_LOGS_DIR:-gickup-runonce_logs}:/log
+      ## Mount a Github PAT
+      - ${GICKUP_GITHUB_PAT_FILE}:/root/.ssh/github_token:ro
+      ## Mount a gitea/forgejo/codeberg PAT
+      - ${GICKUP_CODEBERG_PAT_FILE}:/root/.ssh/codeberg_token:ro
+      ## If you get errors about the container not being able to find a known_hosts file,
+      #  create a file called 'known_hosts' in the same path as the compose.yml file and
+      #  uncomment this volume mount.
+      - ${GICKUP_KNOWN_HOSTS:-./known_hosts}:/root/.ssh/known_hosts
+      ## Mount host's timezone
+      - /etc/timezone:/etc/timezone:ro
+    command: ["/gickup/conf.yml"]
+    environment:
+      TZ: ${TZ:-Etc/UTC}

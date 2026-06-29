@@ -1,0 +1,3 @@
+# Grimoire
+
+Bookmarking 'for wizards.'

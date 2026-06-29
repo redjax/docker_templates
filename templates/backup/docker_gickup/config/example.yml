@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/cooperspencer/gickup/refs/heads/main/gickup_spec.json
-
 # Example copied from: https://github.com/cooperspencer/gickup/blob/main/conf.example.yml
 
 source:

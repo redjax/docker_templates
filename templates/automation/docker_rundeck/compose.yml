@@ -1,0 +1,62 @@
+---
+## Rundeck with MySQL database
+#  https://github.com/rundeck/docker-zoo/blob/master/mysql/docker-compose.yml
+
+networks:
+  rundeck_net: {}
+
+volumes:
+  db_data:
+  rundeck_data:
+  rundeck_logs:
+
+services:
+  rundeck:
+    image: ${RUNDECK_IMAGE:-rundeck/rundeck:SNAPSHOT}
+    container_name: rundeck
+    network_mode: bridge
+    links:
+      - mariadb
+    depends_on:
+      - mariadb
+    environment:
+      RUNDECK_DATABASE_DRIVER: org.mariadb.jdbc.Driver
+      RUNDECK_DATABASE_USERNAME: ${MARIADB_USERNAME:-rundeck}
+      RUNDECK_DATABASE_PASSWORD: ${MARIADB_PASSWORD:-rundeck}
+      RUNDECK_DATABASE_URL: jdbc:mysql://mariadb/rundeck?autoReconnect=true&useSSL=false
+      RUNDECK_GRAILS_URL: ${RUNDECK_GRAILS_URL:-http://localhost:4440}
+      RUNDECK_SERVER_FORWARDED: ${RUNDECK_SERVER_FORWARDED:-false}
+      RUNDECK_SERVER_ADDRESS: ${RUNDECK_SERVER_ADDRESS:-0.0.0.0}
+      RUNDECK_ADMIN_USER: ${RUNDECK_ADMIN_USER:-admin}
+      RUNDECK_ADMIN_PASSWORD: ${RUNDECK_ADMIN_PASSWORD:-admin}
+      ## 26214400 ~= 25MB
+      RUNDECK_GRAILS_UPLOAD_MAXSIZE: ${RUNDECK_UPLOAD_MAXSIZE:-26214400}
+      RUNDECK_SERVER_SESSION_TIMEOUT: ${RUNDECK_SERVER_SESSION_TIMEOUT:-86400}
+
+      ## Encrypt storage passwords
+      # RUNDECK_STORAGE_CONVERTER_1_CONFIG_PASSWORD: ${RUNDECK_STORAGE_CONVERTER_CONFIG_PASSWORD}
+      # RUNDECK_CONFIG_STORAGE_CONVERTER_1_CONFIG_PASSWORD: ${RUNDECK_CONFIG_STORAGE_CONVERTER_PASSWORD}
+    volumes:
+      - ${RUNDECK_DATA_DIR:-rundeck_data}:/home/rundeck/server/data
+      - ${RUNDECK_CONFIG_FILE:-./realm.properties}:/home/rundeck/server/config/realm.properties
+      - ${RUNDECK_LOG_DIR:-rundeck_logs}:/home/rundeck/server/logs
+      - ${RUNDECK_SSH_PRIVATE_KEY:-/dev/null}:/keys/id_rsa
+      - ${RUNDECK_SSH_PUBLIC_KEY:-/dev/null}:/keys/id_rsa.pub
+      - ${RUNDECK_SSH_KNOWN_HOSTS:-/dev/null}:/home/rundeck/.ssh/known_hosts
+      - ${RUNDECK_LICENSE_FILE:-/dev/null}:/home/rundeck/etc/rundeckpro-license.key
+    ports:
+      - ${RUNDECK_PORT:-4440}:4440
+
+  mariadb:
+    image: mariadb:${MARIADB_IMG_VER:-lts}
+    container_name: rundeck-mysql
+    network_mode: bridge
+    expose:
+      - 3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-"RunDeck!"}
+      - MYSQL_DATABASE=${MARIADB_DB_NAME:-rundeck}
+      - MYSQL_USER=${MARIADB_USERNAME:-rundeck}
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD:-rundeck}
+    volumes:
+      - ${MARIADB_DATA_DIR:-db_data}:/var/lib/mysql

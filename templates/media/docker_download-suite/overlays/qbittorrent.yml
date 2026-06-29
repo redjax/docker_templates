@@ -1,0 +1,21 @@
+---
+
+services:
+
+  qbittorrent:
+    image: ghcr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    network_mode: service:vpn
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_WEB_PORT:-8080}
+    volumes:
+      - ${QBITTORRENT_CONF_DIR:-./apps/qbittorrent/config}:/config
+      - ${QBITTORRENT_DOWNLOAD_DIR:-./apps/qbittorrent/downloads}:/downloads
+    depends_on:
+      - vpn
+    networks:
+      - media-net

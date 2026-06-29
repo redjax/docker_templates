@@ -1,0 +1,43 @@
+---
+networks:
+  adguardhome:
+    driver: bridge
+    name: adguardhome
+    ipam:
+      config:
+        - subnet: 172.16.81.0/24
+
+volumes:
+  unbound_config: {}
+
+services:
+  adguardhome:
+    depends_on:
+      - unbound
+    networks:
+      - adguardhome
+
+  unbound:
+    image: mvance/unbound:latest
+    container_name: unbound
+    hostname: unbound
+    restart: unless-stopped
+    volumes:
+      - ${UNBOUND_CONFIG_DIR:-./unbound/config.d}:/etc/unbound/custom.conf.d:ro
+    ports:
+      - ${UNBOUND_DNS_PORT:-533}:53/udp
+      - ${UNBOUND_DNS_PORT:-533}:53/tcp
+    networks:
+      adguardhome:
+        ipv4_address: 172.16.81.10
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    healthcheck:
+      # Use the drill wrapper binary to reduce the exit codes to 0 or 1 for healthchecks
+      test: ['CMD', 'drill-hc', '@127.0.0.1', 'dnssec.works']
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s

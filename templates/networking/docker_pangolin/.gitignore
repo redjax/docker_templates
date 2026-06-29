@@ -1,0 +1,16 @@
+config/*
+config/crowdsec/*
+config/pangolin/*
+config/traefik/*
+config/letsencrypt/*
+logs/*
+
+!config/pangolin/
+!config/pangolin/*example*.yml
+!config/crowdsec/
+!config/crowdsec/*example*.yml
+!config/crowdsec/acquis.d
+!config/traefik/
+!config/traefik/*example*.yml
+
+!.gitkeep

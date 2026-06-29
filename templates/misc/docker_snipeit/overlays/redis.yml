@@ -1,0 +1,25 @@
+---
+name: "snipeit"
+
+volumes:
+  redis_data: {}
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: snipeit-redis
+    restart: unless-stopped
+    volumes:
+      - ${REDIS_DATA_DIR:-redis_data}:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  snipeit:
+    depends_on:
+      redis:
+        condition: service_healthy

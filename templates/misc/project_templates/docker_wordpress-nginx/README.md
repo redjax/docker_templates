@@ -1,3 +1,5 @@
+# Docker Wordpress + NGINX
+
 Spin up a multi-site dockerized Wordpress host, with routing/proxying via jwilder's nginx-proxy container. Clone the repo, run the initialization script, edit docker-compose.yml and .env files, and a multi-site Wordpress host with NGINX and Cloudflare can be spun up (See Instructions below).
 
 This compose project is meant to be run behind Cloudflare for SSL. I haven't (and am not sure I will) added Letsencrypt support to the nginx-proxy container, and am instead relying on Cloudflare to provide SSL with the "Full" SSL option.

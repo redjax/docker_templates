@@ -1,0 +1,122 @@
+---
+networks:
+  concourse_net:
+    driver: bridge
+
+volumes:
+  concourse_db_data: {}
+  concourse_worker_data: {}
+
+services:
+  db:
+    image: postgres
+    container_name: concourse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-concourse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
+      POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
+      PGDATA: /database
+    volumes:
+      - ${CONCOURSE_DB_DATA_DIR:-concourse_db_data}:/database
+    networks:
+      - concourse_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  concourse:
+    image: concourse/concourse
+    container_name: concourse
+    restart: unless-stopped
+    command: web
+    # privileged: true
+    links: [db]
+    depends_on:
+      db:
+        condition: service_healthy
+    ports: ["${CONCOURSE_HTTP_PORT:-8080}:8080"]
+    environment:
+      CONCOURSE_POSTGRES_HOST: db
+      CONCOURSE_POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
+      CONCOURSE_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
+      CONCOURSE_POSTGRES_DATABASE: ${POSTGRES_DB:-concourse}
+
+      CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
+      CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_LOCAL_USER:-admin:concourse}
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM_LOCAL_USERS:-admin,concourse-bot}
+
+      ## instead of relying on the default "detect"
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
+      CONCOURSE_CLIENT_SECRET: ${CONCOURSE_CLIENT_SECRET:-Y29uY291cnNlLXdlYgo=}
+      CONCOURSE_TSA_CLIENT_SECRET: ${CONCOURSE_TSA_CLIENT_SECRET:-Y29uY291cnNlLXdvcmtlcgo=}
+      CONCOURSE_X_FRAME_OPTIONS: allow
+      CONCOURSE_CONTENT_SECURITY_POLICY: "*"
+      CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
+      CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+
+      CONCOURSE_TSA_HOST_KEY: /concourse-keys/tsa_host_key
+      CONCOURSE_TSA_AUTHORIZED_WORKER_KEYS: /concourse-keys/authorized_worker_keys
+      CONCOURSE_SESSION_SIGNING_KEY: /concourse-keys/session_signing_key
+
+      ## Github OAuth
+      CONCOURSE_GITHUB_CLIENT_ID: ${CONCOURSE_GITHUB_CLIENT_ID}
+      CONCOURSE_GITHUB_CLIENT_SECRET: ${CONCOURSE_GITHUB_CLIENT_SECRET}
+
+      ## Gitlab OAuth
+      CONCOURSE_GITLAB_CLIENT_ID: ${CONCOURSE_GITLAB_CLIENT_ID}
+      CONCOURSE_GITLAB_CLIENT_SECRET: ${CONCOURSE_GITLAB_CLIENT_SECRET}
+
+      ## For ARM-based machine, change the Concourse runtime to "houdini"
+      CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+    volumes:
+      - ${CONCOURSE_WEB_KEYS_DIR:-./keys/web}:/concourse-keys:ro
+    networks:
+      - concourse_net
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+
+  worker:
+    image: concourse/concourse
+    container_name: concourse-worker
+    command: worker
+    privileged: true
+    links:
+      - concourse
+    volumes:
+      - ${CONCOURSE_WORKER_KEYS_DIR:-./keys/worker}:/concourse-keys:ro
+      - ${CONCOURSE_WORKER_DATA_DIR:-concourse_worker_data}:/worker-state
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONCOURSE_CONTAINERD_ALLOW_HOST_ACCESS: true
+      CONCOURSE_TSA_HOST: ${CONCOURSE_WORKER_TSA_HOST:-concourse:2222}
+      CONCOURSE_TSA_PUBLIC_KEY: /concourse-keys/tsa_host_key.pub
+      CONCOURSE_TSA_WORKER_PRIVATE_KEY: /concourse-keys/worker_key
+      ## instead of relying on the default "detect"
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
+      CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
+      # CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+      ## For ARM-based machine, change the Concourse runtime to "houdini"
+      CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
+      # CONCOURSE_GARDEN_DNS_SERVER: 1.1.1.1
+      # CONCOURSE_GARDEN_DNS_PROXY_ENABLE: true
+      # CONCOURSE_WORKER_GARDEN_DNS_PROXY_ENABLE: "true"
+      CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE: ${CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE:-true}
+      CONCOURSE_CONTAINERD_DNS_SERVER: ${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}
+    networks:
+      - concourse_net
+    stop_signal: SIGUSR2
+    healthcheck:
+      test: [
+        "CMD-SHELL", "pgrep concourse >/dev/null || exit 1"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

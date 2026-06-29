@@ -1,4 +1,6 @@
 ---
+name: valheim-server
+
 services:
   valheim-server:
     image: lloesche/valheim-server
@@ -9,7 +11,7 @@ services:
     stop_grace_period: 2m
     ports:
       - ${VALHEIM_PORT_RANGE:-2456-2457}:2456-2457/udp
-      - 9002:9001
+      - ${VALHEIM_SUPERVISOR_PORT:-9001}:9001
     volumes:
       - ${VALHEIM_CONF_DIR:-./valheim-server/config}:/config
       - ${VALHEIM_DATA_DIR:-./valheim-server/data}:/opt/valheim
@@ -26,7 +28,7 @@ services:
       UPDATE_IF_IDLE: ${VALHEIM_UPDATE_IF_IDLE:-true}
       RESTART_CRON: ${VALHEIM_RESTART_CRON:-0 5 * * *}
       RESTART_IF_IDLE: ${VALHEIM_RESTART_IF_IDLE:-true}
-      TZ: ${VALHEIM_TZ:-America/New_York}
+      TZ: ${VALHEIM_TZ:-Etc/UTC}
       BACKUPS: ${VALHEIM_BACKUPS:-true}
       BACKUPS_CRON: ${VALHEIM_BACKUPS_CRON:-0 * * * *}
       BACKUPS_DIRECTORY: ${VALHEIM_BACKUPS_DIRECTORY:-/config/backups}
@@ -35,3 +37,21 @@ services:
       BACKUPS_IF_IDLE: ${VALHEIM_BACKUPS_IF_IDLE:-true}
       BACKUPS_IDLE_GRACE_PERIOD: ${VALHEIM_BACKUPS_IDLE_GRACE_PERIOD:-3600}
       PERMISSIONS_UMASK: ${VALHEIM_PERMISSIONS_UMASK:-022}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower_gickup
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

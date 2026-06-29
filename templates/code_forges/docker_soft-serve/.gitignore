@@ -1,0 +1,9 @@
+soft-serve/*
+.ssh/*
+config/*
+
+!.ssh/
+!.ssh/.gitkeep
+!config/
+!config/examples/
+!config/examples/*

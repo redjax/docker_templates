@@ -1,0 +1,13 @@
+db
+keys/*
+keys/web/*
+keys/worker/*
+
+!*example*.*
+!*.*example*
+!keys/
+!keys/web/
+!keys/worker/
+!keys/.gitkeep
+!keys/web/.gitkeep
+!keys/worker/.gitkeep

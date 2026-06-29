@@ -1,0 +1,33 @@
+---
+
+services:
+  portainer_agent:
+    image: portainer/agent:${PORTAINER_AGENT_VERSION:-latest}
+    container_name: portainer_agent
+    restart: unless-stopped
+    ports:
+      - ${PORTAINER_AGENT_PORT:-9001}:${PORTAINER_AGENT_PORT:-9001}
+    environment:
+      AGENT_PORT: ${PORTAINER_AGENT_PORT:-9001}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower_portainer-agent
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+

@@ -1,0 +1,42 @@
+---
+name: nocodb
+
+volumes:
+  nocodb_db_data: {}
+  nocodb_data: {}
+
+networks:
+  nocodb_net: {}
+
+services:
+  nocodb:
+    image: "nocodb/nocodb:latest"
+    restart: unless-stopped
+    depends_on:
+      root_db:
+        condition: service_healthy
+    environment:
+      NC_DB: "pg://root_db:5432?u=${POSTGRES_USER:-postgres}&p=${POSTGRES_PASSWORD:-postgres}&d=root_db"
+      NC_ADMIN_EMAIL: ${NOCODB_ADMIN_EMAIL:-admin@example.com}
+      NC_ADMIN_PASSWORD: ${NOCODB_ADMIN_PASSWORD:-nocoDBAdmin!}
+      NC_AUTH_JWT_SECRET: ${NOCODB_JWT_SECRET}
+      NC_DISABLE_REGISTRATION: ${NOCODB_DISABLE_REGISTRATION:-true}
+    ports:
+      - ${NOCODB_HTTP_PORT:-8080}:8080
+    volumes:
+      - ${NOCODB_DATA_DIR:-nocodb_data}:/usr/app/data
+
+  root_db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: root_db
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"'
+      timeout: 2s
+    volumes:
+      - ${POSTGRES_DATA_DIR:-nocodb_db_data}:/var/lib/postgresql/data

@@ -1,0 +1,52 @@
+---
+networks:
+  commafeed_net: {}
+
+volumes:
+  commafeed_db_data: {}
+
+services:
+  commafeed:
+    image: athou/commafeed:latest-h2
+    restart: unless-stopped
+    container_name: commafeed
+    volumes:
+      - ${COMMAFEED_DB_DATA_DIR:-commafeed_db_data}:/commafeed/data
+    deploy:
+      resources:
+        limits:
+          memory: ${COMMAFEED_ALLOWED_MEMORY:-256M}
+    environment:
+      COMMAFEED_HIDE_FROM_WEB_CRAWLERS: ${COMMAFEED_HIDE_FROM_WEB_CRAWLERS:-true}
+      COMMAFEED_IMAGE_PROXY_ENABLED: ${COMMAFEED_IMAGE_PROXY_ENABLED:-false}
+      COMMAFEED_PASSWORD_RECOVERY_ENABLED: ${COMMAFEED_PASSWORD_RECOVERY_ENABLED:-false}
+      ## Displayed at bottom of page
+      COMMAFEED_ANNOUNCEMENT: ${COMMAFEED_ANNOUNCEMENT}
+      COMMAFEED_FEED_REFRESH_INTERVAL: ${COMMAFEED_FEED_REFRESH_INTERVAL:-5M}
+      COMMAFEED_FEED_REFRESH_MAX_INTERVAL: ${COMMAFEED_FEED_REFRESH_MAX_INTERVAL:-4H}
+      COMMAFEED_USERS_ALLOW_REGISTRATIONS: ${COMMAFEED_USERS_ALLOW_REGISTRATIONS:-false}
+      COMMAFEED_USERS_CREATE_DEMO_ACCOUNT: ${COMMAFEED_USERS_CREATE_DEMO_ACCOUNT:-false}
+    ports:
+      - ${COMMAFEED_WEBUI_PORT:-8082}:8082
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - commafeed_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower_commafeed
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - commafeed_net

@@ -1,0 +1,15 @@
+---
+name: node_exporter
+
+services:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    pid: host
+    network_mode: host
+    command:
+      - "--path.rootfs=/host"
+      - "--web.listen-address=0.0.0.0:${NODE_EXPORTER_PORT:-9100}"
+    volumes:
+      - "/:/host:ro,rslave"

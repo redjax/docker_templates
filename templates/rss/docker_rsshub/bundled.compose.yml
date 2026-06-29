@@ -1,0 +1,53 @@
+---
+networks:
+  rsshub_net: {}
+
+volumes:
+  rsshub_redis_data: {}
+
+services:
+  rsshub:
+    image: diygod/rsshub:chromium-bundled
+    container_name: rsshub
+    restart: unless-stopped
+    ports:
+      - ${RSSHUB_WEBUI_PORT:-1200}:1200
+    environment:
+      NODE_ENV: production
+      CACHE_TYPE: redis
+      REDIS_URL: "redis://redis:6379/"
+    depends_on:
+      - redis
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - rsshub_net
+
+  redis:
+    image: redis:alpine
+    container_name: rsshub-redis
+    restart: unless-stopped
+    volumes:
+      - ${RSSHUB_REDIS_DATA_DIR:-rsshub_redis_data}:/data
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - rsshub_net
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower_rsshub
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      ## Remove old images after updating
+      WATCHTOWER_CLEANUP: "true"
+      ## Only update containers with the
+      #  "com.centurylinklabs.watchtower.enable=true" label
+      WATCHTOWER_LABEL_ENABLE: "true"
+      ## Check for updates every 300 seconds (5 minutes)
+      WATCHTOWER_POLL_INTERVAL: 300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - rsshub_net

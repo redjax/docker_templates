@@ -1,0 +1,11 @@
+data/
+logs/
+config/traefik/*
+
+*.env
+
+.authentik_db_pass
+.authentik_secret
+
+!*example*.*
+!*.*example*.*
