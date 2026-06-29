@@ -33,3 +33,11 @@ services:
     tmpfs:
       ## All writable runtime state resides under /tmp; comment out to persist logs between restarts
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    cpu_shares: 512
+    pids_limit: 512
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
