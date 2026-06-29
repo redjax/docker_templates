@@ -1,1 +1,10 @@
 netalertx/
+netalertx/data/*
+netalertx/data/config/*
+netalertx/data/db/*
+
+!netalertx/
+!netalertx/data/
+!netalertx/data/config/
+!netalertx/data/db/
+!.gitkeep
