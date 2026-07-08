@@ -1,12 +1,15 @@
 # Forgejo <!-- omit in toc -->
 
-[Forgejo](https://forgejo.org) code for (alternative to Github).
+[Forgejo](https://forgejo.org) code forge (alternative to Github).
 
 [Forgejo releases](https://forgejo.org/releases/).
 
 ## Table of Contents <!-- omit in toc -->
 
 - [Setup](#setup)
+  - [Admin Account Setup](#admin-account-setup)
+    - [With INSTALL\_LOCK=false](#with-install_lockfalse)
+    - [With INSTALL\_LOCK=true and DISABLE\_REGISTRATION=false](#with-install_locktrue-and-disable_registrationfalse)
   - [Local Network](#local-network)
   - [Publicly Exposed](#publicly-exposed)
   - [SSH Setup](#ssh-setup)
@@ -20,9 +23,21 @@
 
 Run the [initial setup script](./scripts/initial_setup.sh) to create the `data/forgejo` directory, set the correct permissions, and copy example environment files in the [`env_files/` directory](./env_files/).
 
-Start the stack, navigate to your URL, and complete the setup. Make sure to create an admin account (at the bottom of the page). The container will restart, at which point you should bring it down, edit your env file (default is `env_files/forgejo/default.env`) and set `FORGEJO__security__INSTALL_LOCK=true`, then bring the stack back up.
+Start the stack, navigate to your URL, and complete the setup.
+
+### Admin Account Setup
+
+When `FORGEJO__security__INSTALL_LOCK=false`, the first boot of Forgejo will show a "first time setup" page, where you can edit the server instance and create an administrator account. If `FORGEJO__security__INSTALL_LOCK=true`, you will need to set `FORGEJO__service__DISABLE_REGISTRATION=false` in order to create an account. The first account created in Forgejo becomes the administrator.
+
+#### With INSTALL_LOCK=false
+
+Make sure to create an admin account (at the bottom of the page). The container will restart, at which point you should bring it down, edit your env file (default is `env_files/forgejo/default.env`) and set `FORGEJO__security__INSTALL_LOCK=true`, then bring the stack back up.
 
 After registering a user, if you want to disable future registrations, update the [Forgejo env file](./env_files/forgejo/example.env), setting `FORGEJO__service__DISABLE_REGISTRATION=true`.
+
+#### With INSTALL_LOCK=true and DISABLE_REGISTRATION=false
+
+If the admin account you created does not work after setting the install lock to `true` and restarting the container, try setting the `FORGEJO__security__INSTALL_LOCK` variable to `true`, and `FORGEJO__service__DISABLE_REGISTRATION` to `false`, navigate to the webUI, and manually register a new account. The first account created in a Forgejo instance becomes the administrator.
 
 ### Local Network
 
@@ -107,7 +122,7 @@ bantime = 600
 findtime = 600
 ```
 
-  - Restart Fail2Ban with `sudo systemctl restart fail2ban`
+- Restart Fail2Ban with `sudo systemctl restart fail2ban`
 
 ### Clone with SSH
 
