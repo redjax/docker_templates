@@ -15,6 +15,7 @@
   - [SSH Setup](#ssh-setup)
   - [Clone with SSH](#clone-with-ssh)
   - [OAuth2 Provider Setup](#oauth2-provider-setup)
+- [Setup Action Runner](#setup-action-runner)
 - [Troubleshooting](#troubleshooting)
   - [Init failed: mkdir /path/name](#init-failed-mkdir-pathname)
 - [Links](#links)
@@ -150,6 +151,10 @@ Then, run `ssh $DOMAIN` and confirm the prompt to test it.
 Forgejo can act as an OAuth2 provider for applications like [Woodpecker CI](https://woodpecker-ci.org/docs/administration/configuration/forges/forgejo). You must enable OAuth2 by setting `FORGEJO__oauth2__ENABLED=true` in your [Forgejo env file](./env_files/forgejo/example.env).
 
 This will make OAuth2 application settings available in the Forgejo UI, under `Settings -> Applications -> Authorized OAuth2 applications`.
+
+## Setup Action Runner
+
+See the [Forgejo runner container](./forgejo_runner/) for setup instructions. You must enable Actions on the server by setting `FORGEJO__actions__ENABLED=true`.
 
 ## Troubleshooting
 
