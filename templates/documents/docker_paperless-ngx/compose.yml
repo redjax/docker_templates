@@ -47,14 +47,8 @@ volumes:
 
 services:
 
-#   watchtower:
-#     container_name: watchtower
-#     image: contairrr/watchtower
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock
-
   broker:
-    image: redis:6.0
+    image: redis:${REDIS_IMG_TAG:-latest}
     container_name: paperless-redis
     restart: unless-stopped
     networks:
@@ -74,7 +68,7 @@ services:
       - paperless_backend
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: ghcr.io/paperless-ngx/paperless-ngx:${PAPERLESS_IMG_TAG:-latest}
     container_name: paperless-server
     restart: unless-stopped
     depends_on:
@@ -102,7 +96,7 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
       PAPERLESS_TIKA_ENABLED: 1
-      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000/forms/libreoffice/convert#
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_URL: ${PAPERLESS_SERVER_URL}
     networks:
@@ -110,7 +104,7 @@ services:
       - paperless_backend
 
   gotenberg:
-    image: thecodingmachine/gotenberg:6
+    image: thecodingmachine/gotenberg:${GOTENBERG_IMG_TAG:-latest}
     container_name: paperless-gotenberg
     restart: unless-stopped
     # The gotenberg chromium route is used to convert .eml files. We do not
@@ -120,7 +114,7 @@ services:
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
     ports:
-      - 3000:3000
+      - ${GOTENBERG_PORT:-3000}:3000
     environment:
       DISABLE_GOOGLE_CHROME: 1
     networks:
@@ -130,7 +124,7 @@ services:
     ## Non-amd64 arch, i.e. RPi or VM
     # image: abhilesh7/apache-tika-arm
     ## amd64 arch
-    image: apache/tika:1.27
+    image: apache/tika:${TIKA_IMG_TAG:-latest}
     container_name: paperless-tika
     restart: unless-stopped
     networks:
