@@ -1,0 +1,16 @@
+---
+name: jenkins-agent
+
+services:
+  agent:
+    image: jenkins/inbound-agent:${JENKINS_AGENT_IMG_TAG:-latest-jdk17}
+    restart: unless-stopped
+    init: true
+    environment:
+      JENKINS_URL: ${JENKINS_URL}
+      JENKINS_AGENT_NAME: ${JENKINS_AGENT_NAME}
+      JENKINS_SECRET: ${JENKINS_SECRET}
+      JENKINS_AGENT_WORKDIR: ${JENKINS_AGENT_WORKDIR:-/home/jenkins/agent}
+      JENKINS_WEB_SOCKET: "true"
+    volumes:
+      - ${JENKINS_AGENT_WORKDIR:-./agent_workdir}:/home/jenkins/agent

@@ -1,10 +1,45 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: jenkins
 
-# volumes:
-#   volume_name: {}
+volumes:
+  jenkins_home: {}
 
 services:
+  server:
+    image: jenkins/jenkins:${JENKINS_IMG_TAG:-lts}
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    # read_only: true
+    ports:
+      - ${JENKINS_HTTP_PORT:-8080}:8080
+      - ${JENKINS_AGENT_PORT:-50000}:50000
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      JENKINS_JAVA_OPTS: >-
+        -Djenkins.install.runSetupWizard=true
+        -Xms${JENKINS_JAVA_OPT_XMS:-512m}
+        -Xmx${JENKINS_JAVA_OPTS_XMX:-1024m}
+      JENKINS_OPTS: "--prefix=${JENKINS_PREFIX:-/}"
+    volumes:
+      - ${JENKINS_HOME_DIR:-jenkins_home}:/var/jenkins_home
+      - ./config/init.groovy.d:/usr/share/jenkins/ref/init.groovy.d:ro
+      - ./config/plugins.txt:/usr/share/jenkins/ref/plugins.txt:ro
+    dns:
+      - ${JENKINS_DNS_1:-1.1.1.1}
+      - ${JENKINS_DNS_2:-8.8.8.8}
+      - ${JENKINS_DNS_3:-}
+      - ${JENKINS_DNS_4:-}
 
-  ...
+    cpus: ${JENKINS_MAX_CPU:-4}
+    mem_limit: ${JENKINS_MEM_LIMIT:-8g}
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/login || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  ssh-agent:
+    image: jenkins/ssh-agent
