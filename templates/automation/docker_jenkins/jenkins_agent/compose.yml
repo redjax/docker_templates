@@ -3,7 +3,7 @@ name: jenkins-agent
 
 services:
   agent:
-    image: jenkins/inbound-agent:${JENKINS_AGENT_IMG_TAG:-latest-jdk17}
+    image: jenkins/inbound-agent:${JENKINS_AGENT_IMG_TAG:-latest-jdk21}
     restart: unless-stopped
     init: true
     environment:
