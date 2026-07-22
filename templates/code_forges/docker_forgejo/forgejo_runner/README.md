@@ -29,4 +29,3 @@ If you used a host volume for `FORGEJO_RUNNER_CACHE_DIR` in the [`.env` file](./
 ```shell
 rm -rf $FORGEJO_RUNNER_CACHE_DIR
 ```
-
