@@ -495,7 +495,7 @@
         ]
     },
     {
-        "count": 18,
+        "count": 20,
         "name": "automation",
         "path": "templates/automation",
         "sub_categories": [
@@ -569,8 +569,16 @@
                 "path": "templates/automation/docker_woodpecker_ci"
             },
             {
+                "name": "docker_renovate-server",
+                "path": "templates/automation/docker_renovate-server"
+            },
+            {
                 "name": "docker_semaphore",
                 "path": "templates/automation/docker_semaphore"
+            },
+            {
+                "name": "docker_renovate-headless",
+                "path": "templates/automation/docker_renovate-headless"
             }
         ]
     },
