@@ -13,7 +13,6 @@
 The Renovate container supports [multiple code forges](https://docs.renovatebot.com/modules/platform/), but each Docker instance can only target a single platform. If you want to target multiple forges, i.e. Github and Gitlab, you need to run 2 instances of this container.
 
 ### Schedule
-
 This container uses `restart: no` to prevent the container from running continuously. When this value is `always` or `unless-stopped`, the container runs, exits, then immediately restarts.
 
 This can lead to rate limits and other problems. You should leave `restart: no` and instead write a script or cron job to execute the container on a schedule. You can also run it manually with `docker compose run --rm renovate`, or the [`run-renovate.sh` script](./scripts/run-renovate.sh).
@@ -103,8 +102,7 @@ Individual repositories can override Renovate's default config by putting a `ren
 ### Github Actions
 
 ```json
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+{ "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "dependencyDashboard": true,
   "enabledManagers": ["github-actions"],
@@ -167,3 +165,19 @@ Individual repositories can override Renovate's default config by putting a `ren
   ]
 }
 ```
+
+## Running Renovate
+
+Use the [`run-renovate.sh` script](./scripts/run-renovate.sh) to kill any running renovate container, start a new one, run the renovate bot, and exit. This flow allows for scheduling the script, i.e. `crontab -e`:
+
+```shell
+## Run renovate every 6 hours
+0 */6 /home/jack/sparse-clones/docker_renovate-headless/templates/automation/docker_renovate-headless/scripts/run-renovate.sh > /var/log/renovate.log 2>&1
+```
+
+Copy the [`renovate.logrotate` policy](./renovate.logrotate) to `/etc/logrotate.d/renovate`:
+
+```shell
+sudo cp renovate.logrotate /etc/logrotate.d/renovate
+```
+
