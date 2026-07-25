@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! command -v docker compose &> /dev/null; then
-  echo "[ERROR] docker compose is not installed" >&2
+if ! command -v docker &> /dev/null; then
+  echo "[ERROR] docker is not installed" >&2
+  exit 1
+fi
+
+if ! docker compose version >/dev/null >&2; then
+  echo "[ERROR] docker compose is not available" >&2
   exit 1
 fi
 
@@ -15,9 +20,6 @@ cd "${REPO_ROOT}"
 
 echo "Running renovate container"
 
-if ! docker compose run --rm renovate 2>&1; then
-  echo "[ERROR] Failed to run renovate container" >&2
-  exit 1
-fi
+docker compose run --rm renovate
 
 echo "Renovate finished"
