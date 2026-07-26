@@ -1,0 +1,18 @@
+hostname: harbor.lan # your LAN hostname or IP
+http:
+  port: 8080 # HTTP port (internal)
+  # https section omitted for HTTP-only
+harbor_admin_password: HarborAdmin # set your admin password
+database:
+  password: HarborDBPass # PostgreSQL password
+data_volume: /data # where volumes are mounted inside the container
+core:
+  secret: "4131e4e7955ef85da25aa6d7cfbab6f78e11ac5bd1bc2fd3b2b3a0e3ae8d55c1"
+registry:
+  storage_provider_name: filesystem
+  storage_provider_config:
+    rootdirectory: /data/registry
+jobservice:
+  secret: "4131e4e7955ef85da25aa6d7cfbab6f78e11ac5bd1bc2fd3b2b3a0e3ae8d55c1"
+redis:
+  password: RedisPass123

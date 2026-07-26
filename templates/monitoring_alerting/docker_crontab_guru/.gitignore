@@ -1,0 +1,13 @@
+crontabs/*
+data/*
+data/**/
+data/**/*
+
+!crontabs/
+!crontabs/.gitkeep
+!data/
+!data/crontab_guru/
+
+!*example*.*
+!*.*example*
+

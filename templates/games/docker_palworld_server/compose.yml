@@ -6,10 +6,10 @@ services:
       container_name: palworld-server
       stop_grace_period: 30s
       ports:
-        - ${PALWORLD_GAME_PORT:-8211}:8211/udp
-        - ${PALWORLD_QUERY_PORT:-27015}:27015/udp
-        - ${PALWORLD_RCON_PORT:-25575}:25575/tcp
-        # - ${PALWORLD_REST_API_PORT:-8212}:8212/tcp  # Port for REST API if REST_API_ENABLED: true
+         - ${PALWORLD_GAME_PORT:-8211}:8211/udp
+         - ${PALWORLD_QUERY_PORT:-27015}:27015/udp
+         - ${PALWORLD_RCON_PORT:-25575}:25575/tcp
+         - ${PALWORLD_REST_API_PORT:-8212}:8212/tcp
       env_file:
          - server_opts.env
       volumes:
