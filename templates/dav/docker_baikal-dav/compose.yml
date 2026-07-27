@@ -18,7 +18,7 @@ name: baikal
 
 services:
   baikal:
-    image: ckulka/baikal:${BAIKAL_IMG_TAG:-nginx}
+    image: ckulka/baikal:${BAIKAL_IMG_TAG:-0.10.1apache-php8.2}
     restart: unless-stopped
     environment:
       TZ: ${TZ:-Etc/UTC}
