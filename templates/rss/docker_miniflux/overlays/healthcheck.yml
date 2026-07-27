@@ -1,0 +1,11 @@
+---
+name: miniflux
+
+services:
+  miniflux:
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3

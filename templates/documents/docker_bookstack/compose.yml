@@ -1,0 +1,47 @@
+---
+name: bookstack
+
+services:
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:${BOOKSTACK_IMG_VER:-25.07.3}
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
+      APP_URL: ${BOOKSTACK_APP_URL:-http://localhost:8080}
+      APP_KEY: ${BOOKSTACK_APP_KEY}
+      DB_HOST: ${DB_HOSTNAME:-bookstack_db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USERNAME: ${DB_USERNAME:-bookstack}
+      DB_PASSWORD: ${DB_PASSWORD:-bookstack}
+      DB_DATABASE: ${DB_DATABASE:-bookstackapp}
+
+      MAIL_DRIVER: ${BOOKSTACK_MAIL_DRIVER:-log}
+      MAIL_HOST: ${BOOKSTACK_SMTP_HOST:-}
+      MAIL_PORT: ${BOOKSTACK_SMTP_PORT:-587}
+      MAIL_USERNAME: ${BOOKSTACK_SMTP_USERNAME:-}
+      MAIL_PASSWORD: ${BOOKSTACK_SMTP_PASSWORD:-}
+      MAIL_ENCRYPTION: ${BOOKSTACK_SMTP_ENCRYPTION:-tls}
+      MAIL_FROM: ${BOOKSTACK_SMTP_MAIL_FROM:-noreply@local}
+      MAIL_FROM_NAME: ${BOOKSTACK_SMTP_MAIL_FROM_NAME:-BookStack}
+    volumes:
+      - ${BOOKSTACK_DATA_DIR:-./data/bookstack}:/config
+    ports:
+      - ${BOOKSTACK_WEBUI_PORT:-8080}:80
+    depends_on:
+      - bookstack_db
+
+  bookstack_db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-bookstackAdmin!}
+      MYSQL_DATABASE: ${DB_DATABASE:-bookstackapp}
+      MYSQL_USER: ${DB_USERNAME:-bookstack}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-bookstack}
+    volumes:
+      - ${DB_DATA_DIR:-./data/db}:/var/lib/mysql

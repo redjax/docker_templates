@@ -1,0 +1,9 @@
+config/*
+loki/*
+data/*
+grafana/*
+
+!config/
+!config/examples/
+!*example*.*
+!*.*example*

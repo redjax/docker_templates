@@ -5,7 +5,7 @@ services:
     image: traefik:v${TRAEFIK_IMG_VER:-3.5.1}
     container_name: traefik
     restart: unless-stopped
-    network_mode: host
+    # network_mode: host
     depends_on:
       - gitlab-server
     command:
@@ -27,6 +27,8 @@ services:
     ports:
       - "${TRAEFIK_HTTP_PORT:-80}:80"
       - "${TRAEFIK_HTTPS_PORT:-443}:443"
+    networks:
+      - gitlab_net
 
   gitlab-server:
     labels:
@@ -36,3 +38,8 @@ services:
       - "traefik.http.routers.gitlab.tls=true"
       - "traefik.http.routers.gitlab.tls.certresolver=letsencrypt"
       - "traefik.http.services.gitlab.loadbalancer.server.port=80"
+      - "traefik.http.services.gitlab.loadbalancer.healthcheck.path=/-/health"
+      - "traefik.http.services.gitlab.loadbalancer.healthcheck.interval=10s"
+      - "traefik.docker.network=gitlab_net"
+    networks:
+      - gitlab_net

@@ -1,0 +1,6 @@
+postgres/*
+mysql/*
+semaphore/*
+data/*
+
+!.gitkeep

@@ -1,0 +1,20 @@
+---
+name: netbird
+
+volumes:
+  postgres_data: {}
+
+services:
+  postgres:
+    image: postgres:${POSTGRES_IMG_VER:-17}
+    container_name: netbird-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-netbird}
+      POSTGRES_USER: ${POSTGRES_USER:-netbird}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-netbird}
+    volumes:
+      - ${POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
+    networks:
+      - netbird
+

@@ -1,0 +1,28 @@
+---
+name: joplin
+
+volumes:
+  db_data: {}
+
+services:
+  db:
+    image: postgres:${DB_TAG:-16}
+    container_name: joplin-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-joplin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-joplin}
+      POSTGRES_DB: ${DB_NAME:-joplin}
+    volumes:
+      - ${DB_DATA_DIR:-db_data}:/var/lib/postgresql/data
+
+  joplin:
+    depends_on:
+      - db
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${DB_USER:-joplin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-joplin}
+      POSTGRES_DB: ${DB_NAME:-joplin}
+

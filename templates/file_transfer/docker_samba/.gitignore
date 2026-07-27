@@ -1,0 +1,10 @@
+envs/*
+overlays/*
+
+!envs/
+!overlays/
+!overlays/user-homes.yml
+
+!*example*.*
+!*.*example*
+

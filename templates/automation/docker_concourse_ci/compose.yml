@@ -18,7 +18,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
       PGDATA: /database
     volumes:
-      - ${CONCOURSE_DB_DATA_DIR:-concourse_db_data}:/var/lib/postgresql/data
+      - ${CONCOURSE_DB_DATA_DIR:-concourse_db_data}:/database
     networks:
       - concourse_net
     healthcheck:
@@ -35,18 +35,20 @@ services:
     command: web
     # privileged: true
     links: [db]
-    depends_on: [db]
+    depends_on:
+      db:
+        condition: service_healthy
     ports: ["${CONCOURSE_HTTP_PORT:-8080}:8080"]
     environment:
       CONCOURSE_POSTGRES_HOST: db
       CONCOURSE_POSTGRES_USER: ${POSTGRES_USER:-concourse_user}
       CONCOURSE_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concourse_pass}
       CONCOURSE_POSTGRES_DATABASE: ${POSTGRES_DB:-concourse}
-      
+
       CONCOURSE_EXTERNAL_URL: ${CONCOURSE_URL:-http://localhost:8080}
       CONCOURSE_ADD_LOCAL_USER: ${CONCOURSE_ADD_LOCAL_USER:-admin:concourse}
       CONCOURSE_MAIN_TEAM_LOCAL_USER: ${CONCOURSE_MAIN_TEAM_LOCAL_USERS:-admin,concourse-bot}
-      
+
       ## instead of relying on the default "detect"
       CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
       CONCOURSE_CLIENT_SECRET: ${CONCOURSE_CLIENT_SECRET:-Y29uY291cnNlLXdlYgo=}
@@ -67,7 +69,7 @@ services:
       ## Gitlab OAuth
       CONCOURSE_GITLAB_CLIENT_ID: ${CONCOURSE_GITLAB_CLIENT_ID}
       CONCOURSE_GITLAB_CLIENT_SECRET: ${CONCOURSE_GITLAB_CLIENT_SECRET}
-      
+
       ## For ARM-based machine, change the Concourse runtime to "houdini"
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
     volumes:
@@ -79,12 +81,6 @@ services:
       options:
         max-file: "5"
         max-size: "10m"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f ${CONCOURSE_URL} || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
   worker:
     image: concourse/concourse
@@ -92,8 +88,6 @@ services:
     command: worker
     privileged: true
     links:
-      - concourse
-    depends_on:
       - concourse
     volumes:
       - ${CONCOURSE_WORKER_KEYS_DIR:-./keys/worker}:/concourse-keys:ro
@@ -107,19 +101,21 @@ services:
       ## instead of relying on the default "detect"
       CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: ${CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER:-overlay}
       CONCOURSE_CLUSTER_NAME: ${CONCOURSE_CLUSTER_NAME:-node1}
-      CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
+      # CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}"
       ## For ARM-based machine, change the Concourse runtime to "houdini"
       CONCOURSE_WORKER_RUNTIME: "${CONCOURSE_WORKER_RUNTIME:-containerd}"
-      CONCOURSE_GARDEN_DNS_SERVER: 1.1.1.1
-      CONCOURSE_GARDEN_DNS_PROXY_ENABLE: true
-      CONCOURSE_WORKER_GARDEN_DNS_PROXY_ENABLE: "true"
+      # CONCOURSE_GARDEN_DNS_SERVER: 1.1.1.1
+      # CONCOURSE_GARDEN_DNS_PROXY_ENABLE: true
+      # CONCOURSE_WORKER_GARDEN_DNS_PROXY_ENABLE: "true"
       CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE: ${CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE:-true}
       CONCOURSE_CONTAINERD_DNS_SERVER: ${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}
     networks:
       - concourse_net
     stop_signal: SIGUSR2
     healthcheck:
-      test: ["CMD-SHELL", "curl -f ${CONCOURSE_WORKER_HEALTHCHECK_URL:-http://concourse:8888} || exit 1"]
+      test: [
+        "CMD-SHELL", "pgrep concourse >/dev/null || exit 1"
+      ]
       interval: 10s
       timeout: 5s
       retries: 5

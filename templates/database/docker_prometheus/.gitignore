@@ -1,10 +1,18 @@
-data/*
-data/prometheus/*
+config/*
 
-!data/prometheus/
+!config/
+!config/examples/
 
-!data/prometheus/example.*
-!data/prometheus/example.*.*
+grafana/*
+grafana/provision/*
+grafana/provision/**
+
+!grafana/
+!grafana/examples/
+!grafana/provision/
+!grafana/provision/datasources/
+
+!*-default.yml
 
 !example.*
 !example.*.*
