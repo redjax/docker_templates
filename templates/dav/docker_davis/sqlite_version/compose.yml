@@ -3,6 +3,7 @@ name: davis-sqlite
 
 volumes:
   davis_data: {}
+  davis_webdav: {}
 
 services:
   davis:
@@ -11,6 +12,7 @@ services:
     restart: unless-stopped
     environment:
       APP_ENV: prod
+      APP_SECRET: ${APP_SECRET}
       DATABASE_DRIVER: sqlite
       DATABASE_URL: sqlite:////data/davis-database.db
 
@@ -26,27 +28,22 @@ services:
       CALDAV_ENABLED: ${CALDAV_ENABLED:-true}
       CARDDAV_ENABLED: ${CARDDAV_ENABLED:-true}
       WEBDAV_ENABLED: ${WEBDAV_ENABLED:-false}
+
+      WEBDAV_TMP_DIR: /tmp
+      WEBDAV_PUBLIC_DIR: /webdav/public
+      WEBDAV_HOMES_DIR: /webdav/homes
+
       PUBLIC_CALENDARS_ENABLED: ${PUBLIC_CALENDARS_ENABLED:-true}
 
       INVITE_FROM_ADDRESS: ${INVITE_FROM_ADDRESS:-davis@example.com}
 
-      APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Etc/UTC}
 
       ## Optional extras
       BIRTHDAY_REMINDER_OFFSET: ${BIRTHDAY_REMINDER_OFFSET:-PT9H}
-      WEBDAV_HOMES_DIR: ${WEBDAV_HOMES_DIR:-/webdav/homes}
       SYMFONY_TRUSTED_PROXIES: ${SYMFONY_TRUSTED_PROXIES:-0.0.0.0/0}
     volumes:
-      - davis_data:/data
+      - ${DAVIS_DATA_DIR:-davis_data}:/data
+      - ${DAVIS_WEBDAV_DIR:-davis_webdav}:/webdav
     ports:
       - "${DAVIS_PORT:-9000}:9000"
-    command: >
-      sh -c "
-        mkdir -p /data /data/var &&
-        chown -R 82:82 /data &&
-
-        ## Do migrations automatically
-        bin/console doctrine:migrations:migrate --no-interaction &&
-
-        php -S 0.0.0.0:${DAVIS_PORT:-9000} -t /var/www/davis/public
-      "
