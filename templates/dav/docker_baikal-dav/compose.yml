@@ -20,7 +20,5 @@ services:
   baikal:
     image: ckulka/baikal:${BAIKAL_IMG_TAG:-0.10.1apache-php8.2}
     restart: unless-stopped
-    environment:
-      TZ: ${TZ:-Etc/UTC}
     volumes:
       - ${BAIKAL_DATA_DIR:-./data}:/var/www/baikal/Specific
