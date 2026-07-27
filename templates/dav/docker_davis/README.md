@@ -92,3 +92,7 @@ docker run --rm \
   alpine \
   sh -c "rm -rf /data/* && tar xzf /backup/davis_webdav_YYYY-mm-dd.tar.gz -C /data"
 ```
+
+## Admin user
+
+When creating new users in the Davis webUI, you will have an option of making a user an administrator. This makes them a DAV ACL admin, but you will not be able to log into the `/dashboard` route using this account. The only account that can log in there is the default `admin` user.
