@@ -1,13 +1,11 @@
-# Davis
+# SQLite Version
 
-[Davis](https://github.com/tchapi/davis) is a modern & simple admin interface for Sabre/DAV.
+Davis can [use SQLite as a backend](https://github.com/tchapi/davis/blob/main/docker/docker-compose-sqlite.yml). This is a portable, lightweight way to run Davis, suitable for a single user. For multiple users, or many simultaneous connections, it's better to use the MySQL or Postgres-backed versions.
 
 ## Instructions
 
 - Copy the [example `.env` file](./.env.example) to `.env`
   - Change/set the following env vars:
-    - `DB_ROOT_PASSWORD`: Set a strong password for root database user.
-    - `DB_PASSWORD`: Set a strong password (different from the root password).
     - `ADMIN_PASSWORD`: Set the Davis admin user's password.
       - To change this password, just set a new value and restart the container.
     - Enable CalDAV, CardDAV, and/or WebDAV by setting the corresponding env vars to `true`
