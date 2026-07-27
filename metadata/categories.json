@@ -896,7 +896,7 @@
         ]
     },
     {
-        "count": 3,
+        "count": 4,
         "name": "file_transfer",
         "path": "templates/file_transfer",
         "sub_categories": [],
@@ -908,6 +908,10 @@
             {
                 "name": "docker_samba",
                 "path": "templates/file_transfer/docker_samba"
+            },
+            {
+                "name": "docker_davis",
+                "path": "templates/file_transfer/docker_davis"
             }
         ]
     }

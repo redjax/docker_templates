@@ -245,3 +245,4 @@ Map of the repository's template categories. This page is automatically rendered
 - [file_transfer](../templates/file_transfer)
   - [docker_sftpgo](../templates/file_transfer/docker_sftpgo)
   - [docker_samba](../templates/file_transfer/docker_samba)
+  - [docker_davis](../templates/file_transfer/docker_davis)
