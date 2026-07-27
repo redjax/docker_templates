@@ -1,0 +1,52 @@
+---
+name: davis-sqlite
+
+volumes:
+  davis_data: {}
+
+services:
+  davis:
+    image: ghcr.io/tchapi/davis-standalone:latest
+    container_name: davis
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      DATABASE_DRIVER: sqlite
+      DATABASE_URL: sqlite:////data/davis-database.db
+
+      ## Admin credentials
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+
+      ## Authentication
+      AUTH_REALM: ${AUTH_REALM:-Davis DAV Server}
+      AUTH_METHOD: ${AUTH_METHOD:-Basic}
+
+      ## Features
+      CALDAV_ENABLED: ${CALDAV_ENABLED:-true}
+      CARDDAV_ENABLED: ${CARDDAV_ENABLED:-true}
+      WEBDAV_ENABLED: ${WEBDAV_ENABLED:-false}
+      PUBLIC_CALENDARS_ENABLED: ${PUBLIC_CALENDARS_ENABLED:-true}
+
+      INVITE_FROM_ADDRESS: ${INVITE_FROM_ADDRESS:-davis@example.com}
+
+      APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
+
+      ## Optional extras
+      BIRTHDAY_REMINDER_OFFSET: ${BIRTHDAY_REMINDER_OFFSET:-PT9H}
+      WEBDAV_HOMES_DIR: ${WEBDAV_HOMES_DIR:-/webdav/homes}
+      SYMFONY_TRUSTED_PROXIES: ${SYMFONY_TRUSTED_PROXIES:-0.0.0.0/0}
+    volumes:
+      - davis_data:/data
+    ports:
+      - "${DAVIS_PORT:-9000}:9000"
+    command: >
+      sh -c "
+        mkdir -p /data /data/var &&
+        chown -R 82:82 /data &&
+
+        ## Do migrations automatically
+        bin/console doctrine:migrations:migrate --no-interaction &&
+
+        php -S 0.0.0.0:${DAVIS_PORT:-9000} -t /var/www/davis/public
+      "
