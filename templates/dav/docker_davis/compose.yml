@@ -42,6 +42,8 @@ services:
       ## Optional extras
       BIRTHDAY_REMINDER_OFFSET: ${BIRTHDAY_REMINDER_OFFSET:-PT9H}
       SYMFONY_TRUSTED_PROXIES: ${SYMFONY_TRUSTED_PROXIES:-0.0.0.0/0}
+
+      MAILER_DSN: ${MAILER_DSN:-null://null}
     volumes:
       - ${DAVIS_DATA_DIR:-davis_data}:/data
       - ${DAVIS_WEBDAV_DIR:-davis_webdav}:/webdav
