@@ -2,8 +2,7 @@
 name: bentopdf
 
 volumes:
-  bentopdf_data:
-    name: data
+  data: {}
 
 services:
   bentopdf:
