@@ -11,6 +11,7 @@ Davis can [use SQLite as a backend](https://github.com/tchapi/davis/blob/main/do
 - [SMTP](#smtp)
   - [Gmail SMTP](#gmail-smtp)
   - [Fastmail SMTP](#fastmail-smtp)
+- [Proxying](#proxying)
 - [Troubleshooting](#troubleshooting)
   - [500 error when accessing webUI](#500-error-when-accessing-webui)
 
@@ -73,6 +74,10 @@ MAILER_DSN=smtp://user:pass@smtp.fastmail.com:465?encryption=ssl&auth_mode=login
 ```
 
 Set the `INVITE_FROM_ADDRESS` environment variable to a real email address you control.
+
+## Proxying
+
+If you use a reverse proxy with authentication like [Pangolin](https://pangolin.net/), you can protect the admin UI route while bypassing auth for DAV. Set a bypass rule for the `/dav/*` path.
 
 ## Troubleshooting
 
