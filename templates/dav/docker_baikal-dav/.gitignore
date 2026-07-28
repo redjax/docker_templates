@@ -1,0 +1,13 @@
+data/*
+caddy/*
+caddy/config/*
+caddy/data/*
+
+!data/
+!caddy/
+!caddy/config/
+!caddy/data/
+
+!.gitkeep
+!*example*.*
+!*.*example*
