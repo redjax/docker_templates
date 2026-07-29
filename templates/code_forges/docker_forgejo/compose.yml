@@ -6,7 +6,7 @@ networks:
 
 services:
   forgejo:
-    image: codeberg.org/forgejo/forgejo:${FORGEJO_IMG_VER:-15}
+    image: codeberg.org/forgejo/forgejo:${FORGEJO_IMG_VER:-16}
     restart: always
     env_file:
       - ${FORGEJO_ENV_FILE:-./env_files/forgejo/default.env}
