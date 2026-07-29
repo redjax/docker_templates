@@ -30,13 +30,10 @@ services:
     networks:
       adguardhome:
         ipv4_address: 172.16.81.10
-    deploy:
-      resources:
-        limits:
-          memory: 1G
+    mem_limit: 1G
     healthcheck:
       # Use the drill wrapper binary to reduce the exit codes to 0 or 1 for healthchecks
-      test: ['CMD', 'drill-hc', '@127.0.0.1', 'dnssec.works']
+      test: ["CMD", "drill-hc", "@127.0.0.1", "dnssec.works"]
       interval: 30s
       timeout: 30s
       retries: 3

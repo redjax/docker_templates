@@ -12,10 +12,7 @@ services:
     container_name: commafeed
     volumes:
       - ${COMMAFEED_DB_DATA_DIR:-commafeed_db_data}:/commafeed/data
-    deploy:
-      resources:
-        limits:
-          memory: ${COMMAFEED_ALLOWED_MEMORY:-256M}
+    mem_limit: ${COMMAFEED_ALLOWED_MEMORY:-256M}
     environment:
       COMMAFEED_HIDE_FROM_WEB_CRAWLERS: ${COMMAFEED_HIDE_FROM_WEB_CRAWLERS:-true}
       COMMAFEED_IMAGE_PROXY_ENABLED: ${COMMAFEED_IMAGE_PROXY_ENABLED:-false}

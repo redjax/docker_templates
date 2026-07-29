@@ -36,7 +36,7 @@ services:
     image: woodpeckerci/woodpecker-agent:${WOODPECKER_AGENT_IMG_TAG:-v3}
     container_name: woodpecker-agent
     command: agent
-    restart: unless-stopped 
+    restart: unless-stopped
     depends_on:
       - woodpecker-server
     volumes:
@@ -51,8 +51,5 @@ services:
       options:
         max-size: "${WOODPECKER_AGENT_LOG_MAX_SIZE:-10m}"
         max-file: "${WOODPECKER_AGENT_LOG_MAX_FILE:-5}"
-    deploy:
-      resources:
-        limits:
-          cpus: '${WOODPECKER_AGENT_CPUS:-2}'
-          memory: ${WOODPECKER_AGENT_MEMORY:-2G}
+    cpus: "${WOODPECKER_AGENT_CPUS:-2}"
+    mem_limit: ${WOODPECKER_AGENT_MEMORY:-2G}
