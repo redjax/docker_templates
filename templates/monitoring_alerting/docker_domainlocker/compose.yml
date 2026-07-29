@@ -1,10 +1,66 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: domain-locker
 
-# volumes:
-#   volume_name: {}
+volumes:
+  postgres_data: {}
 
 services:
+  postgres:
+    image: postgres:${DB_IMG_TAG:-15-alpine}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-domain_locker}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme2420}
+    # ports:
+    #   - "127.0.0.1:${DB_PORT:-5432}:5432"
+    expose:
+      - 5432
+    volumes:
+      - ${DB_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DL_PG_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
-  ...
+  app:
+    image: lissy93/domain-locker:${DL_APP_IMG_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      DL_ENV_TYPE: ${DL_ENV_TYPE:-selfHosted}
+      DL_PG_HOST: ${DB_HOST:-postgres}
+      DL_PG_PORT: ${DB_PORT:-5432}
+      DL_PG_USER: ${DB_USER:-postgres}
+      DL_PG_PASSWORD: ${DB_PASSWORD:-changeme2420}
+      DL_PG_NAME: ${DB_NAME:-domain_locker}
+      DNS_DUMPSTER_TOKEN: ${DNS_DUMPSTER_TOKEN:-}
+      SHODAN_TOKEN: ${SHODAN_TOKEN:-}
+    ports:
+      - "${DL_APP_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  updater:
+    image: alpine:${DL_UPDATER_IMG_TAG:-3.20}
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    command: >
+      /bin/sh -c "
+      apk add --no-cache curl &&
+      echo '0 3 * * * /usr/bin/curl -f -X POST http://app:3000/api/domain-updater || echo \"ERROR: domain-updater failed at \$(date)\" >&2' > /etc/crontabs/root &&
+      echo '0 4 * * * /usr/bin/curl -f -X POST http://app:3000/api/expiration-reminders || echo \"ERROR: expiration-reminders failed at \$(date)\" >&2' >> /etc/crontabs/root &&
+      echo '*/15 * * * * /usr/bin/curl -f -X POST http://app:3000/api/domain-monitor || echo \"ERROR: domain-monitor failed at \$(date)\" >&2' >> /etc/crontabs/root &&
+      echo '0 2 * * 0 /usr/bin/curl -f -X POST http://app:3000/api/cleanup-monitor-data || echo \"ERROR: cleanup-monitor-data failed at \$(date)\" >&2' >> /etc/crontabs/root &&
+      crond -f -L /dev/stdout
+      "
