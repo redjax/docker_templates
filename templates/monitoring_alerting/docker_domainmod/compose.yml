@@ -1,10 +1,39 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: domainmod
 
-# volumes:
-#   volume_name: {}
+volumes:
+  application: {}
+  db_data: {}
 
 services:
+  app:
+    image: domainmod/domainmod:${DOMAINMOD_IMG_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
+      DOMAINMOD_WEB_ROOT: ${DOMAINMOD_WEB_ROOT:-}
+      DOMAINMOD_DATABASE_HOST: db
+      DOMAINMOD_DATABASE: ${DOMAINMOD_DB_NAME:-domainmod}
+      DOMAINMOD_USER: ${DOMAINMOD_DB_USER:-domainmod}
+      DOMAINMOD_PASSWORD: ${DOMAINMOD_DB_PASSWORD:-domainmod}
+    volumes:
+      - ${DOMAINMOD_APP_DIR:-application}:/var/www/html
+    ports:
+      - ${DOMAINMOD_HTTP_PORT:-8080}:80
 
-  ...
+  db:
+    image: ghcr.io/linuxserver/mariadb:${DB_IMG_TAG:-alpine}
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Etc/UTC}
+      MYSQL_DATABASE: ${DOMAINMOD_DB_NAME:-domainmod}
+      MYSQL_USER: ${DOMAINMOD_DB_USER:-domainmod}
+      MYSQL_PASSWORD: ${DOMAINMOD_DB_PASSWORD:-domainmod}
+    volumes:
+      - ${DOMAINMOD_DB_DATA_DIR:-db_data}:/config
+    expose:
+      - 3306
