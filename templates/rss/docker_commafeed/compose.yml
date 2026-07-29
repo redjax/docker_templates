@@ -25,25 +25,5 @@ services:
       COMMAFEED_USERS_CREATE_DEMO_ACCOUNT: ${COMMAFEED_USERS_CREATE_DEMO_ACCOUNT:-false}
     ports:
       - ${COMMAFEED_WEBUI_PORT:-8082}:8082
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - commafeed_net
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower_commafeed
-    restart: unless-stopped
-    pull_policy: always
-    environment:
-      ## Remove old images after updating
-      WATCHTOWER_CLEANUP: "true"
-      ## Only update containers with the
-      #  "com.centurylinklabs.watchtower.enable=true" label
-      WATCHTOWER_LABEL_ENABLE: "true"
-      ## Check for updates every 300 seconds (5 minutes)
-      WATCHTOWER_POLL_INTERVAL: 300
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - commafeed_net
