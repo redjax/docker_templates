@@ -28,8 +28,6 @@ services:
       # - 53:53
     volumes:
       - ${OLLAMA_DATA_DIR:-ollama_data}:/root/.ollama
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - ollama_net
 
