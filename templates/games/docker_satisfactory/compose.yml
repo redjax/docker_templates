@@ -30,19 +30,3 @@ services:
       SKIPUPDATE: ${SKIP_UPDATE:-false}
       TIMEOUT: ${TIMEOUT:-30}
     mem_limit: ${RAM_LIMIT:-8G}
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: satisfactory-watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-    environment:
-      ## Remove old images after updating
-      WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP:-"true"}
-      ## Check for updates once every 24h
-      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
-    ## Only monitor containers with a specific label
-    command: --label-enable
