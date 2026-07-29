@@ -6,7 +6,8 @@ volumes:
 
 services:
   database:
-    image: docker.io/tensorchord/pgvecto-rs:${POSTGRES_IMAGE_TAG:-pg14-v0.2.0}
+    # image: docker.io/tensorchord/pgvecto-rs:${POSTGRES_IMAGE_TAG:-pg14-v0.2.0}
+    image: ghcr.io/immich-app/postgres:${POSTGRES_IMAGE_TAG:-14-vectorchord0.4.3-pgvectors0.2.0}
     container_name: immich_postgres
     restart: unless-stopped
     environment:
@@ -28,9 +29,9 @@ services:
     command:
       - postgres
       - -c
-      - shared_preload_libraries=vectors.so
-      - -c
-      - search_path=public,vectors
+      - shared_preload_libraries=vchord.so
+      # - -c
+      # - search_path=public,vectors
       - -c
       - logging_collector=on
       - -c

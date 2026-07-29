@@ -26,8 +26,6 @@ services:
       NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT: ${NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT:-5G}
       NTFY_ATTACHMENT_FILE_SIZE_LIMIT: ${NTFY_ATTACHMENT_FILE_SIZE_LIMIT:-15M}
       NTFY_ATTACHMENT_EXPIRY_DURATION: ${NTFY_ATTACHMENT_EXPIRY_DURATION:-3h}
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - ${NTFY_CACHE_DIR:-./ntfy/cache}:/var/cache/ntfy
       - ${NTFY_CONFIG_DIR:-./ntfy/config}:/etc/ntfy
@@ -42,4 +40,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-

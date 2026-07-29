@@ -40,20 +40,3 @@ services:
       # - ${VRISING_SERVER_GAME_SETTINGS_FILE:-./configs/ServerGameSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json
       ## Mount ServerHostSettings.json from host
       # - ${VRISING_SERVER_HOST_SETTINGS_FILE:-./configs/ServerHostSettings.json}:/mnt/vrising/server/VRisingServer_Data/StreamingAssets/Settings/ServerHostSettings.json
-
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: vrising-server_watchtower
-    restart: unless-stopped
-    environment:
-      ## Remove old images after updating
-      WATCHTOWER_CLEANUP: "true"
-      ## Only update containers with the `com.centurylinklabs.watchtower.enable=true` label
-      WATCHTOWER_LABEL_ENABLE: "true"
-      ## Check for updates every 300 seconds (5 minutes)
-      WATCHTOWER_POLL_INTERVAL: 300
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock

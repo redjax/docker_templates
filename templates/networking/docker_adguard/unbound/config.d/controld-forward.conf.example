@@ -1,4 +1,0 @@
-forward-zone:
-  name: "."
-  forward-addr: <controld-ip-1>
-  forward-addr: <controld-id-2>

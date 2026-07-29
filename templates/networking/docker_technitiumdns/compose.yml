@@ -8,16 +8,13 @@ volumes:
   technitium_data: {}
 
 services:
-
   technitium-dns:
     image: technitium/dns-server:latest
     container_name: technitium-dns
     restart: unless-stopped
     cpu_shares: 50
-    deploy:
-      resources:
-        limits:
-          memory: ${TECHNITIUM_CONTAINER_MEMORY:-512M}
+    cpus: 1
+    mem_limit: ${TECHNITIUM_CONTAINER_MEMORY:-512M}
     hostname: technitium-dns
     # network_mode: "host"
     ports:
@@ -42,12 +39,12 @@ services:
     environment:
       TZ: ${TZ:-Etc/UTC}
       DNS_SERVER_DOMAIN: ${TECHNITIUM_SERVER_DOMAIN:-example.com}
-      
+
       ## You only need to set one of these in your .env
       DNS_SERVER_ADMIN_PASSWORD: ${TECHNITIUM_ADMIN_PASSWORD}
       # DNS_SERVER_ADMIN_PASSWORD_FILE: ${TECHNITIUM_ADMIN_PASSWORD_FILE}
       DNS_SERVER_ADMIN_PASSWORD_FILE: /etc/password.txt
-      
+
       DNS_SERVER_PREFER_IPV6: ${TECHNITIUM_PREFER_IPV6:-false}
       # DNS_SERVER_WEB_SERVICE_HTTP_PORT: 5380
       # DNS_SERVER_WEB_SERVICE_HTTPS_PORT: 53443

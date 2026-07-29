@@ -62,7 +62,11 @@ runner:
   # Like: ["macos-arm64:host", "ubuntu-latest:docker://node:20-bookworm", "ubuntu-22.04:docker://node:20-bookworm"]
   # If it's empty when registering, it will ask for inputting labels.
   # If it's empty when executing the `daemon`, it will use labels in the `.runner` file.
-  labels: []
+  labels:
+    ## Debian
+    - debian:docker://docker.io/library/debian:latest
+    ## catthehacker/ubuntu
+    - ubuntu:docker://ghcr.io/catthehacker/ubuntu:act-24.04
 
 cache:
   #
@@ -181,14 +185,14 @@ container:
   # Specifies the network to which the container will connect.
   # Could be `host`, `bridge` or the name of a custom network.
   # If it's empty, create a network automatically.
-  network: ""
+  network: "bridge"
   # Whether to create networks with IPv6 enabled. Requires the Docker daemon to be set up accordingly.
   # Only takes effect if "network" is set to "".
   enable_ipv6: false
   # Whether to use privileged mode or not when launching task containers (privileged mode is required for Docker-in-Docker).
-  privileged: false
+  privileged: true
   # And other options to be used when the container is started (e.g., --volume /etc/ssl/certs:/etc/ssl/certs:ro).
-  options:
+  options: --env=DOCKER_HOST=tcp://docker-in-docker:2375 --env=DOCKER_BUILDKIT=1
   # The parent directory of a job's working directory.
   # If it's empty, /workspace will be used.
   workdir_parent:
@@ -208,7 +212,7 @@ container:
   # If it's a url, the specified docker host will be mounted in the job container
   # Example urls: unix:///run/docker.socket or ssh://user@host
   # The specified socket is mounted within the job container at /var/run/docker.sock
-  docker_host: "-"
+  docker_host: "tcp://docker-in-docker:2375"
   # Pull docker image(s) even if already present
   force_pull: false
   # Rebuild local docker image(s) even if already present
@@ -256,3 +260,8 @@ server:
   # `runner.fetch_interval` is used. Note that Forgejo Runner might enforce a
   # minimum value for certain instances like Codeberg.
   connections:
+    forgejo:
+      url: http(s)://<your-forgejo-url-or-ip-and-port>/
+      uuid: <your-forgejo-uuid>
+      token: <your-forgejo-token>
+      fetch_interval: 30s
