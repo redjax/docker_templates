@@ -33,12 +33,6 @@ Use a `docker run` command to get started:
 docker run -d -p 3000:8080 --gpus=all -v ollama:/root/.ollama -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:ollama
 ```
 
-If you are going to run the container this way long term, you should also run a `watchtower` container to keep the webUI up to date:
-
-```shell
-docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once open-webui
-```
-
 ### Docker Compose
 
 There are multiple possible configurations for ollama + open-webui, including ollama on host with open-webui in a container, an all-in-one with ollama and open-webui in the same container, ollama and open-webui in separate containers, supporting GPU instead of CPU, etc.
@@ -75,19 +69,19 @@ docker compose -f nvidia.compose.yml exec -it ollama /bin/bash -c "ollama run qw
 
 This is a table of models I've used or would use. The description is taken from [ollama.com](https://ollama.com) for each model.
 
-| Model | Description |
-| ----- | ----------- |
-| [qwq](https://ollama.com/library/qwq)| QwQ is an experimental research model focused on advancing AI reasoning capabilities. |
-| [dolphin-mistral](https://ollama.com/library/dolphin-mistral) | The uncensored Dolphin model based on Mistral that excels at coding tasks. Updated to version 2.8. |
-| [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral) | Uncensored, 8x7b and 8x22b fine-tuned models based on the Mixtral mixture of experts models that excels at coding tasks. Created by Eric Hartford. |
-| [mistral](https://ollama.com/library/mistral) | The 7B model released by Mistral AI, updated to version 0.3. |
-| [starcoder2](https://ollama.com/library/starcoder2) | StarCoder2 is the next generation of transparently trained open code LLMs that comes in three sizes: 3B, 7B and 15B parameters. |
-| [wizard-vicuna-uncensored](https://ollama.com/library/wizard-vicuna-uncensored) | Wizard Vicuna Uncensored is a 7B, 13B, and 30B parameter model based on Llama 2 uncensored by Eric Hartford. |
-| [magicoder](https://ollama.com/library/magicoder) | 🎩 Magicoder is a family of 7B parameter models trained on 75K synthetic instruction data using OSS-Instruct, a novel approach to enlightening LLMs with open-source code snippets. |
-| [dolphincoder](https://ollama.com/library/dolphincoder) | A 7B and 15B uncensored variant of the Dolphin model family that excels at coding, based on StarCoder2. |
-| [openhermes](https://ollama.com/library/openhermes) | OpenHermes 2.5 is a 7B model fine-tuned by Teknium on Mistral with fully open datasets. |
-| [stable-code](https://ollama.com/library/stable-code) | Stable Code 3B is a coding model with instruct and code completion variants on par with models such as Code Llama 7B that are 2.5x larger. |
-| [wizardlm2](https://ollama.com/library/wizardlm2) | State of the art large language model from Microsoft AI with improved performance on complex chat, multilingual, reasoning and agent use cases. |
+| Model                                                                           | Description                                                                                                                                                                        |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [qwq](https://ollama.com/library/qwq)                                           | QwQ is an experimental research model focused on advancing AI reasoning capabilities.                                                                                              |
+| [dolphin-mistral](https://ollama.com/library/dolphin-mistral)                   | The uncensored Dolphin model based on Mistral that excels at coding tasks. Updated to version 2.8.                                                                                 |
+| [dolphin-mixtral](https://ollama.com/library/dolphin-mixtral)                   | Uncensored, 8x7b and 8x22b fine-tuned models based on the Mixtral mixture of experts models that excels at coding tasks. Created by Eric Hartford.                                 |
+| [mistral](https://ollama.com/library/mistral)                                   | The 7B model released by Mistral AI, updated to version 0.3.                                                                                                                       |
+| [starcoder2](https://ollama.com/library/starcoder2)                             | StarCoder2 is the next generation of transparently trained open code LLMs that comes in three sizes: 3B, 7B and 15B parameters.                                                    |
+| [wizard-vicuna-uncensored](https://ollama.com/library/wizard-vicuna-uncensored) | Wizard Vicuna Uncensored is a 7B, 13B, and 30B parameter model based on Llama 2 uncensored by Eric Hartford.                                                                       |
+| [magicoder](https://ollama.com/library/magicoder)                               | 🎩 Magicoder is a family of 7B parameter models trained on 75K synthetic instruction data using OSS-Instruct, a novel approach to enlightening LLMs with open-source code snippets. |
+| [dolphincoder](https://ollama.com/library/dolphincoder)                         | A 7B and 15B uncensored variant of the Dolphin model family that excels at coding, based on StarCoder2.                                                                            |
+| [openhermes](https://ollama.com/library/openhermes)                             | OpenHermes 2.5 is a 7B model fine-tuned by Teknium on Mistral with fully open datasets.                                                                                            |
+| [stable-code](https://ollama.com/library/stable-code)                           | Stable Code 3B is a coding model with instruct and code completion variants on par with models such as Code Llama 7B that are 2.5x larger.                                         |
+| [wizardlm2](https://ollama.com/library/wizardlm2)                               | State of the art large language model from Microsoft AI with improved performance on complex chat, multilingual, reasoning and agent use cases.                                    |
 
 
 ## Performance tweaks
