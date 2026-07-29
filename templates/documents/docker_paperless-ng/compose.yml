@@ -40,13 +40,6 @@ networks:
     name: paperless_frontend
 
 services:
-
-#   watchtower:
-#     container_name: watchtower
-#     image: contairrr/watchtower
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock
-
   broker:
     image: redis:6.0
     container_name: paperless-redis
