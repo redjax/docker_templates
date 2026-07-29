@@ -127,6 +127,7 @@ Map of the repository's template categories. This page is automatically rendered
 - [dav](../templates/dav)
   - [docker_radicale](../templates/dav/docker_radicale)
   - [docker_davis](../templates/dav/docker_davis)
+  - [docker_baikal-dav](../templates/dav/docker_baikal-dav)
 - [rss](../templates/rss)
   - [docker_yarr](../templates/rss/docker_yarr)
   - [docker_miniflux](../templates/rss/docker_miniflux)

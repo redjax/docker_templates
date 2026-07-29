@@ -341,7 +341,7 @@
         ]
     },
     {
-        "count": 3,
+        "count": 4,
         "name": "dav",
         "path": "templates/dav",
         "sub_categories": [],
@@ -353,6 +353,10 @@
             {
                 "name": "docker_davis",
                 "path": "templates/dav/docker_davis"
+            },
+            {
+                "name": "docker_baikal-dav",
+                "path": "templates/dav/docker_baikal-dav"
             }
         ]
     },
