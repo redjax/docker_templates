@@ -64,7 +64,7 @@
         ]
     },
     {
-        "count": 15,
+        "count": 17,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
         "sub_categories": [
@@ -95,6 +95,10 @@
                 "path": "templates/monitoring_alerting/docker_loki"
             },
             {
+                "name": "docker_happydomain",
+                "path": "templates/monitoring_alerting/docker_happydomain"
+            },
+            {
                 "name": "docker_beszel",
                 "path": "templates/monitoring_alerting/docker_beszel"
             },
@@ -109,6 +113,10 @@
             {
                 "name": "docker_librenms",
                 "path": "templates/monitoring_alerting/docker_librenms"
+            },
+            {
+                "name": "docker_domainlocker",
+                "path": "templates/monitoring_alerting/docker_domainlocker"
             },
             {
                 "name": "docker_graylog",
