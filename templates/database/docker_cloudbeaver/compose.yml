@@ -19,13 +19,3 @@ services:
     environment:
       CLOUDBEAVER_ADMIN_NAME: ${CLOUDBEAVER_ADMIN_USERNAME:-cbadmin}
       CLOUDBEAVER_ADMIN_PASSWORD: ${CLOUDBEAVER_ADMIN_PASSWORD:-admin}
-  
-  watchtower:
-    container_name: watchtower
-    image: containrrr/watchtower:latest
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ## Clean up old images and check for updates every 5 minutes
-    command: --cleanup=true --interval 300
-

@@ -47,14 +47,8 @@ services:
       start_period: 60s
     networks:
       - gitlab_net
-    deploy:
-      resources:
-        reservations:
-          cpus: ${GITLAB_CPU_MIN:-4.0}
-          memory: ${GITLAB_MEMORY_MIN:-2500M}
-        limits:
-          cpus: ${GITLAB_CPU_MAX:-4.0}
-          memory: ${GITLAB_MEMORY_MAX:-12000M}
+    cpus: ${GITLAB_CPU_MAX:-4.0}
+    mem_limit: ${GITLAB_MEMORY_MAX:-12000M}
 
   gitlab-runner:
     image: gitlab/gitlab-runner:latest
