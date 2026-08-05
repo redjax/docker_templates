@@ -15,7 +15,9 @@ services:
     container_name: "docker_dind"
     restart: "unless-stopped"
     privileged: "true"
-    command: ["dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false"]
+    # command: ["dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false"]
+    environment:
+      DOCKER_TLS_CERTDIR: ""
 
     cpus: ${DIND_MAX_CPU:-4}
     mem_limit: ${DIND_MEM_LIMIT:-8g}
@@ -37,7 +39,7 @@ services:
       DOCKER_HOST: tcp://docker-in-docker:2375
       DOCKER_TLS_CERTDIR: "" # Disable TLS for Docker 20.10+
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      # - /var/run/docker.sock:/var/run/docker.sock
       - ${FORGEJO_RUNNER_DATA_DIR:-data}:/data
       - ${FORGEJO_RUNNER_CACHE_DIR:-cache}:/home/runner/.cache/actcache
       - ${FORGEJO_RUNNER_CONFIG_DIR:-./config}:/config
