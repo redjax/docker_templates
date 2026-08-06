@@ -2,6 +2,11 @@
 
 The new version of the Unifi controller. [https://github.com/linuxserver/docker-unifi-network-application](https://github.com/linuxserver/docker-unifi-network-application).
 
+> [!NOTE]
+> The Unifi Network Application is being deprecated in favor of [Unifi OS](https://help.ui.com/hc/en-us/articles/34210126298775-Self-Hosting-UniFi). The new solution does not have an official Docker image, but I am following the work of Github user `lemker` in the [`lemker/unifi-os-server` repository](https://github.com/lemker/unifi-os-server).
+>
+> This template will still be available, but it is recommended you start planning a move to Unifi OS. It is not a good idea to run the Unifi Network Application long-term, as it is no longer receiving important updates.
+
 ## Table of Contents <!-- omit in toc -->
 
 - [Setup](#setup)
