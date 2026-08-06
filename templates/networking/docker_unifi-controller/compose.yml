@@ -1,15 +1,13 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: unifi
 
 volumes:
   mongo_data: {}
   unifi_config: {}
 
 services:
-  unifi-network-application:
+  network-application:
     image: lscr.io/linuxserver/unifi-network-application:latest
-    container_name: unifi-network-application
     restart: unless-stopped
     environment:
       - PUID=${PUID:-1000}
@@ -53,10 +51,10 @@ services:
       #  remote syslog
       - ${UNIFI_REMOTE_SYSLOG_PORT:-5514}:5514/udp
 
-  unifi-db:
+  db:
     image: docker.io/mongo:${MONGO_CONTAINER_IMG_VER:-8.0.8}
-    container_name: unifi-db
     restart: unless-stopped
+    container_name: unifi-db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-root}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
