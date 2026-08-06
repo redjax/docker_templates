@@ -1,15 +1,14 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: unifi
 
 volumes:
   mongo_data: {}
   unifi_config: {}
+  syslog-data: {}
 
 services:
-  unifi-network-application:
+  network-application:
     image: lscr.io/linuxserver/unifi-network-application:latest
-    container_name: unifi-network-application
     restart: unless-stopped
     environment:
       - PUID=${PUID:-1000}
@@ -53,10 +52,10 @@ services:
       #  remote syslog
       - ${UNIFI_REMOTE_SYSLOG_PORT:-5514}:5514/udp
 
-  unifi-db:
+  db:
     image: docker.io/mongo:${MONGO_CONTAINER_IMG_VER:-8.0.8}
-    container_name: unifi-db
     restart: unless-stopped
+    container_name: unifi-db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-root}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
@@ -67,3 +66,43 @@ services:
     volumes:
       - ${MONGO_DATA_DIR:-mongo_data}:/data/db
       - ${MONGO_INITDB_SCRIPT:-./mongo/init-mongo.sh}:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+
+  rsyslog-collector:
+    image: rsyslog/rsyslog-collector:latest
+    restart: unless-stopped
+    environment:
+      - ENABLE_UDP=${SYSLOG_ENABLE_UDP:-on}
+      - ENABLE_TCP=${SYSLOG_ENABLE_TCP:-off}
+      - ENABLE_RELP=${SYSLOG_ENABLE_RELP:-off}
+      - ENABLE_TLS=${SYSLOG_ENABLE_TLS:-off}
+      - TZ=${TZ:-Etc/UTC}
+    ports:
+      - ${SYSLOG_PORT:-514}:514/udp
+    volumes:
+      - ${SYSLOG_DATA_DIR:-syslog-data}:/var/log
+      - ${SYSLOG_CONFIG_DIR:-./config/rsyslog.d}:/etc/rsyslog.d:ro
+
+  logrotate:
+    image: alpine:latest
+    restart: unless-stopped
+    volumes:
+      - ${SYSLOG_DATA_DIR:-syslog-data}:/var/log
+    command: >
+      sh -c '
+      MAX_SIZE=52428800
+      KEEP_SIZE=41943040
+
+      while true; do
+        for f in /var/log/*.log; do
+          [ -f "$$f" ] || continue
+
+          size=$$(stat -c%s "$$f" 2>/dev/null || echo 0)
+
+          if [ "$$size" -gt "$$MAX_SIZE" ]; then
+            tail -c "$$KEEP_SIZE" "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"
+          fi
+        done
+
+        sleep 60
+      done
+      '
