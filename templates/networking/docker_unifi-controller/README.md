@@ -53,3 +53,5 @@ If you are using the default Docker volume, use a command like:
 ```shell
 docker compose cp network-application:/config/data/backup /path/on/host/backup
 ```
+
+The [`copy-backups-to-host.sh` script](./scripts/copy-backups-to-host.sh) copies the container's `/config/data/backup` path to another path on the host. This script can be scheduled to ensure you always have recent backups.
