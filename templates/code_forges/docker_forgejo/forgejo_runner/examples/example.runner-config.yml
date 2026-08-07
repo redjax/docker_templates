@@ -20,10 +20,13 @@ cache:
   port: 8080
 
 container:
+  network: host
   privileged: true
   docker_host: tcp://docker-in-docker:2375
   options: --env=DOCKER_HOST=tcp://docker-in-docker:2375 --env=DOCKER_BUILDKIT=1
-
+  ## Should generally be 'false'
+  keep_container: false
+  force_pull: true
 server:
   connections:
     forgejo:
