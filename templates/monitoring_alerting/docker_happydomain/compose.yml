@@ -1,231 +1,88 @@
 ---
+#####################################################################################################
+# Compose file lifted from the happydomain.org docs:                                                #
+# https://help.happydomain.org/en/introduction/deploy/docker/#recommended-deployment-docker-compose #
+#####################################################################################################
+
 name: happydomain
 
 volumes:
-  storage: {}
+  storage:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${HAPPYDOMAIN_SUBNET:-172.28.0.0/24}
+
+configs:
+  unbound_conf:
+    content: |
+      server:
+          verbosity: 1
+          interface: 0.0.0.0
+          port: 53
+          do-ip4: yes
+          do-ip6: no
+          do-udp: yes
+          do-tcp: yes
+
+          access-control: 127.0.0.0/8 allow
+          access-control: ${HAPPYDOMAIN_SUBNET:-172.28.0.0/24} allow
+
+          cache-max-ttl: 60
+
+          so-sndbuf: 0
+          so-rcvbuf: 0
+
+          trust-anchor-file: "/etc/unbound/root.key"
 
 services:
   happydomain:
     image: happydomain/happydomain:${HAPPYDOMAIN_IMG_TAG:-latest}
     restart: unless-stopped
+    dns:
+      - ${HAPPYDOMAIN_DNS_IP:-172.28.0.53}
     ports:
       - ${HAPPYDOMAIN_HTTP_PORT:-8080}:8081
     environment:
       HAPPYDOMAIN_NO_AUTH: ${HAPPYDOMAIN_NO_AUTH:-}
       HAPPYDOMAIN_MAIL_SMTP_HOST: ${HAPPYDOMAIN_MAIL_SMTP_HOST:-}
 
-      ## DNS/DNSSEC
-      HAPPYDOMAIN_CHECKER_DNSVIZ_ENDPOINT: "http://checker-dnsviz:8080"
-      HAPPYDOMAIN_CHECKER_DNSSEC_ENDPOINT: "http://checker-dnssec:8080"
-      # HAPPYDOMAIN_CHECKER_ZONEMASTER_ENDPOINT: "http://checker-zonemaster:8080"
+      HAPPYDOMAIN_CHECKER_DNSVIZ_ENDPOINT: "http://dnsviz:8080"
       HAPPYDOMAIN_CHECKER_ZONEMASTER_ZONEMASTERAPIURL: "http://zonemaster:5000"
-      HAPPYDOMAIN_CHECKER_DELEGATION_ENDPOINT: "http://checker-delegation:8080"
-      HAPPYDOMAIN_CHECKER_AUTHORITATIVE_CONSISTENCY_ENDPOINT: "http://checker-authoritative-consistency:8080"
-      HAPPYDOMAIN_CHECKER_ALIAS_ENDPOINT: "http://checker-alias:8080"
-      HAPPYDOMAIN_CHECKER_LEGACY_RECORDS_ENDPOINT: "http://checker-legacy-records:8080"
-      # HAPPYDOMAIN_CHECKER_NS_RESTRICTIONS_ENDPOINT: "http://checker-ns-restrictions:8080"
-      HAPPYDOMAIN_CHECKER_RESOLVER_PROPAGATION_ENDPOINT: "http://checker-resolver-propagation:8080"
-      HAPPYDOMAIN_CHECKER_REVERSE_ZONE_ENDPOINT: "http://checker-reverse-zone:8080"
-      HAPPYDOMAIN_CHECKER_PTR_ENDPOINT: "http://checker-ptr:8080"
-      HAPPYDOMAIN_CHECKER_DANGLING_ENDPOINT: "http://checker-dangling:8080"
-
-      ## Security/Certificates
-      HAPPYDOMAIN_CHECKER_TLS_ENDPOINT: "http://checker-tls:8080"
-      HAPPYDOMAIN_CHECKER_DANE_ENDPOINT: "http://checker-dane:8080"
-      HAPPYDOMAIN_CHECKER_CAA_ENDPOINT: "http://checker-caa:8080"
-      HAPPYDOMAIN_CHECKER_BLACKLIST_ENDPOINT: "http://checker-blacklist:8080"
-
-      ## E-mail
-      HAPPYDOMAIN_CHECKER_SMTP_ENDPOINT: "http://checker-smtp:8080"
-      HAPPYDOMAIN_CHECKER_EMAIL_AUTOCONFIG_ENDPOINT: "http://checker-email-autoconfig:8080"
-      HAPPYDOMAIN_CHECKER_OPENPGPKEY_SMIMEA_ENDPOINT: "http://checker-email-keys:8080"
-
-      ## Web & Protocols
-      HAPPYDOMAIN_CHECKER_HTTP_ENDPOINT: "http://checker-http:8080"
-      HAPPYDOMAIN_CHECKER_SSH_ENDPOINT: "http://checker-ssh:8080"
-      HAPPYDOMAIN_CHECKER_PING_ENDPOINT: "http://checker-ping:8080"
-      HAPPYDOMAIN_CHECKER_SRV_ENDPOINT: "http://checker-srv:8080"
-
-      ## Collaboration/Messaging
-      # HAPPYDOMAIN_CHECKER_MATRIXIM_ENDPOINT: "http://checker-matrix:8080"
       HAPPYDOMAIN_CHECKER_MATRIXIM_FEDERATIONTESTERSERVER: "http://matrixfederationtester:8080/api/report?server_name=%s"
-      HAPPYDOMAIN_CHECKER_XMPP_ENDPOINT: "http://checker-xmpp:8080"
-      HAPPYDOMAIN_CHECKER_SIP_ENDPOINT: "http://checker-sip:8080"
 
-      ## Directory & Auth
-      HAPPYDOMAIN_CHECKER_LDAP_ENDPOINT: "http://checker-ldap:8080"
-      HAPPYDOMAIN_CHECKER_KERBEROS_ENDPOINT: "http://checker-kerberos:8080"
-      HAPPYDOMAIN_CHECKER_STUNTURN_ENDPOINT: "http://checker-stun-turn:8080"
-
-      ## CalDAV / CardDAV
-      # HAPPYDOMAIN_CHECKER_CALDAV_ENDPOINT: "http://checker-caldav:8080"
-      # HAPPYDOMAIN_CHECKER_CARDDAV_ENDPOINT: "http://checker-carddav:8080"
-
-      HAPPYDOMAIN_CHECKER_HAPPYDELIVER_ENDPOINT: ${HAPPYDOMAIN_CHECKER_HAPPYDELIVER_ENDPOINT:-}
     volumes:
-      - ${HAPPYDOMAIN_DATA_DIR:-storage}:/var/lib/happydomain:rw
+      - ${HAPPYDOMAIN_DATA_DIR:-storage}:/data:rw
 
-  #######################
-  # DNS/DNSSEC checkers #
-  #######################
+  ## Local recursive resolver, so DNS checks don't rely on a third-party resolver
+  unbound:
+    image: alpinelinux/unbound
+    restart: unless-stopped
+    configs:
+      - source: unbound_conf
+        target: /etc/unbound/unbound.conf
+        uid: "100"
+        gid: "101"
+    networks:
+      default:
+        ipv4_address: ${HAPPYDOMAIN_DNS_IP:-172.28.0.53}
 
-  checker-dnsviz:
+  ## DNSViz analysis backend, used by the DNSSEC visualisation checker
+  dnsviz:
     image: happydomain/checker-dnsviz
     restart: unless-stopped
 
-  checker-dnssec:
-    image: happydomain/checker-dnssec
-    restart: unless-stopped
-
-  checker-zonemaster:
-    image: happydomain/checker-zonemaster
-    restart: unless-stopped
-
+  ## Zonemaster backend, used by the Zonemaster checker
   zonemaster:
     image: zonemaster/backend
     command: full
     restart: unless-stopped
 
-  checker-delegation:
-    image: happydomain/checker-delegation
-    restart: unless-stopped
-
-  checker-authoritative-consistency:
-    image: happydomain/checker-authoritative-consistency
-    restart: unless-stopped
-
-  checker-alias:
-    image: happydomain/checker-alias
-    restart: unless-stopped
-
-  checker-legacy-records:
-    image: happydomain/checker-legacy-records
-    restart: unless-stopped
-
-  checker-ns-restrictions:
-    image: happydomain/checker-ns-restrictions
-    restart: unless-stopped
-
-  checker-resolver-propagation:
-    image: happydomain/checker-resolver-propagation
-    restart: unless-stopped
-
-  checker-reverse-zone:
-    image: happydomain/checker-reverse-zone
-    restart: unless-stopped
-
-  checker-ptr:
-    image: happydomain/checker-ptr
-    restart: unless-stopped
-
-  checker-dangling:
-    image: happydomain/checker-dangling
-    restart: unless-stopped
-
-  #################################
-  # Security/Certificate checkers #
-  #################################
-
-  checker-tls:
-    image: happydomain/checker-tls
-    restart: unless-stopped
-
-  checker-dane:
-    image: happydomain/checker-dane
-    restart: unless-stopped
-
-  checker-caa:
-    image: happydomain/checker-caa
-    restart: unless-stopped
-
-  checker-blacklist:
-    image: happydomain/checker-blacklist
-    restart: unless-stopped
-
-  ###################
-  # E-mail checkers #
-  ###################
-
-  checker-smtp:
-    image: happydomain/checker-smtp
-    restart: unless-stopped
-
-  checker-email-autoconfig:
-    image: happydomain/checker-email-autoconfig
-    restart: unless-stopped
-
-  checker-email-keys:
-    image: happydomain/checker-email-keys
-    restart: unless-stopped
-
-  ###########################
-  # Web & Protocol checkers #
-  ###########################
-
-  checker-http:
-    image: happydomain/checker-http
-    restart: unless-stopped
-
-  checker-ssh:
-    image: happydomain/checker-ssh
-    restart: unless-stopped
-
-  checker-ping:
-    image: happydomain/checker-ping
-    restart: unless-stopped
-    cap_add:
-      - NET_RAW # required for ICMP ping
-
-  checker-srv:
-    image: happydomain/checker-srv
-    restart: unless-stopped
-
-  ####################################
-  # Collaboration/Messaging checkers #
-  ####################################
-
-  checker-matrix:
-    image: happydomain/checker-matrix
-    restart: unless-stopped
-
+  ## Matrix federation tester, used by the Matrix checker
   matrixfederationtester:
     image: matrixdotorg/federation-tester-backend
     environment:
       BIND_ADDRESS: "0.0.0.0:8080"
     restart: unless-stopped
-
-  checker-xmpp:
-    image: happydomain/checker-xmpp
-    restart: unless-stopped
-
-  checker-sip:
-    image: happydomain/checker-sip
-    restart: unless-stopped
-
-  #############################
-  # Directory & Auth checkers #
-  #############################
-
-  checker-ldap:
-    image: happydomain/checker-ldap
-    restart: unless-stopped
-
-  checker-kerberos:
-    image: happydomain/checker-kerberos
-    restart: unless-stopped
-
-  checker-stun-turn:
-    image: happydomain/checker-stun-turn
-    restart: unless-stopped
-
-  ###########################
-  # CalDAV/CardDAV checkers #
-  ###########################
-
-  # checker-caldav:
-  #   image: happydomain/checker-caldav
-  #   restart: unless-stopped
-
-  # checker-carddav:
-  #   image: happydomain/checker-carddav
-  #   restart: unless-stopped
