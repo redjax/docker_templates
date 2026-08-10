@@ -1,0 +1,32 @@
+api:
+  dashboard: true
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    filename: "/etc/traefik/dynamic_config.yml"
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      ## Uncomment only 1 below, either
+      #  httpChallenge OR dnsChallenge
+      # httpChallenge:
+      #   entryPoint: web
+      dnsChallenge:
+        ## https://doc.traefik.io/traefik/https/acme/#providers
+        provider: "cloudflare"
+      email: "<your-cloudflare-email>"
+      storage: "/letsencrypt/acme.json"
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+
+log:
+  level: INFO

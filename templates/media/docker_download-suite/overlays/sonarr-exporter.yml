@@ -1,0 +1,18 @@
+---
+
+services:
+
+  ## For exporting to Grafana
+  sonarr-exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    container_name: sonarr-exporter
+    command: ["exportarr", "sonarr"]
+    environment:
+      PORT: ${EXPORTARR_SONARR_PORT:-9707}
+      URL: ${EXPORTARR_SONARR_URL}
+      APIKEY: ${EXPORTARR_SONARR_APIKEY}
+      ENABLE_EPISODE_QUALITY_METRICS: ${EXPORTARR_SONARR_METRICS:-false}
+    ports:
+      - ${EXPORTARR_SONARR_PORT:-9707}:9707
+    depends_on:
+      - sonarr

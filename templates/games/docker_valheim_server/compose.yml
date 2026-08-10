@@ -1,4 +1,6 @@
 ---
+name: valheim-server
+
 services:
   valheim-server:
     image: lloesche/valheim-server
@@ -9,7 +11,7 @@ services:
     stop_grace_period: 2m
     ports:
       - ${VALHEIM_PORT_RANGE:-2456-2457}:2456-2457/udp
-      - 9002:9001
+      - ${VALHEIM_SUPERVISOR_PORT:-9001}:9001
     volumes:
       - ${VALHEIM_CONF_DIR:-./valheim-server/config}:/config
       - ${VALHEIM_DATA_DIR:-./valheim-server/data}:/opt/valheim
@@ -26,7 +28,7 @@ services:
       UPDATE_IF_IDLE: ${VALHEIM_UPDATE_IF_IDLE:-true}
       RESTART_CRON: ${VALHEIM_RESTART_CRON:-0 5 * * *}
       RESTART_IF_IDLE: ${VALHEIM_RESTART_IF_IDLE:-true}
-      TZ: ${VALHEIM_TZ:-America/New_York}
+      TZ: ${VALHEIM_TZ:-Etc/UTC}
       BACKUPS: ${VALHEIM_BACKUPS:-true}
       BACKUPS_CRON: ${VALHEIM_BACKUPS_CRON:-0 * * * *}
       BACKUPS_DIRECTORY: ${VALHEIM_BACKUPS_DIRECTORY:-/config/backups}

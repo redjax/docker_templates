@@ -1,0 +1,26 @@
+---
+
+services:
+
+  lazylibrarian:
+    image: ${LAZY_LIB_IMAGE:-linuxserver/lazylibrarian}
+    container_name: ${LAZY_LIB_NAME:-lazylibrarian}
+    restart: ${LAZY_LIB_RESTART:-unless-stopped}
+    links:
+      - jackett:jackett
+    ports:
+      - ${LAZY_LIB_PORT:-5299}:5299
+    # expose:
+    #   - 5299
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+    # - DOCKER_MODS=linuxserver/calibra-web:calibre # optional
+    volumes:
+      - ${LAZY_LIB_CONFIG_DIR:-./apps/lazylibrarian/config}:/config
+      - ${BOOKS_DIR:-./apps/lazylibrarian/books}:/downloads
+      - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
+      # - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
+    networks:
+      - media-net

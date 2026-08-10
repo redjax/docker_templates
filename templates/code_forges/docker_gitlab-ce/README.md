@@ -1,0 +1,182 @@
+# Gitlab Community Edition <!-- omit in toc -->
+
+Self-hosted Gitlab server & runner.
+
+## Table of Contents <!-- omit in toc -->
+
+- [Requirements](#requirements)
+- [Omnibus Configuration](#omnibus-configuration)
+- [Troubleshooting](#troubleshooting)
+  - [Container permission errors](#container-permission-errors)
+- [Cloudflare Setup](#cloudflare-setup)
+- [Setup Docker Registry](#setup-docker-registry)
+- [Links](#links)
+
+## Requirements
+
+🔗 [Gitlab System Requirements](https://docs.gitlab.com/install/requirements/)
+
+Quick Specs:
+
+| Resource | Minimum                                                                                                                                | Recommended                                                                                            |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Storage  | 2.5 GB                                                                                                                                 | `NA`                                                                                                   |
+| CPU      | 8 vCPU (20 requests per second *or* 1,000 users)                                                                                       | [Gitlab docs: reference architecture](https://docs.gitlab.com/administration/reference_architectures/) |
+| Memory   | 8 GB (see ['running Gitlab in a memory-constrained environment](https://docs.gitlab.com/omnibus/settings/memory_constrained_envs.html) | 16 GB (20 requessts/second or 1,000 users)                                                             |
+| Database | [PostgreSQL requirements](https://docs.gitlab.com/install/requirements/#postgresql)                                                    | `NA` (postgres is required)                                                                            |
+| Redis    | [Redis requirements](https://docs.gitlab.com/install/requirements/#redis)                                                              | `NA` (postgres is required)                                                                            |
+
+## Omnibus Configuration
+
+[List of Gitlab omnibus config options](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md)
+
+Much of Gitlab's configuration is done using the `GITLAB_OMNIBUS_CONFIG` environment variable. This can become difficult to work with in the `compose.yml` file, so instead, this setup uses a [`gitlab.env` file](./example.gitlab.env). The [`compose.yml` stack](./compose.yml) looks for `gitlab.env` in the current directory and loads the `GITLAB_OMNIBUS_CONFIG` from there.
+
+Before running this container, copy `example.gitlab.env` -> `gitlab.env` and review the configuration options.
+
+## Troubleshooting
+
+### Container permission errors
+
+If this container fails to start due to permission problems try to fix it by executing:
+
+```bash
+docker exec -it gitlab update-permissions
+docker restart gitlab
+```
+
+### Personal Access Tokens
+
+When creating a Personal Access Token (PAT), you may see a generic error like this:
+
+![gitlab_pat_err](.assets/img/gitlab_pat_err.png)
+
+To fix this, make sure your `GITLAB_EXTERNAL_URL` value matches the URL you're accessing the Gitlab UI from. For example, in a LAN-only deployment you would need to set `GITLAB_EXTERNAL_URL=http://192.168.1.x:80` (or whatever your `GITLAB_HTTP_PORT` is), or with a reverse proxy you would set `GITLAB_EXTERNAL_URL=https://gitlab.example.com`.
+
+## Cloudflare Setup
+
+> [!WARNING]
+> This setup may not work for your needs. If you use Cloudflare and a proxy like Pangolin,
+> you may need a second domain just for SSH. Cloudflare cannot proxy SSH connections,
+> so you would serve Gitlab's web UI over your primary domain, and SSH over the second, un-proxied domain.
+>
+> This setup requires port forwarding on your home router, and requires ports `80` and `443` to be forwarded
+> to the server hosting Gitlab.
+
+Assumptions:
+
+- You have a domain name, and you've set its nameservers to Cloudflare.
+- You have a machine on your LAN running Gitlab, with [the Traefik overlay](./overlays/traefik.yml)
+  - To run the stack with Traefik, use `docker compose -f compose.yml -f overlays/traefik.yml up -d`
+- Ports `80` and `443` are bound to Traefik, so if you have any other router forwarding to a different machine's `80` or `443`, this won't work.
+
+For the sake of this document, `gitlab.domain.com` is the example domain name. Replace `domain.com` with your domain.
+
+In Cloudflare's DNS, create the following entries:
+
+| Record Type | Name | Content | Proxy Status | Notes |
+| ----------- | ---- | ------- | ------------ | ----- |
+| `A` | `git` | Your [public IP address](https://www.ipadr.is) | Proxied (orange cloud) | |
+| `A` | `gitlab` | Your [public IP address](https://www.ipadr.is) | Proxied (orange cloud) | |
+| `A` | `domain.com` | [public IP address](https://www.ipadr.is) | Not proxied (gray cloud) | |
+
+Replace `domain.com` with your domain, and set your [public IP address](https://www.ipadr.is) in the Content field. It is very important to leave the root `domain.com` A record un-proxied.
+
+Edit your [`gitlab.env` file](./env_files/example.gitlab.env). Edit the `GITLAB_OMNIBUS_CONFIG` variable, setting `gitlab_rails['gitlab_ssh_host'] = 'domain.com'`.
+
+Edit your [Traefik `dynamic_config.yml`](./config/traefik/example.dynamic_config.yml), setting the router rule to:
+
+```yaml
+rule: "Host(`gitlab.example.com`)"
+```
+
+If you create an entry in your `~/.ssh/config`, make sure to use the right port (whatever you set for `GITLAB_SSH_PORT` in the [Gitlab `.env` file](./.env.example)).
+
+```plaintext
+## ~/.ssh/config
+Host domain.com
+  HostName domain.com
+  User git
+  Port 222
+  ## You must create this file and upload it to Gitlab, i.e.
+  #    ssh-keygen -t rsa -b 4096 -f ~/.ssh/gitlab_id_rsa -N ""
+  IdentityFile ~/.ssh/gitlab_id_rsa
+```
+
+## Setup Docker Registry
+
+> [!NOTE]
+> I have configured a working registry. Until this warning is removed, do not expect the steps below to work.
+> I am updating them as I try new things and will remove this message when the instructions are valid.
+
+To enable the Docker registry feature of Gitlab, you have to set the following configurations:
+
+```rb
+gitlab_rails['registry_enabled'] = true;
+registry['enable'] = true;
+registry_external_url 'https://registry.example.com';
+gitlab_rails['registry_host'] = 'registry.example.com';
+registry_nginx['enable'] = false;
+registry['registry_http_addr'] = '127.0.0.1:5000';
+letsencrypt['enable'] = true;
+letsencrypt['contact_emails'] = ['you@example.com'];
+registry_nginx['listen_https'] = false;
+```
+
+Edit the [Gitlab env file](./env_files/example.gitlab.env). Add the following to the `GITLAB_OMNIBUS_CONFIG` (or change the settings):
+
+```plaintext
+GITLAB_OMNIBUS_CONFIG="gitlab_rails['registry_enabled'] = true; registry['enable'] = true; registry_external_url 'https://registry.example.com'; gitlab_rails['registry_host'] = 'registry.example.com'; registry_nginx['enable'] = false; registry['registry_http_addr'] = '127.0.0.1:5000'; letsencrypt['enable'] = true
+letsencrypt['contact_emails'] = ['you@example.com']"
+```
+
+Note that these configurations must all be on 1 line, separated by a semicolon and a space (`; `).
+
+If you are [using Cloudflare](#cloudflare-setup), also add an un-proxied (gray icon) `A` name entry for `registry`, pointed to [your public IP address](https://ipadr.is).
+
+Don't forget to uncomment the registry portions of the [dynamic Traefik config](./config/traefik/dynamic_config.yml) and the [regular Traefik config](./config/traefik/traefik_config.yml).
+
+## Upgrade Gitlab
+
+When you pull the latest Gitlab image and run the update container, you might get an error like `It seems you are upgrading from 18.3.1 to 18.9.1. It is required to upgrade to the latest 18.8.x version first before proceeding`:
+
+```log
+gitlab-server  | Thank you for using GitLab Docker Image!
+gitlab-server  | Current version: gitlab-ce=18.9.1-ce.0
+gitlab-server  | 
+gitlab-server  | Configure GitLab for your system by editing /etc/gitlab/gitlab.rb file
+gitlab-server  | And restart this container to reload settings.
+gitlab-server  | To do it use docker exec:
+gitlab-server  | 
+gitlab-server  |   docker exec -it gitlab editor /etc/gitlab/gitlab.rb
+gitlab-server  |   docker restart gitlab
+gitlab-server  | 
+gitlab-server  | For a comprehensive list of configuration options please see the Omnibus GitLab readme
+gitlab-server  | https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md
+gitlab-server  | 
+gitlab-server  | If this container fails to start due to permission problems try to fix it by executing:
+gitlab-server  | 
+gitlab-server  |   docker exec -it gitlab update-permissions
+gitlab-server  |   docker restart gitlab
+gitlab-server  | 
+gitlab-server  | Cleaning stale PIDs & sockets
+gitlab-server  | It seems you are upgrading from 18.3.1 to 18.9.1.
+gitlab-server  | It is required to upgrade to the latest 18.8.x version first before proceeding.
+gitlab-server  | Please follow the upgrade documentation at https://docs.gitlab.com/ee/update/#upgrade-paths
+```
+
+To fix this, you need to upgrade to an intermediate version first. Check the [container release tags](https://hub.docker.com/r/gitlab/gitlab-ce/tags) to find an intermediary version.
+
+Edit the `.env` file and change the `GITLAB_IMG_TAG` env var, i.e. `GITLAB_IMG_TAG=18.8.5-ce.0`.
+
+Run `docker compose pull` and `docker compose up -d`. You may have to repeat this for a few intermediary versions. For example, going from `18.3.x` to `18.9.1`, I had to update from `18.3.x` -> `18.5.x` -> `18.8.x` -> `latest (18.9.x)`.
+
+Each time you bring the container stack back up, you must wait for the container to do database migrations. Wait until the webUI is available again before upgrading to the next version.
+
+Once you are on the latest release, you can set `GITLAB_IMG_TAG=` in the `.env` file to use the default `latest` tag.
+
+## Links
+
+- [Gitlab docs](https://docs.gitlab.com/)
+  - [Gitlab Docker install docs](https://docs.gitlab.com/install/docker/)
+    -[Gitlab Docker backup docs](https://docs.gitlab.com/install/docker/backup/)

@@ -1,0 +1,1 @@
+0 */6 * * * /bin/bash -c "/path/to/docker_gitlab-ce/scripts/backup/backup_gitlab.sh --src-dir /path/to/gitlab/container --dest-dir /path/to/backup &> /var/log/docker_gitlab/backup.log"

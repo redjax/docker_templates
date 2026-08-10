@@ -1,0 +1,58 @@
+## https://grafana.com/docs/loki/latest/configure/examples/configuration-examples/
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: "2024-01-01"
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  filesystem:
+    directory: /loki/chunks
+
+ruler:
+  storage:
+    type: local
+    local:
+      directory: /loki/rules
+
+compactor:
+  working_directory: /loki/compactor
+  delete_request_store: filesystem
+
+limits_config:
+  ## 7 days; adjust to control disk usage
+  retention_period: 168h
+  max_streams_per_user: 0
+  max_global_streams_per_user: 0
+
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
+
+querier:
+  max_concurrent: 20

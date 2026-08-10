@@ -1,0 +1,5 @@
+StirlingPDF/*
+StirlingPDF/**/*
+
+!StirlingPDF/**/
+!StirlingPDF/**/.gitkeep

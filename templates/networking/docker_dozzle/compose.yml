@@ -1,0 +1,54 @@
+---
+name: "dozzle"
+
+volumes:
+  dozzle_data:
+    name: data
+
+services:
+  dozzle:
+    image: ghcr.io/amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOZZLE_DATA_DIR:-dozzle_data}:/data
+      - ${DOZZLE_USERS_FILE:-./config/users.yml}:/data/users.yml
+    ports:
+      - "${DOZZLE_PORT:-8080}:8080"
+    environment:
+      ## Enable actions (stop, start, restart containers)
+      - DOZZLE_ENABLE_ACTIONS=${DOZZLE_ENABLE_ACTIONS:-true}
+      ## Enable container shell access
+      - DOZZLE_ENABLE_SHELL=${DOZZLE_ENABLE_SHELL:-true}
+      ## Enable simple authentication
+      - DOZZLE_AUTH_PROVIDER=${DOZZLE_AUTH_PROVIDER:-simple}
+      # - DOZZLE_SIMPLE_USERNAME=${DOZZLE_SIMPLE_USERNAME:-admin}
+      # - DOZZLE_SIMPLE_PASSWORD=${DOZZLE_SIMPLE_PASSWORD:-dozzleAdmin}
+      # Display name for the Dozzle container
+      - DOZZLE_HOSTNAME=${DOZZLE_HOSTNAME:-dozzle}
+      # Disable analytics for privacy if desired
+      - DOZZLE_NO_ANALYTICS=${DOZZLE_NO_ANALYTICS:-true}
+      ## Comma-separated list of remote hosts running Dozzle in agent mode.
+      #  i.e., DOZZLE_REMOTE_AGENT=agent1-ip:7007,agent2-ip:7007
+      - DOZZLE_REMOTE_AGENT=${DOZZLE_REMOTE_AGENT_STRING}
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      com.dozzle.description: "${DOZZLE_DESCRIPTION:-Real-time Docker logs viewer with actions & shell access}"
+
+  dozzle-from-file:
+    image: alpine
+    container_name: dozzle-logger
+    restart: unless-stopped
+    network_mode: none
+    volumes:
+      - ${DOZZLE_LOGS_FILE:-./logs/dozzle.log}:/var/log/stream.log
+    command:
+      - tail
+      - -f
+      - /var/log/stream.log

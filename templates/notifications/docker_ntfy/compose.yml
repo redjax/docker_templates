@@ -26,8 +26,6 @@ services:
       NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT: ${NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT:-5G}
       NTFY_ATTACHMENT_FILE_SIZE_LIMIT: ${NTFY_ATTACHMENT_FILE_SIZE_LIMIT:-15M}
       NTFY_ATTACHMENT_EXPIRY_DURATION: ${NTFY_ATTACHMENT_EXPIRY_DURATION:-3h}
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - ${NTFY_CACHE_DIR:-./ntfy/cache}:/var/cache/ntfy
       - ${NTFY_CONFIG_DIR:-./ntfy/config}:/etc/ntfy
@@ -42,19 +40,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower_ntfy
-    restart: unless-stopped
-    pull_policy: always
-    environment:
-      ## Remove old images after updating
-      WATCHTOWER_CLEANUP: "true"
-      ## Only update containers with the
-      #  "com.centurylinklabs.watchtower.enable=true" label
-      WATCHTOWER_LABEL_ENABLE: "true"
-      ## Check for updates every 300 seconds (5 minutes)
-      WATCHTOWER_POLL_INTERVAL: 300
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock

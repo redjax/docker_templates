@@ -1,0 +1,46 @@
+---
+name: unifi
+
+volumes:
+  syslog-data: {}
+
+services:
+  rsyslog-collector:
+    image: rsyslog/rsyslog-collector:latest
+    restart: unless-stopped
+    environment:
+      - ENABLE_UDP=${SYSLOG_ENABLE_UDP:-on}
+      - ENABLE_TCP=${SYSLOG_ENABLE_TCP:-off}
+      - ENABLE_RELP=${SYSLOG_ENABLE_RELP:-off}
+      - ENABLE_TLS=${SYSLOG_ENABLE_TLS:-off}
+      - TZ=${TZ:-Etc/UTC}
+    ports:
+      - ${SYSLOG_PORT:-514}:514/udp
+    volumes:
+      - ${SYSLOG_DATA_DIR:-syslog-data}:/var/log
+      - ${SYSLOG_CONFIG_DIR:-./config/rsyslog.d}:/etc/rsyslog.d:ro
+
+  logrotate:
+    image: alpine:latest
+    restart: unless-stopped
+    volumes:
+      - ${SYSLOG_DATA_DIR:-syslog-data}:/var/log
+    command: >
+      sh -c '
+      MAX_SIZE=52428800
+      KEEP_SIZE=41943040
+
+      while true; do
+        for f in /var/log/*.log; do
+          [ -f "$$f" ] || continue
+
+          size=$$(stat -c%s "$$f" 2>/dev/null || echo 0)
+
+          if [ "$$size" -gt "$$MAX_SIZE" ]; then
+            tail -c "$$KEEP_SIZE" "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"
+          fi
+        done
+
+        sleep 60
+      done
+      '

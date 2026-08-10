@@ -1,0 +1,23 @@
+---
+name: github-runner
+
+services:
+  runner:
+    image: myoung34/github-runner:${RUNNER_IMG_TAG:-latest}
+    restart: unless-stopped
+
+    environment:
+      RUN_AS_ROOT: ${RUN_AS_ROOT:-true}
+      REPO_URL: ${REPO_URL:-https://github.com/OWNER/REPO}
+      ACCESS_TOKEN: ${ACCESS_TOKEN:-}
+      RUNNER_TOKEN: ${RUNNER_TOKEN:-}
+      RUNNER_NAME: ${RUNNER_NAME:-self-hosted}
+      RUNNER_WORKDIR: ${RUNNER_WORKDIR:-/tmp/runner/work}
+      LABELS: ${RUNNER_LABELS:-self-hosted,linux}
+      NO_DEFAULT_LABELS: ${NO_DEFAULT_LABELS:-false}
+
+    cpus: ${RUNNER_CPUS_LIMIT:-0.5}
+    mem_limit: ${RUNNER_MEMORY_LIMIT:-512m}
+    mem_reservation: ${RUNNER_MEMORY_RESERVE:-256m}
+    pids_limit: ${RUNNER_PIDS_LIMIT:-256}
+

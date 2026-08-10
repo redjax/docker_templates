@@ -1,15 +1,13 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: unifi
 
 volumes:
   mongo_data: {}
   unifi_config: {}
 
 services:
-  unifi-network-application:
+  network-application:
     image: lscr.io/linuxserver/unifi-network-application:latest
-    container_name: unifi-network-application
     restart: unless-stopped
     environment:
       - PUID=${PUID:-1000}
@@ -52,13 +50,11 @@ services:
       ## optional
       #  remote syslog
       - ${UNIFI_REMOTE_SYSLOG_PORT:-5514}:5514/udp
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
-  unifi-db:
+  db:
     image: docker.io/mongo:${MONGO_CONTAINER_IMG_VER:-8.0.8}
-    container_name: unifi-db
     restart: unless-stopped
+    container_name: unifi-db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-root}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
@@ -69,9 +65,3 @@ services:
     volumes:
       - ${MONGO_DATA_DIR:-mongo_data}:/data/db
       - ${MONGO_INITDB_SCRIPT:-./mongo/init-mongo.sh}:/docker-entrypoint-initdb.d/init-mongo.sh:ro
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: unifi-watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock

@@ -1,1 +1,7 @@
 data/
+extensions/*
+
+!extensions/
+
+!*.gitkeep
+

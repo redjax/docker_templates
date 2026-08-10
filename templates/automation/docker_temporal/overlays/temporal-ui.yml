@@ -1,0 +1,19 @@
+---
+networks:
+  temporal_net:
+    driver: bridge
+
+services:
+  temporal-ui:
+    image: temporalio/ui:latest
+    restart: unless-stopped
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      TEMPORAL_ADDRESS: ${TEMPORAL_ADDRESS:-temporal:7233}
+      TEMPORAL_GRPC_ENDPOINT: temporal:${TEMPORAL_GRPC_PORT:-7233}
+    ports:
+      - "${TEMPORAL_UI_PORT:-8080}:8080"
+    networks:
+      - temporal_net

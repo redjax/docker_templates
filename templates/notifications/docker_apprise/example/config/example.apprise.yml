@@ -1,0 +1,11 @@
+---
+version: 1
+
+urls:
+  general:
+    - include://ntfy.yml
+    - include://gotify.yml
+
+  critical:
+    - include://critical.yml
+

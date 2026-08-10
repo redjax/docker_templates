@@ -14,10 +14,9 @@ from project_cli.constants import (
     REPO_MAP_OUTPUT_DIR,
     REPO_MAP_TEMPLATE_DIR,
     TEMPLATE_BEACONS_DICT,
+    TEMPLATES_METADATA_CSV_FILE,
     TEMPLATES_METADATA_JSON_FILE,
     TEMPLATES_ROOT,
-    TEMPLATES_METADATA_CSV_FILE,
-    
 )
 
 __all__ = ["parse_arguments", "_metadata"]

@@ -1,0 +1,34 @@
+---
+# networks:
+#   unnamed_net: {}
+
+# volumes:
+#   volume_name: {}
+
+services:
+
+  ## RustDesk ID server
+  hbbs: 
+    image: rustdesk/rustdesk-server:latest
+    container_name: rustdesk_id_server
+    restart: unless-stopped
+    network_mode: "host"
+    depends_on:
+      - hbbr
+    command: hbbs
+    volumes:
+      - ${RUSTDESK_DATA_DIR:-./rustdesk/data}:/root
+    environment:
+      ALWAYS_USE_RELAY: ${RUSTDESK_ALWAYS_USE_RELAY:-Y}
+
+
+  ## RustDesk relay
+  hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: rustdesk_relay
+    restart: unless-stopped
+    network_mode: "host"
+    command: hbbr
+    volumes:
+      - ${RUSTDESK_DATA_DIR:-./rustdesk/data}:/root
+
