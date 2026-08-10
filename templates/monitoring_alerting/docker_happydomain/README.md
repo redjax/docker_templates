@@ -3,7 +3,9 @@
 [HappyDomain](https://www.happydomain.org/en/) is a toolbox for managing domains you own.
 
 > [!NOTE]
-> As of 2026-07-29, the happyDomain service appears to be broken. The containers start and the webUI is accessible, but clicking on a registrar does nothing. No useful error logs, just nothing happens.
+> The `compose.yml` is for smaller scale/personal deployments. See the [`largescale_deployment/` directory](./largescale_deployment/) for a "production ready" version that deploys the individual checker containers.
+>
+> This personal-scale version still runs the checkers, but bundled in a single container image. This is plenty for most users.
 
 ## Setup
 
