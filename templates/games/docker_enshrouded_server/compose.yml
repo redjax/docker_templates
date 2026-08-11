@@ -1,51 +1,62 @@
 ---
-networks:
-  enshrouded_net: {}
+name: enshrouded
+
+volumes:
+  server_data: {}
 
 services:
   enshrouded:
-    image: mbround18/enshrouded-docker:latest
+    image: mornedhels/enshrouded-server:${ENSHROUDED_SERVER_IMG_TAG:-latest}
     container_name: enshrouded
+    hostname: enshrouded
     restart: unless-stopped
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   platforms:
-    #     - linux/amd64
-    environment:
-      SERVER_NAME: ${ENSHROUDED_SERVER_NAME:-"My Enshrouded Server"}
-      PASSWORD: ${ENSHROUDED_PASSWORD:-""}
-      ADMIN_PASSWORD: ${ENSHROUDED_ADMIN_PASSWORD:-"adminpassword"}
-      SAVE_DIRECTORY: ${ENSHROUDED_SAVE_DIR:-./enshrouded/savegame}
-      LOG_DIRECTORY: ${ENSHROUDED_LOGS_DIR:-./enshrouded/logs}
-      # SERVER_IP: 0.0.0.0
-      # GAME_PORT: 15636
-      # QUERY_PORT: 15637
-      SLOT_COUNT: ${ENSHROUDED_SERVER_SLOTS:-16}
+    stop_grace_period: 90s
     ports:
-      - "${ENSHROUDED_SERVER_PORT:-15636}:15636/udp"
-      - "${ENSHROUDED_SERVER_PORT:-15636}:15636/tcp"
-      - "${ENSHROUDED_QUERY_PORT:-15637}:15637/udp"
-      - "${ENSHROUDED_QUERY_PORT:-15637}:15637/tcp"
+      - "${ENSHROUDED_SERVER_PORT:-15637}:15637/udp"
     volumes:
-      - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
-    networks:
-      - enshrouded_net
-
-  ## Uncomment service below to enable auto backups
-  backups:
-    image: mbround18/backup-cron:latest
-    container_name: enshrouded-backups
-    restart: unless-stopped
+      - ${SERVER_DATA_DIR:-server_data}:/opt/enshrouded
+    env_file:
+      - ./env_files/game_options.env
     environment:
-      - SCHEDULE=${ENSHROUDED_BACKUP_SCHEDULE:-*/10 * * * *}
-      - INPUT_FOLDER=/home/steam/enshrouded/savegame
-      - OUTPUT_FOLDER=/home/steam/backups
-      - OUTPUT_USER=1000
-      - OUTPUT_GROUP=1000
-      - KEEP_N_DAYS=${ENSHROUDED_BACKUP_KEEP_DAYS:-5}
-    volumes:
-      - ${ENSHROUDED_DATA_DIR:-./enshrouded/data}:/home/steam/enshrouded
-      - ${ENSHROUDED_BACKUP_DIR:-./enshrouded/backups}:/home/steam/backups
-    networks:
-      - enshrouded_net
+      TZ: ${TZ:-Etc/UTC}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      SERVER_NAME: ${SERVER_NAME:-Embervale Friends}
+      SERVER_SLOT_COUNT: ${SERVER_SLOT_COUNT:-16}
+      SERVER_QUERYPORT: 15637
+      SERVER_IP: ${SERVER_IP:-0.0.0.0}
+      SERVER_SAVE_DIR: ./savegame
+      SERVER_LOG_DIR: ./logs
+      BACKUP_DIR: ./backup
+      BACKUP_CRON: ${SERVER_BACKUP_CRON:-*/4 * * *}
+      BACKUP_MAX_COUNT: ${SERVER_BACKUP_MAX_COUNT:-0}
+      SERVER_VOICE_CHAT_MODE: ${SERVER_VOICE_CHAT_MODE:-Proximity}
+      SERVER_ENABLE_VOICE_CHAT: ${SERVER_ENABLE_VOICE_CHAT:-false}
+      SERVER_ENABLE_TEXT_CHAT: ${SERVER_ENABLE_TEXT_CHAT:-true}
+      UPDATE_CRON: ${SERVER_UPDATE_CHECK_CRON:-*/30 * * * *}
+      UPDATE_CHECK_PLAYERS: ${SERVER_SKIP_UPDATE_WHEN_PLAYERS_CONNECTED:-true}
+
+      ## Admin group
+      SERVER_ROLE_0_NAME: Admins
+      SERVER_ROLE_0_PASSWORD: ${SERVER_ADMIN_PASSWORD:-enshroudedAdmin}
+      SERVER_ROLE_0_CAN_KICK_BAN: true
+      SERVER_ROLE_0_CAN_ACCESS_INVENTORIES: true
+      SERVER_ROLE_0_CAN_EDIT_BASE: true
+      SERVER_ROLE_0_CAN_EXTEND_BASE: true
+      SERVER_ROLE_0_RESERVED_SLOTS: 1
+
+      SERVER_ROLE_1_NAME: Friends
+      SERVER_ROLE_1_PASSWORD: ${SERVER_FRIENDS_PASSWORD:-enshroudedFriends}
+      SERVER_ROLE_1_CAN_ACCESS_INVENTORIES: true
+      SERVER_ROLE_1_CAN_EDIT_BASE: true
+      SERVER_ROLE_1_CAN_EXTEND_BASE: true
+      SERVER_ROLE_1_RESERVED_SLOTS: 3
+
+      SERVER_ROLE_2_NAME: Guests
+      SERVER_ROLE_2_PASSWORD: ${SERVER_GUEST_PASSWORD:-enshroudedGuest}
+      SERVER_ROLE_2_RESERVED_SLOTS: 0
+
+      GAME_BRANCH: ${SERVER_GAME_BRANCH:-public}
+      STEAMCMD_ARGS: ${SERVER_STEAMCMD_ARGS:-validate}
+
+      log_level: ${SERVER_LOG_LEVEL:-40}
