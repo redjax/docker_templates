@@ -1,0 +1,33 @@
+---
+volumes:
+  valkey_data: {}
+
+services:
+  valkey:
+    image: valkey/valkey:${VALKEY_IMG_TAG:-8-alpine}
+    restart: unless-stopped
+    environment:
+      VALKEYCLI_AUTH: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
+    command:
+      - valkey-server
+      - --requirepass
+      - ${REDIS_PASSWORD:?set REDIS_PASSWORD}
+    volumes:
+      - ${VALKEY_DATA_DIR:-valkey_data}:/data
+    healthcheck:
+      test:
+        - CMD
+        - valkey-cli
+        - --no-auth-warning
+        - -a
+        - ${REDIS_PASSWORD:?set REDIS_PASSWORD}
+        - ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  open-archiver:
+    depends_on:
+      valkey:
+        condition: service_healthy

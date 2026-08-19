@@ -1,0 +1,28 @@
+---
+volumes:
+  meili_data: {}
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:${MEILI_IMG_TAG:-v1.38}
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?set MEILI_MASTER_KEY}
+      MEILI_SCHEDULE_SNAPSHOT: ${MEILI_SCHEDULE_SNAPSHOT:-86400}
+    volumes:
+      - ${MEILI_DATA_DIR:-meili_data}:/meili_data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:7700/health | grep -q available",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  open-archiver:
+    depends_on:
+      meilisearch:
+        condition: service_healthy

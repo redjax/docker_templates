@@ -1,10 +1,17 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: open-archiver
 
-# volumes:
-#   volume_name: {}
+volumes:
+  archiver_data: {}
 
 services:
 
-  ...
+  open-archiver:
+    image: logiclabshq/open-archiver:${OA_IMG_TAG:-v0.3.4}
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - ${OA_ARCHIVER_WEBUI_PORT:-3000}:3000
+    volumes:
+      - ${OA_DATA_DIR:-archiver_data}:/var/data/open-archiver

@@ -1,0 +1,10 @@
+---
+services:
+  tika:
+    image: apache/tika:${TIKA_IMG_TAG:-3.2.2.0-full}
+    restart: unless-stopped
+
+  open-archiver:
+    depends_on:
+      tika:
+        condition: service_started
