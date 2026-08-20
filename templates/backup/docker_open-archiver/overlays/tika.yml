@@ -1,0 +1,12 @@
+---
+services:
+  tika:
+    image: apache/tika:${TIKA_IMG_TAG:-3.3.1.0-full}
+    restart: unless-stopped
+    cpus: ${TIKA_CPU_LIMIT:-1.0}
+    mem_limit: ${TIKA_MEM_LIMIT:-1g}
+
+  open-archiver:
+    depends_on:
+      tika:
+        condition: service_started
