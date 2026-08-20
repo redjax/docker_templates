@@ -4,11 +4,12 @@ volumes:
 
 services:
   meilisearch:
-    image: getmeili/meilisearch:${MEILI_IMG_TAG:-v1.38}
+    image: getmeili/meilisearch:${MEILI_IMG_TAG:-v1.53.1}
     restart: unless-stopped
     environment:
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?set MEILI_MASTER_KEY}
       MEILI_SCHEDULE_SNAPSHOT: ${MEILI_SCHEDULE_SNAPSHOT:-86400}
+      MEILI_UPGRADE_DB: ${MEILI_DO_DB_MIGRATIONS:-false}
     volumes:
       - ${MEILI_DATA_DIR:-meili_data}:/meili_data
     healthcheck:

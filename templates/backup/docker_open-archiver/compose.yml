@@ -5,9 +5,8 @@ volumes:
   archiver_data: {}
 
 services:
-
   open-archiver:
-    image: logiclabshq/open-archiver:${OA_IMG_TAG:-v0.3.4}
+    image: logiclabshq/open-archiver:${OA_IMG_TAG:-v0.5.2}
     restart: unless-stopped
     env_file:
       - .env
