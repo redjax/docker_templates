@@ -14,3 +14,5 @@ services:
       - ${OA_ARCHIVER_WEBUI_PORT:-3000}:3000
     volumes:
       - ${OA_DATA_DIR:-archiver_data}:/var/data/open-archiver
+    cpus: ${OA_CPU_LIMIT:-2.0}
+    mem_limit: ${OA_MEM_LIMIT:-2g}

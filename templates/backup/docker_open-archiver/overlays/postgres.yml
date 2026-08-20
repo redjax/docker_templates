@@ -12,12 +12,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
     volumes:
       - ${POSTGRES_DATA_DIR:-db_data}:/var/lib/postgresql/data
+    cpus: ${POSTGRES_MAX_CPU:-1.0}
+    mem_limit: ${POSTGRES_MEM_LIMIT:-768m}
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB",
-        ]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 10

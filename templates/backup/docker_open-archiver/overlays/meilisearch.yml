@@ -12,6 +12,8 @@ services:
       MEILI_UPGRADE_DB: ${MEILI_DO_DB_MIGRATIONS:-false}
     volumes:
       - ${MEILI_DATA_DIR:-meili_data}:/meili_data
+    cpus: ${MEILI_MAX_CPU:-2}
+    mem_limit: ${MEILI_MEM_LIMIT:-2g}
     healthcheck:
       test:
         [
