@@ -57,6 +57,7 @@ Map of the repository's template categories. This page is automatically rendered
 - [web_scraping](../templates/web_scraping)
   - [docker_selenium_hub](../templates/web_scraping/docker_selenium_hub)
 - [backup](../templates/backup)
+  - [docker_open-archiver](../templates/backup/docker_open-archiver)
   - [docker_backrest](../templates/backup/docker_backrest)
   - [docker_git-sync](../templates/backup/docker_git-sync)
   - [kopia](../templates/backup/kopia)

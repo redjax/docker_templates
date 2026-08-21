@@ -24,11 +24,15 @@
         ]
     },
     {
-        "count": 5,
+        "count": 6,
         "name": "backup",
         "path": "templates/backup",
         "sub_categories": [],
         "templates": [
+            {
+                "name": "docker_open-archiver",
+                "path": "templates/backup/docker_open-archiver"
+            },
             {
                 "name": "docker_backrest",
                 "path": "templates/backup/docker_backrest"
