@@ -29,7 +29,8 @@ function GENERATE_SECRET_KEY () {
   elif [[ -f secret_key ]]; then
     echo ""
     echo "Secret key file exists."
-    echo "Open the file and copy the key (getting rid of the newline) into docker-compose.env"
+    echo "Open the file and copy the key (getting rid of the newline) into your .env,"
+    echo "i.e. PAPERLESS_SECRET_KEY=<your new secret>"
     echo ""
   else
     echo ""
