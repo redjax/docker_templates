@@ -16,4 +16,6 @@ services:
       options:
         max-size: "${UPTIME_KUMA_LOG_MAX_SIZE:-150m}"
         max-file: "${UPTIME_KUMA_LOG_MAX_FILE:-5}"
+    mem_limit: ${UPTIME_KUMA_RAM_MAX:-256m}
+    cpus: ${UPTIME_KUMA_CPU_MAX:-0.50}
 
