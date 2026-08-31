@@ -1,0 +1,38 @@
+---
+#############################################
+# https://gethomepage.dev/configs/settings/ #
+#                                           #
+# Homepage app configuration.               #
+#############################################
+
+title: Homelab
+description: Homelab services and infrastructure
+theme: dark
+disableIndexing: true
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: true
+  showSearchSuggestions: true
+  hideVisitURL: true
+  provider: duckduckgo
+
+layout:
+  Media:
+    style: row
+    columns: 4
+
+  Applications:
+    style: row
+    columns: 4
+
+  Infrastructure:
+    style: row
+    columns: 4
+
+  Network:
+    style: row
+    columns: 4
+
+iconStyle: theme
+statusStyle: dot
