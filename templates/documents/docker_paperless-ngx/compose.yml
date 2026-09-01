@@ -133,7 +133,7 @@ services:
     ## Non-amd64 arch, i.e. RPi or VM
     # image: abhilesh7/apache-tika-arm
     ## amd64 arch
-    image: apache/tika:${TIKA_IMG_TAG:-latest}
+    image: apache/tika:${TIKA_IMG_TAG:-3.3.0.0-full}
     container_name: paperless-tika
     restart: unless-stopped
     networks:
