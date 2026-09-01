@@ -14,7 +14,8 @@ services:
     restart: unless-stopped
     volumes:
       - ${PANGOLIN_CONFIG_DIR:-./config/pangolin}:/app/config
-      # - ${CROWDSEC_CONFIG_DIR:-./cconfig/crowdsec}:/etc/crowdsec
+      - ${LETSENCRYPT_CERT_DIR:-./config/letsencrypt}:/app/config/letsencrypt
+      # - ${CROWDSEC_CONFIG_DIR:-./config/crowdsec}:/etc/crowdsec
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/"]
       interval: "3s"
