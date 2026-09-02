@@ -1,0 +1,16 @@
+---
+name: homepage
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:${HOMEPAGE_IMG_TAG:-latest}
+    container_name: ${HOMEPAGE_CONTAINER_NAME:-homepage}
+    restart: unless-stopped
+    ports:
+      - "${HOMEPAGE_HTTP_PORT:-3000}:3000"
+    volumes:
+      - ${HOMEPAGE_CONFIG_DIR:-./config}:/app/config
+    env_file:
+      - ${HOMEPAGE_ENV:-./env/app.env}
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS:-localhost:3000}

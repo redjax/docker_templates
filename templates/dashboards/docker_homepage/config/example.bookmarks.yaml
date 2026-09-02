@@ -1,0 +1,22 @@
+---
+########################################################
+# https://gethomepage.dev/configs/bookmarks            #
+#                                                      #
+# Bookmarks are like browser bookmarks, they define an #
+# outgoing link and do not have widgets.               #
+########################################################
+
+- Developer:
+    - Github:
+        - abbr: GH
+          href: https://github.com/
+
+- Social:
+    - Reddit:
+        - abbr: RE
+          href: https://reddit.com/
+
+- Entertainment:
+    - YouTube:
+        - abbr: YT
+          href: https://youtube.com/
