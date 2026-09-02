@@ -80,4 +80,15 @@ You could also sync your users to a cloud idP like [Microsoft Entra](https://doc
 
 - [Authentik home](https://goauthentik.io)
 - [Authentik Github](https://github.com/goauthentik/authentik)
-
+- [Authentik docs](https://docs.goauthentik.io)
+  - [First steps](https://docs.goauthentik.io/install-config/first-steps/)
+  - [Upgrade docs](https://docs.goauthentik.io/install-config/upgrade/)
+  - [Email setup](https://docs.goauthentik.io/install-config/email/)
+  - [High Availability](https://docs.goauthentik.io/install-config/high-availability/)
+  - [Applications](https://docs.goauthentik.io/add-secure-apps/applications/)
+  - [Providers](https://docs.goauthentik.io/add-secure-apps/providers/)
+  - [Flows](https://docs.goauthentik.io/add-secure-apps/flows-stages/flow/)
+  - [Stages](https://docs.goauthentik.io/add-secure-apps/flows-stages/stages/)
+  - [Authentik policy docs](https://docs.goauthentik.io/customize/policies/)
+  - [Docker Outposts](https://docs.goauthentik.io/add-secure-apps/outposts/)
+  - [Blueprints/templates](https://docs.goauthentik.io/customize/blueprints/)
