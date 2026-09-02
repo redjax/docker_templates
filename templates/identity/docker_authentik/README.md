@@ -32,6 +32,9 @@ Log into the Authentik admin panel by clicking the "Admin interface" button in t
 
 Go to `Directory > Users` and click "New User." It is ok to leave the user with no groups at first, until you [create them](#create-groups).
 
+> [!NOTE]
+> You should add MFA to your accounts as soon as possible after creating them.
+
 ### Create Groups
 
 You can use groups to provide standardized access rules to a range of users/service accounts. You might make a group named `admins`, and create a special `username.admin` version of your account with admin privileges so you aren't logging into the root user, or `homelab` to group homelab service accounts and users.
