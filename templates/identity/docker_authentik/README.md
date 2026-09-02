@@ -8,6 +8,7 @@
   - [Create a User](#create-a-user)
   - [Create Groups](#create-groups)
   - [Setup Email Notifications](#setup-email-notifications)
+- [Applications and Providers](#applications-and-providers)
 - [Links](#links)
 
 ## Setup
@@ -66,6 +67,14 @@ Edit the `.env` file's `AUTHENTIK_SMTP_*` variables with your server's settings.
   | `AUTHENTIK_SMTP_USE_SSL`   | `false`                           |
   | `AUTHENTIK_SMTP_TIMEOUT`   | `10`                              |
   | `AUTHENTIK_SMTP_FROM_ADDR` | `mydomain.authentik@fastmail.com` |
+
+## Applications and Providers
+
+In Authentik, an [application](https://docs.goauthentik.io/add-secure-apps/applications/) represents a thing you're protecting, i.e. "Grafana" or "Jellyfin."
+
+A [provider](https://docs.goauthentik.io/add-secure-apps/providers/) describes how Authentik talks to that application. Authentik supports several providers, including [OIDC/OAuth2](https://docs.goauthentik.io/add-secure-apps/providers/oauth2/), [SAML](https://docs.goauthentik.io/add-secure-apps/providers/saml/), and [LDAP](https://docs.goauthentik.io/add-secure-apps/providers/ldap/).
+
+You could also sync your users to a cloud idP like [Microsoft Entra](https://docs.goauthentik.io/add-secure-apps/providers/entra/) or [Google Workspace](https://docs.goauthentik.io/add-secure-apps/providers/gws/).
 
 ## Links
 
