@@ -71,6 +71,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_harbor](../templates/registries/docker_harbor)
 - [dashboards](../templates/dashboards)
   - [docker_dashy](../templates/dashboards/docker_dashy)
+  - [docker_homepage](../templates/dashboards/docker_homepage)
   - [docker_squirrel_server_manager](../templates/dashboards/docker_squirrel_server_manager)
 - [notifications](../templates/notifications)
   - [docker_apprise](../templates/notifications/docker_apprise)
