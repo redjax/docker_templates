@@ -22,6 +22,8 @@ Authentik will be available at your server's IP on the port you set in `AUTHENTI
 
 The first time you load Authentik, you will be guided through setting up an admin user.
 
+Authentik provides a ["first steps" documentation page](https://docs.goauthentik.io/install-config/first-steps/) to help guide you through the first setup.
+
 ### Create a User
 
 Log into the Authentik admin panel by clicking the "Admin interface" button in the top right of the screen. You should create a new, non-admin user that you will authenticate as.
