@@ -27,11 +27,13 @@ services:
       postgresql:
         condition: service_healthy
     environment:
+      TZ: ${TZ:-Etc/UTC}
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ENABLE_TELEMETRY:-false}
     ports:
       - ${AUTHENTIK_HTTP_PORT:-9000}:9000
       - ${AUTHENTIK_HTTPS_PORT:-9443}:9443
@@ -48,11 +50,13 @@ services:
       postgresql:
         condition: service_healthy
     environment:
+      TZ: ${TZ:-Etc/UTC}
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ENABLE_TELEMETRY:-false}
     shm_size: 512mb
     ## Uncomment if using Docker Outposts
     # user: root
