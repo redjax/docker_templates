@@ -28,6 +28,9 @@ services:
         condition: service_healthy
     environment:
       TZ: ${TZ:-Etc/UTC}
+      AUTHENTIK_WEB__BASE_URL: ${AUTHENTIK_WEB__BASE_URL:-https://example.com}
+      AUTHENTIK_WEB__PATH: ${AUTHENTIK_WEB__PATH:-/}
+
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
