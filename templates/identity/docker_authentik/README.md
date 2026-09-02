@@ -7,6 +7,7 @@
 - [Setup](#setup)
   - [Create a User](#create-a-user)
   - [Create Groups](#create-groups)
+  - [Setup Email Notifications](#setup-email-notifications)
 - [Links](#links)
 
 ## Setup
@@ -33,6 +34,38 @@ Go to `Directory > Users` and click "New User." It is ok to leave the user with 
 ### Create Groups
 
 You can use groups to provide standardized access rules to a range of users/service accounts. You might make a group named `admins`, and create a special `username.admin` version of your account with admin privileges so you aren't logging into the root user, or `homelab` to group homelab service accounts and users.
+
+### Setup Email Notifications
+
+Authentik supports [SMTP for email notifications and alerts](https://docs.goauthentik.io/install-config/email/). You can use a free SMTP server like Gmail to send emails from the Authentik server to users defined in one of the various email stages.
+
+Edit the `.env` file's `AUTHENTIK_SMTP_*` variables with your server's settings. Some servers I've used:
+
+- Gmail
+
+  | Variable                   | Example Value                  |
+  | -------------------------- | ------------------------------ |
+  | `AUTHENTIK_SMTP_HOST`      | `smtp.gmail.com`               |
+  | `AUTHENTIK_SMTP_PORT`      | `587` (TLS) / `465` (SSL)      |
+  | `AUTHENTIK_SMTP_USERNAME`  | `username@gmail.com`           |
+  | `AUTHENTIK_SMTP_PASSWORD`  | `<your-gmail-app-password>`    |
+  | `AUTHENTIK_SMTP_USE_TLS`   | `true`                         |
+  | `AUTHENTIK_SMTP_USE_SSL`   | `false`                        |
+  | `AUTHENTIK_SMTP_TIMEOUT`   | `10`                           |
+  | `AUTHENTIK_SMTP_FROM_ADDR` | `mydomain.authentik@gmail.com` |
+
+- Fastmail
+
+  | Variable                   | Example Value                     |
+  | -------------------------- | --------------------------------- |
+  | `AUTHENTIK_SMTP_HOST`      | `smtp.fastmail.com`               |
+  | `AUTHENTIK_SMTP_PORT`      | `587` (TLS) / `465` (SSL)         |
+  | `AUTHENTIK_SMTP_USERNAME`  | `username@fastmail.com`           |
+  | `AUTHENTIK_SMTP_PASSWORD`  | `<your-fastmail-app-password>`    |
+  | `AUTHENTIK_SMTP_USE_TLS`   | `true`                            |
+  | `AUTHENTIK_SMTP_USE_SSL`   | `false`                           |
+  | `AUTHENTIK_SMTP_TIMEOUT`   | `10`                              |
+  | `AUTHENTIK_SMTP_FROM_ADDR` | `mydomain.authentik@fastmail.com` |
 
 ## Links
 
