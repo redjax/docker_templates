@@ -5,6 +5,8 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Setup](#setup)
+  - [Create a User](#create-a-user)
+  - [Create Groups](#create-groups)
 - [Links](#links)
 
 ## Setup
@@ -19,6 +21,16 @@
 Authentik will be available at your server's IP on the port you set in `AUTHENTIK_HTTP_PORT`, or via HTTPS using the `AUTHENTIK_HTTPS_PORT`. For example: `http(s)://<ip-or-hostname>:$AUTHENTIK_PORT`.
 
 The first time you load Authentik, you will be guided through setting up an admin user.
+
+### Create a User
+
+Log into the Authentik admin panel by clicking the "Admin interface" button in the top right of the screen. You should create a new, non-admin user that you will authenticate as.
+
+Go to `Directory > Users` and click "New User." It is ok to leave the user with no groups at first, until you [create them](#create-groups).
+
+### Create Groups
+
+You can use groups to provide standardized access rules to a range of users/service accounts. You might make a group named `admins`, and create a special `username.admin` version of your account with admin privileges so you aren't logging into the root user, or `homelab` to group homelab service accounts and users.
 
 ## Links
 
