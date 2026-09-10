@@ -1,0 +1,11 @@
+---
+services:
+  mongodb:
+    image: mongo:4.4
+    restart: unless-sstopped
+    volumes:
+      - ./docker/mongodb:/data/db
+
+  server:
+    depends_on:
+      - mongodb
