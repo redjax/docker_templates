@@ -1,6 +1,9 @@
 ---
 name: unifios
 
+volumes:
+  persistent_data: {}
+
 services:
   server:
     container_name: unifi-os-server
@@ -30,6 +33,7 @@ services:
       - ${UNIFIOS_APP_DIR:-./uos}:/var/lib/uosserver
       - ${UNIFIOS_APP_DIR:-./uos}:/var/lib/unifi
       - ${UNIFIOS_DATA_DIR:-./data}:/data
+      - ${UNIFIOS_PERSISTENT_DIR:-persistent_data}:/persistent
     tmpfs:
       - /run:exec
       - /run/lock
