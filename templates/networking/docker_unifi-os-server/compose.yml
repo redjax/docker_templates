@@ -1,47 +1,45 @@
 ---
 name: unifios
 
-volumes:
-  persistent_data: {}
-
 services:
   server:
-    container_name: unifi-os-server
-    image: ghcr.io/unihosted/unifi-os-server-docker:${UNIFIOS_IMG_TAG:-5.1.40}
-    cgroup: host
+    image: ghcr.io/lemker/unifi-os-server:${UNIFIOS_IMG_TAG:-v1.6.0}
     restart: unless-stopped
+    cgroup: host
     cap_add:
       - NET_RAW
       - NET_ADMIN
-    ports:
-      - "${UNIFIOS_HTTP_PORT:-8080}:8080"
-      - "${UNIFIOS_API_PORT:-8443}:8443"
-      - "${UNIFIOS_HOTSPORT_PORTAL_PORT:-8444}:8444"
-      - "${UNIFIOS_HOTSPOT_PORTAL_REDIRECT_PORT:-8880-8882}:8880-8882"
-      - "${UNIFIOS_DISCOVERY_PORT:-10003}:10003/udp"
-      - "${UNIFIOS_WEBUI_PORT:-11443}:443"
-      - "${UNIFIOS_STUN_PORT:-3478}:3478/udp"
-      - "${UNIFIOS_SYSLOG_PORT:-5514}:5514/udp"
-      - "${UNIFIOS_SPEEDTEST_PORT:-6789}:6789"
-      - "${UNIFIOS_DB_PORT:-127.0.0.1:5432}:5432"
-      - "${UNIFIOS_MONGODB_PORT:-27117}"
     extra_hosts:
-      - "host.docker.internal:host-gateway"
-      - "host.containers.internal:host-gateway"
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-      - ${UNIFIOS_APP_DIR:-./uos}:/var/lib/uosserver
-      - ${UNIFIOS_APP_DIR:-./uos}:/var/lib/unifi
-      - ${UNIFIOS_DATA_DIR:-./data}:/data
-      - ${UNIFIOS_PERSISTENT_DIR:-persistent_data}:/persistent
+      host.docker.internal: host-gateway
     tmpfs:
       - /run:exec
       - /run/lock
       - /tmp:exec
       - /var/lib/journal
-      - /var/opt/unifi/tmp:size=64m
-      - /data/unifi-core/config/http
+      - /var/opt/unifi/tmp:size=${UNIFIOS_TMP_SIZE:-64m}
     environment:
-      TZ: ${TZ:-Etc/UTC}
       UOS_SYSTEM_IP: "${UNIFIOS_SYSTEM_IP:-127.0.0.1}"
-      MONGO_INTERNAL: ${UNIFIOS_USER_INTERNAL_MONGODB:-true}
+    volumes:
+      - ${UNIFIOS_PERSISTENT_DIR:-./uos/persistent}:/persistent
+      - ${UNIFIOS_VAR_LOG_DIR:-./uos/var-log}:/var/log
+      - ${UNIFIOS_DATA_DIR:-./uos/data}:/data
+      - ${UNIFIOS_SRV_DIR:-./uos/srv}:/srv
+      - ${UNIFIOS_UNIFI_DIR:-./uos/var-lib-unifi}:/var/lib/unifi
+      - ${UNIFIOS_MONGODB_DIR:-./uos/var-lib-mongodb}:/var/lib/mongodb
+      - ${UNIFIOS_RABBITMQ_SSL_DIR:-./uos/etc-rabbitmq-ssl}:/etc/rabbitmq/ssl
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    ports:
+      - "${UNIFIOS_WEBUI_PORT:-11443}:443"
+      - "${UNIFIOS_SERVICE_PORT:-5005}:5005"
+      - "${UNIFIOS_ALT_WEBUI_PORT:-9543}:9543"
+      - "${UNIFIOS_SPEEDTEST_PORT:-6789}:6789"
+      - "${UNIFIOS_HTTP_PORT:-8080}:8080"
+      - "${UNIFIOS_HOTSPOT_PORTAL_PORT:-8444}:8444"
+      - "${UNIFIOS_STUN_PORT:-3478}:3478/udp"
+      - "${UNIFIOS_SYSLOG_PORT:-5514}:5514/udp"
+      - "${UNIFIOS_DISCOVERY_PORT:-10003}:10003/udp"
+      - "${UNIFIOS_INTERNAL_PORT:-127.0.0.1:11084}:11084"
+      - "${UNIFIOS_RABBITMQ_PORT:-5671}:5671"
+      - "${UNIFIOS_HOTSPOT_PORTAL_HTTP_PORT:-8880}:8880"
+      - "${UNIFIOS_HOTSPOT_PORTAL_HTTPS_PORT:-8881}:8881"
+      - "${UNIFIOS_HOTSPOT_PORTAL_REDIRECT_PORT:-8882}:8882"
