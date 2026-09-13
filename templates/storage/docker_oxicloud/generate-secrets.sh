@@ -12,7 +12,10 @@ oxicloud_storage_encryption_key="$(
   openssl rand 32 | base64 | tr -d '\r\n'
 )"
 
+collabora_admin_password="$(openssl rand -hex 32)"
+
 printf 'POSTGRES_PASSWORD=%s\n' "$postgres_password"
+printf 'COLLABORA_ADMIN_PASSWORD=%s\n' "$collabora_admin_password"
 printf 'OXICLOUD_STORAGE_ENCRYPTION_KEY=%s\n' \
   "$oxicloud_storage_encryption_key"
 
