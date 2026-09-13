@@ -22,3 +22,23 @@
 Oxicloud exposes DAV servers at `/webdav/` (for files), `/carddav/` (for contacts), and `/caldav/` (for calendars). You must use an app password (created in your user's settings); the server will not accept your user's login password.
 
 For example, use your file manager to browse to `https://oxicloud.your-domain.com/webdav/`, then login with your username and an app password.
+
+## Collabora
+
+To allow editing files from the Oxicloud webUI, you can run the stack with the [Collabora overlay](./overlays/collabora.yml). First, prepare the `.env` by editing the following variables:
+
+- `COLLABORA_BIND_ADDRESS`: The URL Collabora is available on.
+  - Should be an IP address reachable from Oxicloud, i.e. 192.168.1.xxx.
+- `COLLABORA_PUBLIC_HOST`: Address to Collabora server, i.e. `collabora.domain.com`.
+- `COLLABORA_ADMIN_PASSWORD`: Generate password with the [`generate-secrets.sh` script](./generate-secrets.sh), copy the value from the script's output into the `.env` file.
+- `OXICLOUD_WOPI_HOST`: Set to domain without protocol, i.e. `oxicloud.domain.com`
+- `OXICLOUD_WOPI_HOST_DOT_ESCAPED`: Escape periods with `\\.`, i.e. `oxicloud\\.domain\\.com`.
+
+When running the stack, use:
+
+```shell
+docker compose \
+  -f compose.yml \
+  -f overlays/collabora.yml \
+  up -d
+```
