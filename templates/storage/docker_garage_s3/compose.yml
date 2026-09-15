@@ -1,0 +1,30 @@
+---
+name: garage-s3
+
+# networks:
+#   unnamed_net: {}
+
+volumes:
+  meta: {}
+  data: {}
+
+services:
+  garage:
+    image: dxflrs/garage:v${GARAGE_IMG_TAG:-2.2.0}
+    container_name: garage
+    restart: unless-stopped
+    environment:
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET}
+      GARAGE_S3_API_S3_REGION: ${GARAGE_S3_REGION:-local-garage}
+      GARAGE_S3_API_ROOT_DOMAIN: ${GARAGE_S3_ROOT_DOMAIN:-.s3.lan}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_UI_TOKEN}
+      GARAGE_ADMIN_API_METRICS_TOKEN: ${GARAGE_METRICS_TOKEN}
+    volumes:
+      - ${GARAGE_CONFIG_FILE:-./config/garage/garage.toml}:/etc/garage.toml:ro
+      - ${GARAGE_META_DIR:-meta}:/var/lib/garage/meta
+      - ${GARAGE_DATA_DIR:-data}:/var/lib/garage/data
+    ports:
+      - ${GARAGE_S3_API_PORT:-3900}:3900
+      - ${GARAGE_RPC_PORT:-3901}:3901
+      - ${GARAGE_S3_WEB_PORT:-3902}:3902
+      - ${GARAGE_ADMIN_API_PORT:-3903}:3903
