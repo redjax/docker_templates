@@ -3,7 +3,6 @@ volumes:
   concourse_worker_data: {}
 
 services:
-
   worker:
     image: concourse/concourse
     container_name: concourse-worker
@@ -30,12 +29,19 @@ services:
       CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE: ${CONCOURSE_CONTAINERD_DNS_PROXY_ENABLE:-true}
       CONCOURSE_CONTAINERD_DNS_SERVER: ${CONCOURSE_WORKER_DNS_SERVER:-1.1.1.1}
     stop_signal: SIGUSR2
+    logging:
+      driver: json-file
+      options:
+        max-size: "${CONCOURSE_WORKER_LOG_MAX_SIZE:-10m}"
+        max-file: "${CONCOURSE_WORKER_LOG_MAX_FILE:-5}"
+    deploy:
+      resources:
+        limits:
+          cpus: "${CONCOURSE_WORKER_CPUS:-2}"
+          memory: ${CONCOURSE_WORKER_MEMORY:-2G}
     healthcheck:
-      test: [
-        "CMD-SHELL", "pgrep concourse >/dev/null || exit 1"
-      ]
+      test: ["CMD-SHELL", "pgrep concourse >/dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-
