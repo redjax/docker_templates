@@ -12,7 +12,7 @@ services:
       - ${COPYPARTY_HTTP_PORT:-3923}:3923
     volumes:
       - ${COPYPARTY_CONF_DIR:-./config}:/cfg:z
-      - ${COPYPARTY_FILESHARE_ROOT_DIR:-fileshare}:/w:z
+      - ${COPYPARTY_FILESHARE_ROOT_DIR:-fileshare}:/w
     environment:
       LD_PRELOAD: /usr/lib/libmimalloc-secure.so.${COPYPARTY_MINALLOC:-NOPE}
       PYTHON_UNBUFFERED: 1
