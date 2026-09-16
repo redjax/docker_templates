@@ -36,7 +36,7 @@
         ]
     },
     {
-        "count": 6,
+        "count": 7,
         "name": "storage",
         "path": "templates/storage",
         "sub_categories": [],
@@ -44,6 +44,10 @@
             {
                 "name": "docker_seafile-server",
                 "path": "templates/storage/docker_seafile-server"
+            },
+            {
+                "name": "docker_copyparty",
+                "path": "templates/storage/docker_copyparty"
             },
             {
                 "name": "docker_bytestash",
