@@ -62,6 +62,7 @@ Map of the repository's template categories. This page is automatically rendered
   - [docker_opengist](../templates/code_forges/docker_opengist)
 - [storage](../templates/storage)
   - [docker_seafile-server](../templates/storage/docker_seafile-server)
+  - [docker_copyparty](../templates/storage/docker_copyparty)
   - [docker_bytestash](../templates/storage/docker_bytestash)
   - [docker_minio](../templates/storage/docker_minio)
   - [docker_baserow](../templates/storage/docker_baserow)
