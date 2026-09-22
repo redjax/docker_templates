@@ -1,10 +1,45 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: manage-my-damn-life
 
-# volumes:
-#   volume_name: {}
+volumes:
+  mysql_data: {}
 
 services:
+  app:
+    image: intriin/mmdl:${MMDL_IMG_TAG:-v0.10.0}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - ${MMDL_WEBUI_PORT:-3000}:3000
+    environment:
+      DB_HOST: ${MYSQL_HOST:-db}
+      DB_PORT: ${MYSQL_PORT:-3306}
+      DB_NAME: ${MYSQL_DATABASE:-managemydamnlife}
+      DB_USER: ${MYSQL_USER:-mmdl}
+      DB_PASS: ${MYSQL_PASSWORD:-managemydamnlife}
 
-  ...
+  db:
+    image: mysql:${MYSQL_IMG_TAG:-8.0}
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-managemydamnlife}
+      MYSQL_USER: ${MYSQL_USER:-mmdl}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-managemydamnlife}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-managemydamnlifeAdmin}
+    volumes:
+      - ${MYSQL_DATA_DIR:-mysql_data}:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
