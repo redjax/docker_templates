@@ -1,0 +1,39 @@
+---
+volumes:
+  sqlite_data: {}
+
+services:
+  sqlite-init:
+    image: alpine:${SQLITE_INIT_ALPINE_TAG:-3.20}
+    user: "0:0"
+    restart: "no"
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        echo "sqlite-init: before"
+        id
+        ls -ldn /data || true
+
+        mkdir -p /data
+        chown 1001:1001 /data
+        chmod 0750 /data
+
+        echo "sqlite-init: after"
+        ls -ldn /data
+
+        touch /data/.sqlite-init-write-test
+        rm /data/.sqlite-init-write-test
+        echo "sqlite-init: success"
+    volumes:
+      - ${DB_DATA_DIR:-sqlite_data}:/data
+
+  app:
+    depends_on:
+      sqlite-init:
+        condition: service_completed_successfully
+    environment:
+      DB_DIALECT: sqlite
+      DB_NAME: /data/mmdl.sqlite
+    volumes:
+      - ${DB_DATA_DIR:-sqlite_data}:/data
