@@ -4,7 +4,7 @@ volumes:
 
 services:
   sqlite-init:
-    image: alpine:${SQLITE_INIT_ALPINE_TAG:-3.20}
+    image: alpine:${SQLITE_INIT_ALPINE_TAG:-3.24}
     user: "0:0"
     restart: "no"
     entrypoint:
