@@ -29,3 +29,45 @@ http://ip-or-fqdn:5232/username/3296f82e-7f1b-4416-9d6f-8be7f2ccf888/
 > If you put Radicale behind a reverse proxy, i.e. `https://dav.example.com`, use that address instead of `http://ip-or-fqdn:5232`. If you access Radicale using the proxied address, the URL shown in the collection will use the proxied URL.
 
 Follow the setup instructions for your client, i.e. [Thunderbird](https://www.thunderbird.net/en-US/), [Davx5](https://github.com/bitfireAT/davx5-ose) (for Android), etc. When setting up synchronization with the client, use the collection's URL (CalDAV for calendar/todo/journal synch, CardDAV for address book synch), and your Radicale username and password.
+
+### Radicale Git Backend
+
+Radicale can [version control your collections with Git](https://radicale.org/v3.html#versioning-collections-with-git). To initialize the repository, you will need to `docker exec` into the container and run `git init`. Then you will create a Radicale hook that commits all changes to the repository with an automated commit message.
+
+- Exec into the Docker container and change directory to `/var/lib/radicale/collections`:
+
+  ```shell
+  docker compose exec -it radicale sh
+
+  ## Inside the container
+  cd /var/lib/radicale/collections
+  ```
+
+- Initialize the Git repository and set the author username and email:
+
+  ```shell
+  git init -b main
+  git config user.name "Radicale"
+  git config user.email "radicale@localhost"
+
+  cat > .gitignore <<'EOF'
+  .Radicale.cache
+  .Radicale.lock
+  EOF
+  ```
+
+  - Add current collections to repository and manually create first commit:
+
+    ```shell
+    git add -A
+    git commit -m "Initial Radicale state"
+    ```
+
+- Edit your `config/config` and add a `[storage]` hook to automatically commit changes:
+
+  ```shell
+  [storage]
+  hook = git add -A && (git diff --cached --quiet || git commit -m "Changes by \"%(user)s\"")
+  ```
+
+- Restart the container with `docker compose restart radicale`, check container logs with `docker compose logs -f radicale`.
