@@ -1,0 +1,12 @@
+---
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:${FLARESOLVERR_IMG_TAG:-latest}
+    container_name: flaresolverr
+    restart: unless-stopped
+    cpus: ${FLARESOLVERR_CPUS:-1.0}
+    mem_limit: ${FLARESOLVERR_MEMORY:-512m}
+    environment:
+      LOG_LEVEL: ${FLARESOLVERR_LOG_LEVEL:-info}
+    # ports:
+    #   - ${FLARSOLVERR_PORT:-8191}:8191
