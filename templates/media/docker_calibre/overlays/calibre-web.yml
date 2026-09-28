@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       PUID: ${PUID:-1000}
-      GUID: ${GUID:-1000}
+      PGID: ${PGID:-1000}
     volumes:
       - ${CALIBRE_WEB_CONFIG_DIR:-./calibre/calibre-web/config}:/config
       - ${CALIBRE_BOOKS_DIR:-./calibre/books}:/books
