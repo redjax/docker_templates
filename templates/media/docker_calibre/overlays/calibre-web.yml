@@ -1,0 +1,14 @@
+---
+services:
+  calibre_web:
+    image: ghcr.io/linuxserver/calibre-web
+    container_name: calibre-web
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+    volumes:
+      - ${CALIBRE_WEB_CONFIG_DIR:-./calibre/calibre-web/config}:/config
+      - ${CALIBRE_BOOKS_DIR:-./calibre/books}:/books
+    ports:
+      - ${CALIBRE_WEB_PORT:-8083}:8083
