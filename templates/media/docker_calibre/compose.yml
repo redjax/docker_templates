@@ -6,6 +6,8 @@ services:
     image: ghcr.io/linuxserver/calibre
     container_name: ${CALIBRE_NAME:-calibre}
     restart: unless-stopped
+    cpus: ${CALIBRE_MAX_CPU:-4}
+    mem_limit: ${CALIBRE_MEM_LIMIT:-2g}
     environment:
       PUID: ${PUID:-1000}
       PGID: ${PGID:-1000}
