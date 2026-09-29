@@ -1,4 +1,6 @@
 .env
+*.local
+*.local.*
 
 apps/*
 apps/**
@@ -22,6 +24,8 @@ scripts/*
 **/apps/qbittorrent/*
 **/apps/transmission/*
 **/apps/couchpotato/*
+
+overlays/gluetun-networks.yml
 
 !apps/
 !apps/**/

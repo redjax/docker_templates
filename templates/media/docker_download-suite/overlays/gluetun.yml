@@ -1,0 +1,40 @@
+---
+#####################################################################
+# Local Gluetun VPN definition                                      #
+#                                                                   #
+# This file is gitignored because each instance of this stack       #
+# may have a different configuration. Some may run LazyLibrarian,   #
+# others might only run the main compose.yml and the Gluetun layer. #
+#                                                                   #
+# You can define your forwarded ports and networked services using  #
+# this file. Add it to your compose command like:                   #
+#   docker compose \                                                #
+#     -f compose.yml \                                              #
+#     -f overlays/gluetun.yml \                                     #
+#     -f overlays/gluetun-networks.yml \                            #
+#     up \                                                          #
+#     -d                                                            #
+#                                                                   #
+# Copy this file and use the comments to create your own network.   #
+# Note that you must still run -f overlays/gluetun.yml with this.   #
+#####################################################################
+
+networks:
+  media-net:
+    external: false
+
+services:
+  gluetun:
+    image: gmcgaw/gluetun:${GLUETUN_IMG_TAG:-latest}
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      VPN_SERVICE_PROVIDER: ${GLUETUN_VPN_SERVICE_PROVIDER}
+      VPN_TYPE: ${GLUETUN_VPN_TYPE:-wireguard}
+      WIREGUARD_PRIVATE_KEY: ${GLUETUN_WIREGUARD_PRIVATE_KEY}
+      WIREGUARD_ADDRESSES: ${GLUETUN_WIREGUARD_ADDRESSES}
+      TZ: ${TZ:-Etc/UTC}
+    networks:
+      - media-net
