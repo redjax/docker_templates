@@ -1,0 +1,12 @@
+---
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:${FLARESOLVERR_IMG_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      LOG_LEVEL: ${FLARESOLVERR_LOG_LEVEL:-info}
+      LOG_HTML: ${FLARESOLVERR_LOG_HTML:-false}
+      CAPTCHA_SOLVER: ${FLARESOLVERR_CAPTCHA_SOLVER:-none}
+      TZ: ${TZ:-Etc/UTC}
+    networks:
+      - media-net
