@@ -768,7 +768,7 @@
         ]
     },
     {
-        "count": 9,
+        "count": 10,
         "name": "media",
         "path": "templates/media",
         "sub_categories": [],
@@ -776,6 +776,10 @@
             {
                 "name": "docker_calibre",
                 "path": "templates/media/docker_calibre"
+            },
+            {
+                "name": "docker_chaptarr",
+                "path": "templates/media/docker_chaptarr"
             },
             {
                 "name": "docker_emby",
@@ -868,7 +872,7 @@
         ]
     },
     {
-        "count": 4,
+        "count": 5,
         "name": "dav",
         "path": "templates/dav",
         "sub_categories": [],
@@ -884,6 +888,10 @@
             {
                 "name": "docker_baikal-dav",
                 "path": "templates/dav/docker_baikal-dav"
+            },
+            {
+                "name": "docker_manage-my-damn-life",
+                "path": "templates/dav/docker_manage-my-damn-life"
             }
         ]
     },
