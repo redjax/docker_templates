@@ -1,0 +1,23 @@
+---
+chaptarr:
+  image: chaptarr/chaptarr:${CHAPTARR_IMG_TAG:-latest}
+  container_name: chaptarr
+  restart: unless-stopped
+  cpus: ${CHAPTARR_CPUS:-2.0}
+  mem_limit: ${CHAPTARR_MEMORY:-2g}
+  ports:
+    - ${CHAPTARR_HTTP_PORT:-8789}:8789
+  environment:
+    PUID: ${PUID:-1000}
+    PGID: ${PGID:-1000}
+    UMASK: ${UMASK:-002}
+    TZ: ${TZ:-Etc/UTC}
+  volumes:
+    ## If ./config doesn't exist, Docker will create it as root:root.
+    #  Create it first (or fix ownership) so it matches PUID/PGID.
+    - ${CHAPTARR_CONFIG_DIR:-./apps/chaptarr/config}:/config
+    - ${CHAPTARR_AUDIOBOOKS_DIR:-./apps/chaptarr/audiobooks}:/audiobooks
+    - ${CHAPTARR_EBOOKS_DIR:-./apps/chaptarr/ebooks}:/ebooks
+    - ${CHAPTARR_DOWNLOADS_DIR:-./apps/chaptarr/downloads}:/downloads
+  networks:
+    - media-net
