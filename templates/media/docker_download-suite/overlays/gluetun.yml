@@ -17,8 +17,15 @@ services:
     environment:
       VPN_SERVICE_PROVIDER: ${GLUETUN_VPN_SERVICE_PROVIDER}
       VPN_TYPE: ${GLUETUN_VPN_TYPE:-wireguard}
+      TZ: ${TZ:-Etc/UTC}
+
+      ## Wireguard
       WIREGUARD_PRIVATE_KEY: ${GLUETUN_WIREGUARD_PRIVATE_KEY}
       WIREGUARD_ADDRESSES: ${GLUETUN_WIREGUARD_ADDRESSES}
-      TZ: ${TZ:-Etc/UTC}
+
+      ## OpenVPN
+      OPENVPN_USER: ${GLUETUN_OPENVPN_USER:-}
+      OPENVPN_PASSWORD: ${GLUETUN_OPENVPN_PASSWORD:-}
+
     networks:
       - media-net
