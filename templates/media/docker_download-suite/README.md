@@ -62,6 +62,8 @@ The stack supports NordVPN, or generic connections via `gluetun`.
 
 #### Gluetun
 
+[Gluetun](https://github.com/passteque/gluetun) is a VPN client that can connect to both OpenVPN and Wireguard servers. It runs in a Docker container and can connect services to each other. In this download suite, Gluetun allows container like Sonarr and Radarr to talk to Jackett, but directs all Jackett and torrent client traffic through the Gluetun container. If you rent a seedbox that offers a VPN client, you can use this container to route ALL of your traffic (besides the Sonnar/Radarr/etc webUI) through the seedbox. Communication between Radarr and Sonarr is limited to the container network, keeping requests internal.
+
 There are 2 Gluetun layers included in this stack: [OpenVPN](./overlays/gluetun-openvpn.yml) and [Wireguard](./overlays/gluetun-wireguard.yml). Whichever connection type you choose, you will also need to supply a local network layer, which you can set up by copying the [`example.gluetun-networks.yml` file](./overlays/example.gluetun-networks.yml) to `overlays/gluetun-networks.yml` and editing for your needs.
 
 For OpenVPN connections, drop your `.ovpn` config and whatever other OpenVPN connection files you have in a path in [`apps/gluetun/openvpn/<some-vpn-name>`](./apps/gluetun/). You will mount this path in the `gluetun` container using the `GLUETUN_OPENVPN_DIR` and `GLUETUN_OPENVPN_CONFIG` environment variables.
