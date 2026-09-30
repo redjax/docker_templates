@@ -13,6 +13,8 @@ apps/radarr/*
 apps/readarr/*
 apps/sonarr/*
 apps/transmission/*
+apps/gluetun/*
+apps/gluetun/**/*
 scripts/*
 
 **/apps/bazarr/*

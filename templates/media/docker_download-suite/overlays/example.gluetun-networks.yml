@@ -41,6 +41,14 @@ services:
 
       ## FlareSolverr API
       - "8191:8191"
+    networks:
+      default:
+        aliases:
+          ## Give the container aliases so you can connect i.e.
+          #  sonarr or radarr to http://jackett:9117
+          - jackett
+          - flaresolverr
+          - chaptarr
 
   ## Route service (-f overlays/<service-name>.yml) traffic
   #  through gluetun network.
@@ -49,6 +57,8 @@ services:
   sonarr:
     network_mode: "service:gluetun"
   jackett:
+    network_mode: "service:gluetun"
+  flaresolverr:
     network_mode: "service:gluetun"
   radarr:
     network_mode: "service:gluetun"
