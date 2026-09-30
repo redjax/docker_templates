@@ -1,7 +1,5 @@
 ---
-
 services:
-
   couchpotato:
     image: lscr.io/linuxserver/couchpotato
     container_name: couchpotato
@@ -17,5 +15,3 @@ services:
       - ${TV_DIR:-./apps/couchpotato/tv-shows}:/tv-shows
     ports:
       - ${COUCHPOTATO_WEB_PORT:-5050}:5050
-    networks:
-      - media-net

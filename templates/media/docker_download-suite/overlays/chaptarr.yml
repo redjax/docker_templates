@@ -19,5 +19,3 @@ chaptarr:
     - ${CHAPTARR_AUDIOBOOKS_DIR:-./apps/chaptarr/audiobooks}:/audiobooks
     - ${CHAPTARR_EBOOKS_DIR:-./apps/chaptarr/ebooks}:/ebooks
     - ${CHAPTARR_DOWNLOADS_DIR:-./apps/chaptarr/downloads}:/downloads
-  networks:
-    - media-net

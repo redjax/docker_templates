@@ -1,7 +1,5 @@
 ---
-
 services:
-
   deluge:
     image: ghcr.io/linuxserver/deluge
     container_name: deluge
@@ -21,5 +19,3 @@ services:
     ## Uncomment if you're using a vpn overlay container
     # depends_on:
     #   - vpn
-    networks:
-      - media-net
