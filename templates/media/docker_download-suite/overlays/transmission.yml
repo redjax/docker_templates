@@ -1,5 +1,4 @@
 ---
-
 services:
   transmission:
     image: ghcr.io/linuxserver/transmission
@@ -26,5 +25,3 @@ services:
     ## Uncomment if using a vpn container
     # depends_on:
     #   - vpn
-    networks:
-        - media-net

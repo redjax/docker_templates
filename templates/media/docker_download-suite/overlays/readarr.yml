@@ -1,7 +1,5 @@
 ---
-
 services:
-
   readarr:
     image: ${READARR_IMAGE:-hotio/readarr:nightly}
     container_name: ${READARR_NAME:-readarr}
@@ -17,5 +15,3 @@ services:
       - ${BOOKS_DOWNLOAD_DIR:-./apps/readarr/downloads}:/downloads
     ports:
       - ${READARR_PORT:-8787}:8787
-    networks:
-      - media-net

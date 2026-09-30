@@ -8,5 +8,3 @@ services:
       LOG_HTML: ${FLARESOLVERR_LOG_HTML:-false}
       CAPTCHA_SOLVER: ${FLARESOLVERR_CAPTCHA_SOLVER:-none}
       TZ: ${TZ:-Etc/UTC}
-    networks:
-      - media-net
