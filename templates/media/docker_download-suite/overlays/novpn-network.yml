@@ -19,3 +19,6 @@ services:
   bazarr:
     ports:
       - ${BAZARR_PORT:-6767}:6767
+  chaptarr:
+    ports:
+      - ${CHAPTARR_HTTP_PORT:-8789}:8789

@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     cpus: ${CHAPTARR_CPUS:-2.0}
     mem_limit: ${CHAPTARR_MEMORY:-2g}
-    ports:
-      - ${CHAPTARR_HTTP_PORT:-8789}:8789
     environment:
       PUID: ${PUID:-1000}
       PGID: ${PGID:-1000}
