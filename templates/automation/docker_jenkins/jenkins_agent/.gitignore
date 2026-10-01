@@ -1,0 +1,3 @@
+agent_workdir/*
+
+!agent_workdir/.gitkeep

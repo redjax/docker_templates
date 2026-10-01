@@ -1,0 +1,8 @@
+workflow-aggregator
+git
+credentials-binding
+ws-cleanup
+timestamper
+job-dsl
+configuration-as-code
+matrix-auth
