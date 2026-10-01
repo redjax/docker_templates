@@ -10,6 +10,7 @@
   - [Setup: VPN](#setup-vpn)
     - [Gluetun](#gluetun)
     - [NordVPN](#nordvpn)
+- [Manage Script](#manage-script)
 
 ## Containers
 
@@ -129,3 +130,17 @@ docker compose \
 #### NordVPN
 
 *TODO: Write NordVPN setup instructions*
+
+## Manage Script
+
+The [`manage-stack.sh` script](./scripts/manage-stack.sh) generates `docker compose -f compose.yml -f ... <operation>` commands based on your input. The `compose_files` array is my "default" stack, and this script helps to run common operations without having to type the full `docker compose` command  each time.
+
+Run `./scripts/manage-stack.sh -h` to see its usage. Quick reference:
+
+| Command                                                 | Description                                                          |
+| ------------------------------------------------------- | -------------------------------------------------------------------- |
+| `./scripts/manage-stack.sh -o start`                    | Brings the stack up                                                  |
+| `./scripts/manage-stack.sh -o stop`                     | Brings the stack down                                                |
+| `./scripts/manage-stack.sh -o restart`                  | Bring the stack down fully, then back up                             |
+| `./scripts/manage-stack.sh -o update`                   | Do a `docker compose pull`, bring the stack down fully, then back up |
+| `./scripts/manage-stack.sh -o logs -n <container-name>` | Tail the logs for a container running in the stack                   |
