@@ -1,7 +1,5 @@
 ---
-
 services:
-
   lazylibrarian:
     image: ${LAZY_LIB_IMAGE:-linuxserver/lazylibrarian}
     container_name: ${LAZY_LIB_NAME:-lazylibrarian}
@@ -22,5 +20,3 @@ services:
       - ${BOOKS_DIR:-./apps/lazylibrarian/books}:/downloads
       - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
       # - ${LIBRARY_DIR:-./apps/lazylibrarian/books}:/books
-    networks:
-      - media-net

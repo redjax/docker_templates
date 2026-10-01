@@ -1,0 +1,24 @@
+---
+#####################################################################################
+# Use this file with docker compose -f when you are NOT using a VPN, i.e. gluetun   #
+#                                                                                   #
+# Provides port mappings for containers in compose.yml. If you are using a VPN like #
+# gluetun, ports should be published through the gluetun container.                 #
+#####################################################################################
+
+services:
+  jackett:
+    ports:
+      - ${JACKETT_PORT:-9117}:9117
+  sonarr:
+    ports:
+      - ${SONARR_PORT:-8989}:8989
+  radarr:
+    ports:
+      - ${RADARR_PORT:-7878}:7878
+  bazarr:
+    ports:
+      - ${BAZARR_PORT:-6767}:6767
+  chaptarr:
+    ports:
+      - ${CHAPTARR_HTTP_PORT:-8789}:8789
