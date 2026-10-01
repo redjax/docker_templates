@@ -33,5 +33,7 @@ overlays/gluetun-networks.yml
 !apps/**/
 !apps/**/empty
 
+!scripts/manage-stack.sh
+
 !*example*.*
 !*.*example*
