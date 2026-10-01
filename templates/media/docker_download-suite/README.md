@@ -64,7 +64,7 @@ The stack supports NordVPN, or generic connections via `gluetun`.
 #### Gluetun
 
 > [!NOTE]
-> When using Gluetun, you may need to add your seedbox's IP in CIDR format, like `FIREWALL_OUTBOUND_SUBNETS=203.0.113.42/32/32`. If you are able to find the remote's VPN IP, it is better to use that. If you can SSH into the remote and run `ip addr show tun0`, you might be able to find the server's VPN IP.
+> When using Gluetun, you may need to add your seedbox's IP in CIDR format, like `FIREWALL_OUTBOUND_SUBNETS=203.0.113.42/32`. If you are able to find the remote's VPN IP, it is better to use that. If you can SSH into the remote and run `ip addr show tun0`, you might be able to find the server's VPN IP.
 
 [Gluetun](https://github.com/passteque/gluetun) is a VPN client that can connect to both OpenVPN and Wireguard servers. It runs in a Docker container and can connect services to each other. In this download suite, Gluetun allows container like Sonarr and Radarr to talk to Jackett, but directs all Jackett and torrent client traffic through the Gluetun container. If you rent a seedbox that offers a VPN client, you can use this container to route ALL of your traffic (besides the Sonnar/Radarr/etc webUI) through the seedbox. Communication between Radarr and Sonarr is limited to the container network, keeping requests internal.
 
