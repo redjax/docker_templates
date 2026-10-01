@@ -23,6 +23,7 @@ services:
       VPN_TYPE: openvpn
       OPENVPN_CUSTOM_CONFIG: ${GLUETUN_OPENVPN_CONFIG}
       TZ: ${TZ:-Etc/UTC}
+      FIREWALL_OUTBOUND_SUBNETS: "${FIREWALL_OUTBOUND_SUBNETS}"
     volumes:
       - ${GLUETUN_OPENVPN_DIR:-./apps/gluetun/openvpn}:/gluetun:ro
     # networks:
