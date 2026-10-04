@@ -81,6 +81,7 @@ declare -a compose_files=(
   overlays/gluetun-networks.yml
   overlays/gluetun-openvpn.yml
   overlays/flaresolverr.yml
+  overlays/lazy-librarian.yml
 )
 
 cmd=(docker compose)

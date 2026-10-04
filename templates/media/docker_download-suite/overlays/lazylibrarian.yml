@@ -4,10 +4,8 @@ services:
     image: ${LAZY_LIB_IMAGE:-linuxserver/lazylibrarian}
     container_name: ${LAZY_LIB_NAME:-lazylibrarian}
     restart: ${LAZY_LIB_RESTART:-unless-stopped}
-    links:
-      - jackett:jackett
-    ports:
-      - ${LAZY_LIB_PORT:-5299}:5299
+    # ports:
+    #   - ${LAZY_LIB_PORT:-5299}:5299
     # expose:
     #   - 5299
     environment:
