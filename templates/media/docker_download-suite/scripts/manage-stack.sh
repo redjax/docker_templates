@@ -80,7 +80,8 @@ declare -a compose_files=(
   overlays/chaptarr.yml
   overlays/gluetun-networks.yml
   overlays/gluetun-openvpn.yml
-  overlays/flaresolverr.yml
+  overlays/prowlarr.yml
+  overlays/byparr.yml
   overlays/lazylibrarian.yml
 )
 
