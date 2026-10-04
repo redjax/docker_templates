@@ -25,3 +25,6 @@ services:
   lazylibrarian:
     ports:
       - ${LAZY_LIB_PORT:-5299}:5299
+  prowlarr:
+    ports:
+      - ${PROWLARR_PORT:-9696}:9696
