@@ -2,13 +2,30 @@
 
 ## Setup
 
-*Note: If using Readarr, make sure Calibre/Calibre-web are on the same Docker network as the Readarr container.*
+- Copy the [example `.env` file](./.env.example) to `.env`
+- Check the [`overlays/` directory](./overlays/) to determine which additional service layer(s) you want to use
+  - For service you're going to run alongside Calibre, make sure to review the service's variables in `.env` and change any to your liking
 
 ## Usage
 
+Run the stack with:
+
+```shell
+docker compose up -d
+```
+
+If you are using any of the [overlays](./overlays/), add them with `-f overlays/<overlay-name>.yml`:
+
+```shell
+docker compose -f compose.yml \
+  -f overlays/calibre-web.yml \  # Run Calibre web with Calibre
+  -f overlays/sftpgo.yml \       # Run SFTPGo with Calibre
+  up -d
+```
+
 ### Plugins
 
-You can install most plugins through the built-in plugin manager. Some plugins need to be downloaded as a `.zip` file and copied into `docker_calibre/calibre/plugins`.
+You can install most plugins through the built-in plugin manager. Some plugins need to be downloaded as a `.zip` file and copied into `./calibre/plugins`. You can also do this with the [SFTPGo layer](./overlays/sftpgo.yml).
 
 Useful plugins list:
 
