@@ -1,0 +1,30 @@
+---
+services:
+  docker-volume-backup:
+    image: offen/docker-volume-backup:latest
+    container_name: docker-volume-backup
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      BACKUP_CRON_EXPRESSION: ${DVB_BACKUP_CRON_EXPRESSION:-0 3 * * *}
+    volumes:
+      - ${CALIBRE_CONFIG_DIR:-./calibre/config}:/backup/calibre/config:ro
+      - ${CALIBRE_UPLOADS_DIR:-./calibre/uploads}:/backup/calibre/uploads:ro
+      - ${CALIBRE_PLUGINS_DIR:-./calibre/plugins}:/backup/calibre/plugins:ro
+      - ${CALIBRE_BOOKS_DIR:-./calibre/CalibreLibrary}:/backup/calibre/CalibreLibrary:ro
+
+      - ${DVB_BACKUP_ARCHIVE_DIR:-./backups}:/archive
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  ## Add docker volume tags to other containers
+  calibre:
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+  calibre_web:
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+  sftpgo:
+    labels:
+      - docker-volume-backup.stop-during-backup
