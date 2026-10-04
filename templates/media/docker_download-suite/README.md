@@ -16,6 +16,7 @@
 
 - Bazarr: For subtitle downloads
 - Jackett: For torrent indexers
+- Prowlarr: For torrent indexers (newer than Jackett)
 - LazyLibrarian: eBook downloads (essentially deprecated in this stack, I don't use it)
 - Readarr: eBook downloads (project has been broken for years at this point, use Chaptarr instead)
 - Chaptarr: eBook downloads
