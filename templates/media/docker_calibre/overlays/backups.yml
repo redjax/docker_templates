@@ -6,7 +6,10 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ:-Etc/UTC}
-      BACKUP_CRON_EXPRESSION: ${DVB_BACKUP_CRON_EXPRESSION:-0 3 * * *}
+      BACKUP_CRON_EXPRESSION: ${DVB_BACKUP_CRON_EXPRESSION:-@weekly}
+      BACKUP_RETENTION_DAYS: ${DVB_BACKUP_RETENTION_DAYS}
+      BACKUP_FILENAME: ${DVB_BACKUP_FILENAME_FORMAT:-calibre-library.backup-%Y%m%d%H%M%S.tar.gz}
+      BACKUP_PRUNING_PREFIX: ${DVB_BACKUP_PRUNING_PREFIX:-calibre-library.backup-}
     volumes:
       - ${CALIBRE_CONFIG_DIR:-./calibre/config}:/backup/calibre/config:ro
       - ${CALIBRE_UPLOADS_DIR:-./calibre/uploads}:/backup/calibre/uploads:ro
