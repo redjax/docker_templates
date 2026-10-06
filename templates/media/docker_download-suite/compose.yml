@@ -19,7 +19,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ:-America/New_York}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ${JACKETT_CONFIG_DIR:-./apps/jackett/config}:/config
       - ${JACKETT_PICONS_DIR:-./apps/jackett/picons}:/picons
@@ -45,7 +45,7 @@ services:
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
-      - TZ=${TZ:-America/New_York}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ${RADARR_CONFIG_DIR:-./apps/radarr/config}:/config
       - ${BOOKS_DOWNLOAD_DIR:-./apps/radarr/downloads}:/downloads

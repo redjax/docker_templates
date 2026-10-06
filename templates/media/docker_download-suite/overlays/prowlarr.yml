@@ -1,0 +1,12 @@
+---
+services:
+  prowlarr:
+    image: ${PROWLARR_IMAGE:-lscr.io/linuxserver/prowlarr:latest}
+    container_name: ${PROWLARR_NAME:-prowlarr}
+    restart: ${PROWLARR_RESTART:-unless-stopped}
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+    volumes:
+      - ${PROWLARR_CONFIG_DIR:-./apps/prowlarr/config}:/config

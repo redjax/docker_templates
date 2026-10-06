@@ -24,6 +24,7 @@ services:
       OPENVPN_CUSTOM_CONFIG: ${GLUETUN_OPENVPN_CONFIG}
       TZ: ${TZ:-Etc/UTC}
       FIREWALL_OUTBOUND_SUBNETS: "${FIREWALL_OUTBOUND_SUBNETS}"
+      DNS_ADDRESS: ${GLUETUN_DNS_ADDRESS:-1.1.1.1}
     volumes:
       - ${GLUETUN_OPENVPN_DIR:-./apps/gluetun/openvpn}:/gluetun:ro
     # networks:

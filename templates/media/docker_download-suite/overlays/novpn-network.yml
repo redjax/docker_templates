@@ -22,3 +22,9 @@ services:
   chaptarr:
     ports:
       - ${CHAPTARR_HTTP_PORT:-8789}:8789
+  lazylibrarian:
+    ports:
+      - ${LAZY_LIB_PORT:-5299}:5299
+  prowlarr:
+    ports:
+      - ${PROWLARR_PORT:-9696}:9696
