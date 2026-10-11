@@ -1,6 +1,8 @@
 adguardhome/
 unbound/*
 unbound/config.d/*
+cert/*
+certs/*
 
 !unbound/
 !unbound/config.d/
@@ -8,4 +10,3 @@ unbound/config.d/*
 !unbound/config.d/config.conf
 !unbound/config.d/*example*
 !unbound/*example*
-

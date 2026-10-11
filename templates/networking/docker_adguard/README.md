@@ -9,6 +9,7 @@ Adblocking & DNS server.
 - [Setup](#setup)
   - [Adguard Home](#adguard-home)
   - [Adguard + Unbound](#adguard--unbound)
+  - [AdGuard Encryption](#adguard-encryption)
 - [Troubleshooting](#troubleshooting)
   - [Fix 'failed to bind port 0.0.0.0:53/tcp'](#fix-failed-to-bind-port-000053tcp)
   - [Use AdGuard Home for DNS on the host running the container](#use-adguard-home-for-dns-on-the-host-running-the-container)
@@ -40,6 +41,33 @@ This will handle creating an internal network for AdGuard Home, Unbound DNS, and
 
 [!NOTE]
 > If your unbound server is on another machine, use that machine's IP address instead.
+
+### AdGuard Encryption
+
+AdGuard supports DNS encryption, i.e. HTTPS/QUIC/TLS, for both DNS and the admin webUI. Navigate to Settings > Encryption to enable it.
+
+When enabling encryption, you must provide a `.crt` and `.key` file and expose additional ports. Generate a certificate using the [`generate-encryption-secrets.sh` script](./scripts/generate-encryption-secrets.sh), or with:
+
+```shell
+openssl req \
+  -x509 \
+  -nodes \
+  -newkey rsa:2048 \
+  -days 3650 \
+  -keyout "/path/to/keyfile.key" \
+  -out "/path/to/certfile.crt" \
+  -subj "/CN=example.com" \
+  -addext "subjectAltName=DNS:example.com"
+
+chmod 600 "/path/to/certfile.crt"
+chmod 644 "/path/to/keyfile.key"
+```
+
+Edit the [`.env` file](./.env.example) and set the paths to your `.crt` and `.key` file in `ADGUARD_CERT_FILE` and `ADGUARD_CERT_KEY`. Run the container with the [`encryption.yml` overlay](./overlays/encryption.yml) to mount the certificate and key and expose the required ports:
+
+```shell
+docker compose -f compose.yml -f overlays/encryption.yml up -d
+```
 
 ## Troubleshooting
 

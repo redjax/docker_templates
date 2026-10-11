@@ -1,0 +1,25 @@
+---
+####################################################################
+# Gluetun - Wireguard                                              #
+#                                                                  #
+# Check overlays/example.gluetun-networks.yml before running this. #
+####################################################################
+
+services:
+  gluetun:
+    image: qmcgaw/gluetun:${GLUETUN_IMG_TAG:-latest}
+    container_name: ${GLUETUN_NAME:-gluetun}
+    restart: ${GLUETUN_RESTART:-unless-stopped}
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      VPN_SERVICE_PROVIDER: custom
+      VPN_TYPE: wireguard
+      WIREGUARD_PRIVATE_KEY: ${GLUETUN_WIREGUARD_PRIVATE_KEY}
+      WIREGUARD_ADDRESSES: ${GLUETUN_WIREGUARD_ADDRESSES}
+      TZ: ${TZ:-Etc/UTC}
+      FIREWALL_OUTBOUND_SUBNETS: "${FIREWALL_OUTBOUND_SUBNETS}"
+    # networks:
+    #   - media-net
