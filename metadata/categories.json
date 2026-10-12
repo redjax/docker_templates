@@ -62,7 +62,7 @@
         ]
     },
     {
-        "count": 17,
+        "count": 18,
         "name": "monitoring_alerting",
         "path": "templates/monitoring_alerting",
         "sub_categories": [
@@ -111,6 +111,10 @@
             {
                 "name": "docker_happydomain",
                 "path": "templates/monitoring_alerting/docker_happydomain"
+            },
+            {
+                "name": "docker_uptime_cairn",
+                "path": "templates/monitoring_alerting/docker_uptime_cairn"
             },
             {
                 "name": "docker_domainlocker",
@@ -808,6 +812,18 @@
             {
                 "name": "docker_immich",
                 "path": "templates/media/docker_immich"
+            }
+        ]
+    },
+    {
+        "count": 2,
+        "name": "identity",
+        "path": "templates/identity",
+        "sub_categories": [],
+        "templates": [
+            {
+                "name": "docker_authentik",
+                "path": "templates/identity/docker_authentik"
             }
         ]
     },
