@@ -49,6 +49,14 @@ Useful plugins list:
 - Favorites Menu *[MobileRead.com](https://www.mobileread.com/forums/showthread.php?t=183022)*
   - Customize a menu of favorite buttons
 
+### Calibre Content Server
+
+Calibre can start a web server to serve your library over the network. You can manage and read books in the Calibre collection from a webUI this way. You must enable the content server inside Calibre and bind the port on your host.
+
+By default, Calibre's content server runs on port `:8080`, but this container overrides that to `:8082`. In the Calibre UI, navigate to "Preferences > Sharing over the net," set the port you want to run the content server on (`8082`), optionally require a username & password, then start the server. In your `.env` file, set `CALIBRE_SERVER_PORT` to whatever port you want to access the server from on your host; you can leave it at `8082`, or set a different port. The port inside the Calibre webUI should remain `8082`.
+
+Then you can access your library at `http://your-ip-or-hostname:8082` (or whatever port you used).
+
 ## Notes
 
 - Calibre-web default login:
