@@ -5,7 +5,7 @@ volumes:
 services:
 
   postgres:
-    image: postgres:${POSTGRES_IMAGE_TAG:-bullseye}
+    image: postgres:${POSTGRES_IMAGE_TAG:-18-bullseye}
     container_name: ${POSTGRES_CONTAINER_NAME:-postgres}
     restart: unless-stopped
     environment:
@@ -26,8 +26,9 @@ services:
       - ${POSTGRES_SCRIPTS_DIR:-./pgsql_scripts}:/scripts
       # Uncomment line below to restore a database backup.
       # - ${POSTGRES_DB_BACKUP}:/path/here
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
       timeout: 5s
       retries: 10
