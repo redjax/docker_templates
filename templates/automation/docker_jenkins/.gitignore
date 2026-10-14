@@ -1,0 +1,10 @@
+config/*
+config/**/*
+
+!config/
+!examples/
+!config/init.groovy.d/
+!config/init.groovy.d/00-basic-security.groovy
+!.gitkeep
+!example*.*
+!*.*example*
