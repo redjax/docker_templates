@@ -1,0 +1,18 @@
+---
+name: garage
+
+services:
+  webui:
+    image: khairul169/garage-webui:${GARAGE_WEBUI_IMG_TAG:-latest}
+    container_name: garage-webui
+    restart: unless-stopped
+    volumes:
+      - ${GARAGE_CONFIG_FILE:-./config/garage/garage.toml}:/etc/garage.toml:ro
+    environment:
+      API_BASE_URL: http://garage:3903
+      S3_ENDPOINT_URL: http://garage:3900
+      API_ADMIN_KEY: ${GARAGE_ADMIN_UI_TOKEN}
+    ports:
+      - ${GARAGE_WEBUI_PORT:-3909}:3909
+    depends_on:
+      - garage
