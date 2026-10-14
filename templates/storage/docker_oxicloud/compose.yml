@@ -1,0 +1,70 @@
+---
+name: oxicloud
+
+services:
+  postgres:
+    image: postgres:${POSTGRES_IMG_TAG:-18.2-alpine3.23}
+    container_name: oxicloud-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-oxicloud}
+      POSTGRES_USER: ${POSTGRES_USER:-oxicloud}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - ${POSTGRES_DATA_DIR:-./data/postgres}:/var/lib/postgresql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  oxicloud:
+    image: diocrafts/oxicloud:${OXICLOUD_IMG_TAG:-0.8.9}
+    container_name: oxicloud
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      OXICLOUD_DB_CONNECTION_STRING: >-
+        postgres://${POSTGRES_USER:-oxicloud}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-oxicloud}
+
+      OXICLOUD_SERVER_HOST: 0.0.0.0
+      OXICLOUD_SERVER_PORT: 8086
+      OXICLOUD_BASE_URL: ${OXICLOUD_BASE_URL:-http://localhost:8086}
+      OXICLOUD_COOKIE_SECURE: ${OXICLOUD_COOKIE_SECURE:-false}
+
+      OXICLOUD_STORAGE_ENTRIES: default
+      OXICLOUD_STORAGE_default_BACKEND: local
+      OXICLOUD_STORAGE_default_ROOT_DIR: /app/storage
+      OXICLOUD_STORAGE_default_ENCRYPTION_KEY: >-
+        ${OXICLOUD_STORAGE_ENCRYPTION_KEY:?Set OXICLOUD_STORAGE_ENCRYPTION_KEY in .env}
+
+      OXICLOUD_SMTP_HOST: ${OXICLOUD_SMTP_HOST:-}
+      OXICLOUD_SMTP_PORT: ${OXICLOUD_SMTP_PORT:-587}
+      OXICLOUD_SMTP_USER: ${OXICLOUD_SMTP_USER:-}
+      OXICLOUD_SMTP_PASS: ${OXICLOUD_SMTP_PASS:-}
+      OXICLOUD_SMTP_FROM: ${OXICLOUD_SMTP_FROM:-}
+      OXICLOUD_SMTP_TLS: ${OXICLOUD_SMTP_TLS:-starttls}
+
+      OXICLOUD_ENABLE_PLUGINS: ${OXICLOUD_ENABLE_PLUGINS:-false}
+      OXICLOUD_PLUGINS_DIR: /app/storage/.plugins
+      OXICLOUD_PLUGIN_LOG_DIR: /app/storage/.plugin-logs
+      OXICLOUD_PLUGIN_TIMEOUT_MS: ${OXICLOUD_PLUGIN_TIMEOUT_MS:-250}
+      OXICLOUD_PLUGIN_MAX_MEMORY_PAGES: ${OXICLOUD_PLUGIN_MAX_MEMORY_PAGES:-256}
+      OXICLOUD_PLUGIN_MAX_INPUT_BYTES: ${OXICLOUD_PLUGIN_MAX_INPUT_BYTES:-262144}
+      OXICLOUD_PLUGIN_MAX_CONCURRENT_INVOCATIONS: ${OXICLOUD_PLUGIN_MAX_CONCURRENT_INVOCATIONS:-4}
+      OXICLOUD_PLUGIN_CACHE_IDLE_TTL_SECS: ${OXICLOUD_PLUGIN_CACHE_IDLE_TTL_SECS:-300}
+      OXICLOUD_PLUGIN_LOG_MAX_FILE_BYTES: ${OXICLOUD_PLUGIN_LOG_MAX_FILE_BYTES:-5242880}
+      OXICLOUD_PLUGIN_LOG_MAX_SEGMENTS: ${OXICLOUD_PLUGIN_LOG_MAX_SEGMENTS:-10}
+      OXICLOUD_PLUGIN_LOG_RETENTION_DAYS: ${OXICLOUD_PLUGIN_LOG_RETENTION_DAYS:-30}
+      OXICLOUD_PLUGIN_LOG_TOTAL_MAX_BYTES: ${OXICLOUD_PLUGIN_LOG_TOTAL_MAX_BYTES:-268435456}
+      OXICLOUD_PLUGIN_LOG_QUEUE_CAPACITY: ${OXICLOUD_PLUGIN_LOG_QUEUE_CAPACITY:-1024}
+
+    volumes:
+      - ${OXICLOUD_DATA_DIR:-./data/storage}:/app/storage
+    ports:
+      - "${OXICLOUD_BIND_ADDRESS:-0.0.0.0}:${OXICLOUD_PORT:-8086}:8086"
