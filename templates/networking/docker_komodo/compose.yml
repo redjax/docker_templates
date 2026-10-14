@@ -1,10 +1,38 @@
 ---
-# networks:
-#   unnamed_net: {}
+name: komodo
 
-# volumes:
-#   volume_name: {}
+volumes:
+  keys: {}
+  backups: {}
+  etc_komodo: {}
 
 services:
 
-  ...
+  core:
+    image: ghcr.io/moghtech/komodo-core:${KOMODO_IMG_TAG:-2}
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${KOMODO_HTTP_PORT:-9120}:9120"
+    env_file:
+      - ${KOMODO_ENV_FILE:-./.env}
+    environment:
+      KOMODO_DATABASE_ADDRESS: ${KOMODO_DATABASE_ADDRESS:-mongo:27017}
+      KOMODO_DATABASE_USERNAME: ${KOMODO_DATABASE_USERNAME:-komodo}
+      KOMODO_DATABASE_PASSWORD: ${KOMODO_DATABASE_PASSWORD:-komodo}
+    volumes:
+      - ${KOMODO_KEYS_DIR:-keys}:/config/keys
+      - ${KOMODO_BACKUPS_PATH:-backups}:/backups
+
+  periphery:
+    image: ghcr.io/moghtech/komodo-periphery:${KOMODO_IMG_TAG:-2}
+    init: true
+    restart: unless-stopped
+    env_file:
+      - ${KOMODO_ENV_FILE:-./.env}
+    volumes:
+      - ${KOMODO_KEYS_DIR:-keys}:/config/keys
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/proc
+      - ${KOMODO_PERIPHERY_ROOT_DIRECTORY:-etc_komodo}:/etc/komodo
+
