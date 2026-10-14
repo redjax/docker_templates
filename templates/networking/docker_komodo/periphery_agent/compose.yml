@@ -1,0 +1,22 @@
+---
+name: komodo-periphery
+
+volumes:
+  periphery-data: {}
+
+services:
+  periphery:
+    image: ghcr.io/moghtech/komodo-periphery:${PERIPHERY_IMG_TAG:-2}
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${PERIPHERY_PORT:-8120}:8120"
+    environment:
+      PERIPHERY_ROOT_DIRECTORY: /etc/komodo
+      PERIPHERY_PASSKEYS: ${PERIPHERY_PASSKEYS:-}
+      PERIPHERY_SSL_ENABLED: "${PERIPHERY_ENABLE_SSL:-false}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/proc
+      - ${PERIFERY_DATA_DIR:-periphery-data}:/etc/komodo
+
