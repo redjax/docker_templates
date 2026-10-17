@@ -17,6 +17,24 @@ You can open the Arcane dashboard by navigating to `http(s)://your-ip-or-hostnam
 | -------- | -------------- |
 | `arcane` | `arcane-admin` |
 
+## Authentik OIDC Auth
+
+You can use Authentik to provide authentication to Arcane. In the Authentik admin panel, create a new provider named "Arcane" with the default authorization flow. Choose "Confidential" for the client type, and copy the client ID and secret. Save these in a password manager somewhere, you'll need them to set up the authentication redirect in Arcane.
+
+Paste your Arcane's redirect URI. You can find this in the Arcane webUI by going to Settings > Authentication, toggling OIDC Authentication on, and clicking "Show configuration" beneath the toggle, then scrolling all the way to the bottom of the page and copying the "Redirect URI Configuration."
+
+In Arcane's webUI, navigate to Settings > Authentication and toggle "OIDC Authentication" on. Click the "Show configuration" dropdown beneath the toggle. Paste the client ID and secret from Authentik in the form fields.
+
+To find your Issuer URL value, run the following command, replacing `$AUTHENTIK_URL` with your own domain:
+
+```shell
+curl -fsS \
+  https://$AUTHENTIK_URL/application/o/arcane/.well-known/openid-configuration \
+  | jq '{issuer, authorization_endpoint, token_endpoint, jwks_uri}'
+```
+
+Paste the `authorization_endpoint` value from the cURL command above into "Issuer URL." Scroll back up to the top of the page and hit the Save button, then log out. You should now see "Authentik" as an option under "Or continue with."
+
 ## Troubleshooting
 
 ### Reset admin password
