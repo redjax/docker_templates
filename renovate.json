@@ -1,0 +1,54 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "github>redjax/PipelineTemplates//config/renovate/default"
+    ],
+    "timezone": "America/New_York",
+    "dependencyDashboard": true,
+    "dependencyDashboardApproval": true,
+    "prConcurrentLimit": 3,
+    "prHourlyLimit": 2,
+    "enabledManagers": [
+        "docker-compose",
+        "dockerfile",
+        "github-actions",
+        "pep621",
+        "pip_requirements",
+        "gomod",
+        "mise",
+        "custom.regex"
+    ],
+    "lockFileMaintenance": {
+        "enabled": false
+    },
+    "packageRules": [
+        {
+            "description": "Override inherited automerge and broad grouping during initial adoption",
+            "matchPackageNames": [
+                "/.*/"
+            ],
+            "automerge": false,
+            "groupName": null
+        },
+        {
+            "description": "Discover Docker dependencies without adding digest pins everywhere yet",
+            "matchDatasources": [
+                "docker"
+            ],
+            "pinDigests": false
+        }
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "description": "Update annotated version variables in GitHub Actions workflows",
+            "managerFilePatterns": [
+                "/^\\.github/workflows/.*\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[ \\t]*\\r?\\n[ \\t]*[A-Z_]+_VERSION:[ \\t]*\"(?<currentValue>[^\"]+)\""
+            ],
+            "extractVersionTemplate": "^v?(?<version>.+)$"
+        }
+    ]
+}
