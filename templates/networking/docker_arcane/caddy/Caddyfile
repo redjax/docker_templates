@@ -1,10 +1,9 @@
 {
-	debug
 	https_port {$CADDY_HTTPS_PORT}
-	default_sni {$CADDY_HOST}
+	default_sni {$CADDY_DEFAULT_SNI}
 }
 
-https://{$CADDY_HOST}:{$CADDY_HTTPS_PORT} {
+{$CADDY_SITE_ADDRESSES} {
 	tls {
 		issuer {$CADDY_TLS_ISSUER}
 	}

@@ -10,7 +10,8 @@ services:
     depends_on:
       - arcane
     environment:
-      CADDY_HOST: "${CADDY_HOST:?Set CADDY_HOST in .env}"
+      CADDY_DEFAULT_SNI: "${CADDY_DEFAULT_SNI:?Set CADDY_DEFAULT_SNI in .env}"
+      CADDY_SITE_ADDRESSES: "${CADDY_SITE_ADDRESSES:?Set CADDY_SITE_ADDRESSES in .env}"
       CADDY_HTTPS_PORT: "${CADDY_HTTPS_PORT:-443}"
       CADDY_TLS_ISSUER: "${CADDY_TLS_ISSUER:-internal}"
     ports:
