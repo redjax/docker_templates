@@ -10,6 +10,8 @@ OUTPUT_DIR="${REPO_ROOT}/output/lint-results"
 
 mkdir -p "${OUTPUT_DIR}"
 
+VERBOSE=false
+
 ## Each script can pass its own values to show a help menu
 show_help() {
   local script_name="${1}"
@@ -26,6 +28,7 @@ Usage:
 
 Options:
   -h, --help           Show this help message and exit.
+  -v, --verbose        Show underlying commands and successful tool output.
       --changed REF    Only process files changed between REF and HEAD.
 
 Arguments:
@@ -44,6 +47,23 @@ require_help_or_target() {
   fi
 
   return 1
+}
+
+## Removes -v/--verbose from script arguments and sets VERBOSE when present.
+parse_verbose_flag() {
+  VERBOSE=false
+  script_args=()
+
+  for arg in "$@"; do
+    case "${arg}" in
+    -v | --verbose)
+      VERBOSE=true
+      ;;
+    *)
+      script_args+=("${arg}")
+      ;;
+    esac
+  done
 }
 
 resolve_targets() {
