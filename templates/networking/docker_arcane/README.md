@@ -33,7 +33,7 @@ curl -fsS \
   | jq '{issuer, authorization_endpoint, token_endpoint, jwks_uri}'
 ```
 
-Paste the `authorization_endpoint` value from the cURL command above into "Issuer URL." Scroll back up to the top of the page and hit the Save button, then log out. You should now see "Authentik" as an option under "Or continue with."
+Paste the `issuer` value from the cURL command above into "Issuer URL." Scroll back up to the top of the page and hit the Save button, then log out. You should now see "Authentik" as an option under "Or continue with."
 
 ## Troubleshooting
 
