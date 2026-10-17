@@ -22,6 +22,7 @@ services:
       PUID: "${ARCANE_PUID:-1000}"
       PGID: "${ARCANE_PGID:-1000}"
       PROJECTS_DIRECTORY: "${ARCANE_PROJECTS_DIRECTORY:-/opt/docker}"
+      ALLOW_CLI_PASSWORD_RESET: ${ARCANE_ALLOW_CLI_PASSWORD_RESET:-false}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${ARCANE_DATA_DIR:-arcane-data}:/app/data
@@ -32,4 +33,3 @@ services:
       timeout: 3s
       retries: 5
       start_period: 15s
-
