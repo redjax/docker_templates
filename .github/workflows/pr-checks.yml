@@ -1,0 +1,31 @@
+---
+name: PR checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "templates/**"
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and validate
+    uses: ./.github/workflows/lint-validate.yml
+    with:
+      lint_yaml: true
+      lint_compose: true
+      lint_dockerfiles: true
+      verbose: false

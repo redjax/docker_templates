@@ -1,0 +1,12 @@
+## All ShellCheck rules:
+#  https://www.shellcheck.net/wiki/
+
+
+## Allow ShellCheck to follow sourced files.
+external-sources=true
+
+## Resolve sourced files relative to the script being checked.
+source-path=SCRIPTDIR
+
+## Also resolve repository-relative source paths.
+source-path=.
