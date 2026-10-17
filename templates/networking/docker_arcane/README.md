@@ -25,7 +25,7 @@ Paste your Arcane's redirect URI. You can find this in the Arcane webUI by going
 
 In Arcane's webUI, navigate to Settings > Authentication and toggle "OIDC Authentication" on. Click the "Show configuration" dropdown beneath the toggle. Paste the client ID and secret from Authentik in the form fields.
 
-To find your Issuer URL value, run the following command, replacing `$AUTHENTIK_URL` with your own domain:
+You can find the "Issuer URL" value in Authentik; after saving the provider, click it to open its configuration and note the "OpenID Configuration Issuer" value. You can also get this value by running the following command, replacing `$AUTHENTIK_URL` with your own domain:
 
 ```shell
 curl -fsS \
