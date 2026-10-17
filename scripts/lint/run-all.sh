@@ -35,7 +35,8 @@ Arguments:
 Environment:
   LINT_YAML            Run yamllint: true or false. Default: true.
   LINT_COMPOSE         Run Compose validation: true or false. Default: true.
-  LINT_DOCKERFILES      Run hadolint: true or false. Default: true.
+  LINT_DOCKERFILES     Run hadolint: true or false. Default: true.
+  LINT_BASH            Run ShellCheck: true or false. Default: true.
 
 Examples:
 ${EXAMPLES}
@@ -46,6 +47,7 @@ fi
 LINT_YAML="${LINT_YAML:-true}"
 LINT_COMPOSE="${LINT_COMPOSE:-true}"
 LINT_DOCKERFILES="${LINT_DOCKERFILES:-true}"
+LINT_BASH="${LINT_BASH:-true}"
 
 for variable in LINT_YAML LINT_COMPOSE LINT_DOCKERFILES; do
   case "${!variable}" in
@@ -70,6 +72,10 @@ fi
 
 if [[ "${LINT_DOCKERFILES}" == true ]]; then
   scripts+=("${SCRIPT_DIR}/lint-dockerfiles.sh")
+fi
+
+if [[ "${LINT_BASH}" == true ]]; then
+  scripts+=("${SCRIPT_DIR}/lint-bash.sh")
 fi
 
 if ((${#scripts[@]} == 0)); then
