@@ -1,0 +1,12 @@
+{
+	https_port {$CADDY_HTTPS_PORT}
+	default_sni {$CADDY_DEFAULT_SNI}
+}
+
+{$CADDY_SITE_ADDRESSES} {
+	tls {
+		issuer {$CADDY_TLS_ISSUER}
+	}
+
+	reverse_proxy arcane:3552
+}

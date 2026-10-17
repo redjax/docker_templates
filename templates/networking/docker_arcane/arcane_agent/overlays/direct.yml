@@ -1,0 +1,17 @@
+---
+####################################################
+# Arcane agent direct networking layer             #
+#                                                  #
+# Use when the server can reach an agent directly, #
+# i.e. on a LAN or VPN.                            #
+#                                                  #
+# The server sends traffic to the agent port for   #
+# control operations.                              #
+####################################################
+
+services:
+  arcane-agent:
+    ports:
+      - "${ARCANE_AGENT_PORT:-3553}:3553"
+    environment:
+      AGENT_MODE: "true"
