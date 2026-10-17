@@ -19,3 +19,16 @@ When running the stack locally and accessing it by IP address or local hostname,
 
 `KOMODO_DEFAULT_SNI` should be the IP address or hostname you use to access the site. This is the server the SSL certificate will have. For example, `KOMODO_DEFAULT_SNI=192.168.1.50` or `KOMODO_DEFAULT_SNI=komodo.example.com`.
 
+### Authentik OIDC Auth
+
+Komodo supports OIDC loging with Authentik natively. In Authentik, create a new OAuth2/OpenID provider named "Komodo." Use "Confidential" for the client type, and save the Client ID/Secret in a password manager. Set the "Redirect URI" to your `KOMODO_HOST` value, followed by `/auth/oidc/callback`. Add the following values to your `.env`:
+
+```plaintext
+# Exact URL you use to access Komodo, including any nonstandard port.
+KOMODO_HOST=https://YOUR_KOMODO_ADDRESS:PORT
+
+KOMODO_OIDC_ENABLED=true
+KOMODO_OIDC_PROVIDER=https://auth.example.com/application/o/komodo/
+KOMODO_OIDC_CLIENT_ID=YOUR_AUTHENTIK_CLIENT_ID
+KOMODO_OIDC_CLIENT_SECRET=YOUR_AUTHENTIK_CLIENT_SECRET
+```
