@@ -6,7 +6,6 @@ volumes:
   backups: {}
 
 services:
-
   core:
     image: ghcr.io/moghtech/komodo-core:${KOMODO_IMG_TAG:-2}
     init: true
@@ -19,6 +18,11 @@ services:
       KOMODO_DATABASE_ADDRESS: ${KOMODO_DATABASE_ADDRESS:-mongo:27017}
       KOMODO_DATABASE_USERNAME: ${KOMODO_DATABASE_USERNAME:-komodo}
       KOMODO_DATABASE_PASSWORD: ${KOMODO_DATABASE_PASSWORD:-komodo}
+
+      KOMODO_OIDC_ENABLED: ${KOMODO_OIDC_ENABLED:-false}
+      KOMODO_OIDC_PROVIDER: ${KOMODO_OIDC_PROVIDER:-}
+      KOMODO_OIDC_CLIENT_ID: ${KOMODO_OIDC_CLIENT_ID:-}
+      KOMODO_OIDC_CLIENT_SECRET: ${KOMODO_OIDC_CLIENT_SECRET:-}
     volumes:
       - ${KOMODO_KEYS_DIR:-keys}:/config/keys
       - ${KOMODO_BACKUPS_PATH:-backups}:/backups
@@ -34,4 +38,3 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc:/proc
       - ${KOMODO_PERIPHERY_ROOT_DIRECTORY:-/etc/komodo}:${KOMODO_PERIPHERY_ROOT_DIRECTORY:-/etc/komodo}
-
