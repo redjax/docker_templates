@@ -7,6 +7,8 @@ SCRIPT_NAME="./scripts/lint/run-all.sh"
 DESCRIPTION="Run all local Docker Compose template linting and validation checks."
 EXAMPLES="  ${SCRIPT_NAME}
   ${SCRIPT_NAME} --changed origin/main
+  ${SCRIPT_NAME} --verbose
+  ${SCRIPT_NAME} --changed origin/main --verbose
   ${SCRIPT_NAME} --help"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
@@ -20,6 +22,7 @@ Usage:
 
 Options:
   -h, --help           Show this help message and exit.
+  -v, --verbose        Pass --verbose to every underlying check.
       --changed REF    Pass --changed REF to every underlying check.
 
 Examples:
@@ -37,7 +40,7 @@ declare -a scripts=(
 failed=0
 
 for script in "${scripts[@]}"; do
-  printf '\n===== %s =====\n' "$(basename "$script")"
+  printf '\n[ %s ]\n' "$(basename "$script")"
 
   if ! "$script" "$@"; then
     failed=1

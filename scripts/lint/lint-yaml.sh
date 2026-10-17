@@ -15,6 +15,7 @@ EXAMPLES="  ${SCRIPT_NAME}
   ${SCRIPT_NAME} templates/media
   ${SCRIPT_NAME} templates/media/docker_jellyfin/compose.yml
   ${SCRIPT_NAME} --changed origin/main
+  ${SCRIPT_NAME} --verbose
   ${SCRIPT_NAME} --help"
 
 if require_help_or_target "$@"; then
@@ -22,29 +23,79 @@ if require_help_or_target "$@"; then
   exit 0
 fi
 
+declare -a script_args=()
+parse_verbose_flag "$@"
+
 PATTERN='^.*/templates/.*\.ya?ml$'
 
-mapfile -t files < <(resolve_targets "${PATTERN}" "$@")
+mapfile -t files < <(resolve_targets "${PATTERN}" "${script_args[@]}")
 
 if ((${#files[@]} == 0)); then
   echo "No YAML files found."
   exit 0
 fi
 
-failures=0
 results_file="${OUTPUT_DIR}/yamllint.txt"
-: >"${results_file}"
+detailed_results_file="${OUTPUT_DIR}/yamllint-detailed.txt"
+yamllint_output="$(mktemp)"
 
+: >"${results_file}"
+: >"${detailed_results_file}"
+
+## Run yamllint once for all files. This avoids hundreds of Python and
+#  yamllint process startups.
+set +e
+run_tool yamllint yamllint -c "${REPO_ROOT}/.yamllint" "${files[@]}" \
+  >"${yamllint_output}" 2>&1
+yamllint_status=$?
+set -e
+
+## yamllint prints each failing file as an unindented path, followed by
+#  indented findings. Extract the failing file paths from that output.
+mapfile -t failed_files < <(
+  awk '/^[^[:space:]]/ { print }' "${yamllint_output}"
+)
+
+## Build a fast lookup set of failed files.
+declare -A failed_file_set=()
+
+for failed_file in "${failed_files[@]}"; do
+  failed_file_set["${failed_file}"]=1
+done
+
+## Write one compact result per checked file.
 for file in "${files[@]}"; do
   relative="${file#"${REPO_ROOT}/"}"
 
-  if yamllint -c "${REPO_ROOT}/.yamllint" "$file" >"${results_file}" 2>&1; then
-    printf 'PASS %s\n' "${relative}"
+  if [[ -n "${failed_file_set[${file}]:-}" ]]; then
+    printf 'FAIL %s\n' "${relative}" >>"${results_file}"
+    printf '\n==> %s\n' "${relative}" >>"${detailed_results_file}"
+
+    if [[ "${VERBOSE}" == true ]]; then
+      printf 'FAIL %s\n' "${relative}"
+    fi
   else
-    printf 'FAIL %s\n' "${relative}"
-    sed 's/^/  /' "${results_file}"
-    ((failures += 1))
+    printf 'PASS %s\n' "${relative}" >>"${results_file}"
+
+    if [[ "${VERBOSE}" == true ]]; then
+      printf 'PASS %s\n' "${relative}"
+    fi
   fi
 done
 
-print_summary "yamllint" "${#files[@]}" "${failures}"
+## Preserve the complete yamllint output for failed files.
+cat "${yamllint_output}" >>"${detailed_results_file}"
+
+if [[ "${VERBOSE}" == true ]]; then
+  cat "${yamllint_output}"
+fi
+
+rm -f "${yamllint_output}"
+
+failures="${#failed_files[@]}"
+
+(
+  print_summary "yamllint" "${#files[@]}" "${failures}"
+) || true
+
+exit "${yamllint_status}"

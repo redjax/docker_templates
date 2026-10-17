@@ -15,6 +15,7 @@ EXAMPLES="  ${SCRIPT_NAME}
   ${SCRIPT_NAME} templates/media
   ${SCRIPT_NAME} templates/media/docker_jellyfin/Dockerfile
   ${SCRIPT_NAME} --changed origin/main
+  ${SCRIPT_NAME} --verbose
   ${SCRIPT_NAME} --help"
 
 if require_help_or_target "$@"; then
@@ -22,9 +23,11 @@ if require_help_or_target "$@"; then
   exit 0
 fi
 
+mapfile -d '' -t script_args < <(parse_verbose_flag "$@")
+
 PATTERN='^.*/templates/.*Dockerfile[^/]*$'
 
-mapfile -t files < <(resolve_targets "${PATTERN}" "$@")
+mapfile -t files < <(resolve_targets "${PATTERN}" "${script_args[@]}")
 
 if ((${#files[@]} == 0)); then
   echo "No Dockerfiles found."
@@ -38,8 +41,12 @@ results_file="${OUTPUT_DIR}/hadolint.txt"
 for file in "${files[@]}"; do
   relative="${file#"${REPO_ROOT}/"}"
 
-  if hadolint "$file" >"${results_file}" 2>&1; then
+  if run_tool hadolint hadolint --no-color "$file" >"${results_file}" 2>&1; then
     printf 'PASS %s\n' "${relative}"
+
+    if [[ "${VERBOSE}" == true ]]; then
+      cat "${results_file}"
+    fi
   else
     printf 'FAIL %s\n' "${relative}"
     cat "${results_file}" >&2
