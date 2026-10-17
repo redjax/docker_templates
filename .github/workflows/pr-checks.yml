@@ -2,11 +2,6 @@
 name: PR checks
 
 on:
-  ## Temporary push trigger. Uncomment and set branch to test
-  # push:
-  #   branches:
-  #     - feat/linters-validators
-
   pull_request:
     branches:
       - main
