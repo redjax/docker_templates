@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib/common.sh"
 
-SCRIPT_NAME="./scripts/lint/lint_dockerfiles.sh"
+SCRIPT_NAME="./scripts/lint/lint-dockerfiles.sh"
 DESCRIPTION="Lint Dockerfiles in Docker Compose template directories using hadolint."
 EXAMPLES="  ${SCRIPT_NAME}
   ${SCRIPT_NAME} templates/media
@@ -23,7 +23,8 @@ if require_help_or_target "$@"; then
   exit 0
 fi
 
-mapfile -d '' -t script_args < <(parse_verbose_flag "$@")
+declare -a script_args=()
+parse_verbose_flag "$@"
 
 PATTERN='^.*/templates/.*Dockerfile[^/]*$'
 
@@ -36,22 +37,37 @@ fi
 
 failures=0
 results_file="${OUTPUT_DIR}/hadolint.txt"
+output_file="$(mktemp)"
+
+trap 'rm -f "${output_file}"' EXIT
+
 : >"${results_file}"
 
 for file in "${files[@]}"; do
   relative="${file#"${REPO_ROOT}/"}"
 
-  if run_tool hadolint hadolint --no-color "$file" >"${results_file}" 2>&1; then
-    printf 'PASS %s\n' "${relative}"
-
-    if [[ "${VERBOSE}" == true ]]; then
-      cat "${results_file}"
-    fi
+  if hadolint --no-color "$file" >"${output_file}" 2>&1; then
+    status="PASS"
   else
-    printf 'FAIL %s\n' "${relative}"
-    cat "${results_file}" >&2
+    status="FAIL"
     ((failures += 1))
   fi
+
+  {
+    printf '%s %s\n' "${status}" "${relative}"
+    printf '$ hadolint --no-color %q\n' "${file}"
+    cat "${output_file}"
+    printf '\n'
+  } >>"${results_file}"
+
+  if [[ "${VERBOSE}" == true ]]; then
+    printf '%s %s\n' "${status}" "${relative}"
+    printf '$ hadolint --no-color %q\n' "${file}"
+    cat "${output_file}"
+    printf '\n'
+  fi
 done
+
+printf 'Report: %s\n' "${results_file}"
 
 print_summary "hadolint" "${#files[@]}" "${failures}"
