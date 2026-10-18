@@ -129,9 +129,9 @@ fi
 EXECUTOR=$(echo "$EXECUTOR" | tr '[:upper:]' '[:lower:]')
 
 ## Validate executor
-if [[ ! " ${VALID_EXECUTORS[@]} " =~ " $EXECUTOR " ]]; then
+if [[ ! "${VALID_EXECUTORS[*]}" =~ $EXECUTOR ]]; then
   echo "[ERROR] Invalid executor: $EXECUTOR"
-  echo "Valid executors are: ${VALID_EXECUTORS[@]}"
+  echo "Valid executors are: ${VALID_EXECUTORS[*]}"
   exit 1
 fi
 
