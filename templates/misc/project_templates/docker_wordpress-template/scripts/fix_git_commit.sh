@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # Retake ownership of directories before pushing to git
 #
 
 DC_DIR="../"
-OWNER_USER="jack"
-OWNER_GROUP="jack"
+OWNER_USER="$USER"
+OWNER_GROUP="$USER"
 
 retake_ownership() {
   echo ""
@@ -14,7 +14,7 @@ retake_ownership() {
   echo ""
 
   cd "${DC_DIR}" || exit
-  chown -R $OWNER_USER:$OWNER_GROUP ./*
+  chown -R "${OWNER_USER}":"${OWNER_GROUP}" ./*
 }
 
 main() {
