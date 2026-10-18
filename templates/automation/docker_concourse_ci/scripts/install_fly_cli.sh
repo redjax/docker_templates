@@ -61,8 +61,7 @@ fi
 FLY_DOWNLOAD_URL="${CONCOURSE_HOST}/api/v1/cli?arch=${ARCH}&platform=${PLATFORM}"
 
 echo "Downloading fly CLI from: ${FLY_DOWNLOAD_URL}"
-curl -sSL "$FLY_DOWNLOAD_URL" -o fly
-if [[ $? -ne 0 ]]; then
+if ! curl -sSL "$FLY_DOWNLOAD_URL" -o fly 2>&1; then
   echo "[ERROR] Download failed from $FLY_DOWNLOAD_URL"
   exit 1
 fi
@@ -71,8 +70,8 @@ if [[ -s fly ]]; then
   chmod +x ./fly
 
   echo "Moving fly CLI binary to $HOME/.local/bin/fly (sudo may prompt)..."
-  mv ./fly $HOME/.local/bin/fly
-  if [[ $? -ne 0 ]]; then
+
+  if ! mv ./fly "$HOME/.local/bin/fly" 2>&1; then
     echo "[ERROR] Failed to move fly binary to $HOME/.local/bin/fly"
     exit 1
   fi
