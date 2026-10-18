@@ -126,7 +126,7 @@ fi
 EXPORT_FILENAME="$(date +'%Y%m%d%H%M%S')_paperless-ngx_export"
 EXPORT_FILE_PATH="${EXPORT_HOST_MOUNT}/${EXPORT_FILENAME}.zip"
 
-cd "$PROJECT_ROOT"
+cd "$PROJECT_ROOT" || exit
 
 echo ""
 logger "Creating Paperless NGX export"
