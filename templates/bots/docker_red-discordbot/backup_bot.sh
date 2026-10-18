@@ -60,10 +60,11 @@ function CHECK_PATH() {
 
 function RESTORE_BACKUP() {
 
-  CHECK_DIRS=(./data ./docker-compose.yml invite-link ./.env)
+  local -a CHECK_DIRS=(./data ./docker-compose.yml invite-link ./.env)
+  local CHECK
 
   for CHECK in "${CHECK_DIRS[@]}"; do
-    if [[ -d "${CHECK}" ]]; then
+    if [[ -d "${CHECK}" || -f "${CHECK}" ]]; then
       echo ""
       echo "${CHECK} exists. Backing up."
       echo ""
@@ -73,21 +74,10 @@ function RESTORE_BACKUP() {
       echo ""
       echo "${CHECK} backed up."
       echo ""
-
-    elif [[ ! -d "${1}" ]]; then
+    else
       echo ""
       echo "${CHECK} does not exist."
       echo ""
-
-    elif [[ -f "${CHECK}" ]]; then
-
-      mv "${CHECK}" "${CHECK}.bak"
-
-    elif [[ ! -f "${CHECK}" ]]; then
-      echo ""
-      echo "${CHECK} does not exist."
-      echo ""
-
     fi
   done
 
