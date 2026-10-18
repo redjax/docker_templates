@@ -2,7 +2,7 @@
 
 declare -a create_dirs=("./data" "./worlds" "./plugins")
 
-for d in ${create_dirs[@]}; do
+for d in "${create_dirs[@]}"; do
   if [ ! -d "$d" ]; then
     echo "Creating directory: $d"
     mkdir -pv "$d"
