@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 THIS_DIR=${PWD}
 
 GITLAB_BASE_URL="https://gitlab.com/mayan-edms/mayan-edms/-/raw/master/docker"
@@ -8,26 +9,23 @@ GITLAB_COMPOSE_URL=$GITLAB_BASE_URL/$COMPOSE_FILE_NAME
 GITLAB_ENV_FILE_URL=$GITLAB_BASE_URL/$ENV_FILE_NAME
 GITLAB_ENV_URL=$GITLAB_BASE_URL/$ENV_NAME
 
-declare -a DOCKER_FILES=( $GITLAB_COMPOSE_URL $GITLAB_ENV_FILE_URL $GITLAB_ENV_URL )
-declare -a CHECK_FILES=( $COMPOSE_FILE_NAME $ENV_FILE_NAME $ENV_NAME )
+declare -a DOCKER_FILES=($GITLAB_COMPOSE_URL $GITLAB_ENV_FILE_URL $GITLAB_ENV_URL)
+declare -a CHECK_FILES=($COMPOSE_FILE_NAME $ENV_FILE_NAME $ENV_NAME)
 
-function CURL_FILE () {
+function CURL_FILE() {
 
   curl $1 -O
 
 }
 
-function DIR_SETUP () {
+function DIR_SETUP() {
 
-  declare -a DIRS=( $THIS_DIR"/redis" $THIS_DIR"/db" $THIS_DIR"/media" )
+  declare -a DIRS=($THIS_DIR"/redis" $THIS_DIR"/db" $THIS_DIR"/media")
 
-  for DIR in "${DIRS[@]}"
-  do
-    if [[ ! -d $DIR ]];
-    then
+  for DIR in "${DIRS[@]}"; do
+    if [[ ! -d $DIR ]]; then
       mkdir -pv $DIR
-    elif [[ -d $DIR ]];
-    then
+    elif [[ -d $DIR ]]; then
       echo ""
       echo $DIR" exists. Skipping."
       echo ""
@@ -38,8 +36,7 @@ function DIR_SETUP () {
 
 DIR_SETUP
 
-for F in "${CHECK_FILES[@]}"
-do
+for F in "${CHECK_FILES[@]}"; do
   if [[ ! -f $F ]]; then
     echo ""
     echo "Curling "$F
