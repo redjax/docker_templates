@@ -207,7 +207,7 @@
         ]
     },
     {
-        "count": 24,
+        "count": 26,
         "name": "networking",
         "path": "templates/networking",
         "sub_categories": [
@@ -225,6 +225,10 @@
                 "path": "templates/networking/docker_netbird"
             },
             {
+                "name": "docker_komodo",
+                "path": "templates/networking/docker_komodo"
+            },
+            {
                 "name": "docker_networking_toolbox",
                 "path": "templates/networking/docker_networking_toolbox"
             },
@@ -235,6 +239,10 @@
             {
                 "name": "docker_portall",
                 "path": "templates/networking/docker_portall"
+            },
+            {
+                "name": "docker_arcane",
+                "path": "templates/networking/docker_arcane"
             },
             {
                 "name": "docker_termix",
