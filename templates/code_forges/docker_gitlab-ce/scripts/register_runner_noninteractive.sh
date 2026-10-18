@@ -146,7 +146,7 @@ echo "  Run untagged jobs: $RUN_UNTAGGED"
 echo "  Locked: $LOCKED"
 echo ""
 
-docker run --rm -v $(pwd)/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner:latest register \
+docker run --rm -v "$(pwd)/gitlab-runner/config:/etc/gitlab-runner" gitlab/gitlab-runner:latest register \
   --non-interactive \
   --url "$URL" \
   --registration-token "$TOKEN" \
@@ -157,7 +157,9 @@ docker run --rm -v $(pwd)/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-
   --run-untagged="$RUN_UNTAGGED" \
   --locked="$LOCKED"
 
-if [[ $? -ne 0 ]]; then
+DOCKER_EXIT_STATUS=$?
+
+if [[ "${DOCKER_EXIT_STATUS}" -ne 0 ]]; then
   echo "[ERROR] Failed to register Gitlab runner"
   exit 1
 else
