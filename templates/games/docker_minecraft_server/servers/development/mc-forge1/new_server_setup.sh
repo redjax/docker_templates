@@ -3,19 +3,19 @@
 declare -a create_dirs=("./data" "./worlds" "./plugins")
 
 for d in ${create_dirs[@]}; do
-    if [ ! -d "$d" ]; then
-        echo "Creating directory: $d"
-        mkdir -pv "$d"
-    else
-        echo "Directory exists, skipping: $d"
-    fi
+  if [ ! -d "$d" ]; then
+    echo "Creating directory: $d"
+    mkdir -pv "$d"
+  else
+    echo "Directory exists, skipping: $d"
+  fi
 done
 
 if [ ! -f ".env" ]; then
-    echo "Copying .env.example to .env"
-    cp .env.example .env
+  echo "Copying .env.example to .env"
+  cp .env.example .env
 else
-    echo "Skipping .env.example copy, .env file already exists"
+  echo "Skipping .env.example copy, .env file already exists"
 fi
 
 echo ""
