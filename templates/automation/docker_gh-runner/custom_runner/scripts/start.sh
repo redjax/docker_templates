@@ -11,12 +11,12 @@ cd /home/docker/actions-runner
 
 # Register the runner (only if not already configured)
 if [ ! -f .runner ]; then
-  ./config.sh --unattended --url ${GH_RUNNER_URL} --token ${GH_RUNNER_TOKEN} --name $(hostname)-${RANDOM}
+  ./config.sh --unattended --url "${GH_RUNNER_URL}" --token "${GH_RUNNER_TOKEN}" --name "$(hostname)"-${RANDOM}
 fi
 
 cleanup() {
   echo "Removing runner..."
-  ./config.sh remove --unattended --token ${GH_RUNNER_TOKEN}
+  ./config.sh remove --unattended --token "${GH_RUNNER_TOKEN}"
 }
 trap 'cleanup; exit 130' INT
 trap 'cleanup; exit 143' TERM
