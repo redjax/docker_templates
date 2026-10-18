@@ -33,7 +33,7 @@ while [[ $# -gt 0 ]]; do
     shift 2
     ;;
   --url)
-    if [[ -z "$URL" ]]; then
+    if [[ -z "${2:-}" ]]; then
       echo "[ERROR] URL (--url) is required"
       print_usage
       exit 1
@@ -129,8 +129,17 @@ fi
 EXECUTOR=$(echo "$EXECUTOR" | tr '[:upper:]' '[:lower:]')
 
 ## Validate executor
-if [[ ! "${VALID_EXECUTORS[*]}" =~ $EXECUTOR ]]; then
-  echo "[ERROR] Invalid executor: $EXECUTOR"
+executor_valid=false
+
+for valid_executor in "${VALID_EXECUTORS[@]}"; do
+  if [[ "${EXECUTOR}" == "${valid_executor}" ]]; then
+    executor_valid=true
+    break
+  fi
+done
+
+if [[ "${executor_valid}" == false ]]; then
+  echo "[ERROR] Invalid executor: ${EXECUTOR}"
   echo "Valid executors are: ${VALID_EXECUTORS[*]}"
   exit 1
 fi
