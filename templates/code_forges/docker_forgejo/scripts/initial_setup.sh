@@ -54,7 +54,7 @@ else
   echo "Forgejo data directory already exists"
 fi
 
-sudo chown -R $CHMOD_UID:$CHMOD_GID "${FORGEJO_DATA_DIR}"
+sudo chown -R "${CHMOD_UID}:${CHMOD_GID}" "${FORGEJO_DATA_DIR}"
 
 if [[ ! -f "${PROJECT_ROOT}/.env" ]]; then
   echo "Copying example .env"
@@ -65,20 +65,20 @@ fi
 
 if [[ ! -f "${PROJECT_ROOT}/env_files/forgejo/default.env" ]]; then
   echo "Copying example Forgejo env"
-  cp "${PROJECT_ROOT}/env_files/forgejo/example.env ${PROJECT_ROOT}/env_files/forgejo/default.env"
+  cp "${PROJECT_ROOT}/env_files/forgejo/example.env" "${PROJECT_ROOT}/env_files/forgejo/default.env"
 else
   echo "Forgejo default env file already exists"
 fi
 
 if [[ ! -f "${PROJECT_CONFIG_DIR}/traefik/dynamic_config.yml" ]]; then
   echo "Copying example Traefik dynamic config"
-  cp ${PROJECT_CONFIG_DIR}/traefik/example.dynamic_config.yml ${PROJECT_CONFIG_DIR}/traefik/dynamic_config.yml
+  cp "${PROJECT_CONFIG_DIR}/traefik/example.dynamic_config.yml" "${PROJECT_CONFIG_DIR}/traefik/dynamic_config.yml"
 else
   echo "Traefik dynamic config already exists"
 fi
 
 if [[ ! -f "${PROJECT_CONFIG_DIR}/traefik/dynamic_config.yml" ]]; then
-  cp ${PROJECT_CONFIG_DIR}/traefik/example.traefik_config.yml ${PROJECT_CONFIG_DIR}/traefik/traefik_config.yml
+  cp "${PROJECT_CONFIG_DIR}/traefik/example.traefik_config.yml" "${PROJECT_CONFIG_DIR}/traefik/traefik_config.yml"
 else
   echo "Traefik config already exists"
 fi
