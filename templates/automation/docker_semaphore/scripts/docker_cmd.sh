@@ -160,7 +160,7 @@ function main() {
   echo ""
 
   if [[ "$DRY_RUN" == "true" ]]; then
-    echo "[DRY RUN] Would run command: ${CMD[@]}"
+    echo "[DRY RUN] Would run command: ${CMD[*]}"
     exit 0
   else
     if ! "${CMD[@]}"; then
