@@ -7,8 +7,6 @@ backup_container_image="busybox"
 ## Number of db dumps & script backups to keep
 backup_retention="3"
 
-## Name of docker project, which is prepended to volume names
-docker_proj_name="docker_postgresql"
 ## Top level backup directory
 backup_dir="$this_dir/backup"
 
@@ -46,7 +44,7 @@ function check_dirs_exist() {
     if [[ ! -d $dir ]]; then
       echo "$dir does not exist. Creating."
 
-      ## Create  $dir
+      ## Create $dir
       mkdir -pv $dir
     fi
   done
@@ -58,15 +56,11 @@ function trim_backup() {
   declare -a backup_trim_dirs=("$pg_db_backup_dir" "$pgadmin_backup_dir/scripts")
 
   for dir in "${backup_trim_dirs[@]}"; do
-
     echo "[DEBUG] Dir in trim FOR loop: $dir"
 
     if [[ $dir == "$pg_db_backup_dir" ]]; then
-
       echo "[DEBUG] DIR: $dir"
 
-      ## Initialize loop counter
-      pg_db_loop_count=0
       ## Get count of files in pg_backup_dir
       pg_db_file_count=$(ls $dir/ | wc -l)
 
@@ -80,7 +74,6 @@ function trim_backup() {
 
         ## Loop until number of files is less than retention num
         while [ $pg_db_file_count -gt $backup_retention ]; do
-
           ## Get pg_db files, remove oldest
           stat --printf='%Y %n\0' $dir/*.sql | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
@@ -90,8 +83,7 @@ function trim_backup() {
       fi
     else
       echo "[DEBUG] DIR: $dir"
-      ## Initialize loop counter
-      pga_script_loop_count=0
+
       ## Get count of files in pg_backup_dir
       pga_script_file_count=$(ls $dir/ | wc -l)
 
@@ -115,7 +107,6 @@ function trim_backup() {
       fi
     fi
   done
-
 }
 
 function backup_container_data() {
@@ -134,7 +125,7 @@ function backup_container_data() {
     backup_dir=$pgadmin_backup_dir
     container_path=$pgadmindata_container_path
     ;;
-  "*")
+  *)
     echo "Invalid container: $1"
 
     exit
@@ -166,11 +157,9 @@ function backup_container_data() {
 
   ## Restart container after backup
   docker compose restart $source_container
-
 }
 
 function pg_backup_select() {
-
   read -p "Backup (V)olume data or (D)atabase dump? " pg_backup_choice
 
   case $pg_backup_choice in
@@ -188,18 +177,17 @@ function pg_backup_select() {
 
     pg_db_backup
     ;;
-  "*")
+  *)
     echo ""
     echo "Invalid choice: $pg_backup_choice"
-    break
+    return 1
     ;;
   esac
-
 }
 
 function pga_backup_select() {
-
-  read -p "Backup (V)olume data or (S)cripts? " pg_backup_choice
+  read -r -n 1 -p "Backup (V)olume data or (S)cripts? " pg_backup_choice
+  echo
 
   case $pg_backup_choice in
   "v" | "V")
@@ -223,24 +211,22 @@ function pga_backup_select() {
 
     pgadmin_scripts_backup
     ;;
-  "*")
+  *)
     echo ""
     echo "Invalid choice: $pg_backup_choice"
-    break
+    return 1
     ;;
   esac
-
 }
 
 function pgadmin_scripts_backup() {
-
   ## Temporary dir to store scripts before tar
   backup_tmp="backup_tmp"
   echo ""
   echo "Copying scripts out of pgadmin:$pgadmin_scripts_container_path"
   echo ""
 
-  docker cp pgadmin:$pgadmin_scripts_container_path $pgadmin_backup_dir/scripts
+  docker cp "pgadmin:${pgadmin_scripts_container_path}" "${pgadmin_backup_dir}/scripts"
 
   echo ""
   echo "Creating $pgadmin_backup_dir/scripts/$backup_tmp to store scripts"
@@ -254,7 +240,7 @@ function pgadmin_scripts_backup() {
   echo "Moving all files from $pgadmin_backup_dir/scripts to $pgadmin_backup_dir/scripts/$backup_tmp"
   echo ""
 
-  mv $pgadmin_backup_dir/scripts/* $pgadmin_backup_dir/scripts/$backup_tmp/
+  mv "${pgadmin_backup_dir}/scripts/*" "${pgadmin_backup_dir}/scripts/${backup_tmp}/"
 
   echo ""
   echo "Creating archive of $pgadmin_backup_dir/scripts/$backup_tmp"
@@ -275,7 +261,6 @@ function pgadmin_scripts_backup() {
   # echo ""
 
   # trim_backup
-
 }
 
 function full_backup() {
@@ -295,7 +280,6 @@ function full_backup() {
   echo ""
   ## Backup pgadmin data
   backup_container_data $pgadmin_container
-
 }
 
 function restore_container_data() {
@@ -304,7 +288,6 @@ function restore_container_data() {
   case $1 in
   "postgres")
     ## Set postgres backup variables
-    target_container=$pg_container
     backup_dir="$pg_backup_dir/"
     container_path=$pgdata_container_path
 
@@ -312,20 +295,18 @@ function restore_container_data() {
     ;;
   "pgadmin")
     ## Set pgadmin backup variables
-    target_container=$pgadmin_container
     backup_dir=$pgadmin_backup_dir
     container_path=$pgadmindata_container_path
 
     echo "pgadmin restore not implemented."
-    break
+    return 1
     ;;
-  "*")
+  *)
     echo "Invalid container: $1"
 
-    exit
+    return 1
     ;;
   esac
-
 }
 
 function pg_db_backup() {
@@ -343,9 +324,9 @@ function pg_db_backup() {
 }
 
 function pg_restore_select() {
-
   echo ""
-  read -p "(Pg): Postgres or (pgA) pgAdmin? " single_restore_choice
+  read -r -n 1 -p "(Pg): Postgres or (pgA) pgAdmin? " single_restore_choice
+  echo
   echo ""
 
   case $single_restore_choice in
@@ -369,10 +350,10 @@ function pg_restore_select() {
 
       pg_db_restore
       ;;
-    "*")
+    *)
       echo ""
       echo "Invalid choice: $pg_restore_choice"
-      break
+      return 1
       ;;
     esac
     ;;
@@ -386,20 +367,18 @@ function pg_restore_select() {
     echo "Invalid: $single_restore_choice"
     ;;
   esac
-
 }
 
 function pg_db_restore() {
   ## Restore postgres backup dump
 
   ## Build numbered list of files for user to select from
-  #    https://askubuntu.com/a/682104
+  #    [https://askubuntu.com/a/682104](https://askubuntu.com/a/682104)
   unset options i
   # Read input from find command, null-delimeted
   while IFS= read -r -d $'\0' file; do
-
     ## Get filename from path
-    #   https://stackoverflow.com/a/965072
+    #   [https://stackoverflow.com/a/965072](https://stackoverflow.com/a/965072)
     filename="${file##*/}"
 
     ## Add find files to array "options," increment i
@@ -410,7 +389,6 @@ function pg_db_restore() {
 
   ## Select menu (from link above)
   select opt in "${options[@]}" "(Q)uit"; do
-
     backup_full_path="$pg_db_backup_dir/$opt"
     # echo "[DEBUG] file: $backup_full_path, inside select statement"
 
@@ -478,7 +456,6 @@ function pg_db_restore() {
 }
 
 function full_restore() {
-
   echo ""
   echo "Restore: $pg_container"
   echo ""
@@ -488,12 +465,10 @@ function full_restore() {
   echo "Restore: $pgadmin_container"
   echo ""
   restore_container_data $pgadmin_container
-
 }
 
 ## Leave help menu function at bottom
 function print_help() {
-
   echo ""
   echo "-b/--backup"
   echo "  -> Start backup selection"
@@ -531,11 +506,9 @@ function print_help() {
   echo "  -> Print help menu"
   echo ""
   echo ""
-
 }
 
 function main() {
-
   echo "[DEBUG] Check if backup directories exist"
   check_dirs_exist
 
@@ -543,7 +516,8 @@ function main() {
 
   case $1 in
   "-b" | "--backup")
-    read -p "(F)ull backup, or (S)ingle container? " backup_choice
+    read -r -n 1-p "(F)ull backup, or (S)ingle container? " backup_choice
+    echo
 
     case $backup_choice in
     "f" | "F")
@@ -551,7 +525,8 @@ function main() {
       ;;
     "s" | "S")
       echo ""
-      read -p "(P)ostgres or pg(A)dmin? " single_backup_choice
+      read -r -n 1 -p "(P)ostgres or pg(A)dmin? " single_backup_choice
+      echo
       echo ""
 
       case $single_backup_choice in
@@ -579,7 +554,8 @@ function main() {
     esac
     ;;
   "-r" | "--restore")
-    read -p "(F)ull restore, or (S)ingle container? " restore_choice
+    read -r -n 1 -p "(F)ull restore, or (S)ingle container? " restore_choice
+    echo
 
     case $restore_choice in
     "f" | "F")
@@ -588,7 +564,7 @@ function main() {
     "s" | "S")
       pg_restore_select
       ;;
-    "*")
+    *)
       echo "Invalid choice: $restore_choice"
       ;;
     esac
@@ -615,7 +591,6 @@ function main() {
     echo "Invalid: $1"
     ;;
   esac
-
 }
 
-main $1
+main "${1}"
