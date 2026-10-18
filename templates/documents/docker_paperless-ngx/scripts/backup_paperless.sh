@@ -17,7 +17,7 @@ function cleanup() {
 trap cleanup EXIT
 
 function logger() {
-  echo "[$(date +'%F %H:%M:%S')] ${@}"
+  echo "[$(date +'%F %H:%M:%S')] ${*}"
 }
 
 function print_help() {
