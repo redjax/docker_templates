@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 #
 # Retake ownership of directories before pushing to git
