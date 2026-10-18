@@ -1,4 +1,4 @@
-#!/bin/bsh
+#!/usr/bin/env bash
 
 if ! command -v docker &>/dev/null; then
   echo "[ERROR] Docker is not installed."
