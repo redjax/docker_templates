@@ -5,8 +5,6 @@ set -euo pipefail
 THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
 PROJECT_CONFIG_DIR="${PROJECT_ROOT}/config"
-PROJECT_DATA_DIR="${PROJECT_ROOT}/data"
-
 FORGEJO_DATA_DIR="${PROJECT_ROOT}/data"
 CHMOD_UID="1000"
 CHMOD_GID="1000"
