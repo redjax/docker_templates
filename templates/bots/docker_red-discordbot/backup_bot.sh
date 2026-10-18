@@ -11,9 +11,8 @@ function GET_TIMESTAMP() {
 function CREATE_BACKUP() {
   # Variable to store timestamp
   TS="$(GET_TIMESTAMP)"
-  BACKUP_NAME="red-discordbot_backup_"$TS
-  # BACKUP_PATH=$BACKUP_DIR"/"$BACKUP_NAME
-  BACKUP_PATH=$BACKUP_DIR"/red-discordbot_backup"
+  BACKUP_NAME="red-discordbot_backup_${TS}"
+  BACKUP_PATH=$BACKUP_DIR"/${BACKUP_NAME}"
 
   if [[ -f $BACKUP_PATH".zip" ]]; then
     echo ""
