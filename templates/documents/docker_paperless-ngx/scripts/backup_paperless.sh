@@ -12,7 +12,7 @@ CWD=$(pwd)
 
 # shellcheck disable=SC2329
 function cleanup() {
-  cd "${CWD}"
+  cd "${CWD}" || exit
 }
 trap cleanup EXIT
 
