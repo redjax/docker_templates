@@ -97,8 +97,7 @@ function cleanup_backups() {
 
     logger "Removing: ${backups[$i]}"
 
-    rm -f "${backups[$i]}"
-    if [[ $? -ne 0 ]]; then
+    if ! rm -f "${backups[$i]}" 2>&1; then
       logger "[ERROR] Failed to remove backup: ${backups[$i]}"
       return 1
     fi
