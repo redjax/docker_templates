@@ -10,6 +10,7 @@ DO_CLEANUP="false"
 
 CWD=$(pwd)
 
+# shellcheck disable=SC2329
 function cleanup() {
   cd "${CWD}"
 }
