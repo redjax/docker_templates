@@ -26,29 +26,30 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -d|--data-dir)
-      FORGEJO_DATA_DIR="$2"
-      shift 2
-      ;;
-    -u|--user-id)
-      CHMOD_UID="$2"
-      shift 2
-      ;;
-    -g|--group-id)
-      CHMOD_GID="$2"
-      shift 2
-      ;;
-    *)
-      echo "[ERROR] Invalid arg: $1" >&2
-      usage
-      exit 1
+  -d | --data-dir)
+    FORGEJO_DATA_DIR="$2"
+    shift 2
+    ;;
+  -u | --user-id)
+    CHMOD_UID="$2"
+    shift 2
+    ;;
+  -g | --group-id)
+    CHMOD_GID="$2"
+    shift 2
+    ;;
+  *)
+    echo "[ERROR] Invalid arg: $1" >&2
+    usage
+    exit 1
+    ;;
   esac
 done
 
 ## Create data directory
 if [[ ! -d "${FORGEJO_DATA_DIR}" ]]; then
-    echo "Creating Forgejo data directory: ${FORGEJO_DATA_DIR}"
-    mkdir -p "${FORGEJO_DATA_DIR}"
+  echo "Creating Forgejo data directory: ${FORGEJO_DATA_DIR}"
+  mkdir -p "${FORGEJO_DATA_DIR}"
 else
   echo "Forgejo data directory already exists"
 fi
@@ -85,4 +86,3 @@ fi
 echo
 echo "Initial setup complete."
 echo "Make sure you edit all of the environment files & Traefik configs before running!"
-
