@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 declare -a create_dirs=("./data" "./worlds" "./plugins")
 
