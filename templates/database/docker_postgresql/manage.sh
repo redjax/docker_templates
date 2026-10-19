@@ -160,7 +160,8 @@ function backup_container_data() {
 }
 
 function pg_backup_select() {
-  read -p "Backup (V)olume data or (D)atabase dump? " pg_backup_choice
+  read -r -n 1 -p "Backup (V)olume data or (D)atabase dump? " pg_backup_choice
+  echo
 
   case $pg_backup_choice in
   "v" | "V")
@@ -333,7 +334,8 @@ function pg_restore_select() {
   "pg" | "PG" | "Pg" | "pG")
     container_choice="postgres"
 
-    read -p "Restore Postgres (V)olume data or (D)atabase dump? " pg_restore_choice
+    read -r -n 1 -p "Restore Postgres (V)olume data or (D)atabase dump? " pg_restore_choice
+    echo
 
     case $pg_restore_choice in
     "v" | "V")
