@@ -5,13 +5,13 @@ CONTAINER_ID=$(docker ps -qf "name=${CONTAINER_NAME}")
 
 # docker exec -it $CONTAINER_ID $1
 
-function DOCKER_COMMAND () {
+function DOCKER_COMMAND() {
 
   docker exec -it $CONTAINER_ID $1
 
 }
 
-function INSTALL_NODE_DEP () {
+function INSTALL_NODE_DEP() {
 
   # DOCKER_COMMAND "yarn add "$1
   echo "Docker command: npm i $2 $1"
@@ -19,21 +19,20 @@ function INSTALL_NODE_DEP () {
 
 }
 
-function REMOVE_NODE_DEP () {
+function REMOVE_NODE_DEP() {
 
   # DOCKER_COMMAND "yarn remove "$1
   DOCKER_COMMAND "npm rm $2 $1"
 
 }
 
-function RUN_NODE_COMMAND () {
+function RUN_NODE_COMMAND() {
 
   DOCKER_COMMAND $1
 
 }
 
-function PRINT_HELP () {
-
+function PRINT_HELP() {
 
   separator_line="---------------------------------------------------------------"
 
@@ -98,31 +97,31 @@ function PRINT_HELP () {
 save_mode=""
 
 case $3 in
-  "" | "--save" | "-S")
-    save_mode="-S"
+"" | "--save" | "-S")
+  save_mode="-S"
   ;;
-  "--save-dev" | "-D")
-    save_mode="-D"
+"--save-dev" | "-D")
+  save_mode="-D"
   ;;
 esac
 
 case $1 in
-  "-i"| "i" | "-a" | "--install" | "--add")
-    INSTALL_NODE_DEP $2 $save_mode
+"-i" | "i" | "-a" | "--install" | "--add")
+  INSTALL_NODE_DEP $2 $save_mode
   ;;
-  "-u" | "-r" | " r" | "rm" | "--uninstall" | "--remove")
-    REMOVE_NODE_DEP $2 $save_mode
+"-u" | "-r" | " r" | "rm" | "--uninstall" | "--remove")
+  REMOVE_NODE_DEP $2 $save_mode
   ;;
-  "-h" | "--help")
-    PRINT_HELP
+"-h" | "--help")
+  PRINT_HELP
   ;;
-  "-c" | "--command")
-    RUN_NODE_COMMAND $2
+"-c" | "--command")
+  RUN_NODE_COMMAND $2
   ;;
-  "*" | "")
-    echo ""
-    echo "Invalid flag, or no flag detected. Printing help menu."
-    echo ""
-    PRINT_HELP
+"*" | "")
+  echo ""
+  echo "Invalid flag, or no flag detected. Printing help menu."
+  echo ""
+  PRINT_HELP
   ;;
 esac
