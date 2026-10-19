@@ -108,7 +108,7 @@ function main() {
 
     print_help
 
-    read -p "Press a key to exit..."
+    read -r -n 1 -p "Press a key to exit..."
 
     exit
     ;;
