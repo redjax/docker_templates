@@ -12,7 +12,7 @@ fi
 
 FORGEJO_VER="${FORGEJO_IMG_VER:-15}"
 
-function forgejo_secret_key() {
+forgejo_secret_key() {
   local key
 
   key=$(docker run --rm codeberg.org/forgejo/forgejo:${FORGEJO_VER} forgejo generate secret SECRET_KEY)
@@ -20,14 +20,14 @@ function forgejo_secret_key() {
   
 }
 
-function forgejo_internal_token() {
+forgejo_internal_token() {
   local token
 
   token=$(docker run --rm codeberg.org/forgejo/forgejo:${FORGEJO_VER} forgejo generate secret INTERNAL_TOKEN)
   echo "${token}"
 }
 
-function authentik_secret() {
+authentik_secret() {
   local secret
 
   secret=$(openssl rand -base64 60 | tr -dc 'A-Za-z0-9')
