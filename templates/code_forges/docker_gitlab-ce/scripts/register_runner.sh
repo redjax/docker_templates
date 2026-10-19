@@ -12,7 +12,7 @@ echo "            use http://gitlab-server as the URL."
 echo ""
 
 docker run --rm -it \
-  -v $(pwd)/gitlab-runner/config:/etc/gitlab-runner \
+  -v "$(pwd)/gitlab-runner/config":/etc/gitlab-runner \
   gitlab/gitlab-runner:latest register
 
 if [[ $? -ne 0 ]]; then
