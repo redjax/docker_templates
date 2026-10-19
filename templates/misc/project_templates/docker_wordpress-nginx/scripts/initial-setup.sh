@@ -15,8 +15,8 @@ DOCKER_PROXY_NETWORK_NAME="proxy_net"
 # in the script
 case "$1" in
 "")
-  echo "Full path to docker directory, i.e. /home/user/docker (no trailing slash): "
-  read DOCKER_DIR_INPUT
+  read -r -p "Full path to docker directory, i.e. /home/user/docker (no trailing slash): " DOCKER_DIR_INPUT
+  echo
   echo "Docker directory set to $DOCKER_DIR_INPUT"
   ;;
 *)
@@ -101,13 +101,13 @@ function PRINT_CF_INSTRUCTIONS() {
   echo "Navigate to your domain on Cloudflare."
   echo ""
 
-  read -p "Press a key to continue..."
+  read -r -p "Press a key to continue..."
   echo ""
 
   echo "Search for instructions on creating an API DNS ZONE key with Cloudflare."
   echo ""
 
-  read -p "Press a key to continue..."
+  read -r -p "Press a key to continue..."
 
   echo ""
   echo "Once you've created an API key, fill the PROXY_CF_TOKEN variable"
@@ -117,7 +117,7 @@ function PRINT_CF_INSTRUCTIONS() {
   echo "Also copy the ZONE ID key on the site's Overview page and fill the"
   echo "PROXY_CF_DOMAIN#_ZONE_ID variable."
 
-  read -p "Press a key to continue..."
+  read -r -p "Press a key to continue..."
 
   echo ""
   echo "Navigate to site's SSL/TLS tab > Origin Server and create a certificate."
@@ -128,12 +128,12 @@ function PRINT_CF_INSTRUCTIONS() {
   echo "These files do not exist, you must create them. Use your domain name"
   echo "and not 'example.com.{key,pem}"
 
-  read -p "Press a key to continue..."
+  read -r -p "Press a key to continue..."
 
   echo ""
   echo "On the SSL/TLS Overview tab, set encryption mode to 'Full (strict)'"
 
-  read -p "Press a key to continue..."
+  read -r -p "Press a key to continue..."
 
   echo ""
   echo "That's all!"
@@ -167,8 +167,8 @@ function MAIN() {
   echo "Make sure to check docker-compose.yml and .env files before running with docker-compose up -d."
 
   echo ""
-  echo "Do you want to be guided through the Cloudflare process? Y/N: "
-  read $GUIDE_CHOICE
+  read -r -p "Do you want to be guided through the Cloudflare process? Y/N: " GUIDE_CHOICE
+  echo
 
   case $GUIDE_CHOICE in
   [Yy] | [Yy][Ee][Ss])
