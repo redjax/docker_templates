@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 NETWORK_NAME="woodpecker_net"
 NET_MODE="bridge"
