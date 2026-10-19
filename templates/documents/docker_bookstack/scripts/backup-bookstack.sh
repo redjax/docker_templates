@@ -15,10 +15,10 @@ function load_dotenv() {
   echo "[INFO] Loading .env from ${env_file}" >&2
   while IFS= read -r line || [[ -n "$line" ]]; do
     # Skip comments, empty lines
-    [[ "${line}" =~ ^[[:space:]]*# || -z "${line// }" ]] && continue
+    [[ "${line}" =~ ^[[:space:]]*# || -z "${line// /}" ]] && continue
     # Export line directly (handles quotes, base64, special chars)
-    export "${line%%#*}"  # Strip inline comments
-  done < "${env_file}"
+    export "${line%%#*}" # Strip inline comments
+  done <"${env_file}"
 }
 
 OUTPUT_DIR="./backups"
@@ -51,31 +51,31 @@ function usage() {
 # Parse args
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -o|--output-dir)
-      OUTPUT_DIR="$2"
-      shift 2
-      ;;
-    -n|--db-name)
-      DB_NAME="$2"
-      shift 2
-      ;;
-    -u|--db-user)
-      DB_USER="$2"
-      shift 2
-      ;;
-    -p|--db-password)
-      DB_PASS="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unknown arg: $1" >&2
-      usage
-      exit 1
-      ;;
+  -o | --output-dir)
+    OUTPUT_DIR="$2"
+    shift 2
+    ;;
+  -n | --db-name)
+    DB_NAME="$2"
+    shift 2
+    ;;
+  -u | --db-user)
+    DB_USER="$2"
+    shift 2
+    ;;
+  -p | --db-password)
+    DB_PASS="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown arg: $1" >&2
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -98,7 +98,7 @@ mkdir -p "${OUTPUT_DIR}"
 echo "[*] Creating database dump from service: ${DB_SERVICE}"
 # Dump DB from running DB container
 ${COMPOSE_CMD} exec -T "${DB_SERVICE}" sh -c \
-  "mariadb-dump -u\"${DB_USER}\" -p\"${DB_PASS}\" \"${DB_NAME}\"" > "${sql_dump}"
+  "mariadb-dump -u\"${DB_USER}\" -p\"${DB_PASS}\" \"${DB_NAME}\"" >"${sql_dump}"
 
 echo "[*] Stopping application stack for filesystem-consistent backup"
 ${COMPOSE_CMD} down

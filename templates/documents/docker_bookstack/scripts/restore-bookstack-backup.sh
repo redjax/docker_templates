@@ -18,11 +18,11 @@ function load_dotenv() {
 
   while IFS= read -r line || [[ -n "$line" ]]; do
     # Skip comments, empty lines
-    [[ "${line}" =~ ^[[:space:]]*# || -z "${line// }" ]] && continue
+    [[ "${line}" =~ ^[[:space:]]*# || -z "${line// /}" ]] && continue
 
     # Export line directly (handles quotes, base64, special chars)
-    export "${line%%#*}"  # Strip inline comments
-  done < "${env_file}"
+    export "${line%%#*}" # Strip inline comments
+  done <"${env_file}"
 }
 
 if ! load_dotenv >&2; then
@@ -45,31 +45,31 @@ function usage() {
 # Parse args
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -f|--backup-file)
-      BACKUP_FILE="$2"
-      shift 2
-      ;;
-    -n|--db-name)
-      DB_NAME="$2"
-      shift 2
-      ;;
-    -u|--db-user)
-      DB_USER="$2"
-      shift 2
-      ;;
-    -p|--db-password)
-      DB_PASS="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unknown arg: $1" >&2
-      usage
-      exit 1
-      ;;
+  -f | --backup-file)
+    BACKUP_FILE="$2"
+    shift 2
+    ;;
+  -n | --db-name)
+    DB_NAME="$2"
+    shift 2
+    ;;
+  -u | --db-user)
+    DB_USER="$2"
+    shift 2
+    ;;
+  -p | --db-password)
+    DB_PASS="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown arg: $1" >&2
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -82,7 +82,7 @@ fi
 
 echo "[*] Restoring from: ${BACKUP_FILE}"
 echo "[*] Database: ${DB_NAME}"
-echo "[*] Root password: ${DB_ROOT_PASSWORD:0:8}..."  # Show first 8 chars for verification
+echo "[*] Root password: ${DB_ROOT_PASSWORD:0:8}..." # Show first 8 chars for verification
 echo "[*] Proceed? (y/N): "
 read -r response
 if [[ ! "${response}" =~ ^[Yy]$ ]]; then
@@ -128,7 +128,7 @@ sudo tar -xzf "${BACKUP_FILE}" -C ./data/ --strip-components=1 "data/bookstack"
 sudo chown -R 1000:995 ./data/bookstack
 
 echo "[*] Dropping and recreating database..."
-${COMPOSE_CMD} exec -T "${DB_SERVICE}" mariadb -u root -p"${DB_ROOT_PASSWORD}" <<- EOF
+${COMPOSE_CMD} exec -T "${DB_SERVICE}" mariadb -u root -p"${DB_ROOT_PASSWORD}" <<-EOF
 DROP DATABASE IF EXISTS \`${DB_NAME}\`;
 CREATE DATABASE \`${DB_NAME}\`;
 CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASS}';
@@ -147,4 +147,3 @@ sleep 15
 
 echo "[*] Restore complete!"
 echo "[*] Check logs: ${COMPOSE_CMD} logs bookstack"
-
