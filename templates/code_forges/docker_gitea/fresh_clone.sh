@@ -6,7 +6,7 @@ for dir in "${default_dirs[@]}"; do
   if [[ ! -d "$dir" ]]; then
 
     echo "Creating $dir"
-    mkdir -pv $dir
+    mkdir -pv "$dir"
 
   fi
 done
@@ -48,7 +48,7 @@ drone_secret=$(openssl rand -hex 16)
 
 echo "[Drone Secret]"
 echo "============================================"
-echo $drone_secret
+echo "$drone_secret"
 echo "============================================"
 
 echo ""
