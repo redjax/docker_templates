@@ -61,7 +61,7 @@ echo "+   To generate a new key later, run $ openssl rand -hex 16    +"
 echo "+ ----------------------------------------------------------------+"
 echo ""
 echo "$> Press enter once you've updated '.env' using instructions above"
-read -p "$>"
+read -r -p "$>"
 
 clear
 exit 0
