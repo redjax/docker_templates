@@ -6,5 +6,5 @@ echo "Allowing Graylog stack ports"
 
 for port in "${allow_ports[@]}"; do
   echo "Allowing port: ${port}"
-  sudo ufw allow $port
+  sudo ufw allow "$port"
 done
