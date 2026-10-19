@@ -19,15 +19,13 @@ if [ -z "$GAME_SETTINGS_FILE" ]; then
 fi
 
 echo "Applying game settings file $CONFIGS_DIR/$GAME_SETTINGS_FILE to server $VRISING_SETTINGS_PERSIST_DIR/$GAME_SETTINGS_FILE"
-cat $CONFIGS_DIR/$GAME_SETTINGS_FILE | sudo tee "$VRISING_SETTINGS_PERSIST_DIR/$GAME_SETTINGS_FILE" >/dev/null 2>&1
-if [[ $? != 0 ]]; then
+if ! sudo tee "$VRISING_SETTINGS_PERSIST_DIR/$GAME_SETTINGS_FILE" >/dev/null 2>&1 <"$CONFIGS_DIR/$GAME_SETTINGS_FILE"; then
   echo "Failed to apply game settings file $GAME_SETTINGS_FILE to server $GAME_SETTINGS_FILE"
   exit 1
 fi
 
 echo "Applying server settings file $CONFIGS_DIR/$SERVER_SETTINGS_FILE to server $VRISING_SETTINGS_PERSIST_DIR/$SERVER_SETTINGS_FILE"
-cat $CONFIGS_DIR/$SERVER_SETTINGS_FILE | sudo tee "$VRISING_SETTINGS_PERSIST_DIR/$SERVER_SETTINGS_FILE" >/dev/null 2>&1
-if [[ $? != 0 ]]; then
+if ! sudo tee "$VRISING_SETTINGS_PERSIST_DIR/$SERVER_SETTINGS_FILE" >/dev/null 2>&1 <"$CONFIGS_DIR/$SERVER_SETTINGS_FILE"; then
   echo "Failed to apply server settings file $SERVER_SETTINGS_FILE to server $SERVER_SETTINGS_FILE"
   exit 1
 fi
