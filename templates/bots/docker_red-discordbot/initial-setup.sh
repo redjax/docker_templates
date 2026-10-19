@@ -12,7 +12,7 @@ declare -a EX_FILES=(".env" "docker-compose.yml")
 function PRETTY_TITLE() {
 
   echo ""
-  echo "["$1"]"
+  echo "[$1]"
   echo "-------------------------"
   echo ""
 
