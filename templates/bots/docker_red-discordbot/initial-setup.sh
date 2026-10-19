@@ -20,13 +20,13 @@ function PRETTY_TITLE() {
 
 function CHECK_INSTALLED() {
 
-  if ! command -v $1 &>/dev/null; then
-    PRETTY_TITLE "Install: "$1
+  if ! command -v "${1}" &>/dev/null; then
+    PRETTY_TITLE "Install: " "${1}"
 
-    sudo $PKG_MGR install -y $1
+    sudo $PKG_MGR install -y "${1}"
 
   else
-    PRETTY_TITLE "Skip: "$1
+    PRETTY_TITLE "Skip: " "${1}"
 
   fi
 
@@ -49,12 +49,12 @@ function CHECK_PATH() {
 function COPY_EXAMPLE() {
 
   if [[ ! -f $1 ]]; then
-    PRETTY_TITLE "Create: "$1
+    PRETTY_TITLE "Create: ${1}"
 
-    cp $1.example $1
+    cp "${1}.example" "${1}"
 
   elif [[ -f $1 ]]; then
-    PRETTY_TITLE "Skip: "$1
+    PRETTY_TITLE "Skip: ${1}"
 
   fi
 
@@ -64,28 +64,28 @@ function RESTORE_BACKUP() {
 
   if [[ -d $1 ]]; then
     echo ""
-    echo $1" exists. Backing up."
+    echo "${1} exists. Backing up."
     echo ""
 
-    mv $1 $1.bak
+    mv "${1}" "${1}.bak"
 
     echo ""
-    echo $1" backed up. Recreating empty."
+    echo "${1} backed up. Recreating empty."
     echo ""
 
-    mkdir -pv $1
+    mkdir -pv "${1}"
 
   elif [[ ! -d $1 ]]; then
     echo ""
-    echo $1" does not exist."
+    echo "${1} does not exist."
     echo ""
 
   elif [[ -f $1 ]]; then
-    mv $1 $1.bak
+    mv "${1}" "${1}.bak"
 
   elif [[ ! -f $1 ]]; then
     echo ""
-    echo $1" does not exist."
+    echo "${1} does not exist."
     echo ""
 
   fi
@@ -98,18 +98,18 @@ function main() {
 
   PRETTY_TITLE "Check: Dependencies installed"
   for DEP in "${DEPS[@]}"; do
-    CHECK_INSTALLED $DEP
+    CHECK_INSTALLED "$DEP"
   done
 
   PRETTY_TITLE "Check: Paths exist"
   for CHECK_PATH in "${PATHS[@]}"; do
-    CHECK_PATH $CHECK_PATH
+    CHECK_PATH "$CHECK_PATH"
   done
 
   PRETTY_TITLE "Create: Config files"
   for FILE in "${EX_FILES[@]}"; do
     FILE_PATH=$THIS_DIR"/"$FILE
-    COPY_EXAMPLE $FILE_PATH
+    COPY_EXAMPLE "$FILE_PATH"
   done
 
   PRETTY_TITLE "Initial setup complete. \
@@ -126,7 +126,7 @@ case "$1" in
   echo "Restore flag passed."
   echo ""
 
-  RESTORE_BACKUP $DATA_DIR
+  RESTORE_BACKUP "$DATA_DIR"
   ;;
 *)
   echo "No restore flag passed, continuing."
