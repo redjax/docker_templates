@@ -6,12 +6,12 @@ function COPY_EXAMPLE_FILE() {
 
   if [[ ! -f $1 ]]; then
     echo ""
-    echo "Copying "$1.example" to "$1
+    echo "Copying "$1.example" to $1"
     echo ""
-    mv $1.example $1
+    mv "$1.example" "$1"
   elif [[ -f $1 ]]; then
     echo ""
-    echo $1" exists. Skipping."
+    echo "$1 exists. Skipping."
     echo ""
   fi
 
@@ -40,7 +40,7 @@ function GENERATE_SECRET_KEY() {
 }
 
 for FILE in "${DOCKER_FILES[@]}"; do
-  COPY_EXAMPLE_FILE $FILE
+  COPY_EXAMPLE_FILE "$FILE"
 done
 
 echo ""
