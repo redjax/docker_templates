@@ -15,7 +15,7 @@ docker network create "${HEADSCALE_NETWORK_NAME}"
 echo ""
 
 if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Created Docker network: ${HEADSCALE_NETWORK_NAME}"
+  echo "[SUCCESS] Created Docker network: ${HEADSCALE_NETWORK_NAME}"
 else
-    echo "[ERROR] Failed creating Docker network: ${HEADSCALE_NETWORK_NAME}"
+  echo "[ERROR] Failed creating Docker network: ${HEADSCALE_NETWORK_NAME}"
 fi

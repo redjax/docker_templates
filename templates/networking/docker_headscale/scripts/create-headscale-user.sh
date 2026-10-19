@@ -16,10 +16,10 @@ docker compose exec -it headscale headscale users create "${HEADSCALE_USER}"
 echo ""
 
 if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Created Headscale user: ${HEADSCALE_USER}"
+  echo "[SUCCESS] Created Headscale user: ${HEADSCALE_USER}"
 else
-    echo "[ERROR] Failed creating Headscale user: ${HEADSCALE_USER}"
-    exit $?
+  echo "[ERROR] Failed creating Headscale user: ${HEADSCALE_USER}"
+  exit $?
 fi
 
 echo "Creating preshared keys for new user: ${HEADSCALE_USER}"

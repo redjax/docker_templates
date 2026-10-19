@@ -17,7 +17,7 @@ docker compose exec headscale headscale namespaces create "${HEADSCALE_NAMESPACE
 echo ""
 
 if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Created Headscale namespace: ${HEADSCALE_NAMESPACE}"
+  echo "[SUCCESS] Created Headscale namespace: ${HEADSCALE_NAMESPACE}"
 else
-    echo "[ERROR] Error creating Headscale namespace: ${HEADSCALE_NAMESPACE}"
+  echo "[ERROR] Error creating Headscale namespace: ${HEADSCALE_NAMESPACE}"
 fi
