@@ -8,7 +8,6 @@ ZBX_PORT="10051"
 ZBX_HOSTNAME=""
 ZBX_METADATA=("autoregister" "os=linux")
 ZBX_ENABLE_TLS="false"
-ZBX_REG_KEY=""
 
 function usage() {
   cat <<EOF
