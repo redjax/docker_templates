@@ -83,18 +83,16 @@ if [[ ! -d "$DEST_DIR" ]]; then
   echo "[WARNING] Could not find backup destination path: $DEST_DIR"
   echo "          Attempting to create it now"
 
-  mkdir -p "$DEST_DIR"
-  if [[ $? -ne 0 ]]; then
+  if ! mkdir -p "$DEST_DIR"; then
     echo "[ERROR] Failed to create backup destination path: $DEST_DIR"
     exit 1
   fi
 fi
 
 echo "Backing up source path '$SRC_DIR' to destination path '$DEST_DIR'"
-rsync -azv --progress "$SRC_DIR/." "$DEST_DIR/."
-if [[ $? -ne 0 ]]; then
+if ! rsync -azv --progress "$SRC_DIR/." "$DEST_DIR/." 2>&1; then
   echo "[ERROR] Failed to backup source path '$SRC_DIR' to destination '$DEST_DIR'"
-  exit $?
+  exit 1
 else
   echo "Completed backup of path '$SRC_DIR' to destination '$DEST_DIR'"
   exit 0
