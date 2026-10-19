@@ -176,11 +176,12 @@ cp -f "/tmp/ServerHostSettings.json.tmp" "${V_RISING_SERVER_CONFIG_FILE}"
 # overriding the V_RISING_SERVER_BIND_IP setting if we get a valid IP address back
 if [ "$V_RISING_SERVER_BIND_IP_AUTO_DETECT" = "true" ]; then
   echo "Auto-detecting public IP address.."
-  export V_RISING_SERVER_BIND_IP="$(curl -s https://api.ipify.org)"
-  if [ $? -ne 0 ]; then
+  if ! V_RISING_SERVER_BIND_IP="$(curl -s https://api.ipify.org)" 2>&1; then
     echo "Failed to auto-detect public IP address, exiting.."
     exit 1
   fi
+
+  export V_RISING_SERVER_BIND_IP=$V_RISING_SERVER_BIND_IP
   echo "Public IP address detected as: $V_RISING_SERVER_BIND_IP"
 fi
 
