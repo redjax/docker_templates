@@ -58,7 +58,7 @@ prompt_if_empty() {
   local is_password=${3:-false}
   local value
 
-  value=$(eval echo \$$var_name)
+  value=$(eval echo "\$$var_name")
 
   if [[ -z $value ]]; then
     if [[ $is_password == true ]]; then
@@ -67,7 +67,7 @@ prompt_if_empty() {
     else
       read -rp "$prompt_msg: " input_val
     fi
-    eval $var_name="'$input_val'"
+    eval "$var_name"="'$input_val'"
   fi
 }
 
