@@ -32,10 +32,7 @@ fi
 install_or_update() {
   # Install V Rising from install.txt
   echo "Installing/updating V Rising.. (this might take a while, be patient)"
-  /steamcmd/steamcmd.sh +runscript /app/install.txt
-
-  # Terminate if exit code wasn't zero
-  if [ $? -ne 0 ]; then
+  if ! /steamcmd/steamcmd.sh +runscript /app/install.txt 2>&1; then
     echo "Exiting, steamcmd install or update failed!"
     exit 1
   fi
