@@ -259,7 +259,7 @@ echo "Starting scheduled task manager.."
 node /app/scheduler_app/app.js &
 
 # Construct a Windows/Wine path for the persistent data
-V_RISING_SERVER_PERSISTENT_DATA_PATH_WINE="Z:$(printf "%s" "$V_RISING_SERVER_PERSISTENT_DATA_PATH" | tr '/' '\\')"
+V_RISING_SERVER_PERSISTENT_DATA_PATH_WINE="Z:${V_RISING_SERVER_PERSISTENT_DATA_PATH//\//\\}"
 
 # Construct the startup command
 # V_RISING_SERVER_STARTUP_COMMAND="$(cat << EOF
