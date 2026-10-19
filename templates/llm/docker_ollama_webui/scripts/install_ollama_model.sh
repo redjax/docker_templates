@@ -20,7 +20,7 @@ fi
 
 echo ""
 echo "Installing ollama model $OLLAMA_MODEL_NAME in open-webui container."
-docker compose -f $COMPOSE_FILE exec -it open-webui /bin/bash -c "ollama run ${OLLAMA_MODEL_NAME}"
+docker compose -f "$COMPOSE_FILE" exec -it open-webui /bin/bash -c "ollama run ${OLLAMA_MODEL_NAME}"
 if [[ ! $? -eq 0 ]]; then
   echo "Failed to install ollama model $OLLAMA_MODEL_NAME in open-webui container."
   exit 1
