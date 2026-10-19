@@ -77,7 +77,7 @@ echo ""
 echo "Setting owner of backups in ${BACKUP_DIR} to ${USER_OWNER}:${GROUP_OWNER}"
 echo ""
 
-if ! chown -R $USER_OWNER:$GROUP_OWNER "${BACKUP_DIR}" >&2; then
+if ! chown -R "$USER_OWNER":"$GROUP_OWNER" "${BACKUP_DIR}" >&2; then
   echo "[ERROR] Failed to set backups owner." >&2
   exit 1
 fi
