@@ -2,13 +2,14 @@
 
 function prompt_create_env() {
   echo "Before running this script, you should copy .env.example to .env and edit it."
-  read -p "Did you already create a .env file and add your values? Y/N: " create_env_choice
+  read -r -n 1 -p "Did you already create a .env file and add your values? Y/N: " create_env_choice
+  echo
 
   case $create_env_choice in
-  [Yy] | [YyEeSs])
+  [Yy])
     return 0
     ;;
-  [Nn] | [NnOo])
+  [Nn])
     echo "Exiting script."
 
     return 1
