@@ -60,7 +60,7 @@ function BACKUP_PAPERLESS_DOCUMENTS() {
   tar -czvf "$MEDIA_HOST_DIR.tar.gz" "$MEDIA_HOST_DIR"
 
   echo "Removing $MEDIA_HOST_DIR"
-  rm -r $MEDIA_HOST_DIR
+  rm -r "$MEDIA_HOST_DIR"
 
   echo "Archiving $DOCUMENT_HOST_DIR"
   tar -czvf "$DOCUMENT_HOST_DIR.tar.gz" "$MEDIA_HOST_DIR"
@@ -90,7 +90,7 @@ function BACKUP_PAPERLESS_DOCUMENTS() {
   for file in "${HOST_BACKUP_ROOT_DIR}"/data/*; do
     echo "Moving file: $file to: $FINAL_BACKUP_PATH/data"
 
-    mv $file $FINAL_BACKUP_PATH/data/
+    mv "$file" $FINAL_BACKUP_PATH/data/
   done
 
   for file in "${HOST_BACKUP_ROOT_DIR}"/media/*; do
