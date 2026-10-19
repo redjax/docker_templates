@@ -8,7 +8,7 @@ BRANCH=${1:-"master"}
 echo ""
 echo "Switching branch to $BRANCH"
 echo ""
-git checkout $BRANCH
+git checkout "$BRANCH"
 
 echo ""
 echo "Run git fetch on $BRANCH"
