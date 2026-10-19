@@ -13,15 +13,15 @@ DATA_VOLUME_NAME=${5:-portainer-data}
 
 if [[ ! -d $BACKUP_DIR ]]; then
   echo ""
-  echo $BACKUP_DIR" does not exist. Creating."
+  echo "$BACKUP_DIR"" does not exist. Creating."
   echo ""
 
-  mkdir -pv $BACKUP_DIR
+  mkdir -pv "$BACKUP_DIR"
 fi
 
 function RUN_BACKUP() {
 
-  sudo docker run --rm --volumes-from $1 -v $BACKUP_DIR:/backup $BACKUP_IMAGE $2 /backup/backup.tar $CONTAINER_BACKUP_DIR
+  sudo docker run --rm --volumes-from "$1" -v "$BACKUP_DIR":/backup "$BACKUP_IMAGE" "$2" /backup/backup.tar "$CONTAINER_BACKUP_DIR"
 
 }
 
@@ -36,10 +36,10 @@ function RESTORE_BACKUP() {
   [yY] | [YyEeSs])
     echo ""
     echo "Test print: "
-    echo "sudo docker create -v $CONTAINER_BACKUP_DIR --name $DATA_VOLUME_NAME"2" $BACKUP_IMAGE true"
+    echo "sudo docker create -v $CONTAINER_BACKUP_DIR --name ${DATA_VOLUME_NAME} $BACKUP_IMAGE true"
     echo ""
     echo "Test print: "
-    echo "sudo docker run --rm --volumes-from $DATA_VOLUME_NAME"2" -v $BACKUP_DIR:/backup $BACKUP_IMAGE tar xvf /backup/backup.tar"
+    echo "sudo docker run --rm --volumes-from ${DATA_VOLUME_NAME}2 -v $BACKUP_DIR:/backup $BACKUP_IMAGE tar xvf /backup/backup.tar"
     echo ""
 
     echo ""
@@ -63,10 +63,10 @@ case $1 in
   case $BACKUP_METHOD in
   "tar")
     echo ""
-    echo "Running "$BACKUP_METHOD" backup using image "$BACKUP_IMAGE
+    echo "Running $BACKUP_METHOD backup using image $BACKUP_IMAGE"
     echo ""
 
-    RUN_BACKUP $CONTAINER_NAME "tar cvf"
+    RUN_BACKUP "$CONTAINER_NAME" "tar cvf"
     ;;
   esac
   ;;
