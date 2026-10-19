@@ -7,7 +7,7 @@ CONTAINER_ID=$(docker ps -qf "name=${CONTAINER_NAME}")
 
 function DOCKER_COMMAND() {
 
-  docker exec -it $CONTAINER_ID $1
+  docker exec -it "$CONTAINER_ID" "$1"
 
 }
 
@@ -28,7 +28,7 @@ function REMOVE_NODE_DEP() {
 
 function RUN_NODE_COMMAND() {
 
-  DOCKER_COMMAND $1
+  DOCKER_COMMAND "$1"
 
 }
 
@@ -107,16 +107,16 @@ esac
 
 case $1 in
 "-i" | "i" | "-a" | "--install" | "--add")
-  INSTALL_NODE_DEP $2 $save_mode
+  INSTALL_NODE_DEP "$2" "$save_mode"
   ;;
 "-u" | "-r" | " r" | "rm" | "--uninstall" | "--remove")
-  REMOVE_NODE_DEP $2 $save_mode
+  REMOVE_NODE_DEP "$2" "$save_mode"
   ;;
 "-h" | "--help")
   PRINT_HELP
   ;;
 "-c" | "--command")
-  RUN_NODE_COMMAND $2
+  RUN_NODE_COMMAND "$2"
   ;;
 "*" | "")
   echo ""
