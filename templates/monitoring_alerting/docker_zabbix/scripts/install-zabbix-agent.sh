@@ -101,7 +101,9 @@ if [[ -z "$ZBX_AGENT_IP" ]]; then
   mapfile -t IFACES < <(ip -o -4 addr show scope global | awk '{print $2, $4}' | sed 's#/.*##')
 
   for i in "${!IFACES[@]}"; do
-    printf "  [%d] %s (%s)\n" "$i" ${IFACES[$i]}
+    read -r iface ip <<<"${IFACES[$i]}"
+    echo
+    printf "  [%d] %s (%s)\n" "$i" "$iface" "$ip"
   done
 
   while true; do
