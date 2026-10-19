@@ -63,16 +63,6 @@ function BACKUP_PAPERLESS_DB() {
 
 }
 
-function RESTORE_MAYAN_DB() {
-
-  echo ""
-  echo "No restore function yet."
-  echo ""
-
-  # cat dumpfile.sql | docker exec -i $DB_CONTAINER psql -U $DB_USER
-
-}
-
 function main() {
 
   if [ "$1" == "backup" ]; then
