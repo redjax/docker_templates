@@ -49,7 +49,7 @@ function main() {
   if [ "$1" == "backup" ]; then
     BACKUP_MAYAN_DB
   elif [ "$1" == "restore" ]; then
-    RESTORE_MAYAN_DOCUMENTS
+    RESTORE_MAYAN_DB
   fi
 
 }
