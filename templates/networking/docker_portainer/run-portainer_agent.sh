@@ -15,10 +15,10 @@ echo ""
 docker stop portainer-agent && docker rm portainer-agent
 
 docker run -d \
-    -p $AGENT_PORT:$AGENT_PORT \
-    --name=portainer-agent \
-    --restart=unless-stopped \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v /var/lib/docker/volumes:/var/lib/docker/volumes \
-    -e AGENT_PORT=$AGENT_PORT \
-    portainer/agent:latest
+  -p $AGENT_PORT:$AGENT_PORT \
+  --name=portainer-agent \
+  --restart=unless-stopped \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/docker/volumes:/var/lib/docker/volumes \
+  -e AGENT_PORT=$AGENT_PORT \
+  portainer/agent:latest
