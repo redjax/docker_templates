@@ -91,7 +91,7 @@ if [[ ! "${response}" =~ ^[Yy]$ ]]; then
 fi
 
 tmp_dir="$(mktemp -d)"
-trap "rm -rf '${tmp_dir}'" EXIT
+trap 'rm -rf "${tmp_dir}"' EXIT
 
 echo "[*] Extracting backup to temp directory..."
 tar -xzf "${BACKUP_FILE}" -C "${tmp_dir}"
