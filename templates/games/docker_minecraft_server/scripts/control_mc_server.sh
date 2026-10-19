@@ -16,4 +16,4 @@ echo ""
 echo "Executing $ docker exec -i $mc_serv rcon-cli"
 echo ""
 
-docker exec -i $mc_serv rcon-cli
+docker exec -i "$mc_serv" rcon-cli
