@@ -27,7 +27,7 @@ fi
 echo "Password hashed successfully. Saving to file: ${HASH_OUTPUT_FILE}"
 
 ## Write password hash & a message to file
-cat <<EOF >"$HASH_OUTPUT_FILE"
+if ! cat <<EOF >"$HASH_OUTPUT_FILE"; then
 Graylog Admin Password Hash:
 
     $PASSWORD_HASH
@@ -47,9 +47,7 @@ password hash file. It is insecure to leave it.
 You can regenerate the same password hash by
 re-running this script and typing the new password.
 EOF
-
-if [[ ! $? -eq 0 ]]; then
-  echo "[ERROR] Failed to save password hash to file."
+  echo "[ERROR] Failed to save password hash to file." >&2
   exit 1
 fi
 
