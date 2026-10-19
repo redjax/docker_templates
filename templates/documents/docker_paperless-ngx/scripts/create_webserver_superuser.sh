@@ -28,15 +28,13 @@ function create_superuser() {
 }
 
 function main() {
-  prompt_create_env
-
-  if [[ $? -eq 0 ]]; then
+  if ! prompt_create_env 2>&1; then
     create_superuser
 
     return $?
 
   else
-    return $?
+    return
   fi
 }
 
