@@ -38,4 +38,3 @@ echo
 echo "Restarting container stack"
 echo "  Command: ${UP_CMD[@]}"
 "${UP_CMD[@]}"
-
