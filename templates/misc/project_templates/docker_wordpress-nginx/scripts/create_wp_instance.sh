@@ -41,12 +41,12 @@ function COPY_EXAMPLE_SITE() {
   cd ..
 
   # Copy example site to wordpress_sites
-  echo "Copying example Wordpress to wordpress_sites/"$WP_SITE_NAME
-  cp -R $EXAMPLE_WP_DIR wordpress_sites/$WP_SITE_NAME
+  echo "Copying example Wordpress to wordpress_sites/$WP_SITE_NAME"
+  cp -R "$EXAMPLE_WP_DIR" "wordpress_sites/$WP_SITE_NAME"
 
   echo ""
-  echo "Creating .env for wordpress_sites/"$WP_SITE_NAME
-  cp $WORDPRESS_SITES/$WP_SITE_NAME/.env.example $WORDPRESS_SITES/$WP_SITE_NAME/.env
+  echo "Creating .env for wordpress_sites/$WP_SITE_NAME"
+  cp "$WORDPRESS_SITES/$WP_SITE_NAME/.env.example" "$WORDPRESS_SITES/$WP_SITE_NAME/.env"
 
   echo ""
   echo "Site $WP_SITE_NAME created. Don't forget to update docker-compose.yml and .env"
