@@ -12,7 +12,7 @@ function RUN_WP_SITE_CONTAINERS() {
   cd "$WP_SITES_DIR" || return 1
 
   for SITE in */; do
-    echo "Executing docker-compose.yml for "$SITE
+    echo "Executing docker-compose.yml for $SITE"
     cd "$SITE" || return 1
     docker-compose up -d --force-recreate
     cd ..
