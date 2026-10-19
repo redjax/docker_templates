@@ -38,9 +38,9 @@ function RESTORE_MAYAN_DOCUMENTS() {
 
 function main() {
 
-  if [ $1 == "backup" ]; then
+  if [ "$1" == "backup" ]; then
     BACKUP_MAYAN_DOCUMENTS
-  elif [ $1 == "restore" ]; then
+  elif [ "$1" == "restore" ]; then
     RESTORE_MAYAN_DOCUMENTS
   fi
 
