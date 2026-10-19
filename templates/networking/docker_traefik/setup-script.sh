@@ -13,8 +13,7 @@ declare -a MAKE_DIRS=($TRAEFIK_CONF_DIR $TRAEFIK_LOG_DIR $TRAEFIK_RULES_DIR)
 echo ""
 echo "Creating directories"
 echo ""
-for dir in "${MAKE_DIRS[@]}"
-do
+for dir in "${MAKE_DIRS[@]}"; do
   if [[ ! -d $dir ]]; then
     echo ""
     echo "Creating directory: "$dir
@@ -32,8 +31,7 @@ echo ""
 echo "Creating files"
 echo ""
 
-for file in "${TOUCH_FILES[@]}"
-do
+for file in "${TOUCH_FILES[@]}"; do
   if [[ ! -f $file ]]; then
     echo ""
     echo "Creating file: "$file
@@ -56,4 +54,4 @@ echo ""
 echo "Creating Traefik docker network: "$TRAEFIK_NETWORK_NAME" (will skip if network exists)"
 echo ""
 # Grep docker network before creating
-docker network ls|grep $TRAEFIK_NETWORK_NAME > /dev/null || docker network create $TRAEFIK_NETWORK_NAME || true
+docker network ls | grep $TRAEFIK_NETWORK_NAME >/dev/null || docker network create $TRAEFIK_NETWORK_NAME || true
