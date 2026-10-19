@@ -64,7 +64,7 @@ function COPY_REPO_TO_HOST() {
   echo "Copying repo to $DOCKER_DIR/"$WORDPRESS_NGINX_DIR_NAME
   echo ""
 
-  cp -R docker_wordpress_nginx $DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME
+  cp -R docker_wordpress_nginx "$DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME"
 
 }
 
