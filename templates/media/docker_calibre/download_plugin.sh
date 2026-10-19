@@ -16,7 +16,7 @@ else
   echo "Changing directory to $PLUGINS_IMPORT_DIR"
   echo ""
 
-  cd "$PLUGINS_IMPORT_DIR"
+  cd "$PLUGINS_IMPORT_DIR" || exit 1
 
   echo ""
   echo "Downloading: $PLUGIN_URL"
