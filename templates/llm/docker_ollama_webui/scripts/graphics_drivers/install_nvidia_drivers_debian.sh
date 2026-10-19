@@ -12,7 +12,7 @@ distribution=$(
   echo $ID$VERSION_ID
 )
 curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
-curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list |
+curl -s -L "https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list" |
   sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
 # Update the package index again after adding the repository
