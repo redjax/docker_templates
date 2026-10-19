@@ -24,7 +24,6 @@ function load_dotenv() {
 OUTPUT_DIR="./backups"
 COMPOSE_CMD="docker compose"
 DB_SERVICE="bookstack_db"
-APP_SERVICE="bookstack"
 DB_USER="${DB_USERNAME:-bookstack}"
 DB_PASS="${DB_PASSWORD:-bookstack}"
 DB_NAME="${DB_DATABASE:-bookstackapp}"
