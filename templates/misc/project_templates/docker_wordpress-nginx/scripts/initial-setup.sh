@@ -5,9 +5,6 @@
 #
 
 SCRIPT_DIR=${PWD}
-GIT_DIR=".git"
-GIT_INGORE=".gitignore"
-README="README.MD"
 
 # Change if you want the working directory for this project to be different in docker/$WORDPRESS_NGINX_DIR_NAME
 WORDPRESS_NGINX_DIR_NAME="wordpress_nginx"
