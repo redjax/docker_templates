@@ -103,7 +103,7 @@ function main() {
     ;;
   *)
     echo ""
-    echo "Invalid entry: "$1
+    echo "Invalid entry: $1"
     echo ""
 
     print_help
