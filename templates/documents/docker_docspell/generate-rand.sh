@@ -8,7 +8,6 @@
 #  DOCSPELL_RESTSERVER_AUTH_SECRET
 #  DOCSPELL_SERVER_INTEGRATION_PASSWORD
 
-password_characters=14
 output_file=./secret
 
 restserver_secret=$(openssl rand -base64 32)
