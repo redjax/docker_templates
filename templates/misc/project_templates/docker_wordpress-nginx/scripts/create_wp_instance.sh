@@ -31,7 +31,7 @@ function CD_TO_PWD() {
   echo "Navigating back to "$SCRIPT_DIR
   echo ""
 
-  cd $SCRIPT_DIR
+  cd "$SCRIPT_DIR" || return 1
 }
 
 function COPY_EXAMPLE_SITE() {
