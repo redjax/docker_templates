@@ -1,6 +1,5 @@
 #!/bin/bash
 
-CONTAINER_NAME=netdata
 ## nightly,  stable
 RELEASE=stable
 

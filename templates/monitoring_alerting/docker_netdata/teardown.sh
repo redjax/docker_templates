@@ -3,7 +3,6 @@
 declare -a VOLUMES=("netdataconfig" "netdatalib" "netdatacache")
 
 CONTAINER_NAME=netdata
-DATA_DIR=./data
 
 function teardown() {
   echo "Stopping & removing Netdata container: ${CONTAINER_NAME}"
