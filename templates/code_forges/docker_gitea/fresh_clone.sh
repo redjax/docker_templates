@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 declare -a default_dirs=("data" "drone/db" "ssh")
 
