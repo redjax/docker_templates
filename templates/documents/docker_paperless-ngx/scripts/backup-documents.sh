@@ -90,13 +90,13 @@ function BACKUP_PAPERLESS_DOCUMENTS() {
   for file in "${HOST_BACKUP_ROOT_DIR}"/data/*; do
     echo "Moving file: $file to: $FINAL_BACKUP_PATH/data"
 
-    mv $file $FINAL_BACKUP_PATH/data/
+    mv "$file" $FINAL_BACKUP_PATH/data/
   done
 
   for file in "${HOST_BACKUP_ROOT_DIR}"/media/*; do
     echo "Moving file: $file to: $FINAL_BACKUP_PATH/media"
 
-    mv $file $FINAL_BACKUP_PATH/media/
+    mv "$file" $FINAL_BACKUP_PATH/media/
   done
 
 }
