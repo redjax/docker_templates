@@ -5,8 +5,11 @@ RELEASE=stable
 
 function start_agent() {
   CONTAINER_HOSTNAME=$(hostname)
-  read -p "Claim token: " CLAIM_TOKEN
-  read -p "Room IDs: " ROOM_IDS
+  read -r -p "Claim token: " CLAIM_TOKEN
+  echo
+
+  read -r -p "Room IDs: " ROOM_IDS
+  echo
 
   docker run -d --name=netdata \
     -p 19999:19999 \
