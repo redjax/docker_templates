@@ -45,7 +45,7 @@ function check_dirs_exist() {
       echo "$dir does not exist. Creating."
 
       ## Create $dir
-      mkdir -pv $dir
+      mkdir -pv "$dir"
     fi
   done
 }
@@ -73,12 +73,12 @@ function trim_backup() {
         echo "Trimming backups from $dir"
 
         ## Loop until number of files is less than retention num
-        while [ $pg_db_file_count -gt $backup_retention ]; do
+        while [ "$pg_db_file_count" -gt $backup_retention ]; do
           ## Get pg_db files, remove oldest
-          stat --printf='%Y %n\0' $dir/*.sql | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
+          stat --printf='%Y %n\0' "$dir/*.sql" | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
           ## Re-set file_count after file deletion
-          pg_db_file_count=$(ls $pg_db_backup_dir/ | wc -l)
+          pg_db_file_count=$(ls "$pg_db_backup_dir/" | wc -l)
         done
       fi
     else
@@ -99,7 +99,7 @@ function trim_backup() {
 
         while [[ $pga_script_file_count -gt $backup_retention ]]; do
           ## Get pga script files, remove oldest
-          stat --printf='%Y %n\0' $dir/* | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
+          stat --printf='%Y %n\0' "$dir/*" | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
           ## Re-set file_count after file deletion
           pga_script_file_count=$(ls $pg_db_backup_dir/ | wc -l)
@@ -385,7 +385,7 @@ function pg_db_restore() {
     options[i++]="$filename"
 
     ## Finish loop, run find command & feed into IFS
-  done < <(find $pg_db_backup_dir/ -maxdepth 1 -type f -name "*.sql" -print0)
+  done < <(find "$pg_db_backup_dir/" -maxdepth 1 -type f -name "*.sql" -print0)
 
   ## Select menu (from link above)
   select opt in "${options[@]}" "(Q)uit"; do
@@ -428,11 +428,11 @@ function pg_db_restore() {
       echo "Copying $opt into $pg_container:/backup"
       echo ""
 
-      eval $docker_cp_cmd &
+      eval "$docker_cp_cmd" &
       wait
 
       ## Restore db
-      cat $backup_full_path | docker exec -i $pg_container psql -U $pg_container_user
+      cat "$backup_full_path" | docker exec -i $pg_container psql -U $pg_container_user
 
       echo ""
       echo "Restarting container to unset POSTGRES_HOST_AUTH_METHOD=true env var."
