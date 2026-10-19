@@ -18,7 +18,9 @@ TORRENTLIST=$(transmission-remote "$SERVER" --list | sed -e '1d' -e '$d' | awk '
 # for each torrent in the list
 for TORRENTID in $TORRENTLIST; do
   INFO=$(transmission-remote "$SERVER" --torrent "$TORRENTID" --info)
-  echo -e "Processing #$TORRENTID - $(echo $INFO | sed -e 's/.*Name: \(.*\) Hash.*/\1/')"
+  TORRENT_NAME="${INFO#*Name: }"
+  TORRENT_NAME="${TORRENT_NAME% Hash*}"
+  echo -e "Processing #$TORRENTID - $TORRENT_NAME"
 
   # check if torrent download is completed
   DL_COMPLETED=$(echo "$INFO" | grep "Done: 100%")
