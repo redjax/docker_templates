@@ -62,7 +62,7 @@ function trim_backup() {
       echo "[DEBUG] DIR: $dir"
 
       ## Get count of files in pg_backup_dir
-      pg_db_file_count=$(ls $dir/ | wc -l)
+      pg_db_file_count=$(find "$dir" -mindepth 1 -maxdepth 1 | wc -l)
 
       echo ""
       echo "Found $pg_db_file_count file(s) in $dir"
@@ -78,14 +78,14 @@ function trim_backup() {
           stat --printf='%Y %n\0' "$dir/*.sql" | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
           ## Re-set file_count after file deletion
-          pg_db_file_count=$(ls "$pg_db_backup_dir/" | wc -l)
+          pg_db_file_count=$(find "$pg_db_backup_dir/" -mindepth 1 -maxdepth 1 | wc -l)
         done
       fi
     else
       echo "[DEBUG] DIR: $dir"
 
       ## Get count of files in pg_backup_dir
-      pga_script_file_count=$(ls $dir/ | wc -l)
+      pga_script_file_count=$(find "$dir" -mindepth 1 -maxdepth 1 | wc -l)
 
       echo ""
       echo "Found $pga_script_file_count file(s) in $dir"
@@ -102,7 +102,7 @@ function trim_backup() {
           stat --printf='%Y %n\0' "$dir/*" | sort -z | sed -zn '1s/[^ ]\{1,\} //p' | xargs -0 rm
 
           ## Re-set file_count after file deletion
-          pga_script_file_count=$(ls $pg_db_backup_dir/ | wc -l)
+          pga_script_file_count=$(find "$pg_db_backup_dir/" -mindepth 1 -maxdepth 1 | wc -l)
         done
       fi
     fi
