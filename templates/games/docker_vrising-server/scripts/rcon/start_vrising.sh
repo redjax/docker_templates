@@ -282,7 +282,7 @@ EOF
 V_RISING_SERVER_STARTUP_COMMAND="${V_RISING_SERVER_STARTUP_COMMAND//$'\n'/ }"
 
 # Set the working directory
-cd /steamcmd/vrising
+cd /steamcmd/vrising || exit 1
 
 ## FIXME: Even with the vcrun2015 below, we still get the same error about "VCRUNTIME140_1.dll" missing!?
 
