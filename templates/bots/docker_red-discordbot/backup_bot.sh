@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 THIS_DIR=${PWD}
 BACKUP_DIR=$THIS_DIR"/backup"
