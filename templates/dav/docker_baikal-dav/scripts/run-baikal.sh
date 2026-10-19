@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
-OVERLAYS_DIR="${PROJECT_ROOT}/overlays"
-DIRECT_ACCESS_OVERLAY="${OVERLAYS_DIR}/direct.yml"
-CADDY_ACCESS_OVERLAY="${OVERLAYS_DIR}/caddy.yml"
-
 EXPOSE_DIRECT="false"
 EXPOSE_CADDY="false"
 DOCKER_OPERATION=
