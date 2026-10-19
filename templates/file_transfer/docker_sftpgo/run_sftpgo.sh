@@ -18,7 +18,7 @@ docker run --name sftpgo \
   -p 8080:8080 \
   -p 2022:2022 \
   -e SFTPGO_GRACE_TIME=32 \
-  -v $HOST_PATH:/srv/sftpgo \
+  -v "$HOST_PATH":/srv/sftpgo \
   -d \
   "drakkan/sftpgo:latest"
 
