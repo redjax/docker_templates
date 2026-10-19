@@ -19,8 +19,8 @@ echo
 PASSWORD_HASH=$(echo -n "${PASSWORD}" | sha256sum | awk '{print $1}')
 
 if [[ ! $? -eq 0 ]]; then
-    echo "[ERROR] Failed to hash password."
-    exit 1
+  echo "[ERROR] Failed to hash password."
+  exit 1
 fi
 
 ## Output the password hash
@@ -49,8 +49,8 @@ re-running this script and typing the new password.
 EOF
 
 if [[ ! $? -eq 0 ]]; then
-    echo "[ERROR] Failed to save password hash to file."
-    exit 1
+  echo "[ERROR] Failed to save password hash to file."
+  exit 1
 fi
 
 echo ""

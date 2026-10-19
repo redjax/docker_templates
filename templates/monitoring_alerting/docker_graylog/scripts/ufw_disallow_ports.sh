@@ -8,4 +8,3 @@ for port in "${allow_ports[@]}"; do
   echo "Closing port: ${port}"
   sudo ufw deny $port
 done
-
