@@ -16,7 +16,7 @@ findtime = 600
 if [[ -f "$DEST_CONF" ]]; then
   echo "Fail2Ban config file already exists at: $DEST_CONF"
   echo ""
-  read -p "Do you want to overwrite it? (y/n): " overwrite_answer
+  read -r -n 1 -p "Do you want to overwrite it? (y/n): " overwrite_answer
 
   case $overwrite_answer in
   [Yy]*) ;;
@@ -65,7 +65,7 @@ else
   esac
 fi
 
-read -p "Reload Fail2Ban? (y/n): " restart_answer
+read -r -n 1 -p "Reload Fail2Ban? (y/n): " restart_answer
 
 case $restart_answer in
 [Yy]*)
