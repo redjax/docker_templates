@@ -34,7 +34,7 @@ function start_agent() {
 
 function start_agent_compose() {
 
-  cd agent
+  cd agent || return 1
 
   docker compose up -d
 
