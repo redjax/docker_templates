@@ -2,7 +2,7 @@
 
 function MAYAN_COMPOSE() {
 
-  docker-compose --file docker-compose.yml --project-name mayan $1
+  docker-compose --file docker-compose.yml --project-name mayan "$1"
 
 }
 
