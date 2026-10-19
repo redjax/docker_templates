@@ -8,6 +8,7 @@ cd "$PROJECT_DIR"
 # Load .env if present
 if [[ -f .env ]]; then
   set -a
+  # shellcheck disable=SC1091
   source .env
   set +a
 fi
