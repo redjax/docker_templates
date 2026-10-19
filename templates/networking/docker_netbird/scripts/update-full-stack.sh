@@ -36,5 +36,5 @@ echo "  Command: ${PULL_CMD[*]}"
 
 echo
 echo "Restarting container stack"
-echo "  Command: ${UP_CMD[@]}"
+echo "  Command: ${UP_CMD[*]}"
 "${UP_CMD[@]}"
