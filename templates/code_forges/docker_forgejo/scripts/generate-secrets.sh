@@ -10,7 +10,7 @@ if ! command -v openssl >/dev/null 2>&1; then
   exit 1
 fi
 
-FORGEJO_VER=${FORGEJO_IMG_VER:-15}
+FORGEJO_VER="${FORGEJO_IMG_VER:-15}"
 
 function forgejo_secret_key() {
   local key
