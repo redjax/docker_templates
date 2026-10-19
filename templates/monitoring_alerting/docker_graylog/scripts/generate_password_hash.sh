@@ -12,7 +12,7 @@
 HASH_OUTPUT_FILE="$(pwd)/password_hash"
 
 ## Prompt for the password securely
-read -sp "Graylog root password to hash: " PASSWORD
+read -r -sp "Graylog root password to hash: " PASSWORD
 echo
 
 ## Hash the password using sha256sum (secure and portable)
@@ -27,7 +27,7 @@ fi
 echo "Password hashed successfully. Saving to file: ${HASH_OUTPUT_FILE}"
 
 ## Write password hash & a message to file
-cat <<EOF >$HASH_OUTPUT_FILE
+cat <<EOF >"$HASH_OUTPUT_FILE"
 Graylog Admin Password Hash:
 
     $PASSWORD_HASH
