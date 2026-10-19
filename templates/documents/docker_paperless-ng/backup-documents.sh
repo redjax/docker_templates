@@ -40,7 +40,7 @@ function TRIM_BACKUPS() {
 
 }
 
-function BACKUP_PAPERLESS_DOCUMENTS2() {
+function BACKUP_PAPERLESS_DOCUMENTS() {
 
   PREPARE_BACKUP_DIRS
 
@@ -101,33 +101,6 @@ function BACKUP_PAPERLESS_DOCUMENTS2() {
 
 }
 
-function BACKUP_PAPERLESS_DOCUMENTS() {
-
-  if [[ ! -f $DOCUMENT_BACKUP_PATH ]]; then
-    echo ""
-    echo "Backing up Paperless documents dir."
-    echo ""
-
-    tar -zcvf $DOCUMENT_BACKUP_PATH $DOCUMENT_DIR
-
-  elif [[ -f $DOCUMENT_BACKUP_PATH ]]; then
-    echo ""
-    echo "Backup exists at "$DOCUMENT_BACKUP_PATH
-    echo ""
-    echo "Removing and creating new backup."
-    echo ""
-
-    rm $DOCUMENT_BACKUP_PATH
-    tar -zcvf $DOCUMENT_BACKUP_PATH $DOCUMENT_DIR
-
-  else
-    echo ""
-    echo "Unknown error."
-    echo ""
-  fi
-
-}
-
 function RESTORE_PAPERLESS_DOCUMENTS() {
 
   echo ""
@@ -139,8 +112,7 @@ function RESTORE_PAPERLESS_DOCUMENTS() {
 function main() {
 
   if [ "$1" == "backup" ]; then
-    # BACKUP_PAPERLESS_DOCUMENTS
-    BACKUP_PAPERLESS_DOCUMENTS2
+    BACKUP_PAPERLESS_DOCUMENTS
   elif [ "$1" == "restore" ]; then
     RESTORE_PAPERLESS_DOCUMENTS
   elif [ "$1" == "trim" ]; then
