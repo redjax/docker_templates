@@ -38,10 +38,10 @@ function BACKUP_PAPERLESS_DB() {
       mkdir -pv $THIS_DIR/backup/db
     fi
 
-    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >$DB_DUMP_PATH
+    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >"$DB_DUMP_PATH"
 
     echo ""
-    echo "Backup saved to: "$DB_DUMP_PATH
+    echo "Backup saved to: $DB_DUMP_PATH"
     echo ""
 
   elif [[ -f $DB_DUMP_PATH ]]; then
@@ -52,7 +52,7 @@ function BACKUP_PAPERLESS_DB() {
     echo ""
 
     rm $DB_DUMP_PATH
-    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >$DB_DUMP_PATH
+    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >"$DB_DUMP_PATH"
 
   else
 
@@ -75,11 +75,11 @@ function RESTORE_MAYAN_DB() {
 
 function main() {
 
-  if [ $1 == "backup" ]; then
+  if [ "$1" == "backup" ]; then
     BACKUP_PAPERLESS_DB
-  elif [ $1 == "restore" ]; then
+  elif [ "$1" == "restore" ]; then
     RESTORE_PAPERLESS_DOCUMENTS
-  elif [ $1 == "trim-backup" ]; then
+  elif [ "$1" == "trim-backup" ]; then
     TRIM_BACKUPS
   fi
 
@@ -97,7 +97,7 @@ case $1 in
   ;;
 *)
   echo ""
-  echo "Invalid flag: "$1
+  echo "Invalid flag: $1"
   echo ""
   echo "Valid flags: -b/--backup, -r/--restore"
   echo ""
