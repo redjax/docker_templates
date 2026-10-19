@@ -8,8 +8,6 @@ set -euo pipefail
 # I will update it as I add/remove containers I "always run." #
 ###############################################################
 
-THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
 CWD=$(pwd)
 trap 'cd "$CWD"' EXIT
 
