@@ -31,7 +31,8 @@ done
 echo ""
 echo "3 secrets will be printed."
 echo ""
-read -p "Press a key to show secrets..."
+read -r -n 1 -p "Press a key to show secrets..."
+echo
 clear
 
 echo "Copy each secret into the following variables in .env:"
@@ -46,7 +47,8 @@ echo "---------"
 cat $output_file
 
 echo ""
-read -p "Press a key once you've copied the secrets..."
+read -r -n 1 -p "Press a key once you've copied the secrets..."
+echo
 echo ""
 
 echo ""
