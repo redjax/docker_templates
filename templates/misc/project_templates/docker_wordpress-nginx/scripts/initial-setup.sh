@@ -31,16 +31,16 @@ function CD_TO_PWD() {
   # script was run from
 
   echo ""
-  echo "Navigating back to "$SCRIPT_DIR
+  echo "Navigating back to $SCRIPT_DIR"
   echo ""
 
-  cd $SCRIPT_DIR
+  cd "$SCRIPT_DIR" || exit 1
 }
 
 function REMOVE_REPO_FILES() {
   # Remove repository files like README.md and .git
 
-  cd $DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME
+  cd "$DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME" || exit 1
 
   echo "Removing .git dir"
   rm -rf .git
@@ -49,7 +49,7 @@ function REMOVE_REPO_FILES() {
   echo "Removing auto_git_checkout.sh"
   rm auto_git_checkout.sh
   echo "Removing initial setup script"
-  cd scripts
+  cd scripts || exit 1
   rm initial-setup.sh
 }
 
@@ -69,7 +69,7 @@ function COPY_REPO_TO_HOST() {
 }
 
 function SETUP_PROXY() {
-  cd nginx-proxy
+  cd nginx-proxy || exit 1
 
   echo ""
   echo "Creating certs folder."
@@ -144,7 +144,7 @@ function MAIN() {
 
   COPY_REPO_TO_HOST
 
-  cd "$SCRIPT_DIR"
+  cd "$SCRIPT_DIR" || exit 1
 
   REMOVE_REPO_FILES
 
@@ -157,7 +157,7 @@ function MAIN() {
   echo "Proxy network "$DOCKER_PROXY_NETWORK_NAME " created."
 
   echo ""
-  cd "$DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME"
+  cd "$DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME" || exit 1
 
   SETUP_PROXY
 
