@@ -5,7 +5,9 @@
 echo "[ Create Headscale Docker network ]"
 echo ""
 
-read -p "Headscale network name (default: headscale_net): " HEADSCALE_NETWORK_NAME
+read -r -p "Headscale network name (default: headscale_net): " HEADSCALE_NETWORK_NAME
+echo
+
 HEADSCALE_NETWORK_NAME=${HEADSCALE_NETWORK_NAME:-headscale_net}
 echo ""
 

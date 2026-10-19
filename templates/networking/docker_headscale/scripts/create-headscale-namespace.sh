@@ -8,7 +8,7 @@
 echo "[ Create Headscale Namespace ]"
 echo ""
 
-read -p "What namespace do you want to use for Headscale? " HEADSCALE_NAMESPACE
+read -r -p "What namespace do you want to use for Headscale? " HEADSCALE_NAMESPACE
 echo ""
 echo "Setting Headscale namespace to: ${HEADSCALE_NAMESPACE}"
 echo ""

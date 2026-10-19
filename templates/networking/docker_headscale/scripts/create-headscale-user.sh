@@ -6,7 +6,8 @@
 echo "[ Create Headscale User ]"
 echo ""
 
-read -p "New user name: " HEADSCALE_USER
+read -r -p "New user name: " HEADSCALE_USER
+echo
 
 echo ""
 echo "Creating Headscale user: ${HEADSCALE_USER}"
