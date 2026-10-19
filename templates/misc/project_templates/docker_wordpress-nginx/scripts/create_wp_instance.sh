@@ -10,8 +10,8 @@ SCRIPT_DIR=${PWD}
 
 case "$1" in
 "")
-  echo "Name of new Wordpress instance: "
-  read WP_SITE_NAME_INPUT
+  read -r -p "Name of new Wordpress instance: " WP_SITE_NAME_INPUT
+  echo
   echo "Site name set to: $WP_SITE_NAME_INPUT"
   ;;
 *)
