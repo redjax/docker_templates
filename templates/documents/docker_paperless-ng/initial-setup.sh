@@ -1,8 +1,8 @@
 #!/bin/bash
 
-declare -a DOCKER_FILES=( "docker-compose.yml" ".env" "docker-compose.env" )
+declare -a DOCKER_FILES=("docker-compose.yml" ".env" "docker-compose.env")
 
-function COPY_EXAMPLE_FILE () {
+function COPY_EXAMPLE_FILE() {
 
   if [[ ! -f $1 ]]; then
     echo ""
@@ -17,7 +17,7 @@ function COPY_EXAMPLE_FILE () {
 
 }
 
-function GENERATE_SECRET_KEY () {
+function GENERATE_SECRET_KEY() {
 
   if [[ ! -f secret_key ]]; then
     echo ""
@@ -25,7 +25,7 @@ function GENERATE_SECRET_KEY () {
     echo "Add the secret to the docker-compose.env file"
     echo ""
 
-    openssl rand -base64 64 >> secret_key
+    openssl rand -base64 64 >>secret_key
   elif [[ -f secret_key ]]; then
     echo ""
     echo "Secret key file exists."
@@ -39,8 +39,7 @@ function GENERATE_SECRET_KEY () {
 
 }
 
-for FILE in "${DOCKER_FILES[@]}"
-do
+for FILE in "${DOCKER_FILES[@]}"; do
   COPY_EXAMPLE_FILE $FILE
 done
 

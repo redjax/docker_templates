@@ -12,11 +12,11 @@ HOST_BACKUP_ROOT_DIR="$THIS_DIR/tmp/paperless"
 # DOCUMENT_BACKUP_NAME=paperless_docs_backup.tar.gz
 # DOCUMENT_BACKUP_PATH=$DOCUMENT_BACKUP_DIR"/"$DOCUMENT_BACKUP_NAME
 
-function GET_TIMESTAMP () {
+function GET_TIMESTAMP() {
   date +"%Y-%m-%d_%H:%M"
 }
 
-function PREPARE_BACKUP_DIRS () {
+function PREPARE_BACKUP_DIRS() {
 
   if [[ ! -d "$HOST_BACKUP_ROOT_DIR/data" ]]; then
     echo "Creating dir: $HOST_BACKUP_ROOT_DIR/data"
@@ -40,7 +40,7 @@ function TRIM_BACKUPS() {
 
 }
 
-function BACKUP_PAPERLESS_DOCUMENTS2 () {
+function BACKUP_PAPERLESS_DOCUMENTS2() {
 
   PREPARE_BACKUP_DIRS
 
@@ -102,8 +102,8 @@ function BACKUP_PAPERLESS_DOCUMENTS2 () {
 
 }
 
-function BACKUP_PAPERLESS_DOCUMENTS () {
-  
+function BACKUP_PAPERLESS_DOCUMENTS() {
+
   if [[ ! -f $DOCUMENT_BACKUP_PATH ]]; then
     echo ""
     echo "Backing up Paperless documents dir."
@@ -129,7 +129,7 @@ function BACKUP_PAPERLESS_DOCUMENTS () {
 
 }
 
-function RESTORE_PAPERLESS_DOCUMENTS () {
+function RESTORE_PAPERLESS_DOCUMENTS() {
 
   echo ""
   echo "No restore function yet."
@@ -137,7 +137,7 @@ function RESTORE_PAPERLESS_DOCUMENTS () {
 
 }
 
-function main () {
+function main() {
 
   if [ $1 == "backup" ]; then
     # BACKUP_PAPERLESS_DOCUMENTS
@@ -151,21 +151,21 @@ function main () {
 }
 
 case $1 in
- "-b" | "--backup")
-   main "backup"
+"-b" | "--backup")
+  main "backup"
   ;;
-  "-r" | "--restore")
-    main "restore"
+"-r" | "--restore")
+  main "restore"
   ;;
-  "-bt" | "--backup-trim")
-    main "trim"
+"-bt" | "--backup-trim")
+  main "trim"
   ;;
-  *)
-    echo ""
-    echo "Invalid flag: "$1
-    echo ""
-    echo "Valid flags: -b/--backup, -r/--restore"
-    echo ""
+*)
+  echo ""
+  echo "Invalid flag: "$1
+  echo ""
+  echo "Valid flags: -b/--backup, -r/--restore"
+  echo ""
   ;;
 esac
 

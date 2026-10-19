@@ -7,8 +7,7 @@ DB_USER=paperless
 # DB_DUMP_NAME=paperless_db_dump.sql
 # DB_DUMP_PATH=$THIS_DIR/backup/db/$DB_DUMP_NAME
 
-
-function GET_TIMESTAMP () {
+function GET_TIMESTAMP() {
   date +"%Y-%m-%d_%H:%M"
 }
 
@@ -22,7 +21,7 @@ function TRIM_BACKUPS() {
 
 }
 
-function BACKUP_PAPERLESS_DB () {
+function BACKUP_PAPERLESS_DB() {
 
   if [[ ! -f $DB_DUMP_PATH ]]; then
 
@@ -39,7 +38,7 @@ function BACKUP_PAPERLESS_DB () {
       mkdir -pv $THIS_DIR/backup/db
     fi
 
-    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER > $DB_DUMP_PATH
+    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >$DB_DUMP_PATH
 
     echo ""
     echo "Backup saved to: "$DB_DUMP_PATH
@@ -53,7 +52,7 @@ function BACKUP_PAPERLESS_DB () {
     echo ""
 
     rm $DB_DUMP_PATH
-    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER > $DB_DUMP_PATH
+    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >$DB_DUMP_PATH
 
   else
 
@@ -64,17 +63,17 @@ function BACKUP_PAPERLESS_DB () {
 
 }
 
-function RESTORE_MAYAN_DB () {
+function RESTORE_MAYAN_DB() {
 
   echo ""
   echo "No restore function yet."
   echo ""
 
   # cat dumpfile.sql | docker exec -i $DB_CONTAINER psql -U $DB_USER
-  
+
 }
 
-function main () {
+function main() {
 
   if [ $1 == "backup" ]; then
     BACKUP_PAPERLESS_DB
@@ -87,21 +86,22 @@ function main () {
 }
 
 case $1 in
- "-b" | "--backup")
-   main "backup"
+"-b" | "--backup")
+  main "backup"
   ;;
-  "-r" | "--restore")
-    main "restore"
+"-r" | "--restore")
+  main "restore"
   ;;
-  "-bt" | "--backup-trim")
-    main "trim-backup"
+"-bt" | "--backup-trim")
+  main "trim-backup"
   ;;
-  *)
-    echo ""
-    echo "Invalid flag: "$1
-    echo ""
-    echo "Valid flags: -b/--backup, -r/--restore"
-    echo ""
+*)
+  echo ""
+  echo "Invalid flag: "$1
+  echo ""
+  echo "Valid flags: -b/--backup, -r/--restore"
+  echo ""
+  ;;
 esac
 
 exit
