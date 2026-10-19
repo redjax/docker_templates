@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-if ! command -v docker 2>&1 > /dev/null; then
-  echo "[ERROR] docker is not installed"
+if ! command -v docker >/dev/null 2>&1; then
+  echo "[ERROR] docker is not installed" >&2
   exit 1
 fi
 
-if ! command -v openssl &>/dev/null; then
-    echo "[ERROR] openssl is not installed"
-    exit 1
+if ! command -v openssl >/dev/null 2>&1; then
+  echo "[ERROR] openssl is not installed" >&2
+  exit 1
 fi
 
 FORGEJO_VER=${FORGEJO_IMG_VER:-15}
