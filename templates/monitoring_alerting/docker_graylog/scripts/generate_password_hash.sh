@@ -16,9 +16,7 @@ read -r -sp "Graylog root password to hash: " PASSWORD
 echo
 
 ## Hash the password using sha256sum (secure and portable)
-PASSWORD_HASH=$(echo -n "${PASSWORD}" | sha256sum | awk '{print $1}')
-
-if [[ ! $? -eq 0 ]]; then
+if ! PASSWORD_HASH=$(echo -n "${PASSWORD}" | sha256sum | awk '{print $1}') 2>&1; then
   echo "[ERROR] Failed to hash password."
   exit 1
 fi
