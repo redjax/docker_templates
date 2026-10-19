@@ -17,19 +17,19 @@ DOCKER_PROXY_NETWORK_NAME="proxy_net"
 # Check if user passed docker directory
 # in the script
 case "$1" in
-  "")
-    echo "Full path to docker directory, i.e. /home/user/docker (no trailing slash): "
-    read DOCKER_DIR_INPUT
-    echo "Docker directory set to "$DOCKER_DIR_INPUT
-    ;;
-  *)
-    echo "Docker directory passed as arg: "$1". Continuing"
-    ;;
+"")
+  echo "Full path to docker directory, i.e. /home/user/docker (no trailing slash): "
+  read DOCKER_DIR_INPUT
+  echo "Docker directory set to "$DOCKER_DIR_INPUT
+  ;;
+*)
+  echo "Docker directory passed as arg: "$1". Continuing"
+  ;;
 esac
 
 DOCKER_DIR=${1:-$DOCKER_DIR_INPUT}
 
-function CD_TO_PWD () {
+function CD_TO_PWD() {
   # Take terminal back to the directory
   # script was run from
 
@@ -40,7 +40,7 @@ function CD_TO_PWD () {
   cd $SCRIPT_DIR
 }
 
-function REMOVE_REPO_FILES () {
+function REMOVE_REPO_FILES() {
   # Remove repository files like README.md and .git
 
   cd $DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME
@@ -56,7 +56,7 @@ function REMOVE_REPO_FILES () {
   rm initial-setup.sh
 }
 
-function COPY_REPO_TO_HOST () {
+function COPY_REPO_TO_HOST() {
   # Copy the repository to its own
   # directory in the host's docker/ dir
   # and remove repository files
@@ -71,7 +71,7 @@ function COPY_REPO_TO_HOST () {
 
 }
 
-function SETUP_PROXY () {
+function SETUP_PROXY() {
   cd nginx-proxy
 
   echo ""
@@ -96,7 +96,7 @@ function SETUP_PROXY () {
 
 }
 
-function PRINT_CF_INSTRUCTIONS () {
+function PRINT_CF_INSTRUCTIONS() {
 
   clear
 
@@ -143,7 +143,7 @@ function PRINT_CF_INSTRUCTIONS () {
 
 }
 
-function MAIN () {
+function MAIN() {
 
   COPY_REPO_TO_HOST
 
@@ -174,15 +174,15 @@ function MAIN () {
   read $GUIDE_CHOICE
 
   case $GUIDE_CHOICE in
-    [Yy] | [Yy][Ee][Ss])
-      PRINT_CF_INSTRUCTIONS
-      ;;
-    [Nn] | [Nn][Oo])
-      echo ""
-      echo "Got it. Guide will not be printed."
-      echo ""
-      ;;
-    esac
+  [Yy] | [Yy][Ee][Ss])
+    PRINT_CF_INSTRUCTIONS
+    ;;
+  [Nn] | [Nn][Oo])
+    echo ""
+    echo "Got it. Guide will not be printed."
+    echo ""
+    ;;
+  esac
 }
 
 MAIN
