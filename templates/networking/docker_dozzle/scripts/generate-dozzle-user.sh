@@ -56,7 +56,10 @@ prompt_if_empty() {
   local var_name=$1
   local prompt_msg=$2
   local is_password=${3:-false}
-  local value=$(eval echo \$$var_name)
+  local value
+
+  value=$(eval echo \$$var_name)
+
   if [[ -z $value ]]; then
     if [[ $is_password == true ]]; then
       read -rsp "$prompt_msg: " input_val
