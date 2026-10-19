@@ -10,7 +10,7 @@ function start_agent() {
 
   docker run -d --name=netdata \
     -p 19999:19999 \
-    --hostname $CONTAINER_HOSTNAME \
+    --hostname "$CONTAINER_HOSTNAME" \
     -v netdataconfig:/etc/netdata \
     -v netdatalib:/var/lib/netdata \
     -v netdatacache:/var/cache/netdata \
@@ -23,9 +23,9 @@ function start_agent() {
     --restart unless-stopped \
     --cap-add SYS_PTRACE \
     --security-opt apparmor=unconfined \
-    -e NETDATA_CLAIM_TOKEN=$CLAIM_TOKEN \
+    -e NETDATA_CLAIM_TOKEN="$CLAIM_TOKEN" \
     -e NETDATA_CLAIM_URL=https://app.netdata.com \
-    -e NETDATA_CLAIM_ROOMS=$ROOM_IDS \
+    -e NETDATA_CLAIM_ROOMS="$ROOM_IDS" \
     netdata/netdata:$RELEASE
 }
 

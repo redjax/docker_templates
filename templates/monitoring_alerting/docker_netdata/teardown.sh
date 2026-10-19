@@ -12,7 +12,7 @@ function teardown() {
 
   for vol in "${VOLUMES[@]}"; do
     echo "Removing volume ${vol} if it exists."
-    docker volume rm $vol
+    docker volume rm "$vol"
   done
 
   if [[ -d ./data ]]; then
