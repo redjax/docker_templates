@@ -54,7 +54,8 @@ if [[ -d "${PROJECT_ROOT}/.ssh" ]]; then
 
   if [[ ${#non_gitkeep_files[@]} -eq 0 ]]; then
     echo "SSH directory exists but does not have any keys. Running SSH setup."
-    if ! source "${PROJECT_ROOT}/scripts/generate-ssh-keys.sh" 2>&1; then
+    # shellcheck source=generate-ssh-keys.sh
+    if ! bash "${PROJECT_ROOT}/scripts/generate-ssh-keys.sh" 2>&1; then
       echo "[ERROR] Failed setting up SSH keys."
       exit 1
     fi
@@ -63,7 +64,8 @@ if [[ -d "${PROJECT_ROOT}/.ssh" ]]; then
   fi
 else
   echo "SSH directory does not exist. Running SSH setup."
-  if ! source "${PROJECT_ROOT}/scripts/generate-ssh-keys.sh" 2>&1; then
+  # shellcheck source=generate-ssh-keys.sh
+  if ! bash "${PROJECT_ROOT}/scripts/generate-ssh-keys.sh" 2>&1; then
     echo "[ERROR] Failed setting up SSH keys."
     exit 1
   fi
