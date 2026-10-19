@@ -2,41 +2,40 @@
 
 declare -a default_dirs=("data" "drone/db" "ssh")
 
-for dir in "${default_dirs[@]}"
-do
-    if [[ ! -d "$dir" ]]; then
+for dir in "${default_dirs[@]}"; do
+  if [[ ! -d "$dir" ]]; then
 
-        echo "Creating $dir"
-        mkdir -pv $dir
-    
-    fi
+    echo "Creating $dir"
+    mkdir -pv $dir
+
+  fi
 done
 
 if [[ ! -f ".env" ]]; then
-    echo ""
-    echo "Copying .env.example -> .env"
-    echo ""
+  echo ""
+  echo "Copying .env.example -> .env"
+  echo ""
 
-    cp .env.example .env
+  cp .env.example .env
 fi
 
 if [[ ! -f "./drone/db/database.sqlite" ]]; then
+  echo ""
+  echo "Creating Drone db"
+  echo ""
+
+  python3 create_drone_db.py
+
+  if [[ -f "database.sqlite" ]]; then
     echo ""
-    echo "Creating Drone db"
+    echo "Moving database file to drone/db"
     echo ""
 
-    python3 create_drone_db.py
-
-    if [[ -f "database.sqlite" ]]; then
-        echo ""
-        echo "Moving database file to drone/db"
-        echo ""
-
-        mv database.sqlite drone/db
-    else
-        echo ""
-        echo "[ERROR]: Database file 'database.sqlite' not found. Is Python installed?"
-    fi
+    mv database.sqlite drone/db
+  else
+    echo ""
+    echo "[ERROR]: Database file 'database.sqlite' not found. Is Python installed?"
+  fi
 fi
 
 echo ""
