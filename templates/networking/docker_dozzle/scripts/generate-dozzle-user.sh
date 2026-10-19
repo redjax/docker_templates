@@ -17,8 +17,7 @@ OPTIONS=n:u:e:
 LONGOPTIONS=name:,username:,email:
 
 ## - Temporarily store output to handle quoting correctly
-PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
-if [[ $? -ne 0 ]]; then
+if ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@") 2>&1; then
   echo "Failed to parse options." >&2
   exit 1
 fi
