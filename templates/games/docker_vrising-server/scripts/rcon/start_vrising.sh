@@ -39,7 +39,7 @@ if [ ! -d "/steamcmd/vrising" ]; then
 fi
 if [ ! -d "${V_RISING_SERVER_PERSISTENT_DATA_PATH}" ]; then
   echo "Missing ${V_RISING_SERVER_PERSISTENT_DATA_PATH}, creating.."
-  mkdir -p ${V_RISING_SERVER_PERSISTENT_DATA_PATH}
+  mkdir -p "${V_RISING_SERVER_PERSISTENT_DATA_PATH}"
 fi
 
 # Define the install/update function
@@ -121,7 +121,7 @@ mkdir -p "${V_RISING_SERVER_PERSISTENT_DATA_PATH}/Settings"
 V_RISING_SERVER_CONFIG_FILE="${V_RISING_SERVER_PERSISTENT_DATA_PATH}/Settings/ServerHostSettings.json"
 if [ ! -f "${V_RISING_SERVER_CONFIG_FILE}" ]; then
   echo "Server configuration file not found, creating a new one.."
-  cp ${V_RISING_SERVER_CONFIG_FILE_DEFAULT} ${V_RISING_SERVER_CONFIG_FILE}
+  cp "${V_RISING_SERVER_CONFIG_FILE_DEFAULT}" "${V_RISING_SERVER_CONFIG_FILE}"
 # else
 #   echo "Applying custom server configuration file.."
 #   cp -f ${V_RISING_SERVER_CONFIG_FILE} ${V_RISING_SERVER_CONFIG_FILE_DEFAULT}
@@ -131,14 +131,14 @@ fi
 # and patch it with jq afterwards.
 if [ "$V_RISING_SERVER_DEFAULT_HOST_SETTINGS" = "true" ]; then
   echo "Applying default server configuration file.."
-  cp -f ${V_RISING_SERVER_CONFIG_FILE_DEFAULT} ${V_RISING_SERVER_CONFIG_FILE}
+  cp -f "${V_RISING_SERVER_CONFIG_FILE_DEFAULT}" "${V_RISING_SERVER_CONFIG_FILE}"
 fi
 
 # Copy the default game configuration file if one doesn't yet exist
 V_RISING_SERVER_GAME_CONFIG_FILE="${V_RISING_SERVER_PERSISTENT_DATA_PATH}/Settings/ServerGameSettings.json"
 if [ ! -f "${V_RISING_SERVER_GAME_CONFIG_FILE}" ]; then
   echo "Game configuration file not found, creating a new one.."
-  cp ${V_RISING_SERVER_GAME_CONFIG_FILE_DEFAULT} ${V_RISING_SERVER_GAME_CONFIG_FILE}
+  cp "${V_RISING_SERVER_GAME_CONFIG_FILE_DEFAULT}" "${V_RISING_SERVER_GAME_CONFIG_FILE}"
 # else
 #   echo "Applying custom game configuration file.."
 #   cp -f ${V_RISING_SERVER_GAME_CONFIG_FILE} ${V_RISING_SERVER_GAME_CONFIG_FILE_DEFAULT}
@@ -148,19 +148,19 @@ fi
 # and patch it with jq afterwards.
 if [ "$V_RISING_SERVER_DEFAULT_GAME_SETTINGS" = "true" ]; then
   echo "Applying default game configuration file.."
-  cp -f ${V_RISING_SERVER_GAME_CONFIG_FILE_DEFAULT} ${V_RISING_SERVER_GAME_CONFIG_FILE}
+  cp -f "${V_RISING_SERVER_GAME_CONFIG_FILE_DEFAULT}" "${V_RISING_SERVER_GAME_CONFIG_FILE}"
 fi
 
 # Copy admin list file if one doesn't yet exist
 V_RISING_SERVER_ADMIN_LIST_FILE_DEFAULT="/steamcmd/vrising/VRisingServer_Data/StreamingAssets/Settings/adminlist.txt"
 if [ ! -f "${V_RISING_SERVER_ADMIN_LIST_FILE_DEFAULT}" ]; then
   echo "Default admin list not found, creating an empty file.."
-  touch ${V_RISING_SERVER_ADMIN_LIST_FILE_DEFAULT}
+  touch "${V_RISING_SERVER_ADMIN_LIST_FILE_DEFAULT}"
 fi
 V_RISING_SERVER_ADMIN_LIST_FILE="${V_RISING_SERVER_PERSISTENT_DATA_PATH}/Settings/adminlist.txt"
 if [ ! -f "${V_RISING_SERVER_ADMIN_LIST_FILE}" ]; then
   echo "Admin list file not found, creating a new one.."
-  cp ${V_RISING_SERVER_ADMIN_LIST_FILE_DEFAULT} ${V_RISING_SERVER_ADMIN_LIST_FILE}
+  cp "${V_RISING_SERVER_ADMIN_LIST_FILE_DEFAULT}" "${V_RISING_SERVER_ADMIN_LIST_FILE}"
 # else
 #   ## TODO: Why would we copy over the defaults if we have the persistence path set?
 #   echo "Applying custom admin list file.."
@@ -171,12 +171,12 @@ fi
 V_RISING_SERVER_BAN_LIST_FILE_DEFAULT="/steamcmd/vrising/VRisingServer_Data/StreamingAssets/Settings/banlist.txt"
 if [ ! -f "${V_RISING_SERVER_BAN_LIST_FILE_DEFAULT}" ]; then
   echo "Default ban list not found, creating an empty file.."
-  touch ${V_RISING_SERVER_BAN_LIST_FILE_DEFAULT}
+  touch "${V_RISING_SERVER_BAN_LIST_FILE_DEFAULT}"
 fi
 V_RISING_SERVER_BAN_LIST_FILE="${V_RISING_SERVER_PERSISTENT_DATA_PATH}/Settings/banlist.txt"
 if [ ! -f "${V_RISING_SERVER_BAN_LIST_FILE}" ]; then
   echo "Ban list file not found, creating a new one.."
-  cp ${V_RISING_SERVER_BAN_LIST_FILE_DEFAULT} ${V_RISING_SERVER_BAN_LIST_FILE}
+  cp "${V_RISING_SERVER_BAN_LIST_FILE_DEFAULT}" "${V_RISING_SERVER_BAN_LIST_FILE}"
 # else
 #   ## TODO: Why would we copy over the defaults if we have the persistence path set?
 #   echo "Applying custom ban list file.."
