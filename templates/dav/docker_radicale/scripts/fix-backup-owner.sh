@@ -29,45 +29,45 @@ function usage() {
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -u|--user)
-      if [[ -z "$2" ]]; then
-        echo "[ERROR] --user provided, but no username given." >&2
-        usage
-        exit 1
-      fi
-
-      USER_OWNER="$2"
-      shift 2
-      ;;
-    -g|--group)
-      if [[ -z "$2" ]]; then
-        echo "[ERROR] --group provided, but not group name given."  >&2
-        usage
-        exit 1
-      fi
-
-      GROUP_OWNER="$2"
-      shift 2
-      ;;
-    -o|--backup-dir)
-      if [[ -z "$2" ]]; then
-        echo "[ERROR] --backup-dir provided, but no directory path given." >&2
-        usage
-        exit 1
-      fi
-
-      BACKUP_DIR="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "[ERROR] Invalid arg: $1" >&2
+  -u | --user)
+    if [[ -z "$2" ]]; then
+      echo "[ERROR] --user provided, but no username given." >&2
       usage
       exit 1
-      ;;
+    fi
+
+    USER_OWNER="$2"
+    shift 2
+    ;;
+  -g | --group)
+    if [[ -z "$2" ]]; then
+      echo "[ERROR] --group provided, but not group name given." >&2
+      usage
+      exit 1
+    fi
+
+    GROUP_OWNER="$2"
+    shift 2
+    ;;
+  -o | --backup-dir)
+    if [[ -z "$2" ]]; then
+      echo "[ERROR] --backup-dir provided, but no directory path given." >&2
+      usage
+      exit 1
+    fi
+
+    BACKUP_DIR="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "[ERROR] Invalid arg: $1" >&2
+    usage
+    exit 1
+    ;;
   esac
 done
 
