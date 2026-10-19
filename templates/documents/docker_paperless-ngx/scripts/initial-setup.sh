@@ -49,7 +49,8 @@ echo "Pausing. Go edit the docker-compose.env, docker-compose.yml, and .env file
 echo ""
 echo "Secret key will be generated in the next step."
 echo ""
-read -p "Press a key to continue when ready: "
+read -r -n 1 -p "Press a key to continue when ready: "
+echo
 echo ""
 
 GENERATE_SECRET_KEY
@@ -63,7 +64,8 @@ echo ""
 cat secret_key
 
 echo ""
-read -p "Press a key to continue when ready: "
+read -r -n 1 -p "Press a key to continue when ready: "
+echo
 
 echo ""
 echo "Running docker-compose stack"
