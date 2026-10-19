@@ -14,15 +14,15 @@ function BACKUP_MAYAN_DB() {
     echo "Creating database backup."
     echo ""
 
-    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >$DB_DUMP_PATH
+    docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >"$DB_DUMP_PATH"
 
     echo ""
-    echo "Backup saved to: "$DB_DUMP_PATH
+    echo "Backup saved to: $DB_DUMP_PATH"
     echo ""
 
   elif [[ -f $DB_DUMP_PATH ]]; then
     echo ""
-    echo $DB_DUMP_PATH" exists. Skipping."
+    echo "$DB_DUMP_PATH exists. Skipping."
     echo ""
 
   else
@@ -46,9 +46,9 @@ function RESTORE_MAYAN_DB() {
 
 function main() {
 
-  if [ $1 == "backup" ]; then
+  if [ "$1" == "backup" ]; then
     BACKUP_MAYAN_DB
-  elif [ $1 == "restore" ]; then
+  elif [ "$1" == "restore" ]; then
     RESTORE_MAYAN_DOCUMENTS
   fi
 
@@ -63,7 +63,7 @@ case $1 in
   ;;
 *)
   echo ""
-  echo "Invalid flag: "$1
+  echo "Invalid flag: $1"
   echo ""
   echo "Valid flags: -b/--backup, -r/--restore"
   echo ""
