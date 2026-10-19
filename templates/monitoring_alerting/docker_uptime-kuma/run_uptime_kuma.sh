@@ -15,9 +15,7 @@ function run_container() {
 }
 
 main() {
-  run_container
-
-  if [[ $? == 0 ]]; then
+  if ! run_container 2>&1; then
     echo "Uptime Kuma container started successfully."
   else
     echo "[ERROR]: Script encountered an error."
