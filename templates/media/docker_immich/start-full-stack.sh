@@ -6,8 +6,6 @@ if ! command -v docker >&/dev/null; then
   exit 1
 fi
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 compose_files=(
   "compose.yml"
   "overlays/postgres.yml"
