@@ -13,11 +13,11 @@ function BACKUP_MAYAN_DOCUMENTS() {
     echo "Backing up Mayan documents dir."
     echo ""
 
-    tar -zcvf $DOCUMENT_BACKUP_PATH $DOCUMENT_DIR
+    tar -zcvf "$DOCUMENT_BACKUP_PATH $DOCUMENT_DIR"
 
   elif [[ -f $DOCUMENT_BACKUP_PATH ]]; then
     echo ""
-    echo "Backup exists at "$DOCUMENT_BACKUP_PATH
+    echo "Backup exists at $DOCUMENT_BACKUP_PATH"
     echo ""
 
   else
@@ -55,7 +55,7 @@ case $1 in
   ;;
 *)
   echo ""
-  echo "Invalid flag: "$1
+  echo "Invalid flag: $1"
   echo ""
   echo "Valid flags: -b/--backup, -r/--restore"
   echo ""
