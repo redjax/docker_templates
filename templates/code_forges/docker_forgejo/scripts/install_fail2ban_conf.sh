@@ -51,7 +51,7 @@ else
   case $answer in
   [Yy]*)
     echo "$HARDCODED_CONF" | sudo tee "$DEST_CONF" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    if echo "$HARDCODED_CONF" | sudo tee "$DEST_CONF" >/dev/null; then
       echo "Config installed successfully."
     else
       echo "Failed to install the config."
