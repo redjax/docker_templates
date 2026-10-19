@@ -14,7 +14,7 @@ restserver_secret=$(openssl rand -base64 32)
 restserver_auth_secret=$(openssl rand -base64 32)
 server_integration_secret=$(openssl rand -base64 32)
 
-declare -a secrets_array=($restserver_secret $restserver_auth_secret $server_integration_secret)
+declare -a secrets_array=("$restserver_secret" "$restserver_auth_secret" "$server_integration_secret")
 
 if [ -f $output_file ]; then
   rm $output_file
