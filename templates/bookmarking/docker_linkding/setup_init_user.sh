@@ -8,13 +8,9 @@ echo
 
 echo "Creating user [$LINKDING_USER:$LINKDING_EMAIL]"
 
-docker-compose exec linkding python manage.py createsuperuser --username=$LINKDING_USER --email=$LINKDING_EMAIL
-
-if [[ $? == 0 ]]; then
+if ! docker-compose exec linkding python manage.py createsuperuser --username="$LINKDING_USER" --email="$LINKDING_EMAIL" 2>&1; then
   echo "Success."
   exit
 else
   echo "Failure."
 fi
-
-exit $?
