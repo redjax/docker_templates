@@ -11,13 +11,13 @@ HTPASSWD_IMAGE="httpd:2.4-alpine"
 CWD=$(pwd)
 
 function cleanup() {
-    cd "$CWD"
+  cd "$CWD"
 }
 trap cleanup EXIT
 
 if [[ ! -f "${USERS_FILE}" ]]; then
-    echo "ERROR: ${USERS_FILE} does not exist."
-    exit 1
+  echo "ERROR: ${USERS_FILE} does not exist."
+  exit 1
 fi
 
 echo "Radicale users"
@@ -27,8 +27,8 @@ echo ""
 read -rp "Enter username to change password: " USERNAME
 
 if ! grep -q "^${USERNAME}:" "${USERS_FILE}"; then
-    echo "User '${USERNAME}' not found."
-    exit 1
+  echo "User '${USERNAME}' not found."
+  exit 1
 fi
 
 echo
@@ -36,10 +36,9 @@ echo "Enter new password for '${USERNAME}'."
 echo
 
 docker run --rm -it \
-    -v "$(pwd)/${CONFIG_DIR}:/data" \
-    "${HTPASSWD_IMAGE}" \
-    htpasswd -B /data/users "${USERNAME}"
+  -v "$(pwd)/${CONFIG_DIR}:/data" \
+  "${HTPASSWD_IMAGE}" \
+  htpasswd -B /data/users "${USERNAME}"
 
 echo
 echo "Password updated for '${USERNAME}'."
-
