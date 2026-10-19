@@ -71,7 +71,7 @@ echo "  Command: $START_CMD"
 if [[ -n "$DRY_RUN" ]]; then
   echo "  Dry-run mode enabled. Run without --dry-run to execute this command."
 else
-  if ! eval $START_CMD; then
+  if ! eval "$START_CMD"; then
     echo "[ERROR] Failed to start Forgejo"
     exit 1
   fi
