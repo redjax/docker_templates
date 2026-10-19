@@ -2,8 +2,8 @@
 set -uo pipefail
 
 if ! command -v tcpdump --help &>/dev/null; then
-    echo "[ERROR] tcpdump is not installed."
-    exit 1
+  echo "[ERROR] tcpdump is not installed."
+  exit 1
 fi
 
 DOCKER_IP="172.16.81.10"
