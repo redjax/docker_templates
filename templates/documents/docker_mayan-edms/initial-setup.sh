@@ -9,8 +9,10 @@ ENV_NAME=".env"
 declare -a CHECK_FILES=("${COMPOSE_FILE_NAME}" "${ENV_FILE_NAME}" "${ENV_NAME}")
 
 function CURL_FILE() {
+  local url
+  url="$1"
 
-  curl $1 -O
+  curl "$url" -O
 
 }
 
