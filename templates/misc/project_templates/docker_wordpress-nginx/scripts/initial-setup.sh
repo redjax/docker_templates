@@ -20,10 +20,10 @@ case "$1" in
 "")
   echo "Full path to docker directory, i.e. /home/user/docker (no trailing slash): "
   read DOCKER_DIR_INPUT
-  echo "Docker directory set to "$DOCKER_DIR_INPUT
+  echo "Docker directory set to $DOCKER_DIR_INPUT"
   ;;
 *)
-  echo "Docker directory passed as arg: "$1". Continuing"
+  echo "Docker directory passed as arg: $1. Continuing"
   ;;
 esac
 
@@ -64,7 +64,7 @@ function COPY_REPO_TO_HOST() {
   cd ../..
 
   echo ""
-  echo "Copying repo to "$DOCKER_DIR"/"$WORDPRESS_NGINX_DIR_NAME
+  echo "Copying repo to $DOCKER_DIR/"$WORDPRESS_NGINX_DIR_NAME
   echo ""
 
   cp -R docker_wordpress_nginx $DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME
@@ -147,7 +147,7 @@ function MAIN() {
 
   COPY_REPO_TO_HOST
 
-  cd $SCRIPT_DIR
+  cd "$SCRIPT_DIR"
 
   REMOVE_REPO_FILES
 
@@ -160,7 +160,7 @@ function MAIN() {
   echo "Proxy network "$DOCKER_PROXY_NETWORK_NAME " created."
 
   echo ""
-  cd $DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME
+  cd "$DOCKER_DIR/$WORDPRESS_NGINX_DIR_NAME"
 
   SETUP_PROXY
 

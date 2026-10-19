@@ -12,10 +12,10 @@ case "$1" in
 "")
   echo "Name of new Wordpress instance: "
   read WP_SITE_NAME_INPUT
-  echo "Site name set to: "$WP_SITE_NAME_INPUT
+  echo "Site name set to: $WP_SITE_NAME_INPUT"
   ;;
 *)
-  echo "Site name passed as arg: "$1". Continuing"
+  echo "Site name passed as arg: $1. Continuing"
   ;;
 esac
 
@@ -49,7 +49,7 @@ function COPY_EXAMPLE_SITE() {
   cp $WORDPRESS_SITES/$WP_SITE_NAME/.env.example $WORDPRESS_SITES/$WP_SITE_NAME/.env
 
   echo ""
-  echo "Site "$WP_SITE_NAME" created. Don't forget to update docker-compose.yml and .env"
+  echo "Site $WP_SITE_NAME created. Don't forget to update docker-compose.yml and .env"
   echo ""
 
 }
