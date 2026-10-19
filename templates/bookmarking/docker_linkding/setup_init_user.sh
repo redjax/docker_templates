@@ -1,7 +1,10 @@
 #!/bin/bash
 
-read -p "Linkding user name: " LINKDING_USER
-read -p "Linkding user email: " LINKDING_EMAIL
+read -r -p "Linkding user name: " LINKDING_USER
+echo
+
+read -r -p "Linkding user email: " LINKDING_EMAIL
+echo
 
 echo "Creating user [$LINKDING_USER:$LINKDING_EMAIL]"
 
