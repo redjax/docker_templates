@@ -12,20 +12,6 @@ echo "Running as user: $(whoami)"
 
 child=0
 
-exit_handler() {
-  echo "Shutdown signal received.."
-
-  # Execute the telnet shutdown commands
-  /app/shutdown.sh
-  killer=$!
-  wait "$killer"
-
-  # sleep 4
-
-  echo "Exiting.."
-  exit
-}
-
 # Trap specific signals and forward to the exit handler
 trap 'exit_handler' SIGINT SIGTERM
 
