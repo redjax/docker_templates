@@ -6,7 +6,6 @@ CONFIG_DIR="./config"
 EXAMPLE_CONFIG="${CONFIG_DIR}/example.config"
 TARGET_CONFIG="${CONFIG_DIR}/config"
 USERS_FILE="${CONFIG_DIR}/users"
-IMAGE="ghcr.io/kozea/radicale:stable"
 
 echo "[ Radicale Initial Setup ]"
 
