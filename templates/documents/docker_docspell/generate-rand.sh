@@ -25,7 +25,7 @@ echo "Generating secrets..."
 echo ""
 
 for sec in "${secrets_array[@]}"; do
-  echo $sec >>$output_file
+  echo "$sec" >>$output_file
 done
 
 echo ""
