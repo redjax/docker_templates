@@ -12,11 +12,9 @@ fi
 if [[ ! -f "$PRIVATE_KEYFILE" ]]; then
   echo "Generating SSH key at ${PRIVATE_KEYFILE} (public key: ${PUBLIC_KEYFILE})"
 
-  ssh-keygen -t rsa -b 4096 -f "${PRIVATE_KEYFILE}" -N ""
-
-  if [[ ! $? -eq 0 ]]; then
+  if ! ssh-keygen -t rsa -b 4096 -f "${PRIVATE_KEYFILE}" -N "" 2>&1; then
     echo "[ERROR] Error generating SSH keys."
-    exit $?
+    exit 1
   fi
 
   echo "Showing public key"
