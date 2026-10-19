@@ -20,8 +20,7 @@ BACKUP_FILENAME="$(ts)-opengist-backup.tar.gz"
 BACKUP_DEST="${BACKUP_DIR}/${BACKUP_FILENAME}"
 
 if [[ ! -d "$BACKUP_DIR" ]]; then
-  mkdir -p "$BACKUP_DIR"
-  if [[ $? -ne 0 ]]; then
+  if ! mkdir -p "$BACKUP_DIR"; then
     echo "[ERROR] Failed to create backup directory: ${BACKUP_DIR}"
     exit 1
   fi
@@ -30,9 +29,9 @@ fi
 echo "Backing up Opengist data to path: ${BACKUP_DEST}"
 echo ""
 
-if ! tar -czf "$BACKUP_DEST" -C "$BACKUP_SRC" .; then
+if ! tar -czf "$BACKUP_DEST" -C "$BACKUP_SRC" . 2>&1; then
   echo "[ERROR] Failed to backup path '${BACKUP_SRC}' to destination '${BACKUP_DEST}'."
-  exit $?
+  exit 1
 else
   echo "[SUCCESS] Created backup of Opengist data at path: ${BACKUP_DEST}"
 fi
