@@ -55,7 +55,7 @@ if [[ "$FORCE" == "false" ]]; then
       exit 0
       ;;
     *)
-      echo "Invalid choice: "$choice", please use 'y' or 'n'."
+      echo "Invalid choice: $choice, please use 'y' or 'n'."
       ;;
     esac
   done
