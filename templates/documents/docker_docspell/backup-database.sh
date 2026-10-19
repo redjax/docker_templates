@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Make sure this matches the .env value for DOCSPELL_BACKUP_DIR
-backup_dir="./backup/db"
-
 ## DATABASE VALUES
 
 # Name of docspell db container (docspell-db by default)
