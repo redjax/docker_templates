@@ -30,10 +30,11 @@ function RESTORE_BACKUP() {
   echo ""
   echo "The restore function is experimental until this comment is removed."
   echo ""
-  read -p "Do you want to continue? Y/N: " choice
+  read -r -n 1 -p "Do you want to continue? Y/N: " choice
+  echo
 
   case $choice in
-  [yY] | [YyEeSs])
+  [yY])
     echo ""
     echo "Test print: "
     echo "sudo docker create -v $CONTAINER_BACKUP_DIR --name ${DATA_VOLUME_NAME} $BACKUP_IMAGE true"
@@ -48,7 +49,7 @@ function RESTORE_BACKUP() {
     echo "Test print: "
     echo "sudo docker run --rm --volumes-from $CONTAINER_NAME -v $BACKUP_DIR:/backup $BACKUP_IMAGE ls /data"
     ;;
-  [nN] | [NnOo])
+  [nN])
     echo ""
     echo "Ok, nevermind."
     echo ""
