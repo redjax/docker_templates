@@ -13,7 +13,9 @@ sudo systemctl restart docker
 echo "NVIDIA drivers installed. You must reboot the system to activate the drivers."
 
 while true; do
-  read -p "Restart now (y/n)? " REBOOT_CHOICE
+  read -r -n 1 -p "Restart now (y/n)? " REBOOT_CHOICE
+  echo
+
   case "${REBOOT_CHOICE,,}" in
   y | yes)
     echo "Restarting machine."
