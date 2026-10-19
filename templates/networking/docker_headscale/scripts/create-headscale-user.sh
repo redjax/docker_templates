@@ -12,10 +12,7 @@ echo ""
 echo "Creating Headscale user: ${HEADSCALE_USER}"
 echo ""
 
-docker compose exec -it headscale headscale users create "${HEADSCALE_USER}"
-echo ""
-
-if [[ $? -eq 0 ]]; then
+if ! docker compose exec -it headscale headscale users create "${HEADSCALE_USER}" 2>&1; then
   echo "[SUCCESS] Created Headscale user: ${HEADSCALE_USER}"
 else
   echo "[ERROR] Failed creating Headscale user: ${HEADSCALE_USER}"

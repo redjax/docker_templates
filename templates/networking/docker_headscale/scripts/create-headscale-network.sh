@@ -11,10 +11,7 @@ echo ""
 
 echo "Creating Headscale network: ${HEADSCALE_NETWORK_NAME}"
 
-docker network create "${HEADSCALE_NETWORK_NAME}"
-echo ""
-
-if [[ $? -eq 0 ]]; then
+if ! docker network create "${HEADSCALE_NETWORK_NAME}" 2>&1; then
   echo "[SUCCESS] Created Docker network: ${HEADSCALE_NETWORK_NAME}"
 else
   echo "[ERROR] Failed creating Docker network: ${HEADSCALE_NETWORK_NAME}"

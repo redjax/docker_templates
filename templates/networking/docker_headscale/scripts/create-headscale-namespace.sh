@@ -13,10 +13,7 @@ echo ""
 echo "Setting Headscale namespace to: ${HEADSCALE_NAMESPACE}"
 echo ""
 
-docker compose exec headscale headscale namespaces create "${HEADSCALE_NAMESPACE}"
-echo ""
-
-if [[ $? -eq 0 ]]; then
+if ! docker compose exec headscale headscale namespaces create "${HEADSCALE_NAMESPACE}" 2>&1; then
   echo "[SUCCESS] Created Headscale namespace: ${HEADSCALE_NAMESPACE}"
 else
   echo "[ERROR] Error creating Headscale namespace: ${HEADSCALE_NAMESPACE}"
