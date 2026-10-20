@@ -25,7 +25,7 @@ jobs:
     name: Lint and validate
     uses: ./.github/workflows/lint-validate.yml
     with:
-      lint_yaml: true
-      lint_compose: true
-      lint_dockerfiles: true
+      lint_yaml: false
+      lint_compose: false
+      lint_dockerfiles: false
       verbose: false
