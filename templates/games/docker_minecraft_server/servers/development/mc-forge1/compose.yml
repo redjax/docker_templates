@@ -4,7 +4,6 @@
 #     external: true
 
 services:
-
   ###############################################
   # Server Template                             #
   #   Type: <VANILLA, PAPER, etc>               #

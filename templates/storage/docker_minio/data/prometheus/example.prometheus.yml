@@ -2,7 +2,7 @@ global:
   scrape_interval: 15s
 
 rule_files:
-- "/alertmanager/alert.rules"
+  - "/alertmanager/alert.rules"
 
 scrape_configs:
   - job_name: "minio-cluster"
@@ -12,7 +12,7 @@ scrape_configs:
     metrics_path: /minio/v2/metrics/cluster
     scheme: https
     static_configs:
-    - targets: ["minio:9001"]
+      - targets: ["minio:9001"]
 
   - job_name: "minio-nodes"
     ## This can be omitted if MinIO has env variable:
@@ -21,7 +21,7 @@ scrape_configs:
     metrics_path: /minio/v2/metrics/node
     scheme: https
     static_configs:
-    - targets: ["minio:9001"]
+      - targets: ["minio:9001"]
 
   - job_name: "minio-bucket"
     ## This can be omitted if MinIO has env variable:
@@ -30,7 +30,7 @@ scrape_configs:
     metrics_path: /minio/v2/metrics/bucket
     scheme: https
     static_configs:
-    - targets: ["minio:9001"]
+      - targets: ["minio:9001"]
 
   - job_name: "minio-resource"
     ## This can be omitted if MinIO has env variable:
@@ -39,4 +39,4 @@ scrape_configs:
     metrics_path: /minio/v2/metrics/resource
     scheme: https
     static_configs:
-    - targets: ["minio:9001"]
+      - targets: ["minio:9001"]

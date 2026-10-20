@@ -1,11 +1,10 @@
-version: '3.8'
+version: "3.8"
 
 volumes:
   docspell-postgres_data:
   docspell-solr_data:
 
 services:
-
   # The restserver and joex containers defined here are configured
   # using env variables. Both must connect to the same database and
   # solr instance. More information on configuring can be found here:
@@ -50,7 +49,8 @@ services:
       - solr-precreate
       - docspell
     healthcheck:
-      test: ["CMD", "curl", "f", "http://localhost:8983/solr/docspell/admin/ping"]
+      test:
+        ["CMD", "curl", "f", "http://localhost:8983/solr/docspell/admin/ping"]
       interval: 1m
       timeout: 10s
       retries: 2
@@ -75,7 +75,7 @@ services:
       - DOCSPELL_JOEX_JDBC_USER=${DOCSPELL_DB_USER:-docspell}
     ports:
       - ${JOEX_PORT:-7878}:7878
-    depends_on: 
+    depends_on:
       - solr
 
   # The consumedir container watches a directory for files to upload

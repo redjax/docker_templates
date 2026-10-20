@@ -1,7 +1,6 @@
-version: '3.9'
+version: "3.9"
 
-x-mayan-container:
-  &mayan-container
+x-mayan-container: &mayan-container
   depends_on:
     - postgresql
     - redis
@@ -39,7 +38,7 @@ services:
     <<: *mayan-container
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`mayan.crvr.us`)"  # Replace this with your published URL
+      - "traefik.http.routers.app.rule=Host(`mayan.crvr.us`)" # Replace this with your published URL
       - "traefik.http.routers.mayan.rule=Host(`mayan.app`)"
       - "traefik.http.routers.mayan.entrypoints=web"
     ports:
@@ -132,15 +131,15 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - 'mkdir --parents /mnt/index && chown mayan:mayan /mnt/index && /usr/local/bin/entrypoint.sh run_command "mountindex --allow-other creation_date /mnt/index"'  # Replace "creation_date" with the index of your choice.
+      - 'mkdir --parents /mnt/index && chown mayan:mayan /mnt/index && /usr/local/bin/entrypoint.sh run_command "mountindex --allow-other creation_date /mnt/index"' # Replace "creation_date" with the index of your choice.
     profiles:
       - mountindex
     security_opt:
       - apparmor:unconfined
     volumes:
       - type: bind
-        source: /mnt/mayan_indexes/creation_date  # Host location where the index will show up.
-        target: /mnt/index  # Location inside the container where the index will be mounted. Must the same is in the "entrypoint" section.
+        source: /mnt/mayan_indexes/creation_date # Host location where the index will show up.
+        target: /mnt/index # Location inside the container where the index will be mounted. Must the same is in the "entrypoint" section.
         bind:
           propagation: shared
 

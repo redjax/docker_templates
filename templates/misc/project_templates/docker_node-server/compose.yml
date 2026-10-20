@@ -8,7 +8,6 @@ volumes:
   node_server-modules:
 
 services:
-
   node_server:
     container_name: node_server
     restart: unless-stopped

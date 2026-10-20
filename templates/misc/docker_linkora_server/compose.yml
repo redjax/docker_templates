@@ -17,4 +17,3 @@ services:
     ports:
       - ${LINKORA_COMM_PORT:-45454}:45454
       - ${LINKORA_WEBUI_PORT:-54545}:54545
-

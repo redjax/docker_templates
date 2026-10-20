@@ -27,4 +27,3 @@ services:
     ports:
       ## metrics endpoint for prometheus
       - ${CROWDSEC_PROMETHEUS_METRICS_PORT:-6060}:6060
-

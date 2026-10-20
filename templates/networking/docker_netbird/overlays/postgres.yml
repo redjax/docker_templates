@@ -17,4 +17,3 @@ services:
       - ${POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
     networks:
       - netbird
-

@@ -8,7 +8,6 @@ networks:
       name: proxy_net
 
 services:
-
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
