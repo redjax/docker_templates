@@ -6,7 +6,7 @@ set -euo pipefail
 #################################
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
+# shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
 
 SCRIPT_NAME="./scripts/lint/lint_yaml.sh"
