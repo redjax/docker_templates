@@ -22,6 +22,6 @@ else
   echo "Downloading: $PLUGIN_URL"
   echo ""
 
-  wget $PLUGIN_URL
+  wget "${PLUGIN_URL}"
 
 fi
