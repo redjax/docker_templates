@@ -12,7 +12,7 @@ env_file="./.env"
 function copy_example_file() {
   # Copies an example_*.* file to the "real" version
   if [[ ! -f $1 ]]; then
-    cp $1 $2
+    cp "${1}" "${2}"
   else
     echo "File $1 already exists. Skipping"
   fi
