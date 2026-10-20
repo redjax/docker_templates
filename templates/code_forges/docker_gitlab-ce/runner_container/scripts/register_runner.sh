@@ -11,11 +11,10 @@ echo "[IMPORTANT] If you're registering the runner included with this compose st
 echo "            use http://gitlab-server as the URL."
 echo ""
 
-docker run --rm -it \
+if ! docker run --rm -it \
   -v "$(pwd)/gitlab-runner/config":/etc/gitlab-runner \
-  gitlab/gitlab-runner:latest register
-
-if [[ $? -ne 0 ]]; then
+  gitlab/gitlab-runner:latest register \
+  2>&1; then
   echo "[ERROR] Failed to register Gitlab runner"
   exit 1
 else
