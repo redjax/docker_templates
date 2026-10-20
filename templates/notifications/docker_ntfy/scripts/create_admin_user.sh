@@ -1,7 +1,6 @@
 #!/bin/bash
 
 USERNAME=${1:-admin}
-CONTAINER_NAME=${2:-ntfy}
 
 if ! docker compose version >/dev/null 2>&1; then
   echo "[ERROR] docker compose is not installed."
