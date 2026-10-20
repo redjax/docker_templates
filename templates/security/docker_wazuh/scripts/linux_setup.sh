@@ -109,7 +109,7 @@ function configure_reverse_proxy() {
     if [[ -z "${PROXY_ADDRESS}" ]]; then
       echo ""
       echo "PROXY_ADDRESS is empty or null."
-      read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
+      read -r -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
       echo ""
     else
       echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
@@ -196,7 +196,7 @@ function main() {
     if [[ -z "${PROXY_ADDRESS}" ]]; then
       echo ""
       echo "PROXY_ADDRESS is empty or null."
-      read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
+      read -r -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
       echo ""
     fi
 
