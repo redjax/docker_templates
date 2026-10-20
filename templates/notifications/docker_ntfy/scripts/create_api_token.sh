@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if ! docker compose version 2>&1 > /dev/null; then
-    echo "[ERROR] Docker Compose is not installed."
-    exit 1
+if ! docker compose version 2>&1 >/dev/null; then
+  echo "[ERROR] Docker Compose is not installed."
+  exit 1
 fi
 
 ## Prompt for username
@@ -16,7 +16,7 @@ COMMAND="docker compose exec -it ntfy ntfy token add"
 
 ## Add expiration if provided
 if [ -n "$EXPIRATION" ]; then
-    COMMAND+=" --expires=$EXPIRATION"
+  COMMAND+=" --expires=$EXPIRATION"
 fi
 
 ## Prompt for label
@@ -24,7 +24,7 @@ read -p "Enter label (or press Enter for no label): " LABEL
 
 # Add label if provided
 if [ -n "$LABEL" ]; then
-    COMMAND+=" --label=\"$LABEL\""
+  COMMAND+=" --label=\"$LABEL\""
 fi
 
 ## Add username
@@ -36,7 +36,7 @@ $COMMAND
 
 ## Check the exit status
 if [ $? -eq 0 ]; then
-    echo "Token created successfully for user: $USERNAME"
+  echo "Token created successfully for user: $USERNAME"
 else
-    echo "Failed to create token for user: $USERNAME"
+  echo "Failed to create token for user: $USERNAME"
 fi
