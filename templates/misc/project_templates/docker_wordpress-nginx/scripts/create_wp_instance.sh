@@ -28,7 +28,7 @@ function CD_TO_PWD() {
   # SCRIPT_DIR=${PWD}
 
   echo ""
-  echo "Navigating back to "$SCRIPT_DIR
+  echo "Navigating back to ${SCRIPT_DIR}"
   echo ""
 
   cd "$SCRIPT_DIR" || return 1
