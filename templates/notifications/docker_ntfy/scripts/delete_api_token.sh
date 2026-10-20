@@ -8,21 +8,16 @@ check_docker_compose() {
   fi
 }
 
-# Function to prompt for input
-prompt_input() {
-  local prompt_message=$1
-  local var_name=$2
-  read -r -p "$prompt_message: " var_name
-}
-
 # Main script
 check_docker_compose
 
 # Prompt for username
-prompt_input "Enter username with token you wish to delete" USERNAME
+read -r -p "Enter username with token you wish to delete" USERNAME
+echo
 
 # Prompt for token ID
-prompt_input "Enter token ID to delete (see token IDs with the list_api_tokens.sh script)" TOKEN_ID
+read -r -p "Enter token ID to delete (see token IDs with the list_api_tokens.sh script)" TOKEN_ID
+echo
 
 # Build the command
 COMMAND="docker compose exec -it ntfy ntfy token del $USERNAME $TOKEN_ID"
