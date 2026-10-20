@@ -9,8 +9,10 @@ ENV_NAME=".env"
 declare -a CHECK_FILES=("${COMPOSE_FILE_NAME}" "${ENV_FILE_NAME}" "${ENV_NAME}")
 
 function CURL_FILE() {
+  local url
+  url="$1"
 
-  curl $1 -O
+  curl "$url" -O
 
 }
 
@@ -35,12 +37,12 @@ DIR_SETUP
 for F in "${CHECK_FILES[@]}"; do
   if [[ ! -f $F ]]; then
     echo ""
-    echo "Curling "$F
+    echo "Curling ${F}"
     echo ""
 
-    CURL_FILE $GITLAB_BASE_URL/$F
+    CURL_FILE $GITLAB_BASE_URL/"${F}"
 
-  elif [[ -f $F ]]; then
+  elif [[ -f "${F}" ]]; then
     echo ""
     echo "${F} already exists. Skipping."
     echo ""

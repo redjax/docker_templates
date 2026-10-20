@@ -20,7 +20,7 @@ echo "Restoring $BACKUP_FILE into volume $VOLUME_NAME"
 
 docker run --rm \
   -v ${VOLUME_NAME}:/data \
-  -v $(pwd):/backup \
+  -v "$(pwd):/backup" \
   alpine \
   sh -c "rm -rf /data/* && tar xzf /backup/${BACKUP_FILE} -C /data"
 

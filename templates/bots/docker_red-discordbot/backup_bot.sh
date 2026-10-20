@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 THIS_DIR=${PWD}
 BACKUP_DIR=$THIS_DIR"/backup"
@@ -37,7 +37,7 @@ function CREATE_BACKUP() {
 
 function CHECK_INSTALLED() {
 
-  if ! command -v $1 &>/dev/null; then
+  if ! command -v "${1}" &>/dev/null; then
     echo ""
     echo "${1} could not be found. Installing."
     echo ""

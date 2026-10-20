@@ -8,10 +8,9 @@ ZBX_PORT="10051"
 ZBX_HOSTNAME=""
 ZBX_METADATA=("autoregister" "os=linux")
 ZBX_ENABLE_TLS="false"
-ZBX_REG_KEY=""
 
 function usage() {
-cat <<EOF
+  cat <<EOF
 Usage: $0 -s <server> [options]
 
 Options:
@@ -28,14 +27,39 @@ EOF
 ## Parse args
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -s|--server) ZBX_SERVER="$2"; shift 2 ;;
-    -p|--port) ZBX_PORT="$2"; shift 2 ;;
-    -h|--hostname) ZBX_HOSTNAME="$2"; shift 2 ;;
-    -m|--metadata) ZBX_METADATA+=("$2"); shift 2 ;;
-    -v|--version) ZBX_VERSION="$2"; shift 2 ;;
-    --enable-tls) ZBX_ENABLE_TLS="true"; shift ;;
-    --help) usage; exit 0 ;;
-    *) echo "Unknown arg: $1"; usage; exit 1 ;;
+  -s | --server)
+    ZBX_SERVER="$2"
+    shift 2
+    ;;
+  -p | --port)
+    ZBX_PORT="$2"
+    shift 2
+    ;;
+  -h | --hostname)
+    ZBX_HOSTNAME="$2"
+    shift 2
+    ;;
+  -m | --metadata)
+    ZBX_METADATA+=("$2")
+    shift 2
+    ;;
+  -v | --version)
+    ZBX_VERSION="$2"
+    shift 2
+    ;;
+  --enable-tls)
+    ZBX_ENABLE_TLS="true"
+    shift
+    ;;
+  --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown arg: $1"
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -77,14 +101,16 @@ if [[ -z "$ZBX_AGENT_IP" ]]; then
   mapfile -t IFACES < <(ip -o -4 addr show scope global | awk '{print $2, $4}' | sed 's#/.*##')
 
   for i in "${!IFACES[@]}"; do
-    printf "  [%d] %s (%s)\n" "$i" ${IFACES[$i]}
+    read -r iface ip <<<"${IFACES[$i]}"
+    echo
+    printf "  [%d] %s (%s)\n" "$i" "$iface" "$ip"
   done
 
   while true; do
     read -r -p "Select interface number to use for Zabbix agent: " choice
     echo ""
 
-    if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 0 && choice < ${#IFACES[@]} )); then
+    if [[ "$choice" =~ ^[0-9]+$ ]] && ((choice >= 0 && choice < ${#IFACES[@]})); then
       ZBX_AGENT_IP="$(echo "${IFACES[$choice]}" | awk '{print $2}')"
       echo "Using IP address: $ZBX_AGENT_IP"
       echo ""
@@ -100,11 +126,11 @@ fi
 HOST_LAN_IP="$(hostname -I | awk '{print $1}')"
 
 if [[ "$ZBX_SERVER" == "127.0.0.1" || "$ZBX_SERVER" == "localhost" || "$ZBX_SERVER" == "$HOST_LAN_IP" ]]; then
-    echo "[INFO] Installing agent on the same host as the server"
-    ## Listen on all interfaces so both local and remote connections work
-    ZBX_AGENT_IP="0.0.0.0"
-    ## Use LAN IP for server communication
-    ZBX_SERVER="$HOST_LAN_IP"
+  echo "[INFO] Installing agent on the same host as the server"
+  ## Listen on all interfaces so both local and remote connections work
+  ZBX_AGENT_IP="0.0.0.0"
+  ## Use LAN IP for server communication
+  ZBX_SERVER="$HOST_LAN_IP"
 fi
 
 ## Detect OS
@@ -114,46 +140,46 @@ OS_VERSION_ID="${VERSION_ID:-}"
 
 function install_agent() {
   case "$OS_ID" in
-    fedora)
-      echo "[INFO] Fedora detected — using Fedora repos"
-      sudo dnf install -y zabbix-agent2
-      ;;
-    rhel|centos|rocky|alma|ol|oraclelinux)
-      major="${OS_VERSION_ID%%.*}"
-      repo_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/rhel/${major}/x86_64/zabbix-release-latest-${ZBX_VERSION}.el${major}.noarch.rpm"
-      
-      echo "[INFO] Installing Zabbix repo: $repo_url"
-      
-      sudo rpm -Uvh "$repo_url"
-      sudo dnf install -y zabbix-agent2
-      ;;
-    debian|ubuntu)
-      echo "[INFO] Debian/Ubuntu based — installing Zabbix repo"
+  fedora)
+    echo "[INFO] Fedora detected — using Fedora repos"
+    sudo dnf install -y zabbix-agent2
+    ;;
+  rhel | centos | rocky | alma | ol | oraclelinux)
+    major="${OS_VERSION_ID%%.*}"
+    repo_url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/rhel/${major}/x86_64/zabbix-release-latest-${ZBX_VERSION}.el${major}.noarch.rpm"
 
-      ## Build correct filename
-      if [[ "$OS_ID" == "debian" ]]; then
-        pkg="zabbix-release_latest+debian${OS_VERSION_ID}_all.deb"
-      else
-        pkg="zabbix-release_latest+ubuntu${OS_VERSION_ID}_all.deb"
-      fi
+    echo "[INFO] Installing Zabbix repo: $repo_url"
 
-      url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/release/debian/pool/main/z/zabbix-release/${pkg}"
+    sudo rpm -Uvh "$repo_url"
+    sudo dnf install -y zabbix-agent2
+    ;;
+  debian | ubuntu)
+    echo "[INFO] Debian/Ubuntu based — installing Zabbix repo"
 
-      echo "[INFO] Installing Zabbix repo package: $url"
+    ## Build correct filename
+    if [[ "$OS_ID" == "debian" ]]; then
+      pkg="zabbix-release_latest+debian${OS_VERSION_ID}_all.deb"
+    else
+      pkg="zabbix-release_latest+ubuntu${OS_VERSION_ID}_all.deb"
+    fi
 
-      sudo apt-get update
-      sudo apt-get install -y wget gnupg
+    url="https://repo.zabbix.com/zabbix/${ZBX_VERSION}/release/debian/pool/main/z/zabbix-release/${pkg}"
 
-      wget -O "/tmp/${pkg}" "$url"
+    echo "[INFO] Installing Zabbix repo package: $url"
 
-      sudo dpkg -i "/tmp/${pkg}"
-      sudo apt-get update
-      sudo apt-get install -y zabbix-agent2
-      ;;
-    *)
-      echo "[ERROR] Unsupported OS: $OS_ID"
-      exit 1
-      ;;
+    sudo apt-get update
+    sudo apt-get install -y wget gnupg
+
+    wget -O "/tmp/${pkg}" "$url"
+
+    sudo dpkg -i "/tmp/${pkg}"
+    sudo apt-get update
+    sudo apt-get install -y zabbix-agent2
+    ;;
+  *)
+    echo "[ERROR] Unsupported OS: $OS_ID"
+    exit 1
+    ;;
   esac
 }
 
@@ -168,13 +194,14 @@ function configure_agent() {
   TLS_BLOCK=""
   if [[ "$ZBX_ENABLE_TLS" == "true" ]]; then
     read -rp "TLS PSK Identity: " TLS_ID
-    read -rsp "TLS PSK (hex): " TLS_PSK; echo
-    
+    read -rsp "TLS PSK (hex): " TLS_PSK
+    echo
+
     echo "$TLS_PSK" | sudo tee /etc/zabbix/zabbix_agent.psk >/dev/null
-    
+
     sudo chmod 600 /etc/zabbix/zabbix_agent.psk
     sudo chown zabbix:zabbix /etc/zabbix/zabbix_agent.psk
-    
+
     TLS_BLOCK="
 TLSConnect=psk
 TLSAccept=psk

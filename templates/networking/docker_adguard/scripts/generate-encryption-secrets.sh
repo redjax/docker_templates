@@ -22,33 +22,33 @@ echo "Generating certs for ${SERVER_NAME}"
 mkdir -p "$CERT_DIR"
 
 if [[ -e "$CERT_FILE" ]]; then
-    echo "Certificate already exists: $CERT_FILE"
+  echo "Certificate already exists: $CERT_FILE"
 else
-    echo "Generating self-signed certificate: $CERT_FILE"
+  echo "Generating self-signed certificate: $CERT_FILE"
 
-    openssl req \
-        -x509 \
-        -nodes \
-        -newkey rsa:2048 \
-        -days 3650 \
-        -keyout "$KEY_FILE" \
-        -out "$CERT_FILE" \
-        -subj "/CN=${SERVER_NAME}" \
-        -addext "subjectAltName=DNS:${SERVER_NAME}"
+  openssl req \
+    -x509 \
+    -nodes \
+    -newkey rsa:2048 \
+    -days 3650 \
+    -keyout "$KEY_FILE" \
+    -out "$CERT_FILE" \
+    -subj "/CN=${SERVER_NAME}" \
+    -addext "subjectAltName=DNS:${SERVER_NAME}"
 
-    chmod 600 "$KEY_FILE"
-    chmod 644 "$CERT_FILE"
+  chmod 600 "$KEY_FILE"
+  chmod 644 "$CERT_FILE"
 
-    echo "Generated:"
-    echo "  Certificate: $CERT_FILE"
-    echo "  Private key: $KEY_FILE"
+  echo "Generated:"
+  echo "  Certificate: $CERT_FILE"
+  echo "  Private key: $KEY_FILE"
 fi
 
 if [[ -e "$KEY_FILE" ]]; then
-    echo "Private key already exists, skipping creation: $KEY_FILE"
+  echo "Private key already exists, skipping creation: $KEY_FILE"
 elif [[ ! -e "$CERT_FILE" ]]; then
-    echo "ERROR: certificate generation failed."
-    exit 1
+  echo "ERROR: certificate generation failed."
+  exit 1
 fi
 
 echo

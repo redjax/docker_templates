@@ -29,12 +29,12 @@ if [[ "$V_RISING_SERVER_RCON_PASSWORD" == "" ]]; then
 
   mcrcon \
     "127.0.0.1" \
-    -p $V_RISING_SERVER_RCON_PORT \
+    -p "$V_RISING_SERVER_RCON_PORT" \
     "${@}"
 else
   mcrcon \
     "127.0.0.1" \
-    -p $V_RISING_SERVER_RCON_PORT \
+    -p "$V_RISING_SERVER_RCON_PORT" \
     --password "${V_RISING_SERVER_RCON_PASSWORD}" \
     "${@}"
 fi

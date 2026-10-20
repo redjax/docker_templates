@@ -12,9 +12,8 @@ DNS_PORT=53
 echo "Starting TCP dump on Unbound container IP ($DOCKER_IP) port $DNS_PORT"
 echo ""
 
-sudo tcpdump -i any host $DOCKER_IP and port $DNS_PORT
-if [[ $? -ne 0 ]]; then
+if ! sudo tcpdump -i any host $DOCKER_IP and port $DNS_PORT 2>&1; then
   echo ""
   echo "[ERROR] Failed monitoring Unbound DNS port."
-  exit $?
+  exit 1
 fi

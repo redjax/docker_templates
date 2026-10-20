@@ -18,7 +18,7 @@ ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | cut -c1-24)
 ## Generate database password (32 chars, alphanumeric only for DB compatibility)
 PG_PASSWORD=$(openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | head -c 32)
 
-cat << EOF
+cat <<EOF
 # Admin settings
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=${ADMIN_PASSWORD}

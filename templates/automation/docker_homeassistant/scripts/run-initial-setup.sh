@@ -16,30 +16,39 @@ MOSQUITTO_SETUP_SCRIPT="${SCRIPTS_DIR}/mosquitto_requirements.sh"
 
 function main() {
   ## Run HomeAssistant Configurator setup script
-  [ -f "${HOMEASSISTANT_CONFIGURATOR_SETUP_SCRIPT}" ] && . "$HOMEASSISTANT_CONFIGURATOR_SETUP_SCRIPT" || {
+  if [[ ! -f "${HOMEASSISTANT_CONFIGURATOR_SETUP_SCRIPT}" ]]; then
     echo "[ERROR] Could not find HomeAssistant Configurator script: ${HOMEASSISTANT_CONFIGURATOR_SETUP_SCRIPT}"
     exit 1
-  }
+  fi
+  # shellcheck source=homeassistant_configurator_requirements.sh
+  . "${HOMEASSISTANT_CONFIGURATOR_SETUP_SCRIPT}"
+
   setup_homeassistant_configurator || {
     echo "[ERROR] Failed to do HomeAssistant Configurator setup."
     exit 1
   }
 
   ## Run HomeAssistant setup script
-  [ -f "${HOMEASSISTANT_SETUP_SCRIPT}" ] && . "${HOMEASSISTANT_SETUP_SCRIPT}" || {
+  if [[ ! -f "${HOMEASSISTANT_SETUP_SCRIPT}" ]]; then
     echo "[ERROR] Could not find HomeAssistant script: ${HOMEASSISTANT_SETUP_SCRIPT}"
     exit 1
-  }
+  fi
+  # shellcheck source=homeassistant_requirements.sh
+  . "${HOMEASSISTANT_SETUP_SCRIPT}"
+
   setup_homeassistant || {
     echo "[ERROR] Failed to do HomeAssistant setup."
     exit 1
   }
 
   ## Run Mosquitto setup script
-  [ -f "${MOSQUITTO_SETUP_SCRIPT}" ] && . "${MOSQUITTO_SETUP_SCRIPT}" || {
+  if [[ ! -f "${MOSQUITTO_SETUP_SCRIPT}" ]]; then
     echo "[ERROR] Could not find Mosquitto script: ${MOSQUITTO_SETUP_SCRIPT}"
     exit 1
-  }
+  fi
+  # shellcheck source=mosquitto_requirements.sh
+  . "${MOSQUITTO_SETUP_SCRIPT}"
+
   setup_mosquitto || {
     echo "[ERROR] Failed to do Mosquitto setup."
     exit 1
@@ -47,7 +56,7 @@ function main() {
 
   echo ""
   echo "Setup complete. Run \`docker compose up -d\` to start the HomeAssistant container."
-  echo "Run additional containers with \`docker compose -f compose.yml -f overlays/<overlay-name>.yml up -d\`"  
+  echo "Run additional containers with \`docker compose -f compose.yml -f overlays/<overlay-name>.yml up -d\`"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

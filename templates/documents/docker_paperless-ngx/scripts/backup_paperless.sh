@@ -116,8 +116,7 @@ parse_args "${@}"
 
 if [[ ! -d "${EXPORT_DEST}" ]]; then
   logger "[WARNING] Creating backup path (does not exist): ${EXPORT_DEST}"
-  mkdir -p "${EXPORT_DEST}"
-  if [[ $? -ne 0 ]]; then
+  if ! mkdir -p "${EXPORT_DEST}" 2>&1; then
     logger "[ERROR] Failed to create backup directory."
     exit $?
   fi
@@ -146,8 +145,7 @@ echo ""
 logger "  Running command: docker compose exec -T webserver document_exporter ../export --delete --zip --zip-name \"${EXPORT_FILENAME}\""
 
 ## Run backup command
-docker compose exec -T webserver document_exporter ../export --delete --zip --zip-name "${EXPORT_FILENAME}"
-if [[ $? -ne 0 ]]; then
+if ! docker compose exec -T webserver document_exporter ../export --delete --zip --zip-name "${EXPORT_FILENAME}" 2>&1; then
   logger "[ERROR] Failed to create Paperless export."
   exit 1
 else
@@ -165,13 +163,11 @@ echo ""
 
 if [[ ! -d "${EXPORT_DEST}" ]]; then
   logger "[WARNING] Creating export destination (does not exist): '${EXPORT_DEST}'"
-  sudo mkdir -p "${EXPORT_DEST}"
-  if [[ $? -ne 0 ]]; then
+  if ! sudo mkdir -p "${EXPORT_DEST}" 2>&1; then
     logger "[ERROR] Failed to create path '${EXPORT_DEST}'."
     logger "Trying again with sudo"
 
-    sudo mkdir -p "${EXPORT_DEST}"
-    if [[ $? -ne 0 ]]; then
+    if ! sudo mkdir -p "${EXPORT_DEST}" 2>&1; then
       logger "[ERROR] Failed to create export destination path '${EXPORT_DEST}'"
       exit $?
     fi
@@ -181,14 +177,12 @@ fi
 echo ""
 logger "Moving backup to ${EXPORT_DEST}"
 
-mv "${EXPORT_FILE_PATH}" "${EXPORT_DEST}"
-if [[ $? -ne 0 ]]; then
+if ! mv "${EXPORT_FILE_PATH}" "${EXPORT_DEST}" 2>&1; then
   echo ""
   logger "[ERROR] Failed to move export archive '${EXPORT_FILE_PATH}' to destination '${EXPORT_DEST}'"
   logger "Trying again with sudo"
 
-  sudo mv "${EXPORT_FILE_PATH}" "${EXPORT_DEST}"
-  if [[ $? -ne 0 ]]; then
+  if ! sudo mv "${EXPORT_FILE_PATH}" "${EXPORT_DEST}" 2>&1; then
     logger "[ERROR] Failed to create path: ${EXPORT_DEST}"
     exit $?
   fi

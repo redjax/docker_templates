@@ -4,12 +4,9 @@ echo ""
 echo "Backing up Palworld world..."
 echo ""
 
-docker compose exec -it palworld backup
-
-if [[ ! $? -eq 0 ]]; then
-    echo "[WARNING] Encountered an error while backing up Palworld world."
-    # exit $?
+if ! docker compose exec -it palworld backup 2>&1; then
+  echo "[WARNING] Encountered an error while backing up Palworld world."
+  exit 1
 else
-    echo "Successfully backed up Palworld world."
-    # exit 0
+  echo "Successfully backed up Palworld world."
 fi

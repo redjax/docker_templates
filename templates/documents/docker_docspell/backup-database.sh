@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Make sure this matches the .env value for DOCSPELL_BACKUP_DIR
-backup_dir="./backup/db"
-
 ## DATABASE VALUES
 
 # Name of docspell db container (docspell-db by default)
@@ -12,8 +9,7 @@ db_name="docspell"
 # Match value of .env variable DOCSPELL_DB_USER
 db_user="docspell"
 
-
-function stop_docspell () {
+function stop_docspell() {
 
   echo ""
   echo "Bringing stack down"
@@ -23,7 +19,7 @@ function stop_docspell () {
 
 }
 
-function start_docspell () {
+function start_docspell() {
 
   echo ""
   echo "Bringing stack up"
@@ -33,7 +29,7 @@ function start_docspell () {
 
 }
 
-function start_docspell_db_only () {
+function start_docspell_db_only() {
 
   echo ""
   echo "Running only database container"
@@ -43,7 +39,7 @@ function start_docspell_db_only () {
 
 }
 
-function backup_database () {
+function backup_database() {
 
   echo ""
   echo "Backing up database"
@@ -53,7 +49,7 @@ function backup_database () {
 
 }
 
-function restore_database () {
+function restore_database() {
 
   echo ""
   echo "Restoring database"
@@ -63,7 +59,7 @@ function restore_database () {
 
 }
 
-function print_help () {
+function print_help() {
 
   echo ""
   echo "--------"
@@ -85,7 +81,7 @@ function print_help () {
 
 }
 
-function main () {
+function main() {
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "" ]; then
     print_help
@@ -99,22 +95,22 @@ function main () {
   start_docspell_db_only
 
   case $1 in
-    "-b" | "--backup")
-      backup_database
+  "-b" | "--backup")
+    backup_database
     ;;
-    "-r" | "--restore")
-      restore_database
+  "-r" | "--restore")
+    restore_database
     ;;
-    *)
-      echo ""
-      echo "Invalid entry: "$1
-      echo ""
+  *)
+    echo ""
+    echo "Invalid entry: $1"
+    echo ""
 
-      print_help
+    print_help
 
-      read -p "Press a key to exit..."
+    read -r -n 1 -p "Press a key to exit..."
 
-      exit
+    exit
     ;;
   esac
 
@@ -123,4 +119,4 @@ function main () {
 
 }
 
-main $1
+main "${1}"
