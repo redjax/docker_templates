@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! docker compose version 2>&1 >/dev/null; then
+if ! docker compose version >/dev/null 2>&1; then
   echo "[ERROR] Docker Compose is not installed."
   exit 1
 fi
