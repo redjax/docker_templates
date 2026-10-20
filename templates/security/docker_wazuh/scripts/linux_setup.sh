@@ -82,14 +82,14 @@ function clone_wazuh_repo() {
     exit 1
   fi
 
-  cd wazuh-docker
+  cd wazuh-docker || return 1
 
   echo "Checking out branch ${WAZUH_VERSION}"
   if ! git checkout $WAZUH_VERSION 2>&1; then
     echo "Failed to checkout branch ${WAZUH_VERSION}"
     exit 1
   else
-    cd $CWD
+    cd "${CWD}" || return 1
   fi
 }
 
@@ -136,7 +136,7 @@ EOF
   fi
 
   ## Return to CWD
-  cd $CWD
+  cd "${CWD}" || return 1
 }
 
 function generate_wazuh_certs() {
@@ -147,7 +147,7 @@ function generate_wazuh_certs() {
     return
   fi
 
-  cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+  cd "./wazuh-docker/${WAZUH_INSTALL_TYPE}" || return 1
 
   if ! docker compose -f generate-indexer-certs.yml run --rm generator 2>&1; then
     echo "Failed to generate Wazuh indexer SSL certificates."
@@ -164,14 +164,14 @@ function generate_wazuh_certs() {
   #     exit 1
   # fi
 
-  cd $CWD
+  cd "${CWD}" || return 1
 
   ## Create a file to indicate SSL certificates have been created
   touch .ssl_certs_generated && echo 1 >.ssl_certs_generated
 }
 
 function compose_up() {
-  cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+  cd "./wazuh-docker/${WAZUH_INSTALL_TYPE}" || return 1
 
   echo "Building Docker containers."
   if ! docker compose build 2>&1; then
@@ -185,7 +185,7 @@ function compose_up() {
     exit 1
   fi
 
-  cd $CWD
+  cd "${CWD}" || return 1
 }
 
 function main() {
