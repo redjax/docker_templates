@@ -6,11 +6,14 @@ set -euo pipefail
 #####################################
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
+# shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
 
 SCRIPT_NAME="./scripts/lint/lint-bash.sh"
 DESCRIPTION="Lint shell scripts throughout the repository using ShellCheck.
+
+Only failed files and their diagnostics are printed.
+The complete per-file report is saved to the output directory.
 
 ShellCheck options:
       --severity LEVEL
@@ -22,10 +25,9 @@ EXAMPLES="  ${SCRIPT_NAME}
   ${SCRIPT_NAME} scripts
   ${SCRIPT_NAME} templates/media
   ${SCRIPT_NAME} scripts/lint/run-all.sh
-  ${SCRIPT_NAME} --severity error --verbose
+  ${SCRIPT_NAME} --severity error
   ${SCRIPT_NAME} --severity warning scripts
   ${SCRIPT_NAME} --changed origin/main
-  ${SCRIPT_NAME} --verbose
   ${SCRIPT_NAME} --help"
 
 if require_help_or_target "$@"; then
@@ -80,16 +82,17 @@ fi
 
 mapfile -t files < <(resolve_targets "${PATTERN}" "${target_args[@]}")
 
-if ((${#files[@]} == 0)); then
-  echo "No shell scripts found."
-  exit 0
-fi
-
 failures=0
 results_file="${OUTPUT_DIR}/shellcheck.txt"
 output_file="$(mktemp)"
 
 trap 'rm -f "${output_file}"' EXIT
+
+echo "Linting Bash scripts with ShellCheck"
+echo "Results will be outputted to ${output_file}"
+echo
+echo "If you do not see any output, it means there were no linting errors"
+echo
 
 : >"${results_file}"
 
@@ -104,6 +107,7 @@ for file in "${files[@]}"; do
     ((failures += 1))
   fi
 
+  ## Save all results to the report, including successful files.
   {
     printf '%s %s\n' "${status}" "${relative}"
     printf '$ shellcheck --severity=%s --format=gcc --color=never %q\n' \
@@ -112,16 +116,16 @@ for file in "${files[@]}"; do
     printf '\n'
   } >>"${results_file}"
 
-  if [[ "${VERBOSE}" == true ]]; then
-    printf '%s %s\n' "${status}" "${relative}"
-    printf '$ shellcheck --severity=%s --format=gcc --color=never %q\n' \
-      "${severity}" "${file}"
+  ## Print only failed files and their diagnostics to the pipeline log.
+  if [[ "${status}" == "FAIL" ]]; then
+    printf 'FAIL %s\n' "${relative}"
     cat "${output_file}"
     printf '\n'
   fi
 done
 
-printf 'Severity: %s\n' "${severity}"
-printf 'Report: %s\n' "${results_file}"
+if ((failures > 0)); then
+  exit 1
+fi
 
-print_summary "shellcheck" "${#files[@]}" "${failures}"
+exit 0
