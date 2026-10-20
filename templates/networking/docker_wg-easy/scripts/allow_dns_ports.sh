@@ -4,10 +4,9 @@ declare -a ALLOW_PORTS=(53/tcp 53/udp 8080/tcp 8080/udp 8443/tcp 3000/tcp 853/tc
 
 echo "Allowing required ports through firewall"
 
-for port in "${ALLOW_PORTS[@]}"
-do
-    echo "ALLOW port: $port"
-    sudo ufw allow $port
+for port in "${ALLOW_PORTS[@]}"; do
+  echo "ALLOW port: $port"
+  sudo ufw allow $port
 done
 
 echo "Reloading firewall"
