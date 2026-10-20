@@ -47,9 +47,7 @@ fi
 DOCKER_COMMAND+=" $USERNAME"
 
 echo "[DEBUG] Executing: $DOCKER_COMMAND"
-$DOCKER_COMMAND
-
-if [ $? -ne 0 ]; then
+if ! "${DOCKER_COMMAND}" 2>&1; then
   echo "[ERROR] Failed to create ntfy user: $USERNAME"
   exit 1
 else
@@ -65,9 +63,7 @@ if [ "$CREATE_TOKEN" == "yes" ]; then
   TOKEN_COMMAND+=" $USERNAME"
 
   echo "[DEBUG] Executing: $TOKEN_COMMAND"
-  $TOKEN_COMMAND
-
-  if [ $? -ne 0 ]; then
+  if ! "${TOKEN_COMMAND}" 2>&1; then
     echo "[ERROR] Failed to create access token for user: $USERNAME"
     exit 1
   else

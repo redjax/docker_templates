@@ -18,9 +18,7 @@ list_tokens() {
   fi
 
   echo "[INFO] Executing: $command"
-  $command
-
-  if [[ $? -ne 0 ]]; then
+  if ! "${command}" 2>&1; then
     echo "[ERROR] Failed to list tokens."
     exit 1
   fi

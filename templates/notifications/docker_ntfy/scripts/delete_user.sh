@@ -39,10 +39,9 @@ else
 fi
 
 if [[ $DELETE_USER ]]; then
-  docker compose exec -it ntfy ntfy user del $USERNAME
-  if [[ $? -ne 0 ]]; then
+  if ! docker compose exec -it ntfy ntfy user del $USERNAME 2>&1; then
     echo "[ERROR] User was not deleted: '$USERNAME'"
-    exit $?
+    exit 1
   else
     echo "Deleted user: '$USERNAME'"
     exit 0

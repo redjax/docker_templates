@@ -10,11 +10,9 @@ fi
 echo "[DEBUG] docker compose exec -it ntfy ntfy user add --role=admin $USERNAME"
 
 echo "Creating user '$USERNAME'"
-docker compose exec -it ntfy ntfy user add --role=admin $USERNAME
-
-if [ $? -ne 0 ]; then
+if ! docker compose exec -it ntfy ntfy user add --role=admin $USERNAME 2>&1; then
   echo "[ERROR] Failed creatinng ntfy admin user: $USERNAME"
-  exit $?
+  exit 1
 else
   echo "[SUCCESS] Created ntfy admin user: $USERNAME"
   exit 0

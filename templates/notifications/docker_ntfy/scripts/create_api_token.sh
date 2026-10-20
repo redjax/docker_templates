@@ -32,10 +32,7 @@ COMMAND+=" $USERNAME"
 
 ## Execute the command
 echo "Executing: $COMMAND"
-$COMMAND
-
-## Check the exit status
-if [ $? -eq 0 ]; then
+if ! "${COMMAND}" 2>&1; then
   echo "Token created successfully for user: $USERNAME"
 else
   echo "Failed to create token for user: $USERNAME"
