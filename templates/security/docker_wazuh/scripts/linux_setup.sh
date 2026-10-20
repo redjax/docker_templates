@@ -154,7 +154,7 @@ function generate_wazuh_certs() {
     exit 1
   else
     echo "Wazuh indexer SSL certificates generated successfully"
-    echo "[WARNING] Certificates path './config/wazuh_indexer_ssl_certs' is not user readable; to see the certs, run sudo ls ${CWD}/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs." fi
+    echo "[WARNING] Certificates path './config/wazuh_indexer_ssl_certs' is not user readable; to see the certs, run sudo ls ${CWD}/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs."
   fi
 
   # if find ./config/wazuh_indexer_ssl_certs -type f \( -iname "*.pem" -o -iname "*.crt" \) | grep -q .; then
