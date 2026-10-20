@@ -6,7 +6,7 @@ echo "Removing ports from firewall"
 
 for port in "${DENY_PORTS[@]}"; do
   echo "DENY port: $port"
-  sudo ufw deny $port
+  sudo ufw deny "$port"
 done
 
 echo "Reloading firewall"
