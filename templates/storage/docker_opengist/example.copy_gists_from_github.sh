@@ -11,7 +11,7 @@ github_user=user
 ## Replace user, password and Opengist url
 opengist_url="http://user:password@opengist.url/init"
 
-curl -s https://api.github.com/users/"$github_user"/gists?per_page=100 | jq '.[] | .git_pull_url' -r | while read url; do
+curl -s https://api.github.com/users/"$github_user"/gists?per_page=100 | jq '.[] | .git_pull_url' -r | while read -r url; do
   git clone "$url"
   repo_dir=$(basename "$url" .git)
 
