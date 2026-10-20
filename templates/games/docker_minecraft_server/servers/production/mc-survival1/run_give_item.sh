@@ -15,4 +15,4 @@ echo ""
 echo "Giving $player $item_quant $item_id"
 echo ""
 
-docker compose exec -it $container_name mc-send-to-console give $player $item_id $item_quant
+docker compose exec -it $container_name mc-send-to-console give "${player}" "${item_id}" "${item_quant}"
