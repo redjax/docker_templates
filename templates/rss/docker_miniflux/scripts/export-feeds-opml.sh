@@ -51,34 +51,34 @@ COMPRESS=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    -u|--url)
-      MINIFLUX_URL="$2"
-      shift 2
-      ;;
-    -t|--token|-k|--api-key)
-      MINIFLUX_TOKEN="$2"
-      shift 2
-      ;;
-    -o|--output)
-      OUTPUT_FILE="$2"
-      shift 2
-      ;;
-    -d|--dir)
-      EXPORT_DIR="$2"
-      shift 2
-      ;;
-    -z|--gzip)
-      COMPRESS=1
-      shift
-      ;;
-    *)
-      echo "[ERROR] Unknown argument: $1" >&2
-      exit 1
-      ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -u | --url)
+    MINIFLUX_URL="$2"
+    shift 2
+    ;;
+  -t | --token | -k | --api-key)
+    MINIFLUX_TOKEN="$2"
+    shift 2
+    ;;
+  -o | --output)
+    OUTPUT_FILE="$2"
+    shift 2
+    ;;
+  -d | --dir)
+    EXPORT_DIR="$2"
+    shift 2
+    ;;
+  -z | --gzip)
+    COMPRESS=1
+    shift
+    ;;
+  *)
+    echo "[ERROR] Unknown argument: $1" >&2
+    exit 1
+    ;;
   esac
 done
 

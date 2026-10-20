@@ -3,7 +3,7 @@ set -euo pipefail
 
 ##############################################################
 # Deletes Miniflux database backups from a directory         #
-#                                                            # 
+#                                                            #
 # All backups are deleted unless a --retain value is passed. #
 #                                                            #
 # With --retain, the newest N backups are kept.              #
@@ -46,32 +46,32 @@ EOF
 DRY_RUN=0
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --backup-dir)
-      BACKUP_DIR="$2"
-      shift 2
-      ;;
-    --retain)
-      RETAIN="$2"
-      shift 2
-      ;;
-    --dry-run)
-      DRY_RUN=1
-      shift
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    -*)
-      echo "Error: Unknown option: $1" >&2
-      echo "Use --help for usage information" >&2
-      exit 1
-      ;;
-    *)
-      echo "Error: Unknown argument: $1" >&2
-      echo "Use --help for usage information" >&2
-      exit 1
-      ;;
+  --backup-dir)
+    BACKUP_DIR="$2"
+    shift 2
+    ;;
+  --retain)
+    RETAIN="$2"
+    shift 2
+    ;;
+  --dry-run)
+    DRY_RUN=1
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -*)
+    echo "Error: Unknown option: $1" >&2
+    echo "Use --help for usage information" >&2
+    exit 1
+    ;;
+  *)
+    echo "Error: Unknown argument: $1" >&2
+    echo "Use --help for usage information" >&2
+    exit 1
+    ;;
   esac
 done
 
@@ -133,14 +133,14 @@ else
   echo ""
   echo "Deleting backups"
   echo ""
-  
+
   DELETED=0
   echo "$BACKUPS" | head -n "$TO_DELETE" | while read -r backup; do
     echo "Deleting: $backup"
     rm -f "$backup"
     DELETED=$((DELETED + 1))
   done
-  
+
   echo ""
   echo "Deleted $TO_DELETE backup(s)"
 fi
