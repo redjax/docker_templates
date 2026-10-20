@@ -50,9 +50,7 @@ function set_systctl_max_map_count() {
   ## Check if the line exists
   if grep -q "^vm.max_map_count=" "$SYSCTL_FILE"; then
     ## Replace the line
-    sudo sed -i "s|^vm.max_map_count=.*|$NEW_LINE|" "$SYSCTL_FILE"
-
-    if [[ $? -ne 0 ]]; then
+    if ! sudo sed -i "s|^vm.max_map_count=.*|$NEW_LINE|" "$SYSCTL_FILE" 2>&1; then
       echo "Failed to update the vm.max_map_count value in $SYSCTL_FILE"
       exit 1
     else
@@ -61,9 +59,7 @@ function set_systctl_max_map_count() {
 
   else
     ## Append the line
-    echo "$NEW_LINE" | sudo tee -a "$SYSCTL_FILE" >/dev/null
-
-    if [[ $? -ne 0 ]]; then
+    if ! echo "$NEW_LINE" | sudo tee -a "$SYSCTL_FILE" >/dev/null 2>&1; then
       echo "Failed to add the vm.max_map_count value to $SYSCTL_FILE"
       exit 1
     else
@@ -81,9 +77,7 @@ function clone_wazuh_repo() {
 
   echo "Cloning Wazuh repository"
 
-  git clone https://github.com/wazuh/wazuh-docker.git -b ${WAZUH_VERSION}
-
-  if [[ $? -ne 0 ]]; then
+  if ! git clone https://github.com/wazuh/wazuh-docker.git -b ${WAZUH_VERSION} 2>&1; then
     echo "Failed to clone Wazuh repository"
     exit 1
   fi
@@ -91,9 +85,7 @@ function clone_wazuh_repo() {
   cd wazuh-docker
 
   echo "Checking out branch ${WAZUH_VERSION}"
-  git checkout $WAZUH_VERSION
-
-  if [[ $? -ne 0 ]]; then
+  if ! git checkout $WAZUH_VERSION 2>&1; then
     echo "Failed to checkout branch ${WAZUH_VERSION}"
     exit 1
   else
@@ -107,8 +99,7 @@ function configure_reverse_proxy() {
     exit 1
   fi
 
-  cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
-  if [[ $? -ne 0 ]]; then
+  if ! cd ./wazuh-docker/${WAZUH_INSTALL_TYPE} 2>&1; then
     echo "Failed to change directory to ./wazuh-docker/${WAZUH_INSTALL_TYPE}"
     exit 1
   fi
@@ -158,9 +149,7 @@ function generate_wazuh_certs() {
 
   cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
 
-  docker compose -f generate-indexer-certs.yml run --rm generator
-
-  if [[ ! $? -eq 0 ]]; then
+  if ! docker compose -f generate-indexer-certs.yml run --rm generator 2>&1; then
     echo "Failed to generate Wazuh indexer SSL certificates."
     exit 1
   else
@@ -185,15 +174,13 @@ function compose_up() {
   cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
 
   echo "Building Docker containers."
-  docker compose build
-  if [[ $? -ne 0 ]]; then
+  if ! docker compose build 2>&1; then
     echo "Failed to build Wazuh Docker containers."
     exit 1
   fi
 
   echo "Bringing up Wazuh Docker stack."
-  docker compose up -d
-  if [[ $? -ne 0 ]]; then
+  if ! docker compose up -d 2>&1; then
     echo "Failed to bring up Wazuh Docker stack."
     exit 1
   fi
@@ -221,9 +208,7 @@ function main() {
   clone_wazuh_repo
 
   if [[ "${USING_REVERSE_PROXY}" -eq 1 ]]; then
-    configure_reverse_proxy
-
-    if [[ $? -ne 0 ]]; then
+    if ! configure_reverse_proxy 2>&1; then
       echo "Failed to configure reverse proxy"
       exit 1
     fi
