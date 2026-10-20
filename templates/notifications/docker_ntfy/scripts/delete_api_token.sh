@@ -12,7 +12,7 @@ check_docker_compose() {
 prompt_input() {
   local prompt_message=$1
   local var_name=$2
-  read -p "$prompt_message: " var_name
+  read -r -p "$prompt_message: " var_name
 }
 
 # Main script

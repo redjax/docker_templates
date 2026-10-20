@@ -28,7 +28,8 @@ list_tokens() {
 check_docker_compose
 
 # Prompt for username (optional)
-read -p "Enter username (press Enter to list all tokens): " USERNAME
+read -r -p "Enter username (press Enter to list all tokens): " USERNAME
+echo
 
 # List tokens
 list_tokens "$USERNAME"

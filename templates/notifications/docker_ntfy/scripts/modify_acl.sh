@@ -12,7 +12,7 @@ check_docker_compose() {
 prompt_input() {
   local prompt_message=$1
   local var_name=$2
-  read -p "$prompt_message: " $var_name
+  read -r -p "$prompt_message: " var_name
 }
 
 ## Main script
@@ -26,7 +26,9 @@ prompt_input "Enter topic name (e.g., 'mytopic' or 'up*')" TOPIC
 
 ## Prompt for access level (e.g., 'read', 'write', or 'rw')
 while true; do
-  read -p "Enter access level ('read', 'write', 'rw', or 'deny'): " ACCESS_LEVEL
+  read -r -p "Enter access level ('read', 'write', 'rw', or 'deny'): " ACCESS_LEVEL
+  echo
+
   case $ACCESS_LEVEL in
   read | write | rw | deny) break ;;
   *) echo "Invalid access level. Please enter 'read', 'write', 'rw', or 'deny'." ;;

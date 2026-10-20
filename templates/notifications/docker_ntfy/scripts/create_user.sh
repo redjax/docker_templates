@@ -4,7 +4,9 @@ prompt_yes_no() {
   local prompt_message=$1
   local user_input
   while true; do
-    read -p "$prompt_message (y/n): " user_input
+    read -r -p "$prompt_message (y/n): " user_input
+    echo
+
     case $user_input in
     [Yy]*)
       echo "yes"
@@ -25,7 +27,8 @@ if ! docker compose version 2>&1 >/dev/null; then
 fi
 
 ## Prompt for username
-read -p "New username: " USERNAME
+read -r -p "New username: " USERNAME
+echo
 
 ## Prompt if the user should be an admin
 IS_ADMIN=$(prompt_yes_no "Should this user be a ntfy admin?")
@@ -34,10 +37,12 @@ IS_ADMIN=$(prompt_yes_no "Should this user be a ntfy admin?")
 CREATE_TOKEN=$(prompt_yes_no "Should an access token be created for this user?")
 
 ## Prompt for expiration period
-read -p "Enter expiration period for the token (i.e. 90d, 30d, or an empty string for never): " EXPIRATION
+read -r -p "Enter expiration period for the token (i.e. 90d, 30d, or an empty string for never): " EXPIRATION
+echo
 
 ## Prompt for label (allow empty/null values)
-read -p "Enter a label for the token (optional, press Enter to skip): " LABEL
+read -r -p "Enter a label for the token (optional, press Enter to skip): " LABEL
+echo
 
 ## Build the `docker compose exec` command
 DOCKER_COMMAND="docker compose exec -it ntfy ntfy user add"

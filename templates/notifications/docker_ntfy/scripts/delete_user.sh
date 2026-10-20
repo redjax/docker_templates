@@ -4,7 +4,9 @@ prompt_yes_no() {
   local prompt_message=$1
   local user_input
   while true; do
-    read -p "$prompt_message (y/n): " user_input
+    read -r -p "$prompt_message (y/n): " user_input
+    echo
+
     case $user_input in
     [Yy]*)
       echo "yes"
@@ -25,7 +27,8 @@ if ! docker compose version 2>&1 >/dev/null; then
 fi
 
 ## Prompt for username
-read -p "Delete username: " USERNAME
+read -r -p "Delete username: " USERNAME
+echo
 
 ## Prompt if the user should be deleted
 DELETE_CONFIRM=$(prompt_yes_no "Delete user '$USERNAME'?")

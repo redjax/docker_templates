@@ -6,10 +6,12 @@ if ! docker compose version 2>&1 >/dev/null; then
 fi
 
 ## Prompt for username
-read -p "Enter username: " USERNAME
+read -r -p "Enter username: " USERNAME
+echo
 
 ## Prompt for expiration period
-read -p "Enter expiration period (e.g., 2d, 1w, or press Enter for no expiration): " EXPIRATION
+read -r -p "Enter expiration period (e.g., 2d, 1w, or press Enter for no expiration): " EXPIRATION
+echo
 
 # Build the command
 COMMAND="docker compose exec -it ntfy ntfy token add"
@@ -20,7 +22,8 @@ if [ -n "$EXPIRATION" ]; then
 fi
 
 ## Prompt for label
-read -p "Enter label (or press Enter for no label): " LABEL
+read -r -p "Enter label (or press Enter for no label): " LABEL
+echo
 
 # Add label if provided
 if [ -n "$LABEL" ]; then
