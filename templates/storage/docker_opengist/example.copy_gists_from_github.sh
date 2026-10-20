@@ -17,10 +17,10 @@ curl -s https://api.github.com/users/"$github_user"/gists?per_page=100 | jq '.[]
 
   # Add remote, push, and remove the directory
   if [ -d "$repo_dir" ]; then
-    cd "$repo_dir"
+    cd "${repo_dir}" || exit 1
     git remote add gist "$opengist_url"
     git push -u gist --all
-    cd ..
+    cd .. || exit 1
     rm -rf "$repo_dir"
   fi
 done
