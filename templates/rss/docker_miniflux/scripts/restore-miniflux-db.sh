@@ -176,7 +176,7 @@ echo
 echo "Ensuring Miniflux container is stopped"
 echo
 
-docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY -f $HEALTHCHECK_OVERLAY stop miniflux
+docker compose -f "${COMPOSE_FILE}" -f "${POSTGRES_OVERLAY}" -f "${HEALTHCHECK_OVERLAY}" stop miniflux
 
 ## Optionally drop and recreate database
 if [ "${DROP_DB:-}" = "1" ]; then
@@ -215,7 +215,7 @@ if [[ "${RESTART_CONTAINERS:-}" == "1" ]]; then
   echo "Restarting Miniflux container"
   echo
 
-  docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY -f $HEALTHCHECK_OVERLAY up -d
+  docker compose -f "${COMPOSE_FILE}" -f "${POSTGRES_OVERLAY}" -f "${HEALTHCHECK_OVERLAY}" up -d
 else
   echo "You many need to manually restart Miniflux, i.e.:"
   echo "  docker compose -f ${COMPOSE_FILE} -f ${POSTGRES_OVERLAY} -f ${HEALTHCHECK_OVERLAY} up -d"
