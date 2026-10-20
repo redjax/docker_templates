@@ -12,8 +12,7 @@ fi
 
 echo "Generating SSH keys for Rundeck. Outputting to ./ssh"
 
-mkdir -p ./ssh
-if [ $? -ne 0 ]; then
+if ! mkdir -p ./ssh 2>&1; then
   echo "[ERROR] Failed to create ./ssh directory."
   exit 1
 fi
