@@ -6,7 +6,7 @@ function COPY_EXAMPLE_FILE() {
 
   if [[ ! -f $1 ]]; then
     echo ""
-    echo "Copying "$1.example" to $1"
+    echo "Copying ${1}.example to ${1}"
     echo ""
     mv "$1.example" "$1"
   elif [[ -f $1 ]]; then
