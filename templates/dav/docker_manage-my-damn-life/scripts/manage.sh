@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
-OVERLAYS_DIR="${PROJECT_ROOT}/overlays}"
-
 DB_TYPE=""
 OPERATION=""
 FORCE="false"
@@ -26,68 +22,68 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -h|--help)
-      usage
-      exit 0
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -t | --db-type)
+    case $2 in
+    [Mm][Yy][Ss][Qq][Ll])
+      DB_TYPE="mysql"
       ;;
-    -t|--db-type)
-      case $2 in
-        [Mm][Yy][Ss][Qq][Ll])
-          DB_TYPE="mysql"
-          ;;
-        [Pp][Oo][Ss][Tt][Gg][Rr][Ee][Ss]|[Pp][Oo][Ss][Tt][Gg][Rr][Ee][Ss][Qq][Ll])
-          DB_TYPE="postgres"
-          ;;
-        [Ss][Qq][Ll][Ii][Tt][Ee])
-          DB_TYPE="sqlite"
-          ;;
-        [Ee][Xx][Tt]|[Ee][Xx][Tt][Ee][Rr][Nn][Aa][Ll])
-          DB_TYPE="external"
-          ;;
-        *)
-          echo "[ERROR] Invalid db type: $2." >&2
-          usage
-
-          exit 1
-          ;;
-      esac
-
-      shift 2
+    [Pp][Oo][Ss][Tt][Gg][Rr][Ee][Ss] | [Pp][Oo][Ss][Tt][Gg][Rr][Ee][Ss][Qq][Ll])
+      DB_TYPE="postgres"
       ;;
-    -o|--operation)
-      case $2 in
-        [Uu][Pp]|[Ss][Tt][Aa][Rr][Tt])
-          OPERATION="up"
-          ;;
-        [Dd][Oo][Ww][Nn]|[Ss][Tt][Oo][Pp])
-          OPERATION="down"
-          ;;
-        [Rr][Ee][Ss][Tt][Aa][Rr][Tt])
-          OPERATION="restart"
-          ;;
-        *)
-          echo "[ERROR] Invalid Docker operation: $2" >&2
-          echo
-          usage
-          exit 1
-          ;;
-      esac
-      shift 2
+    [Ss][Qq][Ll][Ii][Tt][Ee])
+      DB_TYPE="sqlite"
       ;;
-    -f|--force)
-      FORCE="true"
-      shift
-      ;;
-    -r|--rm)
-      DELETE="true"
-      shift
+    [Ee][Xx][Tt] | [Ee][Xx][Tt][Ee][Rr][Nn][Aa][Ll])
+      DB_TYPE="external"
       ;;
     *)
-      echo "[ERROR] Invalid option: $1." >&2
+      echo "[ERROR] Invalid db type: $2." >&2
+      usage
+
+      exit 1
+      ;;
+    esac
+
+    shift 2
+    ;;
+  -o | --operation)
+    case $2 in
+    [Uu][Pp] | [Ss][Tt][Aa][Rr][Tt])
+      OPERATION="up"
+      ;;
+    [Dd][Oo][Ww][Nn] | [Ss][Tt][Oo][Pp])
+      OPERATION="down"
+      ;;
+    [Rr][Ee][Ss][Tt][Aa][Rr][Tt])
+      OPERATION="restart"
+      ;;
+    *)
+      echo "[ERROR] Invalid Docker operation: $2" >&2
       echo
       usage
       exit 1
       ;;
+    esac
+    shift 2
+    ;;
+  -f | --force)
+    FORCE="true"
+    shift
+    ;;
+  -r | --rm)
+    DELETE="true"
+    shift
+    ;;
+  *)
+    echo "[ERROR] Invalid option: $1." >&2
+    echo
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -116,16 +112,16 @@ else
 fi
 
 case "${OPERATION}" in
-  up)
-    up_cmd+=(up -d)
-    ;;
-  down)
-    down_cmd+=(down)
-    ;;
-  restart)
-    up_cmd+=(up -d)
-    down_cmd+=(down)
-    ;;
+up)
+  up_cmd+=(up -d)
+  ;;
+down)
+  down_cmd+=(down)
+  ;;
+restart)
+  up_cmd+=(up -d)
+  down_cmd+=(down)
+  ;;
 esac
 
 if [[ "${FORCE}" == "true" ]]; then

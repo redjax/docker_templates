@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
-OVERLAYS_DIR="${PROJECT_ROOT}/overlays"
-DIRECT_ACCESS_OVERLAY="${OVERLAYS_DIR}/direct.yml"
-CADDY_ACCESS_OVERLAY="${OVERLAYS_DIR}/caddy.yml"
-
 EXPOSE_DIRECT="false"
 EXPOSE_CADDY="false"
 DOCKER_OPERATION=
@@ -43,41 +37,41 @@ fi
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -h|--help)
-      usage
-      exit 0
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  --direct)
+    EXPOSE_DIRECT="true"
+    shift
+    ;;
+  --caddy)
+    EXPOSE_CADDY="true"
+    shift
+    ;;
+  -o | --operation)
+    case $2 in
+    up | start)
+      DOCKER_OPERATION="up"
       ;;
-    --direct)
-      EXPOSE_DIRECT="true"
-      shift
+    down | stop)
+      DOCKER_OPERATION="down"
       ;;
-    --caddy)
-      EXPOSE_CADDY="true"
-      shift
+    restart)
+      DOCKER_OPERATION="restart"
       ;;
-    -o|--operation)
-      case $2 in
-        up|start)
-          DOCKER_OPERATION="up"
-          ;;
-        down|stop)
-          DOCKER_OPERATION="down"
-          ;;
-        restart)
-          DOCKER_OPERATION="restart"
-          ;;
-        pull|update)
-          DOCKER_OPERATION="update"
-          ;;
-      esac
+    pull | update)
+      DOCKER_OPERATION="update"
+      ;;
+    esac
 
-      shift 2
-      ;;
-    *)
-      echo "[ERROR] Invalid flag: ${1}" >&2
-      usage
-      exit 1
-      ;;
+    shift 2
+    ;;
+  *)
+    echo "[ERROR] Invalid flag: ${1}" >&2
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -106,24 +100,24 @@ elif [[ "${EXPOSE_CADDY}" == "true" ]]; then
 fi
 
 case "${DOCKER_OPERATION}" in
-  up)
-    docker_cmd="${docker_cmd} up -d"
-    ;;
-  down)
-    docker_cmd="${docker_cmd} down"
-    ;;
-  restart)
-    docker_cmd="${docker_cmd} down && ${docker_cmd} up -d"
-    ;;
-  pull)
-    docker_cmd="${docker_cmd} pull"
-    ;;
-  *)
-    echo "[ERROR] Invalid Docker operation: ${DOCKER_OPERATION}" >&2
+up)
+  docker_cmd="${docker_cmd} up -d"
+  ;;
+down)
+  docker_cmd="${docker_cmd} down"
+  ;;
+restart)
+  docker_cmd="${docker_cmd} down && ${docker_cmd} up -d"
+  ;;
+pull)
+  docker_cmd="${docker_cmd} pull"
+  ;;
+*)
+  echo "[ERROR] Invalid Docker operation: ${DOCKER_OPERATION}" >&2
 
-    usage
-    exit 1
-    ;;
+  usage
+  exit 1
+  ;;
 esac
 
 echo

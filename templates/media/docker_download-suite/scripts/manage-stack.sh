@@ -8,8 +8,6 @@ set -euo pipefail
 # I will update it as I add/remove containers I "always run." #
 ###############################################################
 
-THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
 CWD=$(pwd)
 trap 'cd "$CWD"' EXIT
 
@@ -48,29 +46,29 @@ run_cmd() {
 ## Parse args
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -o|--operation)
-      OPERATION="${2,,}"
-      shift 2
-      ;;
-    --force)
-      FORCE="true"
-      shift
-      ;;
-    -n|--container-name)
-      LOG_CONTAINER="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "[ERROR] Invalid option: $1" >&2
-      echo
+  -o | --operation)
+    OPERATION="${2,,}"
+    shift 2
+    ;;
+  --force)
+    FORCE="true"
+    shift
+    ;;
+  -n | --container-name)
+    LOG_CONTAINER="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "[ERROR] Invalid option: $1" >&2
+    echo
 
-      usage
-      exit 1
-      ;;
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -109,99 +107,99 @@ for c in "${compose_files[@]}"; do
   cmd+=(-f "${c}")
 
   case "${OPERATION}" in
-    restart|update|upgrade)
-      restart_down_cmd+=(-f "${c}")
-      restart_up_cmd+=(-f "${c}")
-      pull_cmd+=(-f "${c}")
-      ;;
-    log|logs)
-      log_cmd+=(-f "${c}")
-      ;;
+  restart | update | upgrade)
+    restart_down_cmd+=(-f "${c}")
+    restart_up_cmd+=(-f "${c}")
+    pull_cmd+=(-f "${c}")
+    ;;
+  log | logs)
+    log_cmd+=(-f "${c}")
+    ;;
   esac
 done
 
 case "${OPERATION}" in
-  run|start|up)
-    cmd+=(up -d)
+run | start | up)
+  cmd+=(up -d)
 
-    if [[ "${FORCE}" == "true" ]]; then
-      cmd+=(--force-recreate --remove-orphans)
-    fi
-    ;;
-  down|stop)
-    cmd+=(down)
+  if [[ "${FORCE}" == "true" ]]; then
+    cmd+=(--force-recreate --remove-orphans)
+  fi
+  ;;
+down | stop)
+  cmd+=(down)
 
-    if [[ "${FORCE}" == "true" ]]; then
-      cmd+=(--remove-orphans)
-    fi
-    ;;
-  restart)
-    restart_down_cmd+=(down)
-    restart_up_cmd+=(up -d)
+  if [[ "${FORCE}" == "true" ]]; then
+    cmd+=(--remove-orphans)
+  fi
+  ;;
+restart)
+  restart_down_cmd+=(down)
+  restart_up_cmd+=(up -d)
 
-    if [[ "${FORCE}" == "true" ]]; then
-      restart_down_cmd+=(--remove-orphans)
-      restart_up_cmd+=(--force-recreate --remove-orphans)
-    fi
-    ;;
-  update|upgrade)
-    restart_down_cmd+=(down)
-    restart_up_cmd+=(up -d)
-    pull_cmd+=(pull)
+  if [[ "${FORCE}" == "true" ]]; then
+    restart_down_cmd+=(--remove-orphans)
+    restart_up_cmd+=(--force-recreate --remove-orphans)
+  fi
+  ;;
+update | upgrade)
+  restart_down_cmd+=(down)
+  restart_up_cmd+=(up -d)
+  pull_cmd+=(pull)
 
-    if [[ "${FORCE}" == "true" ]]; then
-      restart_down_cmd+=(--remove-orphans)
-      restart_up_cmd+=(--force-recreate --remove-orphans)
-    fi
-    ;;
-  log|logs)
-    if [[ -z "${LOG_CONTAINER}" ]]; then
-      echo "[ERROR] Container name required for logs. Pass one with -n <container-name>" >&2
-      echo
-
-      usage
-      exit 1
-    fi
-
-    log_cmd+=(logs -f "${LOG_CONTAINER}")
-    ;;
-  *)
-    echo "[ERROR] Invalid operation: ${OPERATION}" >&2
+  if [[ "${FORCE}" == "true" ]]; then
+    restart_down_cmd+=(--remove-orphans)
+    restart_up_cmd+=(--force-recreate --remove-orphans)
+  fi
+  ;;
+log | logs)
+  if [[ -z "${LOG_CONTAINER}" ]]; then
+    echo "[ERROR] Container name required for logs. Pass one with -n <container-name>" >&2
     echo
 
     usage
     exit 1
-    ;;
+  fi
+
+  log_cmd+=(logs -f "${LOG_CONTAINER}")
+  ;;
+*)
+  echo "[ERROR] Invalid operation: ${OPERATION}" >&2
+  echo
+
+  usage
+  exit 1
+  ;;
 esac
 
 echo
 
 ## Execute docker command
 case "${OPERATION}" in
-  run|start|up)
-    run_cmd "${cmd[@]}"
-    ;;
-  down|stop)
-    run_cmd "${cmd[@]}"
-    ;;
-  restart)
-    run_cmd "${restart_down_cmd[@]}"
+run | start | up)
+  run_cmd "${cmd[@]}"
+  ;;
+down | stop)
+  run_cmd "${cmd[@]}"
+  ;;
+restart)
+  run_cmd "${restart_down_cmd[@]}"
 
-    echo "Pause..."
-    sleep 2
+  echo "Pause..."
+  sleep 2
 
-    run_cmd "${restart_up_cmd[@]}"
-    ;;
-  update|upgrade)
-    run_cmd "${pull_cmd[@]}"
-    run_cmd "${restart_down_cmd[@]}"
+  run_cmd "${restart_up_cmd[@]}"
+  ;;
+update | upgrade)
+  run_cmd "${pull_cmd[@]}"
+  run_cmd "${restart_down_cmd[@]}"
 
-    echo "Pause..."
-    sleep 2
+  echo "Pause..."
+  sleep 2
 
-    run_cmd "${restart_up_cmd[@]}"
-    ;;
-  log|logs)
-    run_cmd "${log_cmd[@]}"    
-    ;;
+  run_cmd "${restart_up_cmd[@]}"
+  ;;
+log | logs)
+  run_cmd "${log_cmd[@]}"
+  ;;
 esac

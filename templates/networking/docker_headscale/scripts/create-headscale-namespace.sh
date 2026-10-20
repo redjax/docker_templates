@@ -8,16 +8,13 @@
 echo "[ Create Headscale Namespace ]"
 echo ""
 
-read -p "What namespace do you want to use for Headscale? " HEADSCALE_NAMESPACE
+read -r -p "What namespace do you want to use for Headscale? " HEADSCALE_NAMESPACE
 echo ""
 echo "Setting Headscale namespace to: ${HEADSCALE_NAMESPACE}"
 echo ""
 
-docker compose exec headscale headscale namespaces create "${HEADSCALE_NAMESPACE}"
-echo ""
-
-if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Created Headscale namespace: ${HEADSCALE_NAMESPACE}"
+if ! docker compose exec headscale headscale namespaces create "${HEADSCALE_NAMESPACE}" 2>&1; then
+  echo "[SUCCESS] Created Headscale namespace: ${HEADSCALE_NAMESPACE}"
 else
-    echo "[ERROR] Error creating Headscale namespace: ${HEADSCALE_NAMESPACE}"
+  echo "[ERROR] Error creating Headscale namespace: ${HEADSCALE_NAMESPACE}"
 fi

@@ -12,8 +12,8 @@ rcon "announcerestart 1"
 sleep 5
 
 # Tell the scheduler to terminate
-kill -s INT `pgrep -nf scheduler_app/app.js`
+kill -s INT $(pgrep -nf scheduler_app/app.js)
 
 ## FIXME: This seems to instantly destroy it, without saving?!
 # Tell the server to terminate
-kill -s INT `pgrep -nf VRisingServer.exe`
+kill -s INT $(pgrep -nf VRisingServer.exe)
