@@ -6,7 +6,7 @@ echo "Allowing required ports through firewall"
 
 for port in "${ALLOW_PORTS[@]}"; do
   echo "ALLOW port: $port"
-  sudo ufw allow $port
+  sudo ufw allow "$port"
 done
 
 echo "Reloading firewall"
