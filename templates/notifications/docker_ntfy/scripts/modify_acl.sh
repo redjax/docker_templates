@@ -8,21 +8,16 @@ check_docker_compose() {
   fi
 }
 
-## Function to prompt for input
-prompt_input() {
-  local prompt_message=$1
-  local var_name=$2
-  read -r -p "$prompt_message: " var_name
-}
-
 ## Main script
 check_docker_compose
 
 ## Prompt for username (or "everyone" for anonymous access)
-prompt_input "Enter username (or 'everyone' for anonymous access)" USERNAME
+read -r -p "Enter username (or 'everyone' for anonymous access)" USERNAME
+echo
 
 ## Prompt for topic name (wildcards like "up*" are allowed)
-prompt_input "Enter topic name (e.g., 'mytopic' or 'up*')" TOPIC
+read -r -p "Enter topic name (e.g., 'mytopic' or 'up*')" TOPIC
+echo
 
 ## Prompt for access level (e.g., 'read', 'write', or 'rw')
 while true; do
