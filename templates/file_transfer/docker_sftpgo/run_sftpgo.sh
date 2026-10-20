@@ -14,15 +14,15 @@ fi
 
 echo "Starting SFTPGo container using path: $HOST_PATH"
 
-docker run --name sftpgo \
+if ! docker run --name sftpgo \
   -p 8080:8080 \
   -p 2022:2022 \
   -e SFTPGO_GRACE_TIME=32 \
   -v "$HOST_PATH":/srv/sftpgo \
   -d \
-  "drakkan/sftpgo:latest"
+  "drakkan/sftpgo:latest" \
+  2>&1; then
 
-if [[ $? -ne 0 ]]; then
   echo "Failed to start SFTPGo container"
   exit 1
 fi
