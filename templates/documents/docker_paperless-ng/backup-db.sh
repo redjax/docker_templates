@@ -46,12 +46,12 @@ function BACKUP_PAPERLESS_DB() {
 
   elif [[ -f $DB_DUMP_PATH ]]; then
     echo ""
-    echo $DB_DUMP_PATH" exists."
+    echo "${DB_DUMP_PATH} exists."
     echo ""
     echo "Removing and creating new backup."
     echo ""
 
-    rm $DB_DUMP_PATH
+    rm "${DB_DUMP_PATH}"
     docker exec -t $DB_CONTAINER pg_dumpall -c -U $DB_USER >"$DB_DUMP_PATH"
 
   else
