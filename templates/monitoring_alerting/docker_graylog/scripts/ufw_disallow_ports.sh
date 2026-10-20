@@ -6,5 +6,5 @@ echo "Closing Graylog stack ports"
 
 for port in "${disallow_ports[@]}"; do
   echo "Closing port: ${port}"
-  sudo ufw deny $port
+  sudo ufw deny "${port}"
 done
