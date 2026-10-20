@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if ! command -v docker &>/dev/null; then
-  echo "[ERROR] Docker is not installed. Install Docker and try again."
+  echo "[ERROR] Docker is not installed. Install Docker and try again." >&2
   exit 1
 fi
 
@@ -12,14 +12,13 @@ echo "            use http://gitlab-server as the URL."
 echo ""
 
 if ! docker run --rm -it \
-  -v "$(pwd)/gitlab-runner/config":/etc/gitlab-runner \
+  -v "$(pwd)/gitlab-runner/config:/etc/gitlab-runner" \
   gitlab/gitlab-runner:latest \
   register \
   2>&1; then
-
-  echo "[ERROR] Failed to register Gitlab runner"
+  echo "[ERROR] Failed to register Gitlab runner" >&2
   exit 1
-else
-  echo "Gitlab runner registered successfully. Restart the Compose stack to bring the embedded runner up."
-  exit 0
 fi
+
+echo "Gitlab runner registered successfully. Restart the Compose stack to bring the embedded runner up."
+exit 0
