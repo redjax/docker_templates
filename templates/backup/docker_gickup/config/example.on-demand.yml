@@ -17,7 +17,6 @@ source:
       token_file: "/root/.ssh/github_token"
       ## Names of repositories to include
       include:
-
         ## This is where you put the names of the repos you want to synch.
         #  You can copy/paste from another config if you have one.
         - "repo1-name"

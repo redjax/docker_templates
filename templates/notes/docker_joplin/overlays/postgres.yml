@@ -25,4 +25,3 @@ services:
       POSTGRES_USER: ${DB_USER:-joplin}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-joplin}
       POSTGRES_DB: ${DB_NAME:-joplin}
-

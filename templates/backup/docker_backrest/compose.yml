@@ -6,7 +6,6 @@
 #   volume_name: {}
 
 services:
-
   backrest:
     image: garethgeorge/backrest:latest
     container_name: backrest
@@ -28,4 +27,3 @@ services:
       - TZ=${TZ:-Etc/UTC}
     ports:
       - ${BACKREST_PORT:-9898}:9898
-

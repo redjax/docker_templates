@@ -1,14 +1,13 @@
-version: '3'
+version: "3"
 
 networks:
   seafile-net:
     driver: bridge
   web-proxy:
-      external:
-          name: web-proxy
+    external:
+      name: web-proxy
 
 services:
-
   seafile-db:
     image: ${SEAFILE_DB_IMAGE:-mariadb:10.1}
     container_name: ${SEAFILE_DB_NAME:-seafile-db}
@@ -20,7 +19,7 @@ services:
       - ${SEAFILE_DB_DIR:-./seafile-mysql/db}:/var/lib/mysql
     networks:
       - seafile-net
-    
+
   memcached:
     image: ${SEAFILE_MEMCACHED_IMAGE:-memcached:1.5.6}
     container_name: ${SEAFILE_MEMCACHED_NAME:-seafile-memcached}

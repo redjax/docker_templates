@@ -17,4 +17,3 @@ services:
           valid users = %S
           create mask = 0700
           directory mask = 0700
-

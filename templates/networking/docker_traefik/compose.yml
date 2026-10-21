@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 networks:
   spooki_proxy:
@@ -8,7 +8,6 @@ networks:
     driver: bridge
 
 services:
-  
   traefik:
     image: traefik:${TRAEFIK_IMG_VERSION:-latest}
     container_name: traefik
@@ -92,4 +91,4 @@ services:
       ## Services - API
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       ## Middlewares
-      - "traefik.http.routers.traefik-rtr.middlewares=middlewares-basic-auth@file" 
+      - "traefik.http.routers.traefik-rtr.middlewares=middlewares-basic-auth@file"

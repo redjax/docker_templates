@@ -22,4 +22,3 @@ services:
       - mongo
     environment:
       KOMODO_DATABASE_ADDRESS: mongo:27017
-

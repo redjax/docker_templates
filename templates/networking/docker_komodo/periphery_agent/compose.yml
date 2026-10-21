@@ -22,4 +22,3 @@ services:
       - /proc:/proc
       - ${PERIPHERY_DATA_DIR:-/etc/komodo}:${PERIPHERY_DATA_DIR:-/etc/komodo}
       - ${PERIPHERY_KEYS_DIR:-periphery-keys}:/config/keys
-

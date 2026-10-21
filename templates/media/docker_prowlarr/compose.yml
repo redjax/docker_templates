@@ -5,7 +5,7 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     restart: unless-stopped
-    environment:  
+    environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ:-Etc/UTC}

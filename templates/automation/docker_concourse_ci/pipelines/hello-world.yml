@@ -1,20 +1,20 @@
 ---
 jobs:
-- name: hello-job
-  plan:
-    - task: say-hello
-      config:
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
+  - name: hello-job
+    plan:
+      - task: say-hello
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
               repository: alpine
               tag: latest
-        run:
-          path: /bin/sh
-          args:
-          - -c
-          - |
-            echo "============="
-            echo "Hello, World!"
-            echo "============="
+          run:
+            path: /bin/sh
+            args:
+              - -c
+              - |
+                echo "============="
+                echo "Hello, World!"
+                echo "============="

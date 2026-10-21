@@ -14,7 +14,7 @@ services:
     cap_add:
       - SYS_ADMIN
     security_opt:
-        - apparmor:unconfined
+      - apparmor:unconfined
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}

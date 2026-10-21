@@ -9,7 +9,6 @@ networks:
 #   drone-agent_data:
 
 services:
-  
   gitea:
     image: gitea/gitea:latest
     container_name: gitea

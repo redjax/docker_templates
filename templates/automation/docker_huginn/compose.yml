@@ -5,7 +5,6 @@ volumes:
   huginn_data:
 
 services:
-
   huginn:
     container_name: huginn
     image: huginn/huginn

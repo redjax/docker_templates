@@ -12,7 +12,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: [ "CMD-SHELL", "redis-cli ping || exit 1" ]
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
 
   immich-server:
     depends_on:
