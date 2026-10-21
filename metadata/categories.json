@@ -70,7 +70,7 @@
                 "path": "templates/misc/project_templates",
                 "sub_categories": [
                     {
-                        "count": 8,
+                        "count": 7,
                         "name": "docker_wordpress-nginx",
                         "path": "templates/misc/project_templates/docker_wordpress-nginx",
                         "sub_categories": [],
