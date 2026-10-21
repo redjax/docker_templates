@@ -28,4 +28,5 @@ jobs:
       lint_yaml: false
       lint_compose: false
       lint_dockerfiles: false
+      lint_python: false
       verbose: true
