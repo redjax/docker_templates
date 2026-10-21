@@ -20,7 +20,7 @@ services:
       - ${DB_DATA_DIR:-db_data}:/var/lib/mysql
     environment:
       TZ: ${TZ:-Etc/UTC}
-      MARIADB_RANDOM_ROOT_PASSWORD: yes
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
       MYSQL_DATABASE: ${MYSQL_DATABASE:-librenms}
       MYSQL_USER: ${MYSQL_USER:-librenms}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-librenms}
