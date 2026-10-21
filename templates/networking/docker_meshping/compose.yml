@@ -11,5 +11,5 @@ services:
     volumes:
       - ${MESHPING_DATA_DIR:-meshping_data}:/opt/meshping/db
     # If you want to add other Meshping instances to peer with, uncomment this:
-    #environment:
+    # environment:
     #  MESHPING_PEERS: 10.10.10.1:9922,10.10.20.1:9922
