@@ -12,7 +12,7 @@ log:
   # Should be described in Golang's time format.
   time_format: "2006-01-02 15:04:05"
   # Path to the log file. Leave empty to write to stderr.
-  #path: ""
+  # path: ""
 
 # The SSH server configuration.
 ssh:
@@ -138,5 +138,5 @@ jobs:
   mirror_pull: "@every 10m"
 # Additional admin keys.
 # With Docker you sould use an env var, i.e. SOFT_SERVE_INITIAL_ADMIN_KEYS=ssh-rsa AAAA....,ssh-ed25519 AAAA
-#initial_admin_keys:
+# initial_admin_keys:
 #  - "ssh-rsa AAAAB3NzaC1yc2..."
