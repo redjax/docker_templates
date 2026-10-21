@@ -8,6 +8,8 @@ on:
     paths:
       - "templates/**"
       - "scripts/**"
+      - "**/*.py"
+      - "**/*.pyi"
       - ".github/workflows/**"
       - ".yamllint"
       - ".yamllint.yml"
@@ -15,6 +17,7 @@ on:
       - ".hadolint.yaml"
       - ".hadolint.yml"
       - ".shellcheckrc"
+      - "ruff.toml"
     types:
       - opened
       - synchronize
