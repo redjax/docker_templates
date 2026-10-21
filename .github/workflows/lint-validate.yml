@@ -246,3 +246,118 @@ jobs:
               cat "${output_file}"
               exit 2
             fi
+          fi
+
+          exit "${status}"
+
+      - name: Upload Dockerfile report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-dockerfiles-reports
+          path: output/lint-results/hadolint.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  python:
+    name: Python / Ruff
+    if: ${{ inputs.lint_python }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Ruff
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --quiet \
+            "ruff==${RUFF_VERSION}"
+
+      - name: Lint Python and check formatting
+        run: |
+          output_file="$(mktemp)"
+          trap 'rm -f -- "${output_file}"' EXIT
+
+          status=0
+          bash ./scripts/lint/lint-python.sh \
+            >"${output_file}" 2>&1 || status=$?
+
+          if [[ "${VERBOSE_INPUT}" == true ]] || ((status > 1)); then
+            cat "${output_file}"
+          else
+            awk '/^Files checked: [0-9]+$/ || /^Files with failures: [0-9]+$/' \
+              "${output_file}"
+
+            if ! grep -Eq '^Files with failures: [0-9]+$' "${output_file}"; then
+              cat "${output_file}"
+              exit 2
+            fi
+          fi
+
+          exit "${status}"
+
+      - name: Upload Python report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-python-reports
+          path: output/lint-results/ruff.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  bash:
+    name: Bash / ShellCheck
+    if: ${{ inputs.lint_bash }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Ensure ShellCheck is available
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq shellcheck
+          fi
+
+      - name: Lint Bash
+        run: |
+          output_file="$(mktemp)"
+          trap 'rm -f -- "${output_file}"' EXIT
+
+          status=0
+          bash ./scripts/lint/lint-bash.sh \
+            >"${output_file}" 2>&1 || status=$?
+
+          if [[ "${VERBOSE_INPUT}" == true ]] || ((status > 1)); then
+            cat "${output_file}"
+          else
+            awk '/^Files checked: [0-9]+$/ || /^Files with failures: [0-9]+$/' \
+              "${output_file}"
+
+            if ! grep -Eq '^Files with failures: [0-9]+$' "${output_file}"; then
+              cat "${output_file}"
+              exit 2
+            fi
+          fi
+
+          exit "${status}"
+
+      - name: Upload Bash report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-bash-reports
+          path: output/lint-results/shellcheck.txt
+          if-no-files-found: warn
+          retention-days: 14
