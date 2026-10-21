@@ -7,6 +7,14 @@ on:
       - main
     paths:
       - "templates/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - ".yamllint"
+      - ".yamllint.yml"
+      - ".yamllint.yaml"
+      - ".hadolint.yaml"
+      - ".hadolint.yml"
+      - ".shellcheckrc"
     types:
       - opened
       - synchronize
@@ -28,4 +36,5 @@ jobs:
       lint_yaml: false
       lint_compose: false
       lint_dockerfiles: false
-      verbose: true
+      lint_bash: true
+      verbose: false
