@@ -22,8 +22,14 @@ on:
         type: boolean
         default: true
 
+      lint_bash:
+        description: Run ShellCheck.
+        required: false
+        type: boolean
+        default: true
+
       verbose:
-        description: Print detailed tool output.
+        description: Print failed files and detailed tool output.
         required: false
         type: boolean
         default: false
@@ -48,8 +54,14 @@ on:
         type: boolean
         default: true
 
+      lint_bash:
+        description: Run ShellCheck.
+        required: false
+        type: boolean
+        default: true
+
       verbose:
-        description: Print detailed tool output.
+        description: Print failed files and detailed tool output.
         required: false
         type: boolean
         default: false
@@ -67,10 +79,17 @@ jobs:
       LINT_YAML: ${{ inputs.lint_yaml }}
       LINT_COMPOSE: ${{ inputs.lint_compose }}
       LINT_DOCKERFILES: ${{ inputs.lint_dockerfiles }}
+      LINT_BASH: ${{ inputs.lint_bash }}
       VERBOSE_INPUT: ${{ inputs.verbose }}
+
       COMPOSE_VALIDATE_JOBS: "4"
+
+      # renovate: datasource=python-version depName=python versioning=python
+      PYTHON_VERSION: "3.14"
+
       # renovate: datasource=pypi depName=yamllint
       YAMLLINT_VERSION: "1.35.1"
+
       # renovate: datasource=github-releases depName=hadolint/hadolint
       HADOLINT_VERSION: "2.12.0"
 
@@ -78,18 +97,20 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python for yamllint
         if: ${{ inputs.lint_yaml }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install yamllint
         if: ${{ inputs.lint_yaml }}
         shell: bash
         run: |
-          python -m pip install "yamllint==${YAMLLINT_VERSION}"
-          yamllint --version
+          python -m pip install \
+            --disable-pip-version-check \
+            --quiet \
+            "yamllint==${YAMLLINT_VERSION}"
 
       - name: Install hadolint
         if: ${{ inputs.lint_dockerfiles }}
@@ -104,7 +125,14 @@ jobs:
           chmod +x "${RUNNER_TEMP}/lint-bin/hadolint"
           echo "${RUNNER_TEMP}/lint-bin" >> "${GITHUB_PATH}"
 
-          "${RUNNER_TEMP}/lint-bin/hadolint" --version
+      - name: Ensure ShellCheck is available
+        if: ${{ inputs.lint_bash }}
+        shell: bash
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq shellcheck
+          fi
 
       - name: Check Docker Compose
         if: ${{ inputs.lint_compose }}
@@ -120,7 +148,7 @@ jobs:
             args+=(--verbose)
           fi
 
-          ./scripts/lint/run-all.sh "${args[@]}"
+          bash ./scripts/lint/run-all.sh "${args[@]}"
 
       - name: Upload lint and validation reports
         if: ${{ always() }}
