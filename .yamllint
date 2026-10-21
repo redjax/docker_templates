@@ -1,3 +1,4 @@
+---
 extends: default
 
 ignore: |
@@ -13,4 +14,5 @@ rules:
   document-start: disable
 
   truthy:
-    level: warning
+    allowed-values: ["true", "false"]
+    check-keys: false
