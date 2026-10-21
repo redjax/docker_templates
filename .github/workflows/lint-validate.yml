@@ -81,65 +81,142 @@ on:
 permissions:
   contents: read
 
+env:
+  VERBOSE_INPUT: ${{ inputs.verbose }}
+
+  COMPOSE_VALIDATE_JOBS: "4"
+
+  # renovate: datasource=python-version depName=python versioning=python
+  PYTHON_VERSION: "3.14"
+
+  # renovate: datasource=pypi depName=yamllint
+  YAMLLINT_VERSION: "1.35.1"
+
+  # renovate: datasource=github-releases depName=hadolint/hadolint
+  HADOLINT_VERSION: "2.12.0"
+
+  # renovate: datasource=pypi depName=ruff
+  RUFF_VERSION: "0.17.1"
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  lint:
-    name: Run selected checks
+  yaml:
+    name: YAML / yamllint
+    if: ${{ inputs.lint_yaml }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-
-    env:
-      LINT_YAML: ${{ inputs.lint_yaml }}
-      LINT_COMPOSE: ${{ inputs.lint_compose }}
-      LINT_DOCKERFILES: ${{ inputs.lint_dockerfiles }}
-      LINT_PYTHON: ${{ inputs.lint_python }}
-      LINT_BASH: ${{ inputs.lint_bash }}
-      VERBOSE_INPUT: ${{ inputs.verbose }}
-
-      COMPOSE_VALIDATE_JOBS: "4"
-
-      # renovate: datasource=python-version depName=python versioning=python
-      PYTHON_VERSION: "3.14"
-
-      # renovate: datasource=pypi depName=yamllint
-      YAMLLINT_VERSION: "1.35.1"
-
-      # renovate: datasource=github-releases depName=hadolint/hadolint
-      HADOLINT_VERSION: "2.12.0"
-
-      # renovate: datasource=pypi depName=ruff
-      RUFF_VERSION: "0.17.1"
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Set up Python
-        if: ${{ inputs.lint_yaml || inputs.lint_python }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install yamllint
-        if: ${{ inputs.lint_yaml }}
-        shell: bash
         run: |
           python -m pip install \
             --disable-pip-version-check \
             --quiet \
             "yamllint==${YAMLLINT_VERSION}"
 
-      - name: Install Ruff
-        if: ${{ inputs.lint_python }}
-        shell: bash
+      - name: Lint YAML
         run: |
-          python -m pip install \
-            --disable-pip-version-check \
-            --quiet \
-            "ruff==${RUFF_VERSION}"
+          output_file="$(mktemp)"
+          trap 'rm -f -- "${output_file}"' EXIT
+
+          status=0
+          bash ./scripts/lint/lint-yaml.sh \
+            >"${output_file}" 2>&1 || status=$?
+
+          if [[ "${VERBOSE_INPUT}" == true ]] || ((status > 1)); then
+            cat "${output_file}"
+          else
+            awk '/^Files checked: [0-9]+$/ || /^Files with failures: [0-9]+$/' \
+              "${output_file}"
+
+            if ! grep -Eq '^Files with failures: [0-9]+$' "${output_file}"; then
+              cat "${output_file}"
+              exit 2
+            fi
+          fi
+
+          exit "${status}"
+
+      - name: Upload YAML reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-yaml-reports
+          path: |
+            output/lint-results/yamllint.txt
+            output/lint-results/yamllint-detailed.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  compose:
+    name: Docker Compose / config validation
+    if: ${{ inputs.lint_compose }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check Docker Compose
+        run: docker compose version
+
+      - name: Validate Docker Compose
+        run: |
+          output_file="$(mktemp)"
+          trap 'rm -f -- "${output_file}"' EXIT
+
+          status=0
+          bash ./scripts/lint/validate-compose.sh \
+            >"${output_file}" 2>&1 || status=$?
+
+          if [[ "${VERBOSE_INPUT}" == true ]] || ((status > 1)); then
+            cat "${output_file}"
+          else
+            awk '/^Files checked: [0-9]+$/ || /^Files with failures: [0-9]+$/' \
+              "${output_file}"
+
+            if ! grep -Eq '^Files with failures: [0-9]+$' "${output_file}"; then
+              cat "${output_file}"
+              exit 2
+            fi
+          fi
+
+          exit "${status}"
+
+      - name: Upload Docker Compose reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-compose-reports
+          path: |
+            output/lint-results/compose-config.txt
+            output/lint-results/compose-config-detailed.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  dockerfiles:
+    name: Dockerfiles / hadolint
+    if: ${{ inputs.lint_dockerfiles }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
 
       - name: Install hadolint
-        if: ${{ inputs.lint_dockerfiles }}
-        shell: bash
         run: |
           mkdir -p "${RUNNER_TEMP}/lint-bin"
 
@@ -150,36 +227,22 @@ jobs:
           chmod +x "${RUNNER_TEMP}/lint-bin/hadolint"
           echo "${RUNNER_TEMP}/lint-bin" >> "${GITHUB_PATH}"
 
-      - name: Ensure ShellCheck is available
-        if: ${{ inputs.lint_bash }}
-        shell: bash
+      - name: Lint Dockerfiles
         run: |
-          if ! command -v shellcheck >/dev/null 2>&1; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq shellcheck
-          fi
+          output_file="$(mktemp)"
+          trap 'rm -f -- "${output_file}"' EXIT
 
-      - name: Check Docker Compose
-        if: ${{ inputs.lint_compose }}
-        shell: bash
-        run: docker compose version
+          status=0
+          bash ./scripts/lint/lint-dockerfiles.sh \
+            >"${output_file}" 2>&1 || status=$?
 
-      - name: Run linters and validators
-        shell: bash
-        run: |
-          args=()
+          if [[ "${VERBOSE_INPUT}" == true ]] || ((status > 1)); then
+            cat "${output_file}"
+          else
+            awk '/^Files checked: [0-9]+$/ || /^Files with failures: [0-9]+$/' \
+              "${output_file}"
 
-          if [[ "${VERBOSE_INPUT}" == true ]]; then
-            args+=(--verbose)
-          fi
-
-          bash ./scripts/lint/run-all.sh "${args[@]}"
-
-      - name: Upload lint and validation reports
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-validation-reports
-          path: output/lint-results/
-          if-no-files-found: warn
-          retention-days: 14
+            if ! grep -Eq '^Files with failures: [0-9]+$' "${output_file}"; then
+              cat "${output_file}"
+              exit 2
+            fi
