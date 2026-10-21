@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
 
-SCRIPT_NAME="./scripts/lint/lint_yaml.sh"
+SCRIPT_NAME="./scripts/lint/lint-yaml.sh"
 DESCRIPTION="Lint YAML files in Docker Compose template directories using yamllint.
 
 Only files with findings and their diagnostics are printed.
@@ -47,11 +47,11 @@ fi
 
 yamllint_output="$(mktemp)"
 
-trap 'rm -f "${yamllint_output}"' EXIT
+trap 'rm -f -- "${yamllint_output}"' EXIT
 
 ## Run yamllint once for all files to avoid repeated process startups.
-## The parsing below expects standard-format file headings followed
-## by indented diagnostics.
+#  The parsing below expects standard-format file headings followed
+#  by indented diagnostics.
 yamllint_status=0
 
 run_tool yamllint yamllint \
@@ -72,7 +72,7 @@ for failed_file in "${failed_files[@]}"; do
 done
 
 ## Save one compact result per checked file.
-## Print only files with findings to the console.
+#  Print only files with findings to the console.
 failures=0
 
 for file in "${files[@]}"; do
@@ -96,8 +96,8 @@ if [[ -s "${yamllint_output}" ]]; then
   cat "${yamllint_output}"
 fi
 
-## Print totals after all filenames, line numbers, and rule violations.
-printf '\nFiles checked: %d\nFailures: %d\n' \
+## Use the summary labels expected by run-all.sh.
+printf '\nFiles checked: %d\nFiles with failures: %d\n' \
   "${#files[@]}" "${failures}"
 
 exit "${yamllint_status}"
