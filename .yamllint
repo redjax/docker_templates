@@ -8,6 +8,10 @@ ignore: |
 
 rules:
   comments-indentation: disable
+  comments:
+    ## yamllint and the RedHat YAML VSCode extension fight over this rule,
+    #  and it's less painful to just make yamllint handle RedHat's formatting.
+    min-spaces-from-content: 1
 
   line-length:
     disable
