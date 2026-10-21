@@ -1,0 +1,57 @@
+---
+name: Lint Python
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-python:
+    name: Ruff lint and formatting
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+
+    env:
+      # renovate: datasource=python-version depName=python versioning=python
+      PYTHON_VERSION: "3.14"
+
+      # renovate: datasource=pypi depName=ruff
+      RUFF_VERSION: "0.17.1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          # renovate: datasource=python-version depName=python versioning=python
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Ruff
+        shell: bash
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --quiet \
+            "ruff==${RUFF_VERSION}"
+
+      - name: Lint Python and check formatting
+        shell: bash
+        run: bash ./scripts/lint/lint-python.sh
+
+      - name: Upload Ruff report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-lint-reports
+          path: output/lint-results/ruff.txt
+          if-no-files-found: warn
+          retention-days: 14
