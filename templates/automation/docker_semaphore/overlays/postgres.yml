@@ -1,9 +1,4 @@
 ---
-name: ${STACK_NAME:-semaphore}
-
-networks:
-  semaphore_net: {}
-
 volumes:
   semaphore_postgres: {}
 
@@ -13,8 +8,6 @@ services:
       SEMAPHORE_DB_HOST: postgres
       SEMAPHORE_DB_PORT: 5432
       SEMAPHORE_DB_DIALECT: postgres
-    # networks:
-    #   - semaphore_net
     depends_on:
       - postgres
 
@@ -29,5 +22,3 @@ services:
       POSTGRES_USER: ${SEMAPHORE_DB_USER:-semaphore}
       POSTGRES_PASSWORD: ${SEMAPHORE_DB_PASSWORD:-semaphore}
       POSTGRES_DB: ${SEMAPHORE_DB_DATABASE:-semaphore}
-    # networks:
-    #   - semaphore_net
