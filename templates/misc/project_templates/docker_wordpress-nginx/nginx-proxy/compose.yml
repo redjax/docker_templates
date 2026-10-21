@@ -41,7 +41,6 @@ services:
       DOMAIN1_PROXIED: ${PROXY_DOMAIN1_PROXIED:-1}
       DOCKER_CERT_PATH: ${PROXY_CERT_PATH:-./conf/certs}
       DOCKER_TLS_VERIFY: ${PROXY_TLS_VERIFY:-1}
-      TARGET_DOMAIN: ${WILDCARD_DOMAIN}
 
   whoami:
     image: jwilder/whoami
