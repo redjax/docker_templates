@@ -22,6 +22,12 @@ on:
         type: boolean
         default: true
 
+      lint_python:
+        description: Run Ruff lint and formatting checks.
+        required: false
+        type: boolean
+        default: true
+
       lint_bash:
         description: Run ShellCheck.
         required: false
@@ -54,6 +60,12 @@ on:
         type: boolean
         default: true
 
+      lint_python:
+        description: Run Ruff lint and formatting checks.
+        required: false
+        type: boolean
+        default: true
+
       lint_bash:
         description: Run ShellCheck.
         required: false
@@ -79,6 +91,7 @@ jobs:
       LINT_YAML: ${{ inputs.lint_yaml }}
       LINT_COMPOSE: ${{ inputs.lint_compose }}
       LINT_DOCKERFILES: ${{ inputs.lint_dockerfiles }}
+      LINT_PYTHON: ${{ inputs.lint_python }}
       LINT_BASH: ${{ inputs.lint_bash }}
       VERBOSE_INPUT: ${{ inputs.verbose }}
 
@@ -93,12 +106,15 @@ jobs:
       # renovate: datasource=github-releases depName=hadolint/hadolint
       HADOLINT_VERSION: "2.12.0"
 
+      # renovate: datasource=pypi depName=ruff
+      RUFF_VERSION: "0.17.1"
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Python for yamllint
-        if: ${{ inputs.lint_yaml }}
+      - name: Set up Python
+        if: ${{ inputs.lint_yaml || inputs.lint_python }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -111,6 +127,15 @@ jobs:
             --disable-pip-version-check \
             --quiet \
             "yamllint==${YAMLLINT_VERSION}"
+
+      - name: Install Ruff
+        if: ${{ inputs.lint_python }}
+        shell: bash
+        run: |
+          python -m pip install \
+            --disable-pip-version-check \
+            --quiet \
+            "ruff==${RUFF_VERSION}"
 
       - name: Install hadolint
         if: ${{ inputs.lint_dockerfiles }}

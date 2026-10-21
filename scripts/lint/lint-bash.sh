@@ -13,6 +13,7 @@ SCRIPT_NAME="./scripts/lint/lint-bash.sh"
 DESCRIPTION="Lint shell scripts throughout the repository using ShellCheck.
 
 Only failed files and their diagnostics are printed.
+The final lines show how many files were checked and how many had failures.
 The complete per-file report is saved to the output directory.
 
 ShellCheck options:
@@ -35,6 +36,7 @@ if require_help_or_target "$@"; then
   exit 0
 fi
 
+## Accept --verbose for compatibility without printing successful files.
 declare -a script_args=()
 parse_verbose_flag "$@"
 
@@ -82,19 +84,19 @@ fi
 
 mapfile -t files < <(resolve_targets "${PATTERN}" "${target_args[@]}")
 
-failures=0
 results_file="${OUTPUT_DIR}/shellcheck.txt"
-output_file="$(mktemp)"
-
-trap 'rm -f "${output_file}"' EXIT
-
-echo "Linting Bash scripts with ShellCheck"
-echo "Results will be outputted to ${output_file}"
-echo
-echo "If you do not see any output, it means there were no linting errors"
-echo
 
 : >"${results_file}"
+
+if ((${#files[@]} == 0)); then
+  printf 'Files checked: 0\nFiles with failures: 0\n'
+  exit 0
+fi
+
+failures=0
+output_file="$(mktemp)"
+
+trap 'rm -f -- "${output_file}"' EXIT
 
 for file in "${files[@]}"; do
   relative="${file#"${REPO_ROOT}/"}"
@@ -116,13 +118,17 @@ for file in "${files[@]}"; do
     printf '\n'
   } >>"${results_file}"
 
-  ## Print only failed files and their diagnostics to the pipeline log.
+  ## Print only failed files and their diagnostics.
   if [[ "${status}" == "FAIL" ]]; then
     printf 'FAIL %s\n' "${relative}"
     cat "${output_file}"
     printf '\n'
   fi
 done
+
+## Use the summary labels expected by run-all.sh.
+printf '\nFiles checked: %d\nFiles with failures: %d\n' \
+  "${#files[@]}" "${failures}"
 
 if ((failures > 0)); then
   exit 1

@@ -8,6 +8,8 @@ on:
     paths:
       - "templates/**"
       - "scripts/**"
+      - "**/*.py"
+      - "**/*.pyi"
       - ".github/workflows/**"
       - ".yamllint"
       - ".yamllint.yml"
@@ -15,6 +17,7 @@ on:
       - ".hadolint.yaml"
       - ".hadolint.yml"
       - ".shellcheckrc"
+      - "ruff.toml"
     types:
       - opened
       - synchronize
@@ -36,5 +39,6 @@ jobs:
       lint_yaml: false
       lint_compose: false
       lint_dockerfiles: false
+      lint_python: false
       lint_bash: true
       verbose: false
