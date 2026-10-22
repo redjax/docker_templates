@@ -6,7 +6,7 @@ volumes:
   linkwarden_data: {}
   linkwarden_db_data: {}
   meilisearch_data: {}
-  
+
 services:
   linkwarden:
     image: ghcr.io/linkwarden/linkwarden:latest

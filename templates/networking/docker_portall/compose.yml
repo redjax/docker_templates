@@ -11,4 +11,3 @@ services:
       - SECRET_KEY=${PORTALL_SECRET_KEY}
     volumes:
       - ${PORTALL_DATA_DIR:-portall_data}:/app/instance
-

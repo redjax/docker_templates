@@ -5,23 +5,22 @@
 # (i.e. the machine this file was copied from), and add
 # the node/remote's IP. Reload the prometheus container,
 # and the remote node's cAdvisor and node-exporter should become available.
-# 
+#
 # Works with Tailscale!
 #
 
-version: '3'
+version: "3"
 
 services:
-
   node-exporter:
     image: prom/node-exporter
     container_name: node-exporter
     restart: unless-stopped
     command:
-      - '--path.rootfs=/host'
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^(sys|proc|dev|host|etc)($$|/)'
+      - "--path.rootfs=/host"
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^(sys|proc|dev|host|etc)($$|/)"
     volumes:
       - /:/host:ro,rslave
       - /sys:/host/sys:ro

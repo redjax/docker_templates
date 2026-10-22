@@ -57,4 +57,3 @@ services:
       - ${CADDY_CONFIG_DIR:-caddy_config}:/config
     networks:
       - netbird
-

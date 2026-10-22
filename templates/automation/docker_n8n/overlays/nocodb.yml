@@ -16,6 +16,7 @@ services:
       nocodb_postgres:
         condition: service_healthy
     environment:
+      # yamllint disable-line rule:line-length
       NC_DB: "pg://nocodb_postgres:5432?u=${NOCODB_POSTGRES_USER:-postgres}&p=${NOCODB_POSTGRES_PASSWORD:-postgres}&d=root_db"
       NC_ADMIN_EMAIL: ${NOCODB_ADMIN_EMAIL:-admin@example.com}
       NC_ADMIN_PASSWORD: ${NOCODB_ADMIN_PASSWORD:-nocoDBAdmin!}

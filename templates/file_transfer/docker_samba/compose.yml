@@ -23,4 +23,3 @@ services:
           force user = root
     volumes:
       - ${SAMBA_SHARED_DIR:-/srv/shares}:/shares
-

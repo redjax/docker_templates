@@ -4,7 +4,6 @@ networks:
     # driver: bridge
     # external: true
 
-
 services:
   traefik:
     image: traefik:v3.3.3

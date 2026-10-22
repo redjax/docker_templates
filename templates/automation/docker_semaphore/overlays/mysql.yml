@@ -1,6 +1,4 @@
 ---
-name: ${STACK_NAME:-semaphore}
-
 networks:
   semaphore_net: {}
 

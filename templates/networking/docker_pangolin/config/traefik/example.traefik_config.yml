@@ -31,24 +31,24 @@ accessLog:
   filters:
     statusCodes:
       ## Success codes
-      - "200-299" 
+      - "200-299"
       ## Client errors
-      - "400-499" 
+      - "400-499"
       ## Server errors
-      - "500-599" 
+      - "500-599"
     retryAttempts: true
     ## Increased to focus on slower requests
-    minDuration: "100ms" 
+    minDuration: "100ms"
   ## Add buffering for better performance
-  bufferingSize: 100     
+  bufferingSize: 100
   fields:
     ## Start with dropping all fields
-    defaultMode: drop    
+    defaultMode: drop
     names:
       ## Keep client address for IP tracking
       ClientAddr: keep
       ## Keep client host for IP tracking
-      ClientHost: keep 
+      ClientHost: keep
       ## Keep request method for tracking
       RequestMethod: keep
       ## Keep request path for tracking
@@ -85,9 +85,9 @@ accessLog:
         ## Keep content type for tracking
         Content-Type: keep
         ## Redact sensitive information
-        Authorization: redact 
+        Authorization: redact
         ## Redact sensitive information
-        Cookie: redact       
+        Cookie: redact
 
 certificatesResolvers:
   letsencrypt:
@@ -115,7 +115,7 @@ entryPoints:
       tls:
         certResolver: "letsencrypt"
       ## Enable crowdsec middleware
-      middlewares: 
+      middlewares:
         - crowdsec@file
 
 serversTransport:

@@ -11,7 +11,7 @@ services:
       - ${MC_SERVER_RCON_PORT:-25575}
     environment:
       EULA: "true"
-      SNOOPER_ENABLED: 'false'
+      SNOOPER_ENABLED: "false"
       MODPACK_PLATFORM: MODRINTH
       MEMORY: ${MC_SERVER_MEMORY:-4}G
       MODRINTH_MODPACK: https://modrinth.com/modpack/the-pixelmon-modpack/version/${MC_SERVER_PIXELMON_VERSION:-9.2.10}
@@ -22,20 +22,20 @@ services:
       WHITELIST: ${MC_SERVER_WHITELISTED_PLAYERS}
       OPS: ${MC_SERVER_OPERATORS}
       MOTD: ${MC_SERV_MOTD:-Welcome to Pixelmon!}
-      ALLOW_FLIGHT: 'true'
-      GUI: 'FALSE'
-      MAX_TICK_TIME: '-1'
-      ENABLE_ROLLING_LOGS: 'true'
+      ALLOW_FLIGHT: "true"
+      GUI: "FALSE"
+      MAX_TICK_TIME: "-1"
+      ENABLE_ROLLING_LOGS: "true"
       TZ: ${TZ:-Etc/UTC}
       tty: ${MC_SERV_TTY:-'true'}
-      stdin_open: 'true'
+      stdin_open: "true"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - ${MC_SERVER_DATA_DIR:-mc-data}:/data
       - ${MC_SERVER_BACKUP_DIR:-mc-backups}:/data/simplebackups
     healthcheck:
-        test: mc-health
-        start_period: 1m
-        interval: 5s
-        retries: 20
+      test: mc-health
+      start_period: 1m
+      interval: 5s
+      retries: 20

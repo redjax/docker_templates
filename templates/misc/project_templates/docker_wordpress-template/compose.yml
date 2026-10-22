@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 # networks:
 #   backend:
@@ -7,7 +7,6 @@ version: '3.1'
 #       name: wp_proxy
 
 services:
-
   wp_db:
     image: ${WP_DB_IMAGE:-mariadb:latest}
     container_name: ${WP_DB_NAME:-wp_db}

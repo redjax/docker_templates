@@ -16,4 +16,3 @@ services:
       FTR_ADMIN_PASSWORD: ${FIVEFILTERS_ADMIN_PASSWORD:-}
     volumes:
       - ${FIVEFILTERS_CACHE_DIR:-fivefilters-cache}:/var/www/html/cache/rss
-

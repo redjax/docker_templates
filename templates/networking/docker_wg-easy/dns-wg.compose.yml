@@ -23,7 +23,7 @@ services:
     sysctls:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
-      # - net.ipv6.conf.all.forwarding=1  
+      # - net.ipv6.conf.all.forwarding=1
     logging:
       driver: json-file
       options:
@@ -77,10 +77,10 @@ services:
         ipv4_address: 172.22.0.3
 
   adguardhome:
-    image: 'adguard/adguardhome:latest'
-    container_name: 'adguard'
-    hostname: 'adguard'
-    restart: 'unless-stopped'
+    image: "adguard/adguardhome:latest"
+    container_name: "adguard"
+    hostname: "adguard"
+    restart: "unless-stopped"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${ADGUARD_WORK_DIR:-./adguardhome/work}:/opt/adguardhome/work

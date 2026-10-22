@@ -1,3 +1,4 @@
+---
 extends: default
 
 ignore: |
@@ -6,11 +7,19 @@ ignore: |
   node_modules/
 
 rules:
+  comments-indentation: disable
+  comments:
+    ## yamllint and the RedHat YAML VSCode extension fight over this rule,
+    #  and it's less painful to just make yamllint handle RedHat's formatting.
+    min-spaces-from-content: 1
+
   line-length:
-    max: 120
-    level: warning
+    disable
+    # max: 120
+    # level: warning
 
   document-start: disable
 
   truthy:
-    level: warning
+    allowed-values: ["true", "false"]
+    check-keys: false

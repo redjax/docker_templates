@@ -4,7 +4,7 @@ http:
       redirectScheme:
         scheme: https
 
-  ## Whitelist middleware for internal IPs
+    ## Whitelist middleware for internal IPs
     #  Crowdsec feature
     default-whitelist:
       ipWhiteList:
@@ -13,7 +13,7 @@ http:
           - "192.168.0.0/16"
           - "192.168.1.0/24"
           - "172.16.0.0/12"
-    
+
     ## Basic security headers
     #  Crowdsec feature
     security-headers:
@@ -21,31 +21,31 @@ http:
         ## Custom response headers
         customResponseHeaders:
           ## Remove server header
-          Server: "" 
+          Server: ""
           ## Remove powered by header
-          X-Powered-By: "" 
+          X-Powered-By: ""
           ## Set forwarded proto to https
-          X-Forwarded-Proto: "https"  
+          X-Forwarded-Proto: "https"
         ## SSL proxy headers
-        sslProxyHeaders: 
+        sslProxyHeaders:
           ## Set forwarded proto to https
-          X-Forwarded-Proto: "https" 
+          X-Forwarded-Proto: "https"
         ## Hosts proxy headers
-        hostsProxyHeaders: 
+        hostsProxyHeaders:
           ## Set forwarded host
-          - "X-Forwarded-Host" 
+          - "X-Forwarded-Host"
         ## Prevent MIME sniffing
-        contentTypeNosniff: true 
+        contentTypeNosniff: true
         ## Set frame options
-        customFrameOptionsValue: "SAMEORIGIN" 
+        customFrameOptionsValue: "SAMEORIGIN"
         ## Set referrer policy
-        referrerPolicy: "strict-origin-when-cross-origin" 
+        referrerPolicy: "strict-origin-when-cross-origin"
         ## Force STS header
-        forceSTSHeader: true 
+        forceSTSHeader: true
         ## Include subdomains
-        stsIncludeSubdomains: true 
+        stsIncludeSubdomains: true
         ## STS seconds
-        stsSeconds: 63072000 
+        stsSeconds: 63072000
         ## Preload STS
         stsPreload: true
 
@@ -78,7 +78,7 @@ http:
           crowdsecAppsecBodyLimit: 10485760
           ## CrowdSec API key which you noted down later
           crowdsecLapiKey: "<PUT_YOUR_BOUNCER_KEY_HERE_OR_IT_WILL_NOT_WORK>"
-          ## CrowdSec  
+          ## CrowdSec
           crowdsecLapiHost: crowdsec:8080
           ## CrowdSec API scheme
           crowdsecLapiScheme: http

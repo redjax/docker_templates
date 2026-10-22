@@ -20,4 +20,3 @@ services:
     mem_limit: ${RUNNER_MEMORY_LIMIT:-512m}
     mem_reservation: ${RUNNER_MEMORY_RESERVE:-256m}
     pids_limit: ${RUNNER_PIDS_LIMIT:-256}
-

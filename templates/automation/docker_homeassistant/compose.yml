@@ -17,5 +17,3 @@ services:
       - ${HA_CONF_DIR:-hass_config}:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
-    # ports:
-    #   - ${HA_HTTP_PORT:-8123}:8123

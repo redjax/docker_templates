@@ -27,4 +27,3 @@ services:
     restart: unless-stopped
     volumes:
       - ${RSSHUB_REDIS_DATA_DIR:-redis-data}:/data
-

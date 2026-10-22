@@ -14,10 +14,10 @@ source:
   ## Use github repository as a source
   github:
     ## Set clone URL base, including git username
-    - url: "git@github.com:<username>"
+    - user: "<username>"
       ssh: true
       ## Path in container
-      key: "/ssh/id_rsa"
+      sshkey: "/ssh/id_rsa"
       ## Names of repositories to include
       include:
         - "repo1"
