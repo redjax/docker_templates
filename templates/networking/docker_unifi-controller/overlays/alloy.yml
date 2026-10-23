@@ -1,0 +1,41 @@
+---
+volumes:
+  alloy_data: {}
+
+services:
+  alloy:
+    image: ${ALLOY_IMAGE:-grafana/alloy:latest}
+    restart: unless-stopped
+    user: "0:0"
+    cpus: "${ALLOY_CPUS:-0.5}"
+    mem_limit: "${ALLOY_MEM_LIMIT:-128M}"
+    environment:
+      NODE_NAME: ${ALLOY_NODE_NAME:-unifi}
+      LOKI_URL: ${LOKI_URL:?Set LOKI_URL in .env}
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    ports:
+      - "${ALLOY_BIND_ADDRESS:-127.0.0.1}:${ALLOY_HTTP_PORT:-12345}:12345"
+    volumes:
+      - type: bind
+        source: ./config/alloy/config.alloy
+        target: /etc/alloy/config.alloy
+        read_only: true
+        bind:
+          create_host_path: false
+
+      - type: bind
+        source: ${SYSLOG_DATA_DIR:-syslog-data}
+        target: /var/log/rsyslog
+        read_only: true
+        bind:
+          create_host_path: false
+
+      - type: volume
+        source: alloy_data
+        target: /var/lib/alloy/data
+
+
