@@ -1,0 +1,34 @@
+---
+services:
+  collabora:
+    image: collabora/code:${COLLABORA_IMG_TAG:-26.04.3.2.1}
+    container_name: collabora
+    restart: unless-stopped
+    environment:
+      aliasgroup1: >-
+        https://${OXICLOUD_WOPI_HOST:?Set OXICLOUD_WOPI_HOST in .env}:443
+      DONT_GEN_SSL_CERT: "true"
+      extra_params: >-
+        --o:ssl.enable=false
+        --o:ssl.termination=true
+        --o:server_name=${COLLABORA_PUBLIC_HOST:?Set COLLABORA_PUBLIC_HOST in .env}
+        --o:net.frame_ancestors=https://${OXICLOUD_WOPI_HOST:?Set OXICLOUD_WOPI_HOST in .env}
+      username: ${COLLABORA_ADMIN_USER:-admin}
+      password: ${COLLABORA_ADMIN_PASSWORD:?Set COLLABORA_ADMIN_PASSWORD in .env}
+    cap_add:
+      - MKNOD
+    ports:
+      - "${COLLABORA_BIND_ADDRESS:-192.168.1.18}:${COLLABORA_PORT:-8669}:9980"
+
+  oxicloud:
+    depends_on:
+      collabora:
+        condition: service_started
+    environment:
+      OXICLOUD_WOPI_ENABLED: "true"
+      OXICLOUD_WOPI_DISCOVERY_URL: >-
+        http://collabora:9980/hosting/discovery
+      OXICLOUD_WOPI_BASE_URL: >-
+        ${OXICLOUD_BASE_URL:?Set OXICLOUD_BASE_URL in .env}
+      OXICLOUD_WOPI_PUBLIC_BASE_URL: >-
+        ${OXICLOUD_BASE_URL:?Set OXICLOUD_BASE_URL in .env}
