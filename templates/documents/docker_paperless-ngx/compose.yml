@@ -103,6 +103,7 @@ services:
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_URL: ${PAPERLESS_SERVER_URL}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
     networks:
       - paperless_frontend
       - paperless_backend
@@ -132,7 +133,7 @@ services:
     ## Non-amd64 arch, i.e. RPi or VM
     # image: abhilesh7/apache-tika-arm
     ## amd64 arch
-    image: apache/tika:${TIKA_IMG_TAG:-latest}
+    image: apache/tika:${TIKA_IMG_TAG:-3.3.0.0-full}
     container_name: paperless-tika
     restart: unless-stopped
     networks:

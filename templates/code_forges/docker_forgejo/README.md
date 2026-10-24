@@ -15,6 +15,7 @@
   - [SSH Setup](#ssh-setup)
   - [Clone with SSH](#clone-with-ssh)
   - [OAuth2 Provider Setup](#oauth2-provider-setup)
+    - [Authentik OAuth2 setup](#authentik-oauth2-setup)
 - [Setup Action Runner](#setup-action-runner)
 - [Troubleshooting](#troubleshooting)
   - [Init failed: mkdir /path/name](#init-failed-mkdir-pathname)
@@ -151,6 +152,38 @@ Then, run `ssh $DOMAIN` and confirm the prompt to test it.
 Forgejo can act as an OAuth2 provider for applications like [Woodpecker CI](https://woodpecker-ci.org/docs/administration/configuration/forges/forgejo). You must enable OAuth2 by setting `FORGEJO__oauth2__ENABLED=true` in your [Forgejo env file](./env_files/forgejo/example.env).
 
 This will make OAuth2 application settings available in the Forgejo UI, under `Settings -> Applications -> Authorized OAuth2 applications`.
+
+#### Authentik OAuth2 setup
+
+If you are using Authentik as your IDP, you can create a Provider and Application for signing into Forgejo. 
+
+Authentik setup:
+
+- Open the admin UI and navigate to "Applications > Providers"
+- Create a new provider and choose "OAuth2/OpenID Provider"
+  - Give the provider a name like "Forgejo"
+  - Use the default authentication flow
+  - Set Client Type to Confidential
+  - Save the Client ID and Client Secret to a password manager. You will need them later in Forgejo
+  - Set the Redirect URI to `https://YOUR_FORGEJO_ADDRESS/user/oauth2/Authentik/callback`
+    - Include your Forgejo port if you're accessing with `http(s)://ip-address:port`
+- Navigate to "Applications > Applications"
+- Create a new Application using existing provider (use the dropdown next to the New Application button)
+  - Give the application a name like "Forgejo"
+  - Choose the Forgejo provider you created from the "Provider" dropdown
+
+Forgejo Setup:
+
+- Login to Forgejo as the admin user
+- Go to "Site Administration"
+- Navigate to "Identity & Access > Authentication sources" and add a new source. Use the following values:
+  - Authentication type: OAuth2
+  - Authentication name: Authentik
+  - OAuth2 provider: OpenID Connect (scroll down in the list if you don't see it)
+  - Paste the Client ID and Secret from the Authentik Provider
+  - For Icon URL, use `https://auth.example.com/static/dist/assets/icons/icon.png`
+  - For the OpenID Connect Auto Discovery URL, use: `https://auth.twistp.ing/application/o/forgejo/.well-known/openid-configuration`
+  - Set "Additional scopes" to `email profile`
 
 ## Setup Action Runner
 

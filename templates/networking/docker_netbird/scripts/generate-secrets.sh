@@ -35,4 +35,3 @@ EOF
 
 echo
 echo "[OK] Secrets generated"
-

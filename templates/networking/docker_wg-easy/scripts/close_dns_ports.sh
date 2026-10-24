@@ -4,10 +4,9 @@ declare -a DENY_PORTS=(53/tcp 53/udp 8080/tcp 8080/udp 8443/tcp 3000/tcp 853/tcp
 
 echo "Removing ports from firewall"
 
-for port in "${DENY_PORTS[@]}"
-do
-    echo "DENY port: $port"
-    sudo ufw deny $port
+for port in "${DENY_PORTS[@]}"; do
+  echo "DENY port: $port"
+  sudo ufw deny "$port"
 done
 
 echo "Reloading firewall"

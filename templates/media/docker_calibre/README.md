@@ -2,13 +2,30 @@
 
 ## Setup
 
-*Note: If using Readarr, make sure Calibre/Calibre-web are on the same Docker network as the Readarr container.*
+- Copy the [example `.env` file](./.env.example) to `.env`
+- Check the [`overlays/` directory](./overlays/) to determine which additional service layer(s) you want to use
+  - For service you're going to run alongside Calibre, make sure to review the service's variables in `.env` and change any to your liking
 
 ## Usage
 
+Run the stack with:
+
+```shell
+docker compose up -d
+```
+
+If you are using any of the [overlays](./overlays/), add them with `-f overlays/<overlay-name>.yml`:
+
+```shell
+docker compose -f compose.yml \
+  -f overlays/calibre-web.yml \  # Run Calibre web with Calibre
+  -f overlays/sftpgo.yml \       # Run SFTPGo with Calibre
+  up -d
+```
+
 ### Plugins
 
-You can install most plugins through the built-in plugin manager. Some plugins need to be downloaded as a `.zip` file and copied into `docker_calibre/calibre/plugins`.
+You can install most plugins through the built-in plugin manager. Some plugins need to be downloaded as a `.zip` file and copied into `./calibre/plugins`. You can also do this with the [SFTPGo layer](./overlays/sftpgo.yml).
 
 Useful plugins list:
 
@@ -31,6 +48,14 @@ Useful plugins list:
   - Get a page count for selected book
 - Favorites Menu *[MobileRead.com](https://www.mobileread.com/forums/showthread.php?t=183022)*
   - Customize a menu of favorite buttons
+
+### Calibre Content Server
+
+Calibre can start a web server to serve your library over the network. You can manage and read books in the Calibre collection from a webUI this way. You must enable the content server inside Calibre and bind the port on your host.
+
+By default, Calibre's content server runs on port `:8080`, but this container overrides that to `:8082`. In the Calibre UI, navigate to "Preferences > Sharing over the net," set the port you want to run the content server on (`8082`), optionally require a username & password, then start the server. In your `.env` file, set `CALIBRE_SERVER_PORT` to whatever port you want to access the server from on your host; you can leave it at `8082`, or set a different port. The port inside the Calibre webUI should remain `8082`.
+
+Then you can access your library at `http://your-ip-or-hostname:8082` (or whatever port you used).
 
 ## Notes
 

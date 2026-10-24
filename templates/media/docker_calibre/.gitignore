@@ -1,1 +1,7 @@
 calibre/
+sftpgo/*
+sftpgo/config/*
+
+!sftpgo/
+!sftpgo/config/
+!sftpgo/config/example.sftpgo.json

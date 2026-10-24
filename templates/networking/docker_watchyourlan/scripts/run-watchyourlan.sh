@@ -23,9 +23,7 @@ function restart_container() {
 
 function main() {
   pull_container
-  run_container
-
-  if [[ ! $? -eq 0 ]]; then
+  if ! run_container 2>&1; then
     echo "Detected non-zero exit code: $?. Attempting to restart watchyourlan container."
     restart_container
   fi
