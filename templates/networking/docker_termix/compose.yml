@@ -17,3 +17,4 @@ services:
       - ${TERMIX_DATA_DIR:-termix_data}:/app/data
     environment:
       PORT: 8080
+      OIDC_SILENT_LOGIN_DEFAULT: ${TERMIX_OIDC_SILENT_LOGIN_DEFAULT:-false}
