@@ -1,0 +1,14 @@
+---
+services:
+  gotify-alerter:
+    image: foxxmd/komodo-gotify-alerter:${GOTIFY_ALERTER_IMG_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      GOTIFY_URL: ${GOTIFY_ALERTER_URL:?Set GOTIFY_ALERTER_URL environment variable}
+      GOTIFY_APP_TOKEN: ${GOTIFY_ALERTER_APP_TOKEN:?Set GOTIFY_ALERTER_APP_TOKEN environment variable}
+      GOTIFY_OK_PRIORITY: "${GOTIFY_ALERTER_OK_PRIORITY:-3}"
+      GOTIFY_WARNING_PRIORITY: "${GOTIFY_ALERTER_WARNING_PRIORITY:-5}"
+      GOTIFY_CRITICAL_PRIORITY: "${GOTIFY_ALERTER_CRITICAL_PRIORITY:-8}"
+    expose:
+      - "7000"
+
