@@ -1,0 +1,11 @@
+---
+volumes:
+  defectdojo_redis: {}
+
+services:
+  valkey:
+    image: valkey/valkey:${VALKEY_IMG_TAG:-9.1.2-alpine}
+    restart: unless-stopped
+    volumes:
+      - ${VALKEY_DATA_DIR:-defectdojo_redis}:/data
+

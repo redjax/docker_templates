@@ -1,0 +1,15 @@
+---
+volumes:
+  defectdojo_postgres: {}
+
+services:
+  postgres:
+    image: postgres:${DB_IMG_TAG:-18.6-alpine}
+    restart: unless-stopped
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: "${DD_DATABASE_NAME:-defectdojo}"
+      POSTGRES_USER: "${DD_DATABASE_USER:-defectdojo}"
+      POSTGRES_PASSWORD: "${DD_DATABASE_PASSWORD:?Set DD_DATABASE_PASSWORD in .env}"
+    volumes:
+      - ${DB_DATA_DIR:-defectdojo_postgres}:/var/lib/postgresql/data
