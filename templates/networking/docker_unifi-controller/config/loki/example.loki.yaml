@@ -45,5 +45,5 @@ limits_config:
   retention_period: 168h
   # Needed for Top-N aggregations by high-cardinality values,
   # like source and destination IP addresses.
-  max_query_series: 5000
+  max_query_series: ${LOKI_MAX_QUERY_SERIES:-5000}
 
