@@ -12,6 +12,7 @@ services:
     mem_limit: "${LOKI_MEM_LIMIT:-384M}"
     command:
       - -config.file=/etc/loki/config.yaml
+      - -config.expand-env=true
     ports:
       - "${LOKI_BIND_ADDRESS:-127.0.0.1}:${LOKI_HTTP_PORT:-3100}:3100"
     environment:
