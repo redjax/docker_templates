@@ -65,6 +65,32 @@ After bringing the compose stack up, navigate to `https://vpn.yourdomain.com`. Y
 
 Follow the setup instructions to install the app, or skip them and do it later. It is recommended you enable MFA in the settings, then log out and back in to trigger the MFA setup.
 
+## OAuth2/OIDC
+
+### Authentik OAuth2/OIDC setup
+
+To use Authentik as an identity provider for Pangolin, follow these steps:
+
+- In Authentik:
+  - Navigate to "Applications > Applications" and create a new application.
+  - Select OAuth2/OpenID Connect as the provider type and configure the provider.
+  - Set the redirect URI to the callback URL provided by Pangolin when configuring the identity provider.
+    - The URL will resemble `https://pangolin.example.com/auth/idp/<id>/oidc/callback`.
+    - You can find it at the top of the page when adding an identity provider in Pangolin.
+  - Save the provider and note the Client ID and Client Secret.
+
+- In Pangolin:
+  - Navigate to "Server Admin > "Identity Providers" and add an OAuth2/OIDC identity provider.
+  - Enter the Authentik client ID and client secret, along with the following endpoints, replacing `authentik.example.com` with your Authentik domain (**note**: the trailing `/`s are important):
+    - Authorization URL: `https://authentik.example.com/application/o/authorize/`
+    - Token URL: `https://authentik.example.com/application/o/token/`
+    - UserInfo URL: `https://authentik.example.com/application/o/userinfo/`
+  - Save the identity provider configuration in Pangolin.
+  - Return to Authentik and add the callback URL provided by Pangolin to the provider's allowed redirect URIs.
+  - Log out of Pangolin and test logging in with Authentik.
+
+For additional configuration details, see the [Authentik–Pangolin integration guide](https://integrations.goauthentik.io/networking/pangolin/).
+
 ## Links
 
 - [Netbird home](https://netbird.io)
