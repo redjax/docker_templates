@@ -14,4 +14,10 @@ fi
 echo "Starting full stack (Unifi, MongoDB, Rsyslog)"
 echo
 
-docker compose -f compose.yml -f overlays/rsyslog.yml up -d
+docker compose \
+  -f compose.yml \
+  -f overlays/alloy.yml \
+  -f overlays/loki.yml \
+  -f overlays/rsyslog.yml \
+  up -d
+

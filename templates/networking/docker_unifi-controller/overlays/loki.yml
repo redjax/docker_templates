@@ -1,0 +1,36 @@
+---
+
+volumes:
+  loki_data: {}
+
+services:
+  loki:
+    image: ${LOKI_IMAGE:-grafana/loki:latest}
+    restart: unless-stopped
+    user: "0:0"
+    cpus: "${LOKI_CPUS:-1.0}"
+    mem_limit: "${LOKI_MEM_LIMIT:-384M}"
+    command:
+      - -config.file=/etc/loki/config.yaml
+      - -config.expand-env=true
+    ports:
+      - "${LOKI_BIND_ADDRESS:-127.0.0.1}:${LOKI_HTTP_PORT:-3100}:3100"
+    environment:
+      LOKI_MAX_QUERY_SERIES: ${LOKI_MAX_QUERY_SERIES:-10000}
+    volumes:
+      - type: bind
+        source: ${LOKI_CONFIG_FILE:-./config/loki/loki.yaml}
+        target: /etc/loki/config.yaml
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: volume
+        source: ${LOKI_DATA_DIR:-loki_data}
+        target: /var/loki
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+

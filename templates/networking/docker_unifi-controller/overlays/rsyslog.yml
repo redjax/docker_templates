@@ -23,24 +23,34 @@ services:
   logrotate:
     image: alpine:latest
     restart: unless-stopped
+    depends_on:
+      - rsyslog-collector
+    pid: "service:rsyslog-collector"
     volumes:
       - ${SYSLOG_DATA_DIR:-syslog-data}:/var/log
-    command: >
-      sh -c '
-      MAX_SIZE=52428800
-      KEEP_SIZE=41943040
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        MAX_SIZE=52428800
 
-      while true; do
-        for f in /var/log/*.log; do
-          [ -f "$$f" ] || continue
+        while true; do
+          for f in /var/log/*.log; do
+            [ -f "$$f" ] || continue
 
-          size=$$(stat -c%s "$$f" 2>/dev/null || echo 0)
+            size=$$(stat -c%s "$$f")
 
-          if [ "$$size" -gt "$$MAX_SIZE" ]; then
-            tail -c "$$KEEP_SIZE" "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"
-          fi
+            if [ "$$size" -gt "$$MAX_SIZE" ]; then
+              echo "Rotating $$f ($$size bytes)"
+
+              mv -f "$$f" "$$f.1"
+
+              # rsyslog is PID 1 in the shared PID namespace.
+              # Close the old outputs; reopen on the next message.
+              kill -HUP 1
+            fi
+          done
+
+          sleep 60
         done
 
-        sleep 60
-      done
-      '
