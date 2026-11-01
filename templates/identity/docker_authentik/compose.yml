@@ -2,7 +2,7 @@ name: authentik
 
 services:
   postgresql:
-    image: postgres:${POSTGRES_IMG_TAG:-16-alpine}
+    image: postgres:${POSTGRES_IMG_TAG:-18-alpine}
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${PG_DB:-authentik}
@@ -17,10 +17,10 @@ services:
         - pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
       timeout: 5s
     volumes:
-      - ${POSTGRES_DATA_DIR:-./database}:/var/lib/postgresql/data
+      - ${POSTGRES_DATA_DIR:-./database}:/var/lib/postgresql
 
   server:
-    image: ghcr.io/goauthentik/server:${AUTHENTIK_IMG_TAG:-2026.8.1}
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_IMG_TAG:-2026.8.5}
     command: server
     restart: unless-stopped
     depends_on:
