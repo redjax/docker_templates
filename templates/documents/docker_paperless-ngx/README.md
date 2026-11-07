@@ -52,6 +52,23 @@ If you run into authentication errors after upgrading, try to fix it with the fo
   - Quit the prompt with `\q`
 - Restart the stack with `docker compose up -d --force-recreate`
 
+## Backups
+
+The included [`overlays/backups.yml` file](./overlays/backups.yml) has a [Nautical backup container](https://github.com/Minituff/nautical-backup) you can use to create regular backups of the database and uploaded documents.
+
+To setup backups with Nautical:
+
+- Edit `.env` and set the `NAUTICAL_*` env vars:
+  - Make sure `TZ` is set to your timezone for accurate cron schedules.
+  - Optionally override `NAUTICAL_CRON_SCHEDULE` to set the backup schedule (default: 4am).
+  - Optionally change the config & backup paths in `NAUTICAL_CONFIG_DIR` and `NAUTICAL_BACKUPS_DIR`.
+
+When you want to run the Nautical backups container, start the stack with `-f overlays/backups.yml`:
+
+```shell
+docker compose -f compose.yml -f overlays/backups.yml up -d
+```
+
 ## OAuth
 
 ### Authentik
@@ -79,4 +96,3 @@ If you run into authentication errors after upgrading, try to fix it with the fo
     - `PAPERLESS_OIDC_LOGOUT_URL=https://authentik.example.com/application/o/paperless/end-session/`
 
 You will now see an "Authentik" login option beneath the login form. After logging in for the first time, you can link your Authentik account to a local Paperless account by logging into the local account, clicking the username in the top right of the screen and then clicking "My Profile." There will be a "Connect new social account" section with a link to the OIDC provider you set up; click it to link your OIDC account to the local user account.
- 
