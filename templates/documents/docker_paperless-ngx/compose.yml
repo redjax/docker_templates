@@ -104,6 +104,15 @@ services:
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_URL: ${PAPERLESS_SERVER_URL}
       PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+
+      ## OIDC auth (i.e. Authentik)
+      PAPERLESS_APPS: "${PAPERLESS_OIDC_ENABLED:+allauth.socialaccount.providers.openid_connect}"
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >-
+        {"openid_connect":{"OAUTH_PKCE_ENABLED":true,"APPS":[{"provider_id":"authentik","name":"Authentik","client_id":"${PAPERLESS_OIDC_CLIENT_ID}","secret":"${PAPERLESS_OIDC_CLIENT_SECRET}","settings":{"server_url":"${PAPERLESS_OIDC_BASE_URL}/application/o/${PAPERLESS_OIDC_SLUG}/.well-known/openid-configuration","fetch_userinfo":true}}],"SCOPE":["openid","profile","email"]}}
+
+      PAPERLESS_SOCIAL_AUTO_SIGNUP: "${PAPERLESS_OIDC_AUTO_SIGNUP:-false}"
+      PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: "${PAPERLESS_OIDC_ALLOW_SIGNUPS:-false}"
+      PAPERLESS_LOGOUT_REDIRECT_URL: "${PAPERLESS_OIDC_LOGOUT_URL:-}"
     networks:
       - paperless_frontend
       - paperless_backend
