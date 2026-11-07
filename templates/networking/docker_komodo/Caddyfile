@@ -1,0 +1,8 @@
+{
+  default_sni {$KOMODO_DEFAULT_SNI:?}
+}
+
+{$KOMODO_TLS_NAMES:?} {
+  tls internal
+  reverse_proxy core:9120
+}

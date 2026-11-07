@@ -20,14 +20,14 @@ function setup_mosquitto() {
 
   if [[ ! -d ./config/mosquitto ]]; then
     echo "Creating config dir"
-    mkdir -pv $PROJECT_ROOT/config/mosquitto
+    mkdir -pv "${PROJECT_ROOT}/config/mosquitto"
   fi
 
   if [[ ! -f ./config/mosquitto/mosquitto.conf ]]; then
     echo "Creating config file"
 
     ## Create mosquitto conf file & echo config into it
-    cat <<EOF >$PROJECT_ROOT/config/mosquitto/mosquitto.conf
+    cat <<EOF >"${PROJECT_ROOT}/config/mosquitto/mosquitto.conf"
 persistence     true
 persistence_location /mosquitto/data/
 log_dest        file /mosquitto/log/mosquitto.log

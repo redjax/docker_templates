@@ -28,211 +28,195 @@ NEW_LINE="vm.max_map_count=${MAX_MAP_COUNT}"
 SYSCTL_FILE="/etc/sysctl.conf"
 
 ## Check if Docker Compose is installed
-if ! command -v docker compose --help > /dev/null 2>&1; then
-    echo "docker compose is not installed"
-    exit 1
+if ! command -v docker compose --help >/dev/null 2>&1; then
+  echo "docker compose is not installed"
+  exit 1
 fi
 
 ## Check if git is installed
-if ! command -v git > /dev/null 2>&1; then
-    echo "git is not installed"
-    exit 1
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is not installed"
+  exit 1
 fi
 
 function set_systctl_max_map_count() {
-    echo "Setting max memory map count to: ${MAX_MAP_COUNT}"
-    
-    if [[ ! -f "/etc/sysctl.conf" ]]; then
-        echo "[ERROR] This machine does not have a /etc/sysctl.conf file"
-        exit 1
-    fi
+  echo "Setting max memory map count to: ${MAX_MAP_COUNT}"
 
-    ## Check if the line exists
-    if grep -q "^vm.max_map_count=" "$SYSCTL_FILE"; then
-        ## Replace the line
-        sudo sed -i "s|^vm.max_map_count=.*|$NEW_LINE|" "$SYSCTL_FILE"
+  if [[ ! -f "/etc/sysctl.conf" ]]; then
+    echo "[ERROR] This machine does not have a /etc/sysctl.conf file"
+    exit 1
+  fi
 
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to update the vm.max_map_count value in $SYSCTL_FILE"
-            exit 1
-        else
-            echo "Updated the vm.max_map_count value in $SYSCTL_FILE"
-        fi
-
+  ## Check if the line exists
+  if grep -q "^vm.max_map_count=" "$SYSCTL_FILE"; then
+    ## Replace the line
+    if ! sudo sed -i "s|^vm.max_map_count=.*|$NEW_LINE|" "$SYSCTL_FILE" 2>&1; then
+      echo "Failed to update the vm.max_map_count value in $SYSCTL_FILE"
+      exit 1
     else
-        ## Append the line
-        echo "$NEW_LINE" | sudo tee -a "$SYSCTL_FILE" > /dev/null
-
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to add the vm.max_map_count value to $SYSCTL_FILE"
-            exit 1
-        else
-            echo "Added the vm.max_map_count value to $SYSCTL_FILE"
-        fi
-
+      echo "Updated the vm.max_map_count value in $SYSCTL_FILE"
     fi
+
+  else
+    ## Append the line
+    if ! echo "$NEW_LINE" | sudo tee -a "$SYSCTL_FILE" >/dev/null 2>&1; then
+      echo "Failed to add the vm.max_map_count value to $SYSCTL_FILE"
+      exit 1
+    else
+      echo "Added the vm.max_map_count value to $SYSCTL_FILE"
+    fi
+
+  fi
 }
 
 function clone_wazuh_repo() {
-    if [[ -d "./wazuh-docker" ]]; then
-        echo "Directory ./wazuh-docker already exists, skipping clone."
-        return
-    fi
+  if [[ -d "./wazuh-docker" ]]; then
+    echo "Directory ./wazuh-docker already exists, skipping clone."
+    return
+  fi
 
-    echo "Cloning Wazuh repository"
+  echo "Cloning Wazuh repository"
 
-    git clone https://github.com/wazuh/wazuh-docker.git -b ${WAZUH_VERSION}
+  if ! git clone https://github.com/wazuh/wazuh-docker.git -b ${WAZUH_VERSION} 2>&1; then
+    echo "Failed to clone Wazuh repository"
+    exit 1
+  fi
 
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to clone Wazuh repository"
-        exit 1
-    fi
+  cd wazuh-docker || return 1
 
-    cd wazuh-docker
-
-    echo "Checking out branch ${WAZUH_VERSION}"
-    git checkout $WAZUH_VERSION
-
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to checkout branch ${WAZUH_VERSION}"
-        exit 1
-    else
-        cd $CWD
-    fi
+  echo "Checking out branch ${WAZUH_VERSION}"
+  if ! git checkout $WAZUH_VERSION 2>&1; then
+    echo "Failed to checkout branch ${WAZUH_VERSION}"
+    exit 1
+  else
+    cd "${CWD}" || return 1
+  fi
 }
 
 function configure_reverse_proxy() {
-    if [[ ! -d "./wazuh-docker/${WAZUH_INSTALL_TYPE}" ]]; then
-        echo "Directory ./wazuh-docker/${WAZUH_INSTALL_TYPE} does not exist"
-        exit 1
-    fi
+  if [[ ! -d "./wazuh-docker/${WAZUH_INSTALL_TYPE}" ]]; then
+    echo "Directory ./wazuh-docker/${WAZUH_INSTALL_TYPE} does not exist"
+    exit 1
+  fi
 
-    cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to change directory to ./wazuh-docker/${WAZUH_INSTALL_TYPE}"
-        exit 1
-    fi
+  if ! cd ./wazuh-docker/${WAZUH_INSTALL_TYPE} 2>&1; then
+    echo "Failed to change directory to ./wazuh-docker/${WAZUH_INSTALL_TYPE}"
+    exit 1
+  fi
 
-    ## Check if the content already exists in the file with flexible indentation
-    if grep -Pq "^\s*environment:" ./generate-indexer-certs.yml && grep -Pq "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml; then
-        if [[ -z "${PROXY_ADDRESS}" ]]; then
-            echo ""
-            echo "PROXY_ADDRESS is empty or null."
-            read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
-            echo ""
-        else
-            echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
-        fi
-
-        # Check if the current value of HTTP_PROXY in the file is different from PROXY_ADDRESS
-        current_proxy=$(grep -P "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml | sed 's/^\s*- HTTP_PROXY=//')
-        
-        if [[ "${current_proxy}" != "${PROXY_ADDRESS}" ]]; then
-            echo "Updating HTTP_PROXY from '${current_proxy}' to '${PROXY_ADDRESS}'"
-            # Use a different delimiter for sed to avoid conflicts with slashes in PROXY_ADDRESS
-            sed -i "s|^\s*- HTTP_PROXY=.*$|        - HTTP_PROXY=${PROXY_ADDRESS}|" ./generate-indexer-certs.yml
-            echo "Updated environment variable in ./generate-indexer-certs.yml"
-        else
-            echo "HTTP_PROXY is already set to the correct value: ${PROXY_ADDRESS}"
-        fi
+  ## Check if the content already exists in the file with flexible indentation
+  if grep -Pq "^\s*environment:" ./generate-indexer-certs.yml && grep -Pq "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml; then
+    if [[ -z "${PROXY_ADDRESS}" ]]; then
+      echo ""
+      echo "PROXY_ADDRESS is empty or null."
+      read -r -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
+      echo ""
     else
-        echo "Reverse proxy env variable not detected in ./generate-indexer-certs.yml. Appending line to container file."
+      echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
+    fi
 
-        cat >> ./generate-indexer-certs.yml << EOF
+    # Check if the current value of HTTP_PROXY in the file is different from PROXY_ADDRESS
+    current_proxy=$(grep -P "^\s*- HTTP_PROXY=" ./generate-indexer-certs.yml | sed 's/^\s*- HTTP_PROXY=//')
+
+    if [[ "${current_proxy}" != "${PROXY_ADDRESS}" ]]; then
+      echo "Updating HTTP_PROXY from '${current_proxy}' to '${PROXY_ADDRESS}'"
+      # Use a different delimiter for sed to avoid conflicts with slashes in PROXY_ADDRESS
+      sed -i "s|^\s*- HTTP_PROXY=.*$|        - HTTP_PROXY=${PROXY_ADDRESS}|" ./generate-indexer-certs.yml
+      echo "Updated environment variable in ./generate-indexer-certs.yml"
+    else
+      echo "HTTP_PROXY is already set to the correct value: ${PROXY_ADDRESS}"
+    fi
+  else
+    echo "Reverse proxy env variable not detected in ./generate-indexer-certs.yml. Appending line to container file."
+
+    cat >>./generate-indexer-certs.yml <<EOF
     environment:
       - HTTP_PROXY=${PROXY_ADDRESS}
 EOF
-    fi
+  fi
 
-    ## Return to CWD
-    cd $CWD
+  ## Return to CWD
+  cd "${CWD}" || return 1
 }
 
 function generate_wazuh_certs() {
-    if [[ ! -f .ssl_certs_generated ]]; then
-        echo "Generating Wazuh indexer SSL certificates."
-    else
-        echo "SSL certificates have already been generated on this machine. Skipping step."
-        return
-    fi
+  if [[ ! -f .ssl_certs_generated ]]; then
+    echo "Generating Wazuh indexer SSL certificates."
+  else
+    echo "SSL certificates have already been generated on this machine. Skipping step."
+    return
+  fi
 
-    cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+  cd "./wazuh-docker/${WAZUH_INSTALL_TYPE}" || return 1
 
-    docker compose -f generate-indexer-certs.yml run --rm generator
+  if ! docker compose -f generate-indexer-certs.yml run --rm generator 2>&1; then
+    echo "Failed to generate Wazuh indexer SSL certificates."
+    exit 1
+  else
+    echo "Wazuh indexer SSL certificates generated successfully"
+    echo "[WARNING] Certificates path './config/wazuh_indexer_ssl_certs' is not user readable; to see the certs, run sudo ls ${CWD}/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs."
+  fi
 
-    if [[ ! $? -eq 0 ]]; then
-        echo "Failed to generate Wazuh indexer SSL certificates."
-        exit 1
-    else
-        echo "Wazuh indexer SSL certificates generated successfully"
-        echo "[WARNING] Certificates path './config/wazuh_indexer_ssl_certs' is not user readable; to see the certs, run sudo ls ${CWD}/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs."    fi
-    fi
+  # if find ./config/wazuh_indexer_ssl_certs -type f \( -iname "*.pem" -o -iname "*.crt" \) | grep -q .; then
+  #     echo "Wazuh indexer SSL certificates generated successfully"
+  # else
+  #     echo "No .pem or .crt files found, Wazuh did not generate SSL certificates correctly."
+  #     exit 1
+  # fi
 
-    # if find ./config/wazuh_indexer_ssl_certs -type f \( -iname "*.pem" -o -iname "*.crt" \) | grep -q .; then
-    #     echo "Wazuh indexer SSL certificates generated successfully"
-    # else
-    #     echo "No .pem or .crt files found, Wazuh did not generate SSL certificates correctly."
-    #     exit 1
-    # fi
+  cd "${CWD}" || return 1
 
-    cd $CWD
-
-    ## Create a file to indicate SSL certificates have been created
-    touch .ssl_certs_generated && echo 1 > .ssl_certs_generated
+  ## Create a file to indicate SSL certificates have been created
+  touch .ssl_certs_generated && echo 1 >.ssl_certs_generated
 }
 
 function compose_up() {
-    cd ./wazuh-docker/${WAZUH_INSTALL_TYPE}
+  cd "./wazuh-docker/${WAZUH_INSTALL_TYPE}" || return 1
 
-    echo "Building Docker containers."
-    docker compose build
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to build Wazuh Docker containers."
-        exit 1
-    fi
+  echo "Building Docker containers."
+  if ! docker compose build 2>&1; then
+    echo "Failed to build Wazuh Docker containers."
+    exit 1
+  fi
 
-    echo "Bringing up Wazuh Docker stack."
-    docker compose up -d
-    if [[ $? -ne 0 ]]; then
-        echo "Failed to bring up Wazuh Docker stack."
-        exit 1
-    fi
+  echo "Bringing up Wazuh Docker stack."
+  if ! docker compose up -d 2>&1; then
+    echo "Failed to bring up Wazuh Docker stack."
+    exit 1
+  fi
 
-    cd $CWD
+  cd "${CWD}" || return 1
 }
 
 function main() {
-    if [[ "$USING_REVERSE_PROXY" =~ ^[0-9]+$ ]] && ((USING_REVERSE_PROXY == 1)); then
-        echo "USING_REVERSE_PROXY=1, reverse proxy support will be enabled."
+  if [[ "$USING_REVERSE_PROXY" =~ ^[0-9]+$ ]] && ((USING_REVERSE_PROXY == 1)); then
+    echo "USING_REVERSE_PROXY=1, reverse proxy support will be enabled."
 
-        ## Check PROXY_ADDRESS
-        if [[ -z "${PROXY_ADDRESS}" ]]; then
-            echo ""
-            echo "PROXY_ADDRESS is empty or null."
-            read -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
-            echo ""
-        fi
-
-        echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
+    ## Check PROXY_ADDRESS
+    if [[ -z "${PROXY_ADDRESS}" ]]; then
+      echo ""
+      echo "PROXY_ADDRESS is empty or null."
+      read -r -p "Please enter your Wazuh reverse proxy address/domain name: " PROXY_ADDRESS
+      echo ""
     fi
 
-    set_systctl_max_map_count
-    
-    clone_wazuh_repo
+    echo "Using PROXY_ADDRESS: ${PROXY_ADDRESS}"
+  fi
 
-    if [[ "${USING_REVERSE_PROXY}" -eq 1 ]]; then
-        configure_reverse_proxy
+  set_systctl_max_map_count
 
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to configure reverse proxy"
-            exit 1
-        fi
+  clone_wazuh_repo
+
+  if [[ "${USING_REVERSE_PROXY}" -eq 1 ]]; then
+    if ! configure_reverse_proxy 2>&1; then
+      echo "Failed to configure reverse proxy"
+      exit 1
     fi
+  fi
 
-    generate_wazuh_certs
+  generate_wazuh_certs
 
-    compose_up
+  compose_up
 }
 
 main
-

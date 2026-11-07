@@ -11,19 +11,25 @@ function check_container() {
 }
 
 function unseal_loop() {
+  local i=1
+
   echo "OpenBao uses Shamir keys (e.g., 5 total, 3 required)."
   echo "Paste one key per prompt."
   echo ""
 
-  i=0
-  while i <3; do
-    echo "Unsealing Vault with key #${i}"
-    docker compose exec -it "$CONTAINER_NAME" bao unseal
+  while ((i <= 3)); do
+    echo "Unsealing OpenBao with key #${i}"
+
+    if ! docker compose exec -it "$CONTAINER_NAME" bao unseal; then
+      echo "[ERROR] Unseal command failed." >&2
+      return 1
+    fi
+
     i=$((i + 1))
   done
 
   echo ""
-  echo "Vault is now unsealed"
+  echo "Finished submitting three keys."
 }
 
 function login_root() {

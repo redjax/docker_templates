@@ -30,7 +30,7 @@ if [[ ! -f "${CONFIG_TEMPLATE}" ]]; then
   exit 1
 fi
 
-envsubst < "${CONFIG_TEMPLATE}" > "${CONFIG_RENDERED}"
+envsubst <"${CONFIG_TEMPLATE}" >"${CONFIG_RENDERED}"
 echo "[OK] Wrote ${CONFIG_RENDERED}"
 
 ## Render dashboard.env
@@ -39,7 +39,7 @@ if [[ ! -f "${DASHBOARD_TEMPLATE}" ]]; then
   exit 1
 fi
 
-envsubst < "${DASHBOARD_TEMPLATE}" > "${DASHBOARD_RENDERED}"
+envsubst <"${DASHBOARD_TEMPLATE}" >"${DASHBOARD_RENDERED}"
 echo "[OK] Wrote ${DASHBOARD_RENDERED}"
 
 ## Render Caddyfile
@@ -48,8 +48,7 @@ if [[ ! -f "${CADDYFILE_TEMPLATE}" ]]; then
   exit 1
 fi
 
-envsubst < "${CADDYFILE_TEMPLATE}" > "${CADDYFILE_RENDERED}"
+envsubst <"${CADDYFILE_TEMPLATE}" >"${CADDYFILE_RENDERED}"
 echo "[OK] Wrote ${CADDYFILE_RENDERED}"
 
 echo "[DONE] All NetBird templates rendered"
-

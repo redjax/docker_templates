@@ -1,0 +1,132 @@
+---
+name: Lint and validate
+
+on:
+  workflow_call:
+    inputs:
+      lint_yaml:
+        description: Run yamllint.
+        required: false
+        type: boolean
+        default: true
+
+      lint_compose:
+        description: Run Docker Compose configuration validation.
+        required: false
+        type: boolean
+        default: true
+
+      lint_dockerfiles:
+        description: Run hadolint.
+        required: false
+        type: boolean
+        default: true
+
+      verbose:
+        description: Print detailed tool output.
+        required: false
+        type: boolean
+        default: false
+
+  workflow_dispatch:
+    inputs:
+      lint_yaml:
+        description: Run yamllint.
+        required: false
+        type: boolean
+        default: true
+
+      lint_compose:
+        description: Run Docker Compose configuration validation.
+        required: false
+        type: boolean
+        default: true
+
+      lint_dockerfiles:
+        description: Run hadolint.
+        required: false
+        type: boolean
+        default: true
+
+      verbose:
+        description: Print detailed tool output.
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Run selected checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    env:
+      LINT_YAML: ${{ inputs.lint_yaml }}
+      LINT_COMPOSE: ${{ inputs.lint_compose }}
+      LINT_DOCKERFILES: ${{ inputs.lint_dockerfiles }}
+      VERBOSE_INPUT: ${{ inputs.verbose }}
+      COMPOSE_VALIDATE_JOBS: "4"
+      # renovate: datasource=pypi depName=yamllint
+      YAMLLINT_VERSION: "1.35.1"
+      # renovate: datasource=github-releases depName=hadolint/hadolint
+      HADOLINT_VERSION: "2.12.0"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: ${{ inputs.lint_yaml }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install yamllint
+        if: ${{ inputs.lint_yaml }}
+        shell: bash
+        run: |
+          python -m pip install "yamllint==${YAMLLINT_VERSION}"
+          yamllint --version
+
+      - name: Install hadolint
+        if: ${{ inputs.lint_dockerfiles }}
+        shell: bash
+        run: |
+          mkdir -p "${RUNNER_TEMP}/lint-bin"
+
+          curl --fail --silent --show-error --location \
+            "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" \
+            --output "${RUNNER_TEMP}/lint-bin/hadolint"
+
+          chmod +x "${RUNNER_TEMP}/lint-bin/hadolint"
+          echo "${RUNNER_TEMP}/lint-bin" >> "${GITHUB_PATH}"
+
+          "${RUNNER_TEMP}/lint-bin/hadolint" --version
+
+      - name: Check Docker Compose
+        if: ${{ inputs.lint_compose }}
+        shell: bash
+        run: docker compose version
+
+      - name: Run linters and validators
+        shell: bash
+        run: |
+          args=()
+
+          if [[ "${VERBOSE_INPUT}" == true ]]; then
+            args+=(--verbose)
+          fi
+
+          ./scripts/lint/run-all.sh "${args[@]}"
+
+      - name: Upload lint and validation reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-validation-reports
+          path: output/lint-results/
+          if-no-files-found: warn
+          retention-days: 14

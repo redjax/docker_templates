@@ -1,0 +1,25 @@
+---
+volumes:
+  caddy-data: {}
+  caddy-config: {}
+
+services:
+  caddy:
+    image: caddy:${KOMODO_CADDY_IMG_TAG:-2}
+    restart: unless-stopped
+    ports:
+      - ${KOMODO_CADDY_HTTP_PORT:-80}:80
+      - ${KOMODO_CADDY_HTTPS_PORT:-443}:443
+    environment:
+      KOMODO_TLS_NAMES: ${KOMODO_TLS_NAMES:?Set KOMODO_TLS_NAMES in .env}
+      KOMODO_DEFAULT_SNI: ${KOMODO_DEFAULT_SNI:?Set KOMODO_DEFAULT_SNI in .env}
+    volumes:
+      - ${KOMODO_CADDY_CADDYFILE:-./Caddyfile}:/etc/caddy/Caddyfile:ro
+      - ${KOMODO_CADDY_DATA_DIR:-caddy-data}:/data
+      - ${KOMODO_CADDY_CONFIG_DIR:-caddy-config}:/config
+
+  core:
+    ## Replace host port mapping from main compose.yml
+    ports: !override []
+    expose:
+      - "9120"

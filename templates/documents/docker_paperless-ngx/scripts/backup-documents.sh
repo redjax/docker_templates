@@ -12,11 +12,11 @@ HOST_BACKUP_ROOT_DIR="$THIS_DIR/tmp/paperless"
 # DOCUMENT_BACKUP_NAME=paperless_docs_backup.tar.gz
 # DOCUMENT_BACKUP_PATH=$DOCUMENT_BACKUP_DIR"/"$DOCUMENT_BACKUP_NAME
 
-function GET_TIMESTAMP () {
+function GET_TIMESTAMP() {
   date +"%Y-%m-%d_%H:%M"
 }
 
-function PREPARE_BACKUP_DIRS () {
+function PREPARE_BACKUP_DIRS() {
 
   if [[ ! -d "$HOST_BACKUP_ROOT_DIR/data" ]]; then
     echo "Creating dir: $HOST_BACKUP_ROOT_DIR/data"
@@ -40,7 +40,7 @@ function TRIM_BACKUPS() {
 
 }
 
-function BACKUP_PAPERLESS_DOCUMENTS2 () {
+function BACKUP_PAPERLESS_DOCUMENTS() {
 
   PREPARE_BACKUP_DIRS
 
@@ -48,26 +48,25 @@ function BACKUP_PAPERLESS_DOCUMENTS2 () {
   DOCUMENT_HOST_DIR="$HOST_BACKUP_ROOT_DIR/data/$timestamp"
   DOCUMENT_BACKUP_PATH="$DOCUMENT_HOST_DIR/"
   MEDIA_HOST_DIR="$HOST_BACKUP_ROOT_DIR/media/$timestamp"
-  MEDIA_BACKUP_PATH="$MEDIA_HOST_DIR"
   FINAL_BACKUP_PATH="$THIS_DIR/backup/paperless-data"
 
   echo "Backing up Paperless data to $DOCUMENT_BACKUP_PATH"
-  docker cp $PAPERLESS_CONTAINER_NAME:$DOCUMENTS_CONTAINER_DIR $DOCUMENT_HOST_DIR
+  docker cp $PAPERLESS_CONTAINER_NAME:$DOCUMENTS_CONTAINER_DIR "$DOCUMENT_HOST_DIR"
 
   echo "Backing up Paperless media to $MEDIA_HOST_DIR"
-  docker cp $PAPERLESS_CONTAINER_NAME:$MEDIA_CONTAINER_DIR $MEDIA_HOST_DIR
+  docker cp $PAPERLESS_CONTAINER_NAME:$MEDIA_CONTAINER_DIR "$MEDIA_HOST_DIR"
 
   echo "Archiving $MEDIA_HOST_DIR"
-  tar -czvf "$MEDIA_HOST_DIR.tar.gz" $MEDIA_HOST_DIR
+  tar -czvf "$MEDIA_HOST_DIR.tar.gz" "$MEDIA_HOST_DIR"
 
   echo "Removing $MEDIA_HOST_DIR"
-  rm -r $MEDIA_HOST_DIR
+  rm -r "$MEDIA_HOST_DIR"
 
   echo "Archiving $DOCUMENT_HOST_DIR"
-  tar -czvf "$DOCUMENT_HOST_DIR.tar.gz" $MEDIA_HOST_DIR
+  tar -czvf "$DOCUMENT_HOST_DIR.tar.gz" "$MEDIA_HOST_DIR"
 
   echo "Removing $DOCUMENT_HOST_DIR"
-  rm -r $DOCUMENT_HOST_DIR
+  rm -r "$DOCUMENT_HOST_DIR"
 
   if ! [[ -d "$FINAL_BACKUP_PATH" ]]; then
     echo "Creating $FINAL_BACKUP_PATH"
@@ -88,48 +87,21 @@ function BACKUP_PAPERLESS_DOCUMENTS2 () {
     mkdir -pv "$FINAL_BACKUP_PATH/media"
   fi
 
-  for file in ${HOST_BACKUP_ROOT_DIR}/data/*; do
+  for file in "${HOST_BACKUP_ROOT_DIR}"/data/*; do
     echo "Moving file: $file to: $FINAL_BACKUP_PATH/data"
 
-    mv $file $FINAL_BACKUP_PATH/data/
+    mv "$file" $FINAL_BACKUP_PATH/data/
   done
 
-  for file in ${HOST_BACKUP_ROOT_DIR}/media/*; do
+  for file in "${HOST_BACKUP_ROOT_DIR}"/media/*; do
     echo "Moving file: $file to: $FINAL_BACKUP_PATH/media"
 
-    mv $file $FINAL_BACKUP_PATH/media/
+    mv "$file" $FINAL_BACKUP_PATH/media/
   done
 
 }
 
-function BACKUP_PAPERLESS_DOCUMENTS () {
-  
-  if [[ ! -f $DOCUMENT_BACKUP_PATH ]]; then
-    echo ""
-    echo "Backing up Paperless documents dir."
-    echo ""
-
-    tar -zcvf $DOCUMENT_BACKUP_PATH $DOCUMENT_DIR
-
-  elif [[ -f $DOCUMENT_BACKUP_PATH ]]; then
-    echo ""
-    echo "Backup exists at "$DOCUMENT_BACKUP_PATH
-    echo ""
-    echo "Removing and creating new backup."
-    echo ""
-
-    rm $DOCUMENT_BACKUP_PATH
-    tar -zcvf $DOCUMENT_BACKUP_PATH $DOCUMENT_DIR
-
-  else
-    echo ""
-    echo "Unknown error."
-    echo ""
-  fi
-
-}
-
-function RESTORE_PAPERLESS_DOCUMENTS () {
+function RESTORE_PAPERLESS_DOCUMENTS() {
 
   echo ""
   echo "No restore function yet."
@@ -137,35 +109,34 @@ function RESTORE_PAPERLESS_DOCUMENTS () {
 
 }
 
-function main () {
+function main() {
 
-  if [ $1 == "backup" ]; then
-    # BACKUP_PAPERLESS_DOCUMENTS
-    BACKUP_PAPERLESS_DOCUMENTS2
-  elif [ $1 == "restore" ]; then
+  if [ "$1" == "backup" ]; then
+    BACKUP_PAPERLESS_DOCUMENTS
+  elif [ "$1" == "restore" ]; then
     RESTORE_PAPERLESS_DOCUMENTS
-  elif [ $1 == "trim" ]; then
+  elif [ "$1" == "trim" ]; then
     TRIM_BACKUPS
   fi
 
 }
 
 case $1 in
- "-b" | "--backup")
-   main "backup"
+"-b" | "--backup")
+  main "backup"
   ;;
-  "-r" | "--restore")
-    main "restore"
+"-r" | "--restore")
+  main "restore"
   ;;
-  "-bt" | "--backup-trim")
-    main "trim"
+"-bt" | "--backup-trim")
+  main "trim"
   ;;
-  *)
-    echo ""
-    echo "Invalid flag: "$1
-    echo ""
-    echo "Valid flags: -b/--backup, -r/--restore"
-    echo ""
+*)
+  echo ""
+  echo "Invalid flag: $1"
+  echo ""
+  echo "Valid flags: -b/--backup, -r/--restore"
+  echo ""
   ;;
 esac
 

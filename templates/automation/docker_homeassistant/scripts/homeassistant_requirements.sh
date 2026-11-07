@@ -6,16 +6,16 @@ THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT=$(realpath -m "$THIS_DIR/..")
 
 function setup_homeassistant() {
-  if [[ ! -d $PROJECT_ROOT/config/homeassistant ]]; then
+  if [[ ! -d "${PROJECT_ROOT}/config/homeassistant" ]]; then
     echo "Creating HomeAssistant config directory"
-    mkdir -pv $PROJECT_ROOT/config/homeassistant
+    mkdir -pv "${PROJECT_ROOT}/config/homeassistant"
   fi
 
-  if [[ ! -f $PROJECT_ROOT/config/homeassistant/configuration.yml ]]; then
+  if [[ ! -f "${PROJECT_ROOT}/config/homeassistant/configuration.yml" ]]; then
     HOST_IP=$(hostname -I | cut -f1 -d' ')
 
     echo "Creating HomeAssistant config file"
-    cat <<EOF >$PROJECT_ROOT/config/homeassistant/configuration.yml
+    cat <<EOF >"${PROJECT_ROOT}/config/homeassistant/configuration.yml"
 # Loads default set of integrations. Do not remove.
 default_config:
 

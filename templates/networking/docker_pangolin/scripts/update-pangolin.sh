@@ -16,4 +16,3 @@ cd "${PROJECT_ROOT}"
 echo
 echo "Updating Pangolin containers"
 docker compose pull && docker compose up -d --force-recreate
-

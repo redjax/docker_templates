@@ -9,10 +9,11 @@ echo ""
 docker ps -a
 
 echo ""
-read -p "Enter server container name (i.e. mc-server1): " mc_serv
+read -r -p "Enter server container name (i.e. mc-server1): " mc_serv
+echo
 
 echo ""
 echo "Executing $ docker exec -i $mc_serv rcon-cli"
 echo ""
 
-docker exec -i $mc_serv rcon-cli
+docker exec -i "$mc_serv" rcon-cli

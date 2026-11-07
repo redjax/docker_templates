@@ -15,22 +15,22 @@ while true; do
   echo ""
 
   case $yn in
-      [Yy]*)
-        echo ""
-        echo "Creating ${project_root}/nocodb/data"
-        mkdir -p "${project_root}/nocodb/data"
-        echo "Creating ${project_root}/nocodb/postgres_data"
-        mkdir -p "${project_root}/nocodb/postgres_data"
-        echo ""
-        break
-        ;;
-      [Nn]*)
-        echo "Skipping host volume setup"
-        break
-        ;;
-      *)
-        echo "[ERROR] Invalid choice: $yn. Please use 'y' or 'n'"
-        ;;
+  [Yy]*)
+    echo ""
+    echo "Creating ${project_root}/nocodb/data"
+    mkdir -p "${project_root}/nocodb/data"
+    echo "Creating ${project_root}/nocodb/postgres_data"
+    mkdir -p "${project_root}/nocodb/postgres_data"
+    echo ""
+    break
+    ;;
+  [Nn]*)
+    echo "Skipping host volume setup"
+    break
+    ;;
+  *)
+    echo "[ERROR] Invalid choice: $yn. Please use 'y' or 'n'"
+    ;;
   esac
 done
 
@@ -49,6 +49,7 @@ else
   echo "[ Generate NocoDB admin password ]"
   echo ""
 
+  # shellcheck source=generate_nocodb_admin_password.sh
   . "$NOCODB_ADMIN_PW_SCRIPT"
   generate_nocodb_admin_password
 
@@ -68,9 +69,10 @@ else
   echo "[ Generate nocodb JWT token ]"
   echo ""
 
+  # shellcheck source=generate_nocodb_jwt_secret.sh
   . "$NOCODB_JWT_SECRET_SCRIPT"
   generate_nocodb_jwt_secret
-  
+
   echo ""
   echo "Edit the .env file at '${COMPOSE_DOTENV_FILE}'"
   echo "Paste the value above into 'NOCODB_JWT_SECRET'"
@@ -88,9 +90,10 @@ else
   echo "[ Generate nocodb Postgres password ]"
   echo ""
 
+  # shellcheck source=generate_postgres_password.sh
   . "$NOCODB_POSTGRES_PASSWORD_SCRIPT"
   generate_nocodb_postgres_password
-  
+
   echo ""
   echo "Edit the .env file at '${COMPOSE_DOTENV_FILE}'"
   echo "Paste the value above into 'NOCODB_POSTGRES_PASSWORD'"

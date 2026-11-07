@@ -24,18 +24,18 @@ if [ -f "$ENV_FILE" ]; then
     ## Skip comments and empty lines
     [[ "$key" =~ ^[[:space:]]*# ]] && continue
     [[ -z "$key" ]] && continue
-    
+
     ## Remove leading/trailing whitespace and quotes
     key=$(echo "$key" | xargs)
     value=$(echo "$value" | sed 's/^["'"'"']//;s/["'"'"']$//')
-    
+
     ## Export if not already set via environment or command line
     case "$key" in
-      PG_USER|PG_DB|PG_PASSWORD|ADMIN_USERNAME|ADMIN_PASSWORD|CREATE_ADMIN|RUN_MIGRATIONS|BASE_URL|POLLING_FREQUENCY|MINIFLUX_HTTP_PORT|MINIFLUX_IMG_TAG|PG_IMG_TAG|PG_HOST|PG_PORT)
-          export "$key"="$value"
-          ;;
+    PG_USER | PG_DB | PG_PASSWORD | ADMIN_USERNAME | ADMIN_PASSWORD | CREATE_ADMIN | RUN_MIGRATIONS | BASE_URL | POLLING_FREQUENCY | MINIFLUX_HTTP_PORT | MINIFLUX_IMG_TAG | PG_IMG_TAG | PG_HOST | PG_PORT)
+      export "$key"="$value"
+      ;;
     esac
-  done < "$ENV_FILE"
+  done <"$ENV_FILE"
 fi
 
 ## Configuration defaults
@@ -75,47 +75,47 @@ EOF
 ## Parse command-line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --compose-file)
-      COMPOSE_FILE="$2"
-      shift 2
-      ;;
-    --postgres-overlay)
-      POSTGRES_OVERLAY="$2"
-      shift 2
-      ;;
-    --pg-user)
-      PG_USER="$2"
-      shift 2
-      ;;
-    --pg-db)
-      PG_DB="$2"
-      shift 2
-      ;;
-    --restart)
-      RESTART_CONTAINERS=1
-      shift
-      ;;
-    --drop-db)
-      DROP_DB=1
-      shift
-      ;;
-    --kill-connections)
-      KILL_CONNECTIONS=1
-      shift
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    -*)
-      echo "Error: Unknown option: $1" >&2
-      echo "Use --help for usage information" >&2
-      exit 1
-      ;;
-    *)
-      BACKUP_FILE="$1"
-      shift
-      ;;
+  --compose-file)
+    COMPOSE_FILE="$2"
+    shift 2
+    ;;
+  --postgres-overlay)
+    POSTGRES_OVERLAY="$2"
+    shift 2
+    ;;
+  --pg-user)
+    PG_USER="$2"
+    shift 2
+    ;;
+  --pg-db)
+    PG_DB="$2"
+    shift 2
+    ;;
+  --restart)
+    RESTART_CONTAINERS=1
+    shift
+    ;;
+  --drop-db)
+    DROP_DB=1
+    shift
+    ;;
+  --kill-connections)
+    KILL_CONNECTIONS=1
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -*)
+    echo "Error: Unknown option: $1" >&2
+    echo "Use --help for usage information" >&2
+    exit 1
+    ;;
+  *)
+    BACKUP_FILE="$1"
+    shift
+    ;;
   esac
 done
 
@@ -176,12 +176,12 @@ echo
 echo "Ensuring Miniflux container is stopped"
 echo
 
-docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY -f $HEALTHCHECK_OVERLAY stop miniflux
+docker compose -f "${COMPOSE_FILE}" -f "${POSTGRES_OVERLAY}" -f "${HEALTHCHECK_OVERLAY}" stop miniflux
 
 ## Optionally drop and recreate database
 if [ "${DROP_DB:-}" = "1" ]; then
   echo "Dropping and recreating database"
-  
+
   ## Kill active connections if requested
   if [ "${KILL_CONNECTIONS:-}" = "1" ]; then
     echo "Killing active connections to ${PG_DB}"
@@ -191,23 +191,23 @@ if [ "${DROP_DB:-}" = "1" ]; then
       WHERE datname = '${PG_DB}' AND pid <> pg_backend_pid();
     " || true
   fi
-  
+
   ## Connect to 'postgres' database to drop the target database
   if ! docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T -e PGPASSWORD="$PG_PASSWORD" db psql -U "$PG_USER" -d postgres -c "DROP DATABASE IF EXISTS ${PG_DB};" 2>&1 | tee /dev/stderr | grep -q "cannot drop"; then
     : ## Success or already dropped
   elif [ "${KILL_CONNECTIONS:-}" != "1" ]; then
     handle_db_access_error
   fi
-  
+
   docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T -e PGPASSWORD="$PG_PASSWORD" db psql -U "$PG_USER" -d postgres -c "CREATE DATABASE ${PG_DB};" || true
 fi
 
 ## Restore database from backup
 echo "Restoring database"
 if ! $DECOMPRESS "$BACKUP_FILE" | docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T -e PGPASSWORD="$PG_PASSWORD" db psql -U "$PG_USER" "$PG_DB" 2>&1 | tee /dev/stderr | grep -q "database is being accessed"; then
-    : ## Success
+  : ## Success
 else
-    handle_db_access_error
+  handle_db_access_error
 fi
 
 if [[ "${RESTART_CONTAINERS:-}" == "1" ]]; then
@@ -215,7 +215,7 @@ if [[ "${RESTART_CONTAINERS:-}" == "1" ]]; then
   echo "Restarting Miniflux container"
   echo
 
-  docker compose -f $COMPOSE_FILE -f $POSTGRES_OVERLAY -f $HEALTHCHECK_OVERLAY up -d
+  docker compose -f "${COMPOSE_FILE}" -f "${POSTGRES_OVERLAY}" -f "${HEALTHCHECK_OVERLAY}" up -d
 else
   echo "You many need to manually restart Miniflux, i.e.:"
   echo "  docker compose -f ${COMPOSE_FILE} -f ${POSTGRES_OVERLAY} -f ${HEALTHCHECK_OVERLAY} up -d"

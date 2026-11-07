@@ -12,22 +12,20 @@
 HASH_OUTPUT_FILE="$(pwd)/password_hash"
 
 ## Prompt for the password securely
-read -sp "Graylog root password to hash: " PASSWORD
+read -r -sp "Graylog root password to hash: " PASSWORD
 echo
 
 ## Hash the password using sha256sum (secure and portable)
-PASSWORD_HASH=$(echo -n "${PASSWORD}" | sha256sum | awk '{print $1}')
-
-if [[ ! $? -eq 0 ]]; then
-    echo "[ERROR] Failed to hash password."
-    exit 1
+if ! PASSWORD_HASH=$(echo -n "${PASSWORD}" | sha256sum | awk '{print $1}') 2>&1; then
+  echo "[ERROR] Failed to hash password."
+  exit 1
 fi
 
 ## Output the password hash
 echo "Password hashed successfully. Saving to file: ${HASH_OUTPUT_FILE}"
 
 ## Write password hash & a message to file
-cat <<EOF >$HASH_OUTPUT_FILE
+if ! cat <<EOF >"$HASH_OUTPUT_FILE"; then
 Graylog Admin Password Hash:
 
     $PASSWORD_HASH
@@ -47,10 +45,8 @@ password hash file. It is insecure to leave it.
 You can regenerate the same password hash by
 re-running this script and typing the new password.
 EOF
-
-if [[ ! $? -eq 0 ]]; then
-    echo "[ERROR] Failed to save password hash to file."
-    exit 1
+  echo "[ERROR] Failed to save password hash to file." >&2
+  exit 1
 fi
 
 echo ""

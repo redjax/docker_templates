@@ -17,7 +17,7 @@ function make_backup() {
 }
 
 function fix_dest_dir_permissions() {
-  sudo chown -R ${USER}:${USER} "${BACKUP_DEST}"
+  sudo chown -R "${USER}":"${USER}" "${BACKUP_DEST}"
 }
 
 function main() {

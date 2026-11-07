@@ -6,20 +6,18 @@
 echo "[ Create Headscale User ]"
 echo ""
 
-read -p "New user name: " HEADSCALE_USER
+read -r -p "New user name: " HEADSCALE_USER
+echo
 
 echo ""
 echo "Creating Headscale user: ${HEADSCALE_USER}"
 echo ""
 
-docker compose exec -it headscale headscale users create "${HEADSCALE_USER}"
-echo ""
-
-if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Created Headscale user: ${HEADSCALE_USER}"
+if ! docker compose exec -it headscale headscale users create "${HEADSCALE_USER}" 2>&1; then
+  echo "[SUCCESS] Created Headscale user: ${HEADSCALE_USER}"
 else
-    echo "[ERROR] Failed creating Headscale user: ${HEADSCALE_USER}"
-    exit $?
+  echo "[ERROR] Failed creating Headscale user: ${HEADSCALE_USER}"
+  exit 1
 fi
 
 echo "Creating preshared keys for new user: ${HEADSCALE_USER}"

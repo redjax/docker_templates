@@ -9,7 +9,8 @@ fi
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AGH_ROOT=$(realpath -m "${THIS_DIR}/..")
 
-CWD=$(pwd); trap 'cd "$CWD"' EXIT
+CWD=$(pwd)
+trap 'cd "$CWD"' EXIT
 MAIN_COMPOSE_FILE="${AGH_ROOT}/compose.yml"
 UNBOUND_COMPOSE_FILE="${AGH_ROOT}/overlays/unbound.yml"
 
@@ -31,27 +32,27 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    -u|-p|--pull)
-      PULL="true"
-      shift
-      ;;
-    -f|-r|--recreate)
-      RECREATE="true"
-      shift
-      ;;
-    --dry-run)
-      DRY_RUN="true"
-      shift
-      ;;
-    *)
-      echo "[ERROR] Invalid arg: $1" >&2
-      usage
-      exit 1
-      ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -u | -p | --pull)
+    PULL="true"
+    shift
+    ;;
+  -f | -r | --recreate)
+    RECREATE="true"
+    shift
+    ;;
+  --dry-run)
+    DRY_RUN="true"
+    shift
+    ;;
+  *)
+    echo "[ERROR] Invalid arg: $1" >&2
+    usage
+    exit 1
+    ;;
   esac
 done
 

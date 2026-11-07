@@ -1,0 +1,14 @@
+---
+#############################################################
+# Arcane agent edge networking layer                        #
+#                                                           #
+# This config is for machines on remote networks. The agent #
+# sends outbound-only traffic to the server, and does not   #
+# require a port binding.                                   #
+#############################################################
+
+services:
+  arcane-agent:
+    environment:
+      EDGE_AGENT: "true"
+      EDGE_TRANSPORT: "${ARCANE_EDGE_TRANSPORT:-poll}"

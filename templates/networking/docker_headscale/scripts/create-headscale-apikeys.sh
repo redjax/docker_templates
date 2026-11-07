@@ -5,11 +5,8 @@
 echo "[ Create Headscale API Keys ]"
 echo ""
 
-docker exec headscale headscale apikeys create
-echo ""
-
-if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Created Headscale API keys"
+if ! docker exec headscale headscale apikeys create 2>&1; then
+  echo "[SUCCESS] Created Headscale API keys"
 else
-    echo "[ERROR] Failed creating Headscale API keys"
+  echo "[ERROR] Failed creating Headscale API keys"
 fi

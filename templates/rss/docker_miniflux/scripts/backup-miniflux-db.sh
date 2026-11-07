@@ -23,18 +23,18 @@ if [ -f "$ENV_FILE" ]; then
     ## Skip comments and empty lines
     [[ "$key" =~ ^[[:space:]]*# ]] && continue
     [[ -z "$key" ]] && continue
-    
+
     ## Remove leading/trailing whitespace and quotes
     key=$(echo "$key" | xargs)
     value=$(echo "$value" | sed 's/^["'"'"']//;s/["'"'"']$//')
-    
+
     ## Export if not already set via environment or command line
     case "$key" in
-      PG_USER|PG_DB|PG_PASSWORD|ADMIN_USERNAME|ADMIN_PASSWORD|CREATE_ADMIN|RUN_MIGRATIONS|BASE_URL|POLLING_FREQUENCY|MINIFLUX_HTTP_PORT|MINIFLUX_IMG_TAG|PG_IMG_TAG|PG_HOST|PG_PORT)
-          export "$key"="$value"
-          ;;
+    PG_USER | PG_DB | PG_PASSWORD | ADMIN_USERNAME | ADMIN_PASSWORD | CREATE_ADMIN | RUN_MIGRATIONS | BASE_URL | POLLING_FREQUENCY | MINIFLUX_HTTP_PORT | MINIFLUX_IMG_TAG | PG_IMG_TAG | PG_HOST | PG_PORT)
+      export "$key"="$value"
+      ;;
     esac
-  done < "$ENV_FILE"
+  done <"$ENV_FILE"
 fi
 
 ## Configuration defaults
@@ -72,43 +72,43 @@ EOF
 ## Parse command-line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --compose-file)
-      COMPOSE_FILE="$2"
-      shift 2
-      ;;
-    --postgres-overlay)
-      POSTGRES_OVERLAY="$2"
-      shift 2
-      ;;
-    --backup-dir)
-      BACKUP_DIR="$2"
-      shift 2
-      ;;
-    --pg-user)
-      PG_USER="$2"
-      shift 2
-      ;;
-    --pg-db)
-      PG_DB="$2"
-      shift 2
-      ;;
-    --compression)
-      COMPRESSION="$2"
-      shift 2
-      ;;
-    --no-compression)
-      COMPRESSION="none"
-      shift
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Error: Unknown option: $1" >&2
-      echo "Use --help for usage information" >&2
-      exit 1
-      ;;
+  --compose-file)
+    COMPOSE_FILE="$2"
+    shift 2
+    ;;
+  --postgres-overlay)
+    POSTGRES_OVERLAY="$2"
+    shift 2
+    ;;
+  --backup-dir)
+    BACKUP_DIR="$2"
+    shift 2
+    ;;
+  --pg-user)
+    PG_USER="$2"
+    shift 2
+    ;;
+  --pg-db)
+    PG_DB="$2"
+    shift 2
+    ;;
+  --compression)
+    COMPRESSION="$2"
+    shift 2
+    ;;
+  --no-compression)
+    COMPRESSION="none"
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Error: Unknown option: $1" >&2
+    echo "Use --help for usage information" >&2
+    exit 1
+    ;;
   esac
 done
 
@@ -137,9 +137,9 @@ echo "Output: $BACKUP_FILE"
 
 ## Run pg_dump inside the postgres container and output to local file
 if [ "$COMPRESSION" = "gzip" ]; then
-  docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T db pg_dump -U "$PG_USER" "$PG_DB" | gzip > "$BACKUP_FILE"
+  docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T db pg_dump -U "$PG_USER" "$PG_DB" | gzip >"$BACKUP_FILE"
 else
-  docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T db pg_dump -U "$PG_USER" "$PG_DB" > "$BACKUP_FILE"
+  docker compose -f "$COMPOSE_FILE" -f "$POSTGRES_OVERLAY" exec -T db pg_dump -U "$PG_USER" "$PG_DB" >"$BACKUP_FILE"
 fi
 
 echo "Backup complete: $BACKUP_FILE"

@@ -16,4 +16,3 @@ sudo ufw reload
 echo "Added Linkora ports (45454, 54545) to UFW allow list"
 
 exit 0
-
