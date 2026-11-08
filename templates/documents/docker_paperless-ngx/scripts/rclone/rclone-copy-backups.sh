@@ -1,9 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-##########################################################
-# Copy the nautical backup directory to an rclone remote #
-##########################################################
+##################################################################
+# Copy the nautical backup directory to an rclone remote         #
+#                                                                #
+# Initialize an rclone config with:                              #
+#   rclone config --config "path/to/your/rclone.conf"            #
+#                                                                #
+# The default rclone config path is ~/.config/rclone/rclone.conf #
+# If you generate a config in this path, you must always pass it #
+# to rclone commands with --config "path/to/your/rclone.conf"    #
+#                                                                #
+# Encrypt the configuration by generating a password:            #
+#   openssl rand -hex 32 > /path/to/.rclone.pass                 #
+#                                                                #
+# After generating the password, run:                            #
+#   rclone config encryption set \                               #
+#     --config ./scripts/rclone/rclone.conf \                    #
+#     --password-command "cat ./scripts/rclone/.rclone.pass"     #
+#                                                                #
+# To run commands with the encrypted config, use the             #
+# --password-command flag to 'cat' the contents of the file:     #
+#                                                                #
+# rclone listremotes \                                           #
+#   --config path/to/your/rclone.conf \                          #
+#   --password-command "cat /path/to/.rclone.pass"               #
+##################################################################
 
 CONFIG=""
 PASSWORD_FILE=""
