@@ -202,6 +202,45 @@ forgejo  | Received signal 15; terminating.
 
 make sure the host path in the `FORGEJO_DATA_DIR` [env variable](./.env.example) is owned by the `USER_UID` and `USER_GID` vars in [the forgejo app env file](./env_files/forgejo/example.env). For example, if set to `USER_UID=1000` and `USER_GID=1000`, run `chmod -R 1000:1000 ./data/forgejo.
 
+### Fastmail SMTP Not Working
+
+If you are attempting to configure SMTP with [Fastmail](https://fastmail.com), and you are using `smtp.fastmail.com:587` but getting timeouts when trying to send test emails, you might need to use the HTTPS proxy (`smtps-proxy.fastmail.com`).
+
+Set the following values in the [`env_files/forgejo/default.env`](./env_files/forgejo/example.env) file, using your real username, password/token, and FROM address(es):
+
+> [!NOTE]
+> For the `FORGEJO__mailer__FROM` address, you must own the address. You can use one of Fastmail's masked or custom addresses to obscure your real account in messages from Forgejo.
+
+```plaintext
+FORGEJO__mailer__ENABLED=true
+FORGEJO__mailer__PROTOCOL=smtps
+FORGEJO__mailer__SMTP_ADDR=smtps-proxy.fastmail.com
+FORGEJO__mailer__SMTP_PORT=443
+FORGEJO__mailer__USER=your-fastmail-username@fastmail.com
+## Account password or access token
+FORGEJO__mailer__PASSWD=<your fastmail app token>
+## Can be different from the username value above; you must own the address/alias
+FORGEJO__mailer__FROM=your-sender-address@fastmail.com
+
+```
+
+### Permission Errors
+
+If you get permission errors when using a host volume mount, i.e. `./data/forgejo`, especially during Forgejo's initial setup with the `gitea.db` file, you likely skipped running the [`./scripts/initial_setup.sh` script](./scripts/initial_setup.sh).
+
+Try fixing the container permissions:
+
+```shell
+## Stop the running containers
+docker compose down
+
+## Fix directory permissions
+sudo chown -R 1000:1000 ./data/forgejo
+
+## Restart container
+docker compose up -d
+```
+
 ## Links
 
 - [Forgejo home](https://forgejo.org)
