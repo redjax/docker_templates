@@ -33,7 +33,13 @@ authentik_secret() {
   echo "${secret}"
 }
 
+anubis_signing_key() {
+  openssl rand -hex 32
+}
+
 echo "FORGEJO__secret__SECRET_KEY=$(forgejo_secret_key)"
 echo "FORGEJO__secret__INTERNAL_TOKEN=$(forgejo_internal_token)"
 echo "AUTHENTIK_SECRET_KEY=$(authentik_secret)"
 echo "AUTHENTIK_DB_PASS=$(authentik_secret)"
+echo "ANUBIS_SIGNING_KEY=$(anubis_signing_key)"
+
