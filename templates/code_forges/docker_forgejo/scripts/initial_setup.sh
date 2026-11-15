@@ -5,7 +5,7 @@ set -euo pipefail
 THIS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 PROJECT_ROOT=$(realpath -m "${THIS_DIR}/..")
 PROJECT_CONFIG_DIR="${PROJECT_ROOT}/config"
-FORGEJO_DATA_DIR="${PROJECT_ROOT}/data"
+FORGEJO_DATA_DIR="${PROJECT_ROOT}/data/forgejo"
 CHMOD_UID="1000"
 CHMOD_GID="1000"
 
@@ -44,13 +44,24 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-## Create data directory
-if [[ ! -d "${FORGEJO_DATA_DIR}" ]]; then
-  echo "Creating Forgejo data directory: ${FORGEJO_DATA_DIR}"
-  mkdir -p "${FORGEJO_DATA_DIR}"
-else
-  echo "Forgejo data directory already exists"
-fi
+echo "Creating data directories & setting ownership"
+
+## Create data directories
+mkdir -p "${FORGEJO_DATA_DIR}"
+mkdir -p "${FORGEJO_DATA_DIR}/git"
+mkdir -p "${FORGEJO_DATA_DIR}/gitea"
+mkdir -p "${FORGEJO_DATA_DIR}/ssh"
+mkdir -p "${FORGEJO_DATA_DIR}/git/.ssh"
+touch "${FORGEJO_DATA_DIR}/git/.ssh/authorized_keys"
+
+sudo chown "${CHMOD_UID}:${CHMOD_GID}" \
+  "${FORGEJO_DATA_DIR}/git/.ssh" \
+  "${FORGEJO_DATA_DIR}/git/.ssh/authorized_keys"
+
+sudo chmod u+rwx "${FORGEJO_DATA_DIR}"
+sudo chmod 755 "${FORGEJO_DATA_DIR}/git"
+sudo chmod 700 "${FORGEJO_DATA_DIR}/git/.ssh"
+sudo chmod 600 "${FORGEJO_DATA_DIR}/git/.ssh/authorized_keys"
 
 sudo chown -R "${CHMOD_UID}:${CHMOD_GID}" "${FORGEJO_DATA_DIR}"
 

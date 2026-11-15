@@ -12,13 +12,27 @@
     - [With INSTALL\_LOCK=true and DISABLE\_REGISTRATION=false](#with-install_locktrue-and-disable_registrationfalse)
   - [Local Network](#local-network)
   - [Publicly Exposed](#publicly-exposed)
+  - [Caddy Server](#caddy-server)
+  - [Protect Site with Anubis](#protect-site-with-anubis)
   - [SSH Setup](#ssh-setup)
   - [Clone with SSH](#clone-with-ssh)
   - [OAuth2 Provider Setup](#oauth2-provider-setup)
     - [Authentik OAuth2 setup](#authentik-oauth2-setup)
+- [Backups](#backups)
+  - [Offen Docker Volume Backup](#offen-docker-volume-backup)
+    - [Test Offen Backup](#test-offen-backup)
+    - [Restore Offen Backup](#restore-offen-backup)
+      - [Restore on a new machine](#restore-on-a-new-machine)
+      - [Download and extract the backup](#download-and-extract-the-backup)
+      - [Stop Forgejo and the backup scheduler](#stop-forgejo-and-the-backup-scheduler)
+      - [Restore to a host bind mount](#restore-to-a-host-bind-mount)
+      - [Restore to a named Docker volume](#restore-to-a-named-docker-volume)
+      - [Start and verify Forgejo](#start-and-verify-forgejo)
 - [Setup Action Runner](#setup-action-runner)
 - [Troubleshooting](#troubleshooting)
   - [Init failed: mkdir /path/name](#init-failed-mkdir-pathname)
+  - [Fastmail SMTP Not Working](#fastmail-smtp-not-working)
+  - [Permission Errors](#permission-errors)
 - [Links](#links)
 
 ## Setup
@@ -70,6 +84,95 @@ On your router, forward the following ports:
 - WAN: `80` -> LAN: `192.168.1.xxx:<your-traefik-http-port>`
 - WAN: `443` -> LAN: `192.168.1.xxx:<your-traefik-https-port>`
 - WAN: `222` (or whatever SSH port you're using for the Forgejo container) -> LAN: `192.168.1.xxx:<your-forgejo-host-ip>`
+
+### Caddy Server
+
+You can (and should) put Caddy in front of Forgejo when serving it publicly. Caddy is not included in this configuration, but you can create your own using the instructions below.
+
+In a new directory, i.e. `~/docker_caddy`, create the following files:
+
+- `compose.yml`:
+
+  ```yaml
+  ---
+  name: caddy
+
+  volumes:
+    data: {}
+    config: {}
+
+  services:
+    caddy:
+      image: caddy:${CADDY_IMG_TAG:-2}
+      restart: unless-stopped
+      network_mode: host
+
+      environment:
+        DOMAIN: ${DOMAIN:-localhost}
+        ACME_EMAIL: ${ACME_EMAIL:-admin@localhost}
+        FORGEJO_DOMAIN: ${FORGEJO_DOMAIN:-${DOMAIN:-localhost}}
+        FORGEJO_UPSTREAM: ${FORGEJO_UPSTREAM:-127.0.0.1:3000}
+
+      volumes:
+        - ${CADDYFILE:-./Caddyfile}:/etc/caddy/Caddyfile:ro
+        - ${CADDY_DATA_DIR:-data}:/data
+        - ${CADDY_CONFIG_DIR:-config}:/config
+  ```
+
+- `Caddyfile`:
+
+  ```plaintext
+  {
+      email {$ACME_EMAIL}
+  }
+
+  {$FORGEJO_DOMAIN} {
+      log
+      reverse_proxy {$FORGEJO_UPSTREAM} {
+          header_up X-Real-IP {remote_host}
+          header_up X-Http-Version {http.request.proto}
+          header_up X-TLS-SNI-Name {tls_server_name}
+        }
+  }
+  ```
+
+- And create a `.env` files, using the values relevant to your configuration:
+
+  ```plaintext
+  ## Default: 2
+  CADDY_IMG_TAG=
+
+  ## Default: localhost
+  #  Use your domain with no protocol, i.e. my-git-domain.com
+  DOMAIN=my-git-domain.com
+  ## Default: admin@localhost
+  ACME_EMAIL=address@example.com
+
+  ## Default: localhost
+  #  Use your domain or subdomain, i.e. my-git-domain.com
+  #  or git.my-domain.com
+  FORGEJO_DOMAIN=my-git-domain.com
+  ## Default: 127.0.0.1:3000
+  #  When using Anubis, proxy to the Anubis port, i.e.
+  #  127.0.0.1:8923
+  FORGEJO_UPSTREAM=
+  ```
+
+When using Caddy, you should only bind Forgejo's ports to `127.0.0.1:<port>`. This forces traffic through the Caddy proxy and prevents exposing the port directly.
+
+### Protect Site with Anubis
+
+This stack includes an optional layer for [Anubis](https://anubis.techaro.lol/). You can protect your site from some automated scans/interactions (i.e. LLM agents and other bots) by running the stack with [`-f overlay/anubis.yml`](./overlay.anubis.yml), i.e.:
+
+```shell
+docker compose -f compose.yml -f overlay.anubis.yml up -d
+```
+
+First, edit your `.env` file. At minimum, you need to set a v alue for `ANUBIS_SIGNING_KEY`, which you can generate with `openssl rand -hex32` or the [`./scripts/generate-secrets.sh` script](./scripts/generate-secrets.sh).
+
+Next, update your [Caddy config](#caddy-server)'s `.env` file; set `FORGEJO_UPSTREAM=127.0.0.1:8923` (Anubis's port). When a request is made to your Forgejo instance, it hits Caddy, then Anubis, where a challenge must be passed to get to your site.
+
+Path filters in the `overlay.anubis.yml` control which requests are challenged. This allows for Git HTTPS and SSH traffic to continue working.
 
 ### SSH Setup
 
@@ -155,7 +258,7 @@ This will make OAuth2 application settings available in the Forgejo UI, under `S
 
 #### Authentik OAuth2 setup
 
-If you are using Authentik as your IDP, you can create a Provider and Application for signing into Forgejo. 
+If you are using Authentik as your IDP, you can create a Provider and Application for signing into Forgejo.
 
 Authentik setup:
 
@@ -185,6 +288,315 @@ Forgejo Setup:
   - For the OpenID Connect Auto Discovery URL, use: `https://auth.twistp.ing/application/o/forgejo/.well-known/openid-configuration`
   - Set "Additional scopes" to `email profile`
 
+## Backups
+
+### Offen Docker Volume Backup
+
+The [`overlay.offen-backup.yml` layer](./overlay.offen-backup.yml) can backup your Forgejo Docker volumes using [`offen/docker-volume-backups](https://github.com/offen/docker-volume-backup). This container is configured to backup to S3 compatible storage (AWS S3, Wasabi, Backblaze B2, etc) on a schedule defined by the user (default: 4:30AM daily in the configured timezone).
+
+To set up backups:
+
+- Edit your `.env` file's `Offen backup` section
+- Set your timezone in `OFFEN_BACKUP_TZ`
+- Optionally change the cron schedule in `OFFEN_BACKUP_CRON`
+- Create a bucket in your S3 storage and put its name in `OFFEN_BACKUP_S3_BUCKET`
+- If you have a folder in the bucket for Forgejo backups, add the path in `OFFEN_BACKUP_S3_PREFIX`
+- Set your endpoint (should be available in the webUI for your S3 storage) in `OFFEN_BACKUP_S3_ENDPOINT`
+  - For example, Wasabi US East 1 (N. Virginia) uses `s3.wasabisys.com`; US East 2 uses `s3.us-east-2.wasabisys.com`.
+- Put your access key and secret in `OFFEN_BACKUP_S3_ACCESS_KEY_ID` and `OFFEN_BACKUP_S3_SECRET_ACCESS_KEY`
+- Generate a passhprase with `openssl rand -hex 32` or `./scripts/generate-secrets.sh` and paste the value into `OFFEN_BACKUP_AGE_PASSPHRASE`
+- Optionally set a number of days for backup retention in `OFFEN_BACKUP_RETENTION_DAYS`
+- If you use Gotify, you can set notifications by putting a URL in `OFFEN_BACKUP_NOTIFICATION_URLS`, i.e.:
+  - `OFFEN_BACKUP_NOTIFICATION_URLS='gotify://gotify.example.com:443/YOUR_APPLICATION_TOKEN/?title=Forgejo+backups&priority=5'`
+- You can filter notifications by log level using `OFFEN_BACKUP_NOTIFICATION_LEVEL`
+
+To start the Offen backup container, use `-f overlay.offen-backup.yml` with your `docker compose` command. Examples:
+
+Forgejo + Offen:
+
+```shell
+docker compose -f compose.yml -f overlay.offen-backup.yml up -d
+```
+
+With [Anubis](#protect-site-with-anubis):
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.anubis.yml \
+  -f overlay.offen-backup.yml \
+  up -d
+```
+
+#### Test Offen Backup
+
+Run a manual backup. This temporarily stops Forgejo:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.offen-backup.yml \
+  exec offen-backup backup
+```
+
+If using [Anubis](#protect-site-with-anubis), include `-f overlay.anubis.yml` as in the startup command. The backup command runs the backup immediately instead of waiting for the schedule.
+
+Afterward, confirm:
+
+- Forgejo is running again.
+- An encrypted `.tar.gz.age` archive appeared in your bucket.
+- A Gotify notification arrived, if enabled with notification level `info`.
+
+View Offen's backup logs with:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.offen-backup.yml \
+  logs --tail=100 offen-backup
+```
+
+#### Restore Offen Backup
+
+> [!WARNING]
+> Stop Forgejo and the backup scheduler before replacing any data. Preserve the existing data until the restored instance has been verified.
+
+The examples below assume the archive contains a `data/` directory. Check the archive layout and adjust the source path if necessary.
+
+##### Restore on a new machine
+
+Prepare the repository, `.env`, and external configuration files first. These deployment files are not included in the data-only backup. Use the same Forgejo image version as the backed-up installation for the initial restore. Keep existing instance secrets consistent with the restored configuration; do not overwrite them with newly generated values or placeholders.
+
+Do not run `docker compose up` yet.
+
+Create Forgejo’s container and storage without starting the application:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.offen-backup.yml \
+  create forgejo
+```
+
+Include `-f overlay.anubis.yml` if it is part of your deployment.
+
+Find the named volume that Compose created for `/data`:
+
+```shell
+CID=$(docker compose -f compose.yml \
+  -f overlay.offen-backup.yml \
+  ps -aq forgejo)
+
+DATA_VOLUME=$(docker inspect "$CID" --format \
+  '{{range .Mounts}}{{if and (eq .Destination "/data") (eq .Type "volume")}}{{.Name}}{{end}}{{end}}')
+
+test -n "$DATA_VOLUME" || {
+  echo "No named volume found at /data; stopping." >&2
+  exit 1
+}
+
+printf 'Restoring into volume: %s\n' "$DATA_VOLUME"
+```
+
+After decrypting and extracting the backup, confirm the source directory contains your Forgejo data:
+
+```shell
+sudo ls -la "$RESTORE_DIR/data"
+```
+
+Restore into the new volume. The command stops if the destination is not empty:
+
+```shell
+sudo test -d "$RESTORE_DIR/data" || exit 1
+
+docker run --rm \
+  --mount "type=bind,source=$RESTORE_DIR/data,target=/restore,readonly" \
+  --mount "type=volume,source=$DATA_VOLUME,target=/destination" \
+  alpine:3.22 \
+  sh -ec '
+    test -n "$(ls -A /restore)" || {
+      echo "Restore source is empty; stopping." >&2
+      exit 1
+    }
+
+    test -z "$(ls -A /destination)" || {
+      echo "Destination is not empty; use the existing-volume restore procedure." >&2
+      exit 1
+    }
+
+    cp -a /restore/. /destination/
+  '
+```
+
+Start the restored installation using your usual overlay list:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.anubis.yml \
+  -f overlay.offen-backup.yml \
+  up -d
+```
+
+Omit the Anubis overlay if it is not enabled.
+
+Forgejo should use the restored database and configuration rather than presenting a fresh installation wizard. Verify login, repositories, and cloning before enabling normal traffic or relying on scheduled backups. For a host bind mount, the process is similar: restore into the configured host data directory before starting Forgejo.
+
+##### Download and extract the backup
+
+Download the desired `.tar.gz.age` archive from your bucket, then decrypt it using your backup passphrase:
+
+```shell
+age --decrypt \
+  --output forgejo-backup.tar.gz \
+  downloaded-backup.tar.gz.age
+```
+
+Extract it into an empty temporary directory and inspect it:
+
+```shell
+tar -tzf forgejo-backup.tar.gz | head -n 30
+
+RESTORE_DIR="$(mktemp -d)"
+
+sudo tar --numeric-owner -xzpf forgejo-backup.tar.gz \
+  -C "$RESTORE_DIR"
+
+sudo ls -la "$RESTORE_DIR/data"
+```
+
+Run the remaining commands in the same shell so that `$RESTORE_DIR` remains available.
+
+##### Stop Forgejo and the backup scheduler
+
+From your Forgejo Compose directory, run:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.offen-backup.yml \
+  stop offen-backup forgejo
+```
+
+Include `-f overlay.anubis.yml` if it is part of your deployment.
+
+Choose the appropriate restore method below.
+
+##### Restore to a host bind mount
+
+Set `DATA_DIR` to the absolute host directory mounted at `/data`. Use the actual path configured for your deployment:
+
+```shell
+DATA_DIR=/absolute/path/to/data/forgejo
+```
+
+Confirm the paths, preserve the existing directory, and restore into an empty replacement:
+
+```shell
+sudo test -d "$RESTORE_DIR/data" || exit 1
+test -n "$DATA_DIR" && test -d "$DATA_DIR" || exit 1
+
+printf 'Restoring from: %s\nRestoring to: %s\n' \
+  "$RESTORE_DIR/data" "$DATA_DIR"
+
+OLD_DATA_DIR="${DATA_DIR}.before-restore-$(date +%Y%m%d-%H%M%S)"
+
+sudo mv -- "$DATA_DIR" "$OLD_DATA_DIR"
+sudo mkdir -p -- "$DATA_DIR"
+
+sudo cp -a "$RESTORE_DIR/data/." "$DATA_DIR/"
+```
+
+Copy the contents of the extracted `data` directory. The resulting layout should match the original `/data` mount.
+
+> [!NOTE]
+> Keep enough free space for the extracted backup, restored data, and preserved original data. If necessary, move the original data to another disk or machine first.
+
+##### Restore to a named Docker volume
+
+Restore directly into the existing volume These commands assume you have already extracted the backup into `$RESTORE_DIR/data` and stopped Forgejo and the backup scheduler.
+
+Find the actual volume mounted at Forgejo’s `/data`:
+
+```shell
+CID=$(docker compose -f compose.yml \
+  -f overlay.offen-backup.yml \
+  ps -aq forgejo)
+
+DATA_VOLUME=$(docker inspect "$CID" --format \
+  '{{range .Mounts}}{{if and (eq .Destination "/data") (eq .Type "volume")}}{{.Name}}{{end}}{{end}}')
+
+test -n "$DATA_VOLUME" || {
+  echo "No named volume found at /data; stopping." >&2
+  exit 1
+}
+
+printf 'Volume to restore: %s\n' "$DATA_VOLUME"
+docker volume inspect "$DATA_VOLUME"
+```
+
+Include your usual additional overlays in the Compose command if applicable. Before proceeding, confirm the volume name and check that the extracted backup contains the expected Forgejo files:
+
+```shell
+sudo ls -la "$RESTORE_DIR/data"
+```
+
+> [!WARNING]
+> The next command deletes the existing volume contents before restoring the backup. Ensure Forgejo and any other containers that write to this volume are stopped. Preserve a separate backup of the current data if you may need to roll back.
+
+Restore the backup into the existing volume:
+
+```shell
+sudo test -d "$RESTORE_DIR/data" || exit 1
+
+docker run --rm \
+  --mount "type=bind,source=$RESTORE_DIR/data,target=/restore,readonly" \
+  --mount "type=volume,source=$DATA_VOLUME,target=/destination" \
+  alpine:3.22 \
+  sh -ec '
+    test -n "$(ls -A /restore)" || {
+      echo "Restore source is empty; stopping." >&2
+      exit 1
+    }
+
+    find /destination -mindepth 1 -maxdepth 1 \
+      -exec rm -rf -- {} \;
+
+    cp -a /restore/. /destination/
+  '
+```
+
+This replaces the contents of the volume, essentially wiping any existing data. Start the stack again using your usual overlay list:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.anubis.yml \
+  -f overlay.offen-backup.yml \
+  up -d
+```
+
+Omit the Anubis overlay if it is not enabled. Verify startup logs, login, and repository access before considering the restore complete.
+
+##### Start and verify Forgejo
+
+Recreate the containers so Forgejo and the backup service use the restored directory or volume. Use your deployment’s usual overlay list:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.anubis.yml \
+  -f overlay.offen-backup.yml \
+  up -d --force-recreate
+```
+
+Omit the Anubis overlay if it is not enabled.
+
+Check Forgejo’s startup logs:
+
+```shell
+docker compose -f compose.yml \
+  -f overlay.anubis.yml \
+  -f overlay.offen-backup.yml \
+  logs --tail=100 forgejo
+```
+
+Verify that you can log in, open repositories, and clone a repository. Check attachments and LFS objects if used.
+
+Keep the original data directory or Docker volume until recovery has been verified.
+
 ## Setup Action Runner
 
 See the [Forgejo runner container](./forgejo_runner/) for setup instructions. You must enable Actions on the server by setting `FORGEJO__actions__ENABLED=true`.
@@ -201,6 +613,45 @@ forgejo  | Received signal 15; terminating.
 ```
 
 make sure the host path in the `FORGEJO_DATA_DIR` [env variable](./.env.example) is owned by the `USER_UID` and `USER_GID` vars in [the forgejo app env file](./env_files/forgejo/example.env). For example, if set to `USER_UID=1000` and `USER_GID=1000`, run `chmod -R 1000:1000 ./data/forgejo.
+
+### Fastmail SMTP Not Working
+
+If you are attempting to configure SMTP with [Fastmail](https://fastmail.com), and you are using `smtp.fastmail.com:587` but getting timeouts when trying to send test emails, you might need to use the HTTPS proxy (`smtps-proxy.fastmail.com`).
+
+Set the following values in the [`env_files/forgejo/default.env`](./env_files/forgejo/example.env) file, using your real username, password/token, and FROM address(es):
+
+> [!NOTE]
+> For the `FORGEJO__mailer__FROM` address, you must own the address. You can use one of Fastmail's masked or custom addresses to obscure your real account in messages from Forgejo.
+
+```plaintext
+FORGEJO__mailer__ENABLED=true
+FORGEJO__mailer__PROTOCOL=smtps
+FORGEJO__mailer__SMTP_ADDR=smtps-proxy.fastmail.com
+FORGEJO__mailer__SMTP_PORT=443
+FORGEJO__mailer__USER=your-fastmail-username@fastmail.com
+## Account password or access token
+FORGEJO__mailer__PASSWD=<your fastmail app token>
+## Can be different from the username value above; you must own the address/alias
+FORGEJO__mailer__FROM=your-sender-address@fastmail.com
+
+```
+
+### Permission Errors
+
+If you get permission errors when using a host volume mount, i.e. `./data/forgejo`, especially during Forgejo's initial setup with the `gitea.db` file, you likely skipped running the [`./scripts/initial_setup.sh` script](./scripts/initial_setup.sh).
+
+Try fixing the container permissions:
+
+```shell
+## Stop the running containers
+docker compose down
+
+## Fix directory permissions
+sudo chown -R 1000:1000 ./data/forgejo
+
+## Restart container
+docker compose up -d
+```
 
 ## Links
 
