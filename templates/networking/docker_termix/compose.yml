@@ -8,7 +8,7 @@ volumes:
 
 services:
   termix:
-    image: ghcr.io/lukegus/termix:latest
+    image: ghcr.io/lukegus/termix:${TERMIX_IMG_TAG:-latest}
     container_name: termix
     restart: unless-stopped
     ports:
@@ -17,3 +17,5 @@ services:
       - ${TERMIX_DATA_DIR:-termix_data}:/app/data
     environment:
       PORT: 8080
+      OIDC_SILENT_LOGIN_DEFAULT: ${TERMIX_OIDC_SILENT_LOGIN_DEFAULT:-false}
+      ALLOW_PASSWORD_LOGIN: ${TERMIX_ALLOW_PASSWORD_LOGIN:-true}
