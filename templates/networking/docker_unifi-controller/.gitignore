@@ -1,4 +1,18 @@
 unifi/
 mongo/*
+config/*
+config/rsyslog.d/*
+rsyslog/*
+rsyslog/logs/*
 
+!config/
+!config/rsyslog.d/
+!config/examples/
+!config/logrotate/
+!rsyslog/
+!rsyslog/logs/
+
+!*example*.*
+!*.*example*
+!*.gitkeep
 !mongo/init-mongo.sh

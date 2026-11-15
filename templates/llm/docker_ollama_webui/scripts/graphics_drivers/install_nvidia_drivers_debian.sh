@@ -7,10 +7,13 @@ sudo apt update
 sudo apt install -y nvidia-driver-525 nvidia-dkms-525
 
 # Install NVIDIA Container Toolkit
-distribution=$(. /etc/os-release; echo $ID$VERSION_ID)
+distribution=$(
+  . /etc/os-release
+  echo $ID$VERSION_ID
+)
 curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
-curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
-    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+curl -s -L "https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list" |
+  sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
 # Update the package index again after adding the repository
 sudo apt update
@@ -26,19 +29,21 @@ echo "NVIDIA drivers installed. You must reboot the system to activate the drive
 
 # Prompt the user to reboot
 while true; do
-    read -p "Restart now (y/n)? " REBOOT_CHOICE
-    case "${REBOOT_CHOICE,,}" in
-        y|yes)
-            echo "Restarting machine."
-            sudo reboot
-            break
-            ;;
-        n|no)
-            echo "Skipping reboot."
-            exit 0
-            ;;
-        *)
-            echo "Invalid choice. Please enter 'y' or 'n'."
-            ;;
-    esac
+  read -r -n 1 -p "Restart now (y/n)? " REBOOT_CHOICE
+  echo
+
+  case "${REBOOT_CHOICE,,}" in
+  y | yes)
+    echo "Restarting machine."
+    sudo reboot
+    break
+    ;;
+  n | no)
+    echo "Skipping reboot."
+    exit 0
+    ;;
+  *)
+    echo "Invalid choice. Please enter 'y' or 'n'."
+    ;;
+  esac
 done

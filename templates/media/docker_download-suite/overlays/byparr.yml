@@ -1,0 +1,9 @@
+---
+services:
+  byparr:
+    image: ghcr.io/thephaseless/byparr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-Etc/UTC}
+      - PORT=8191
+      - LOG_LEVEL=${BYPARR_LOG_LEVEL:-info}

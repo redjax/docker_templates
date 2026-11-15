@@ -1,0 +1,17 @@
+---
+################################################################
+# Allows Chaptarr to connect to an external Postgres server    #
+#                                                              #
+# The databases (MainDb, LogDb, CacheDb) and user must already #
+# exist prior to running this.                                 #
+################################################################
+services:
+  chaptarr:
+    environment:
+      Chaptarr__Postgres__Host: ${PG_HOST:-postgres}
+      Chaptarr__Postgres__Port: ${PG_PORT:-5432}
+      Chaptarr__Postgres__User: ${PG_USER:-chaptarr}
+      Chaptarr__Postgres__Password: ${PG_PASSWORD:-chaptarr}
+      Chaptarr__Postgres__MainDb: ${PG_NAME:-chaptarr-main}
+      Chaptarr__Postgres__LogDb: ${PG_LOGDB_NAME:-chaptarr-log}
+      Chaptarr__Postgres__CacheDb: ${PG_CACHEDB_NAME:-chaptarr-cache}

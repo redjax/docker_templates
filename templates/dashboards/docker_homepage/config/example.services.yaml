@@ -1,0 +1,35 @@
+---
+#############################################
+# https://gethomepage.dev/configs/services/ #
+#############################################
+- Media:
+    - Jellyfin:
+        icon: jellyfin.png
+        href: "http://192.168.1.10:8086/"
+        description: Media server
+
+    - Sonarr:
+        icon: sonarr.png
+        href: "https://sonarr.example.com"
+        description: TV management
+        ping: "https://sonarr.example.com"
+
+- Applications:
+    - Paperless-ngx:
+        icon: paperless-ngx.png
+        href: "https://docs.example.com"
+        description: Document management"
+        ping: "https://docs.example.com"
+
+- Infrastructure:
+    - AdGuard Home:
+        icon: adguard-home.png
+        href: "http://192.168.1.5"
+        description: DNS and ad blocking
+        ping: "http://192.168.1.5"
+        ## Some services support widgets, i.e. ad blocking stats
+        widget:
+          type: adguard
+          url: http://192.168.1.5
+          username: admin
+          password: your-adguard-password

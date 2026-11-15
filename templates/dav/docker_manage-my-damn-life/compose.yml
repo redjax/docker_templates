@@ -1,0 +1,24 @@
+---
+name: manage-my-damn-life
+
+volumes:
+  mysql_data: {}
+
+services:
+  app:
+    image: intriin/mmdl:${MMDL_IMG_TAG:-v0.10.0}
+    restart: unless-stopped
+    ports:
+      - ${MMDL_WEBUI_PORT:-3000}:3000
+    environment:
+      NEXT_BASE_URL: ${MMDL_BASE_URL:-http://localhost}
+      NEXT_PUBLIC_DISABLE_USER_REGISTRATION: ${MMDL_DISABLE_REGISTRATION:-true}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      AES_PASSWORD: ${AES_PASSWORD:-}
+      NODE_OPTIONS: ${NODE_OPTIONS:-}
+      DB_DIALECT: ${DB_DIALECT:-}
+      DB_HOST: ${MYSQL_HOST:-}
+      DB_PORT: ${MYSQL_PORT:-}
+      DB_NAME: ${MYSQL_DATABASE:-}
+      DB_USER: ${MYSQL_USER:-}
+      DB_PASS: ${MYSQL_PASSWORD:-}

@@ -1,4 +1,6 @@
 .env
+*.local
+*.local.*
 
 apps/*
 apps/**
@@ -11,6 +13,10 @@ apps/radarr/*
 apps/readarr/*
 apps/sonarr/*
 apps/transmission/*
+apps/gluetun/*
+apps/gluetun/**/*
+apps/prowlarr/*
+apps/prowlarr/**/*
 scripts/*
 
 **/apps/bazarr/*
@@ -22,10 +28,15 @@ scripts/*
 **/apps/qbittorrent/*
 **/apps/transmission/*
 **/apps/couchpotato/*
+**/apps/prowlarr/*
+
+overlays/gluetun-networks.yml
 
 !apps/
 !apps/**/
 !apps/**/empty
+
+!scripts/manage-stack.sh
 
 !*example*.*
 !*.*example*

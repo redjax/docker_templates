@@ -1,7 +1,5 @@
 ---
-
 services:
-
   ## For exporting to Grafana
   radarr-exporter:
     image: ghcr.io/onedr0p/exportarr:latest
@@ -16,5 +14,3 @@ services:
       - ${EXPORTARR_RADARR_PORT:-9708}:9708
     depends_on:
       - radarr
-    networks:
-      - media-net

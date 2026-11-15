@@ -26,9 +26,3 @@ services:
       - ${MINIO_WEBUI_PORT:-9001}:9001
     volumes:
       - ${MINIO_DATA_DIR:-./data/minio}:/data
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: minio-watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock

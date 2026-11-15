@@ -1,0 +1,98 @@
+---
+## Anubis docs:
+#  https://anubis.techaro.lol/
+
+volumes:
+  anubis_data: {}
+
+configs:
+  anubis_policy:
+    content: |
+      # Evaluate protocol exceptions before the browser challenge.
+      bots:
+        ## Git smart HTTP: discovery, fetch/clone, and push.
+        #  Supports repository URLs with or without a .git suffix.
+        - name: forgejo-git-http
+          path_regex: '^/[^/]+/[^/]+/(info/refs|git-upload-pack|git-receive-pack)$$'
+          action: ALLOW
+
+        ## Git LFS API and object-transfer paths.
+        - name: forgejo-lfs
+          path_regex: '^/[^/]+/[^/]+/info/lfs(/|$$)'
+          action: ALLOW
+
+        ## Forgejo REST API, including Actions API operations.
+        - name: forgejo-api
+          path_regex: '^/api/'
+          action: ALLOW
+
+        ## Actions runner RPC and artifact-service endpoints.
+        - name: forgejo-actions-rpc
+          path_regex: '^/twirp/'
+          action: ALLOW
+
+        ## Challenge everything else, regardless of User-Agent.
+        - name: challenge-web
+          path_regex: '.*'
+          action: CHALLENGE
+          challenge:
+            algorithm: fast
+            difficulty: ${ANUBIS_DIFFICULTY:-4}
+
+      ## Retain challenge state across container restarts.
+      store:
+        backend: bbolt
+        parameters:
+          path: /data/anubis.bdb
+
+      ## Do not inject honeypot markup into Forgejo responses.
+      honeypot:
+        enabled: false
+
+services:
+  forgejo:
+    ## Replace the base port mappings.
+    ports: !override
+      - "127.0.0.1:${FORGEJO_LOCAL_HTTP_PORT:-3000}:3000"
+      - "${FORGEJO_SSH_PORT:-222}:22"
+
+  ## Prepare Anubis's dedicated named volume.
+  anubis-init:
+    image: alpine:${ANUBIS_INIT_IMG_TAG:-3.24}
+    user: "0:0"
+    restart: "no"
+    network_mode: none
+    volumes:
+      - ${ANUBIS_DATA_DIR:-anubis_data}:/data
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        chown 1000:1000 /data
+        chmod 700 /data
+
+  anubis:
+    image: ghcr.io/techarohq/anubis:${ANUBIS_IMG_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      BIND: ":8923"
+      TARGET: "http://forgejo:3000"
+      POLICY_FNAME: "/etc/anubis/policy.yaml"
+      COOKIE_SECURE: "true"
+      SLOG_LEVEL: "${ANUBIS_LOG_LEVEL:-INFO}"
+      ED25519_PRIVATE_KEY_HEX: "${ANUBIS_SIGNING_KEY:?Set ANUBIS_SIGNING_KEY in .env}"
+    configs:
+      - source: anubis_policy
+        target: /etc/anubis/policy.yaml
+    volumes:
+      - ${ANUBIS_DATA_DIR:-anubis_data}:/data
+    ports:
+      - "${ANUBIS_LOCAL_PORT:-127.0.0.1:8923}:8923"
+    networks:
+      - forgejo_net
+    depends_on:
+      forgejo:
+        condition: service_started
+      anubis-init:
+        condition: service_completed_successfully
+

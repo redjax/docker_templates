@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
@@ -44,21 +44,21 @@ services:
       - "${PHOTOPRISM_WEB_PORT:-2342}:2342" # [local port]:[container port]
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "${PHOTOPRISM_ADMIN_PASSWORD:-insecure}" # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000 # File size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "${PHOTOPRISM_DEBUG:-false}" # Run in debug mode (shows additional log messages)
-      PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
-      PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
-      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables using TensorFlow for image classification
+      PHOTOPRISM_PUBLIC: "false" # No authentication required (disables password protection)
+      PHOTOPRISM_READONLY: "false" # Don't modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false" # Enables experimental features
+      PHOTOPRISM_DISABLE_WEBDAV: "false" # Disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false" # Disables Settings in Web UI
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false" # Disables using TensorFlow for image classification
       PHOTOPRISM_DARKTABLE_PRESETS: "${PHOTOPRISM_DARKTABLE_PRESETS:-false}" # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
+      PHOTOPRISM_DETECT_NSFW: "false" # Flag photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true" # Allow uploads that MAY be offensive
       # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_DRIVER: "mysql" # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306" # MariaDB database server (hostname:port)
       PHOTOPRISM_DATABASE_NAME: "${PHOTOPRISM_DB_NAME:-photoprism}" # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "${PHOTOPRISM_DB_USER:-photoprism}" # MariaDB database user name
       PHOTOPRISM_DATABASE_PASSWORD: "${PHOTOPRISM_DB_PASSWORD:-insecure}" # MariaDB database user password
@@ -100,16 +100,3 @@ services:
       MYSQL_DATABASE: ${PHOTOPRISM_DB_NAME:-photoprism}
       MYSQL_USER: ${PHOTOPRISM_DB_USER:-photoprism}
       MYSQL_PASSWORD: ${PHOTOPRISM_DB_PASSWORD:-insecure}
-
-# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
-#
-#  watchtower:
-#    image: containrrr/watchtower
-#    container_name: watchtower
-#    restart: unless-stopped
-#    environment:
-#      WATCHTOWER_CLEANUP: "true"
-#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
-#    volumes:
-#      - "/var/run/docker.sock:/var/run/docker.sock"
-#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account

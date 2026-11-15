@@ -11,7 +11,7 @@ cd keys
 WORK_DIR="$PWD"
 _MSYSTEM="${MSYSTEM:=}"
 if [ "$_MSYSTEM" == "MINGW64" ]; then
-  WORK_DIR="$(cygpath -t windows $(pwd))"
+  WORK_DIR="$(cygpath -t windows "$(pwd)")"
 fi
 
 docker run --rm -v "$WORK_DIR/web":/keys concourse/concourse \

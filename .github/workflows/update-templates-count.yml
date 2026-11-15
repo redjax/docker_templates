@@ -9,22 +9,24 @@ on:
   workflow_dispatch:
   ## Scheduled trigger
   schedule:
-    - cron: "0 0,12 * * *"
+    - cron: "0 0 * * *"
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   count-templates:
-    if: ${{ ! startsWith(github.head_ref, 'fix/') && ! startsWith(github.head_ref, 'hotfix/') }}
+    name: Count templates and create PR if needed
     runs-on: ubuntu-latest
-
+    outputs:
+      pr_number: ${{ steps.create_pr.outputs.pull-request-number }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ## Checkout the incoming PR branch
-          ref: ${{ github.event.pull_request.head.ref }}
+          # ## Checkout the incoming PR branch
+          # ref: ${{ github.event.pull_request.head.ref }}
           persist-credentials: true
           ## Fetch all history for diffing
           fetch-depth: 0
@@ -48,16 +50,76 @@ jobs:
           uv run scripts/count_templates.py --update-all --log-level debug
 
       - name: Check for changes
+        id: changes
         run: |
           if [[ -n "$(git status --porcelain ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md)" ]]; then
-            echo "changes=true" >> $GITHUB_ENV
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push changes
-        if: env.changes == 'true'
+      - name: Commit and create PR if there are changes
+        id: create_pr
+        if: steps.changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update template metadata from GitHub Actions"
+          title: "Update template metadata and README"
+          body: |
+            Automated updates to template metadata and README:
+            - `./metadata/templates_count`
+            - `./metadata/templates.json`
+            - `./metadata/templates.csv`
+            - `./README.md`
+
+            Triggered by: ${{ github.event_name }}
+          branch: update-templates-${{ github.run_number }}-${{ github.run_id }}
+          base: main
+          add-paths: |
+            ./metadata/templates_count
+            ./metadata/templates.json
+            ./metadata/templates.csv
+            ./README.md
+          labels: automated,documentation
+          assignees: redjax
+
+  auto-merge-pr:
+    name: Auto-merge PR with template updates
+    runs-on: ubuntu-latest
+    needs: count-templates
+    if: needs.count-templates.outputs.pr_number != ''
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install GitHub CLI
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Auto-merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add ./metadata/templates_count ./metadata/templates.json ./metadata/templates.csv ./README.md
-          git commit -m "Update template metadata from GitHub Actions"
-          git push
+          gh pr merge ${{ needs.count-templates.outputs.pr_number }} --auto --squash
+
+      - name: Check if PR merged
+        id: pr-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          state=$(gh pr view ${{ needs.count-templates.outputs.pr_number }} --json state -q '.state')
+          if [ "$state" = "MERGED" ]; then
+            echo "merged=true" >> $GITHUB_OUTPUT
+          else
+            echo "merged=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Delete branch if PR merged successfully
+        if: steps.pr-status.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Deleting PR branch because merged successfully"
+          gh api -X DELETE repos/$GITHUB_REPOSITORY/git/refs/heads/${{ needs.count-templates.result.pr_branch }} || true  # ← Use PR branch name

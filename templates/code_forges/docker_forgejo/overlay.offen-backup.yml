@@ -1,0 +1,59 @@
+---
+services:
+  forgejo:
+    labels:
+      docker-volume-backup.stop-during-backup: "forgejo-data"
+
+  offen-backup:
+    image: offen/docker-volume-backup:${OFFEN_BACKUP_IMG_TAG:-v2}
+    restart: unless-stopped
+    environment:
+      ## Daily at 04:30 in the configured time zone.
+      TZ: "${OFFEN_BACKUP_TZ:-Etc/UTC}"
+      BACKUP_CRON_EXPRESSION: "${OFFEN_BACKUP_CRON:-30 4 * * *}"
+
+      ## Back up the application data mount inherited from Forgejo.
+      BACKUP_SOURCES: "/data"
+      BACKUP_COMPRESSION: "gz"
+      GZIP_PARALLELISM: "1"
+      BACKUP_FILENAME: "forgejo-%Y-%m-%dT%H-%M-%S.tar.gz"
+
+      ## Only stop containers carrying this matching label.
+      BACKUP_STOP_DURING_BACKUP_LABEL: "forgejo-data"
+
+      ## Do not run unrelated lifecycle hooks elsewhere on the Docker host.
+      EXEC_LABEL: "forgejo-backup"
+
+      ## S3-compatible object storage.
+      AWS_S3_BUCKET_NAME: "${OFFEN_BACKUP_S3_BUCKET:?Set OFFEN_BACKUP_S3_BUCKET}"
+      AWS_S3_PATH: "${OFFEN_BACKUP_S3_PREFIX:?Set OFFEN_BACKUP_S3_PREFIX}"
+      AWS_ENDPOINT: "${OFFEN_BACKUP_S3_ENDPOINT:?Set OFFEN_BACKUP_S3_ENDPOINT}"
+      AWS_ENDPOINT_PROTO: "https"
+      AWS_S3_BUCKET_LOOKUP: "${OFFEN_BACKUP_S3_BUCKET_LOOKUP:-auto}"
+      AWS_ACCESS_KEY_ID: "${OFFEN_BACKUP_S3_ACCESS_KEY_ID:?Set OFFEN_BACKUP_S3_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${OFFEN_BACKUP_S3_SECRET_ACCESS_KEY:?Set OFFEN_BACKUP_S3_SECRET_ACCESS_KEY}"
+
+      ## Client-side encryption. Keep a separate recovery copy of this password.
+      AGE_PASSPHRASE: "${OFFEN_BACKUP_AGE_PASSPHRASE:?Set OFFEN_BACKUP_AGE_PASSPHRASE}"
+
+      ## No retained local archive.
+      BACKUP_ARCHIVE: "/disabled-local-archive"
+
+      ## -1 disables pruning. Enable after testing upload and restore.
+      BACKUP_RETENTION_DAYS: "${OFFEN_BACKUP_RETENTION_DAYS:--1}"
+      BACKUP_PRUNING_PREFIX: "forgejo-"
+
+      ## Optional shoutrrr notification destination.
+      NOTIFICATION_URLS: "${OFFEN_BACKUP_NOTIFICATION_URLS:-}"
+      NOTIFICATION_LEVEL: "${OFFEN_BACKUP_NOTIFICATION_LEVEL:-error}"
+
+    ## Inherit Forgejo's mounts, including whichever source provides /data.
+    volumes_from:
+      - "forgejo:ro"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - forgejo_net
+    depends_on:
+      forgejo:
+        condition: service_started

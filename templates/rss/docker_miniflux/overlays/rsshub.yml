@@ -1,0 +1,27 @@
+---
+name: miniflux
+
+volumes:
+  redis-data: {}
+
+services:
+  rsshub:
+    image: diygod/rsshub:chromium-bundled
+    restart: unless-stopped
+    ports:
+      - ${RSSHUB_PORT:-1200}:1200
+    environment:
+      NODE_ENV: production
+      CACHE_TYPE: redis
+      REDIS_URL: redis://redis:6379/
+
+      GITHUB_ACCESS_TOKEN: ${GITHUB_ACCESS_TOKEN:-}
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - ${RSSHUB_REDIS_DATA_DIR:-redis-data}:/data
+

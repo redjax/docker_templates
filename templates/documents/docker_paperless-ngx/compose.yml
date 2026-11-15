@@ -47,21 +47,17 @@ volumes:
 
 services:
 
-#   watchtower:
-#     container_name: watchtower
-#     image: contairrr/watchtower
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock
-
   broker:
-    image: redis:6.0
+    image: redis:${REDIS_IMG_TAG:-latest}
     container_name: paperless-redis
     restart: unless-stopped
     networks:
       - paperless_backend
+    cpus: ${REDIS_MAX_CPU:-0.25}
+    mem_limit: ${REDIS_MEM_LIMIT:-256m}
 
   db:
-    image: postgres:13
+    image: postgres:${PG_IMG_TAG:-16}
     container_name: paperless-db
     restart: unless-stopped
     volumes:
@@ -72,9 +68,11 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD:-paperless}
     networks:
       - paperless_backend
+    cpus: ${PG_MAX_CPU:-1}
+    mem_limit: ${PG_MEM_LIMIT:-512m}
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: ghcr.io/paperless-ngx/paperless-ngx:${PAPERLESS_IMG_TAG:-latest}
     container_name: paperless-server
     restart: unless-stopped
     depends_on:
@@ -102,15 +100,27 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
       PAPERLESS_TIKA_ENABLED: 1
-      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000/forms/libreoffice/convert#
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_URL: ${PAPERLESS_SERVER_URL}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+
+      ## OIDC auth (i.e. Authentik)
+      PAPERLESS_APPS: "${PAPERLESS_OIDC_ENABLED:+allauth.socialaccount.providers.openid_connect}"
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >-
+        {"openid_connect":{"OAUTH_PKCE_ENABLED":true,"APPS":[{"provider_id":"authentik","name":"Authentik","client_id":"${PAPERLESS_OIDC_CLIENT_ID}","secret":"${PAPERLESS_OIDC_CLIENT_SECRET}","settings":{"server_url":"${PAPERLESS_OIDC_BASE_URL}/application/o/${PAPERLESS_OIDC_SLUG}/.well-known/openid-configuration","fetch_userinfo":true}}],"SCOPE":["openid","profile","email"]}}
+
+      PAPERLESS_SOCIAL_AUTO_SIGNUP: "${PAPERLESS_OIDC_AUTO_SIGNUP:-false}"
+      PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: "${PAPERLESS_OIDC_ALLOW_SIGNUPS:-false}"
+      PAPERLESS_LOGOUT_REDIRECT_URL: "${PAPERLESS_OIDC_LOGOUT_URL:-}"
     networks:
       - paperless_frontend
       - paperless_backend
+    cpus: ${PAPERLESS_MAX_CPU:-2}
+    mem_limit: ${PAPERLESS_MEM_LIMIT:-2g}
 
   gotenberg:
-    image: thecodingmachine/gotenberg:6
+    image: thecodingmachine/gotenberg:${GOTENBERG_IMG_TAG:-latest}
     container_name: paperless-gotenberg
     restart: unless-stopped
     # The gotenberg chromium route is used to convert .eml files. We do not
@@ -120,18 +130,22 @@ services:
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
     ports:
-      - 3000:3000
+      - ${GOTENBERG_PORT:-3000}:3000
     environment:
       DISABLE_GOOGLE_CHROME: 1
     networks:
       - paperless_backend
+    cpus: ${GOTENBERG_MAX_CPU:-1}
+    mem_limit: ${GOTENBERG_MEM_LIMIT:-2g}
 
   tika:
     ## Non-amd64 arch, i.e. RPi or VM
     # image: abhilesh7/apache-tika-arm
     ## amd64 arch
-    image: apache/tika:1.27
+    image: apache/tika:${TIKA_IMG_TAG:-3.3.0.0-full}
     container_name: paperless-tika
     restart: unless-stopped
     networks:
       - paperless_backend
+    cpus: ${TIKA_MAX_CPU:-1}
+    mem_limit: ${TIKA_MEM_LIMIT:-512m}

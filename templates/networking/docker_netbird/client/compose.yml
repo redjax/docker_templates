@@ -1,0 +1,27 @@
+---
+name: netbird-client
+
+volumes:
+  client_data: {}
+
+services:
+  netbird-client:
+    image: netbirdio/netbird:latest
+    container_name: netbird-client
+    network_mode: host
+    privileged: true
+    hostname: ${NETBIRD_CLIENT_HOSTNAME:-}
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    environment:
+      NB_SETUP_KEY: ${NETBIRD_CLIENT_SETUP_KEY:-}
+      NB_MANAGEMENT_URL: ${NETBIRD_CLIENT_SERVER_URL:-}
+      NB_ALLOW_SERVER_SSH: ${NETBIRD_ENABLE_SSH:-false}
+    volumes:
+      - ${NETBIRD_CLIENT_DATA_DIR:-client_data}:/var/lib/netbird
+    devices:
+      - /dev/net/tun:/dev/net/tun
+

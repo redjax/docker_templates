@@ -1,0 +1,163 @@
+---
+name: librenms
+
+volumes:
+  librenms_data: {}
+  db_data: {}
+
+services:
+  db:
+    image: mariadb:10
+    container_name: librenms_db
+    restart: unless-stopped
+    command:
+      - "mysqld"
+      - "--innodb-file-per-table=1"
+      - "--lower-case-table-names=0"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    volumes:
+      - ${DB_DATA_DIR:-db_data}:/var/lib/mysql
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-librenms}
+      MYSQL_USER: ${MYSQL_USER:-librenms}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-librenms}
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: librenms_redis
+    restart: unless-stopped
+    environment:
+      - "TZ=${TZ:-Etc/UTC}"
+
+  msmtpd:
+    image: crazymax/msmtpd:latest
+    container_name: librenms_msmtpd
+    restart: always
+    env_file:
+      - ./env_files/msmtpd.env
+
+  librenms:
+    image: librenms/librenms:latest
+    container_name: librenms
+    hostname: librenms
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    ports:
+      - target: 8000
+        published: ${LIBRENMS_HTTP_PORT:-8000}
+        protocol: tcp
+    depends_on:
+      - db
+      - redis
+      - msmtpd
+    volumes:
+      - ${LIBRENMS_DATA_DIR:-librenms_data}:/data"
+    env_file:
+      - "./env_files/librenms.env"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      DB_HOST: ${DB_HOST:-db}
+      DB_NAME: ${MYSQL_DATABASE:-librenms}
+      DB_USER: ${MYSQL_USER:-librenms}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-librenms}
+      DB_TIMEOUT: 60
+
+  dispatcher:
+    image: librenms/librenms:latest
+    container_name: librenms_dispatcher
+    hostname: librenms-dispatcher
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    depends_on:
+      - librenms
+      - redis
+    volumes:
+      - ${LIBRENMS_DATA_DIR:-librenms_data}:/data
+    env_file:
+      - "./env_files/librenms.env"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      DB_HOST: ${DB_HOST:-db}
+      DB_NAME: ${MYSQL_DATABASE:-librenms}
+      DB_USER: ${MYSQL_USER:-librenms}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-librenms}
+      DB_TIMEOUT: 60
+      DISPATCHER_NODE_ID: dispatcher1
+      SIDECAR_DISPATCHER: 1
+
+  syslogng:
+    image: librenms/librenms:latest
+    container_name: librenms_syslogng
+    hostname: librenms-syslogng
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    depends_on:
+      - librenms
+      - redis
+    ports:
+      - target: 514
+        published: ${SYSLOGGING_TCP_PORT:-514}
+        protocol: tcp
+      - target: 514
+        published: ${SYSLOGGING_UDP_PORT:-514}
+        protocol: udp
+    volumes:
+      - ${LIBRENMS_DATA_DIR:-librenms_data}:/data
+    env_file:
+      - "./env_files/librenms.env"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      DB_HOST: ${DB_HOST:-db}
+      DB_NAME: ${MYSQL_DATABASE:-librenms}
+      DB_USER: ${MYSQL_USER:-librenms}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-librenms}
+      DB_TIMEOUT: 60
+      SIDECAR_SYSLOGNG: 1
+
+  snmptrapd:
+    image: librenms/librenms:latest
+    container_name: librenms_snmptrapd
+    hostname: librenms-snmptrapd
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    depends_on:
+      - librenms
+      - redis
+    ports:
+      - target: 162
+        published: ${SNMPTRAPD_TCP_PORT:-162}
+        protocol: tcp
+      - target: 162
+        published: ${SNMPTRAPD_UDP_PORT:-162}
+        protocol: udp
+    volumes:
+      - ${LIBRENMS_DATA_DIR:-librenms_data}:/data
+    env_file:
+      - "./env_files/librenms.env"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      DB_HOST: ${DB_HOST:-db}
+      DB_NAME: ${MYSQL_DATABASE:-librenms}
+      DB_USER: ${MYSQL_USER:-librenms}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-librenms}
+      DB_TIMEOUT: 60
+      SIDECAR_SNMPTRAPD: 1

@@ -2,7 +2,8 @@
 
 ## Get user password before running container.
 #  Hide password input with -s
-read -s -p "Password to encrypt: " USER_PASSWORD
+read -r -s -p "Password to encrypt: " USER_PASSWORD
+echo
 
 echo "Hashing password with wg-easy container"
 docker run -it ghcr.io/wg-easy/wg-easy wgpw "${USER_PASSWORD}"

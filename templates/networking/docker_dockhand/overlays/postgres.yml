@@ -1,0 +1,22 @@
+---
+name: dockhand
+
+volumes:
+  postgres_data: {}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dockhand
+      POSTGRES_PASSWORD: ${DOCKHAND_DB_PASSWORD:-changeme}
+      POSTGRES_DB: dockhand
+    volumes:
+      - ${DOCKHAND_DB_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
+
+  dockhand:
+    environment:
+      DATABASE_URL: postgres://dockhand:${DOCKHAND_DB_PASSWORD:-changeme}:5432/dockhand
+    depends_on:
+      - postgres

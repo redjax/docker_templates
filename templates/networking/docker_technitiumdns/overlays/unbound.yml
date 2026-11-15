@@ -1,0 +1,57 @@
+---
+name: technitium
+
+networks:
+  technitium_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
+
+volumes:
+  unbound_redis_data:
+  unbound_config:
+
+services:
+  technitium-dns:
+    environment:
+      DNS_SERVER_FORWARDERS: ${TECHNITIUM_DNS_FORWARDERS:-"172.25.0.10:53,1.1.1.1,1.0.0.1"}
+    networks:
+      - technitium_net
+    depends_on:
+      - unbound
+
+  redis:
+    image: redis:latest
+    container_name: unbound_redis
+    restart: unless-stopped
+    volumes:
+      - unbound_redis_data:/data
+    networks:
+      - technitium_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  unbound:
+    image: klutchell/unbound
+    container_name: unbound
+    restart: unless-stopped
+    command: ["unbound", "-d"]
+    depends_on:
+      - redis
+    volumes:
+      - ${UNBOUND_CONFIG_DIR:-./unbound/config.d}:/etc/unbound/custom.conf.d:ro
+    networks:
+      technitium_net:
+        ipv4_address: 172.25.0.10
+    ports:
+      - ${UNBOUND_DNS_PORT:-533}:53/udp
+      - ${UNBOUND_DNS_PORT:-533}:53/tcp
+    healthcheck:
+      test: ["CMD", "dig", "@127.0.0.1", "google.com"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

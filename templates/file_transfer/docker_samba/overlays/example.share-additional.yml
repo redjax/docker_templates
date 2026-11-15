@@ -1,0 +1,31 @@
+---
+name: samba
+
+###########################################################
+# Example of an additional SMB share overlay.             #
+# The default behavior for the compose file is            #
+# to create a 'shared' share and assign user              #
+# access using the SAMBA_VOLUME_CONFIG_shared             #
+# env var.                                                #
+#                                                         #
+# You can create additional shares with overlay           #
+# files, and add them to the stack like:                  #
+#   docker compose -f compose.yml -f overlays/share-2.yml #
+###########################################################
+
+services:
+  samba:
+    ## Create an env file just for this overlay.
+    #  The values are merged with the root smb.env,
+    #  so you do not need to redefine users, just
+    #  environment values for this share.
+    env_file:
+      - envs/share.sharename.env
+    environment:
+      SAMBA_VOLUME_CONFIG_sharename: |
+        [sharename]
+        path = /shares/sharename
+        valid users = sambaUsername
+
+    volumes:
+      - ${SAMBA_SHARE_sharename_DIR:-/srv/sharename}

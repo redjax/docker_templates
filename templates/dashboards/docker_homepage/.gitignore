@@ -1,0 +1,8 @@
+config/*
+logs/*
+*.log
+*.log.*
+
+!config/
+!*example*.*
+!*.*example*

@@ -1,7 +1,5 @@
 ---
-
 services:
-
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent
     container_name: qbittorrent
@@ -17,5 +15,3 @@ services:
       - ${QBITTORRENT_DOWNLOAD_DIR:-./apps/qbittorrent/downloads}:/downloads
     depends_on:
       - vpn
-    networks:
-      - media-net

@@ -1,0 +1,28 @@
+---
+name: freshrss
+
+volumes:
+  postgres-data: {}
+
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-freshrss}
+      POSTGRES_USER: ${POSTGRES_USER:-freshrss}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-freshrss}
+    volumes:
+      - ${POSTGRES_DATA_DIR:-postgres-data}:/var/lib/postgresql/data
+
+  freshrss:
+    depends_on:
+      - postgres
+    environment:
+      DB_TYPE: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_BASE: ${POSTGRES_DB:-freshrss}
+      DB_USER: ${POSTGRES_USER:-freshrss}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-freshrss}
+

@@ -1,0 +1,29 @@
+---
+networks:
+  linkora_net: {}
+
+volumes:
+  db_data: {}
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: linkora-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LINKORA_DB_ROOT_PASSWORD:-linkoraRoot}
+      MYSQL_DATABASE: ${LINKORA_DB_DATABASE:-linkora}
+      MYSQL_USER: ${LINKORA_DB_USER:-linkora}
+      MYSQL_PASSWORD: ${LINKORA_DB_PASSWORD:-linkora}
+    # ports:
+    # ${LINKORA_DB_PORT:-3306}:3306
+    expose:
+      - 3306
+    volumes:
+      - ${LINKORA_DB_DIR:-db_data}:/var/lib/mysql
+    networks:
+      - linkora_net
+
+  linkora-sync-server:
+    networks:
+      - linkora_net

@@ -1,0 +1,34 @@
+---
+name: ${STACK_NAME:-semaphore}
+
+networks:
+  semaphore_net: {}
+
+volumes:
+  semaphore_mysql: {}
+
+services:
+  semaphore:
+    environment:
+      SEMAPHORE_DB_HOST: mysql
+      SEMAPHORE_DB_PORT: 3306
+      SEMAPHORE_DB_DIALECT: mysql
+    networks:
+      - semaphore_net
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:${SEMAPHORE_MYSQL_CONTAINER_VER:-8.0}
+    container_name: semaphore_mysql_db
+    restart: unless-stopped
+    hostname: mysql
+    volumes:
+      - ${SEMAPHORE_MYSQL_DATA_DIR:-semaphore_mysql}:/var/lib/mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: ${SEMAPHORE_MYSQL_RANDOM_ROOT_PASSWORD:-'yes'}
+      MYSQL_DATABASE: ${SEMAPHORE_DB_DATABASE:-semaphore}
+      MYSQL_USER: ${SEMAPHORE_DB_USER:-semaphore}
+      MYSQL_PASSWORD: ${SEMAPHORE_DB_PASSWORD:-semaphore}
+    networks:
+      - semaphore_net

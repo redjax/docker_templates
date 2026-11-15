@@ -1,0 +1,24 @@
+volumes:
+  mc-data: {}
+
+services:
+  mc-server:
+    image: itzg/minecraft-server
+    container_name: ${MC_SERVER_CONTAINER_NAME:-mc-server_cobbleverse}
+    ports:
+      - ${MC_SERVER_PORT:-25565}:25565
+    environment:
+      EULA: "true"
+      MODPACK_PLATFORM: MODRINTH
+      MODRINTH_DOWNLOAD_DEPENDENCIES: optional
+      MEMORY: ${MC_SERVER_MEMORY:-4}G
+      MODRINTH_MODPACK: https://modrinth.com/modpack/cobbleverse/version/1.7.2
+      PVP: ${MC_SERV_PVP:-true}
+      ONLINE_MODE: ${MC_SERV_ONLINE_MODE:-true}
+      WHITELIST_ENABLED: ${MC_SERVER_WHITELIST_ENABLE:-false}
+      OVERRIDE_WHITELIST: true
+      WHITELIST: ${MC_SERVER_WHITELISTED_PLAYERS}
+      OPS: ${MC_SERVER_OPERATORS}
+    volumes:
+      - ${MC_SERVER_DATA_DIR:-mc-data}:/data
+      - ${MC_MODS_DIR:-./extra_mods}:/mods:ro

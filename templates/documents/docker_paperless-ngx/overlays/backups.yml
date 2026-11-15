@@ -1,0 +1,41 @@
+---
+services:
+  webserver:
+    labels:
+      nautical-backup.enable: "true"
+      nautical-backup.group: "paperless"
+      nautical-backup.stop-before-backup: "true"
+      nautical-backup.stop-timeout: "60"
+      nautical-backup.start-timeout: "120"
+
+  db:
+    labels:
+      nautical-backup.enable: "true"
+      nautical-backup.group: "paperless"
+      nautical-backup.stop-before-backup: "true"
+      nautical-backup.stop-timeout: "60"
+      nautical-backup.start-timeout: "120"
+
+  nautical-backup:
+    image: minituff/nautical-backup:${NAUTICAL_IMG_TAG:-2.25.14}
+    container_name: paperless-nautical-backup
+    restart: unless-stopped
+
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      CRON_SCHEDULE: "${NAUTICAL_CRON_SCHEDULE:-0 4 * * *}"
+      REQUIRE_LABEL: "true"
+      STOP_TIMEOUT: "${NAUTICAL_STOP_TIMEOUT:-60}"
+      START_TIMEOUT: "${NAUTICAL_START_TIMEOUT:-60}"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${NAUTICAL_CONFIG_DIR:-./data/nautical/config}:/config
+      - ${NAUTICAL_BACKUPS_DIR:-./data/nautical/backups}:/app/destination
+
+      # PostgreSQL
+      - ${PG_DATA_DIR:-./data/postgres/data}:/app/source/paperless-db:ro
+
+      # Paperless configuration and documents
+      - ${PAPERLESS_DATA_DIR:-./data/paperless/data}:/app/source/paperless-server/data:ro
+      - ${PAPERLESS_MEDIA_DIR:-./data/paperless/media}:/app/source/paperless-server/media:ro

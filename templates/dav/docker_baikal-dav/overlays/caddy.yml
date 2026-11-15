@@ -1,0 +1,28 @@
+---
+###########################################################
+# Proxy Baikal from a Caddy server.                       #
+#                                                         #
+# Useful if pointing a domain name directly at the server #
+# running Baikal.                                         #
+#                                                         #
+# Caddy handles HTTPS for the server in this scenario.    #
+###########################################################
+
+name: baikal
+
+services:
+  caddy:
+    image: caddy:${CADDY_IMG_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - ${BAIKAL_CADDY_HTTP_PORT:-80}:80
+      - ${BAIKAL_CADDY_HTTPS_PORT:-443}:443
+
+    volumes:
+      - ${CADDY_CADDYFILE:-./caddy/Caddyfile}:/etc/caddy/Caddyfile
+      - ${CADDY_DATA_DIR:-./caddy/data}:/data
+      - ${CADDY_CONFIG_DIR:-./caddy/config}:/config
+
+  baikal:
+    expose:
+      - 80

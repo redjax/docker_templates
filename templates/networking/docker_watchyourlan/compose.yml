@@ -1,0 +1,17 @@
+---
+name: watchyourlan
+
+volumes:
+  watchyourlan_data:
+
+services:
+  watchyourlan:
+    image: aceberg/watchyourlan:v2
+    container_name: watchyourlan
+    restart: unless-stopped
+    environment:
+      IFACES: ${WYL_IFACES:-enp2s0}
+      TZ: ${TZ:-Etc/UTC}
+    network_mode: "host"
+    volumes:
+      - ${WYL_DATA_DIR:-watchyourlan_data}:/data/WatchYourLAN

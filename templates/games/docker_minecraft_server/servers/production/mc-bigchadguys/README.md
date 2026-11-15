@@ -17,6 +17,7 @@ You will also need to download the following on both the server and your client:
 - [FTB Chunks(Fabric)](https://www.curseforge.com/minecraft/mc-mods/ftb-chunks-fabric/download/5378089)
 - [BCG Util](https://www.curseforge.com/minecraft/mc-mods/bcg-util/download/5359973)
 - [Cobblemon Quests](https://www.curseforge.com/minecraft/mc-mods/cobblemon-quests/download/5640002)
+- [Iris Shaders](https://modrinth.com/mod/iris?version=1.20.1&loader=fabric)
 
 ## Cobblemon Commands
 

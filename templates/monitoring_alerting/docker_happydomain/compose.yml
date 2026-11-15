@@ -1,0 +1,88 @@
+---
+#####################################################################################################
+# Compose file lifted from the happydomain.org docs:                                                #
+# https://help.happydomain.org/en/introduction/deploy/docker/#recommended-deployment-docker-compose #
+#####################################################################################################
+
+name: happydomain
+
+volumes:
+  storage:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${HAPPYDOMAIN_SUBNET:-172.28.0.0/24}
+
+configs:
+  unbound_conf:
+    content: |
+      server:
+          verbosity: 1
+          interface: 0.0.0.0
+          port: 53
+          do-ip4: yes
+          do-ip6: no
+          do-udp: yes
+          do-tcp: yes
+
+          access-control: 127.0.0.0/8 allow
+          access-control: ${HAPPYDOMAIN_SUBNET:-172.28.0.0/24} allow
+
+          cache-max-ttl: 60
+
+          so-sndbuf: 0
+          so-rcvbuf: 0
+
+          trust-anchor-file: "/etc/unbound/root.key"
+
+services:
+  happydomain:
+    image: happydomain/happydomain:${HAPPYDOMAIN_IMG_TAG:-latest}
+    restart: unless-stopped
+    dns:
+      - ${HAPPYDOMAIN_DNS_IP:-172.28.0.53}
+    ports:
+      - ${HAPPYDOMAIN_HTTP_PORT:-8080}:8081
+    environment:
+      HAPPYDOMAIN_NO_AUTH: ${HAPPYDOMAIN_NO_AUTH:-}
+      HAPPYDOMAIN_MAIL_SMTP_HOST: ${HAPPYDOMAIN_MAIL_SMTP_HOST:-}
+
+      HAPPYDOMAIN_CHECKER_DNSVIZ_ENDPOINT: "http://dnsviz:8080"
+      HAPPYDOMAIN_CHECKER_ZONEMASTER_ZONEMASTERAPIURL: "http://zonemaster:5000"
+      HAPPYDOMAIN_CHECKER_MATRIXIM_FEDERATIONTESTERSERVER: "http://matrixfederationtester:8080/api/report?server_name=%s"
+
+    volumes:
+      - ${HAPPYDOMAIN_DATA_DIR:-storage}:/data:rw
+
+  ## Local recursive resolver, so DNS checks don't rely on a third-party resolver
+  unbound:
+    image: alpinelinux/unbound
+    restart: unless-stopped
+    configs:
+      - source: unbound_conf
+        target: /etc/unbound/unbound.conf
+        uid: "100"
+        gid: "101"
+    networks:
+      default:
+        ipv4_address: ${HAPPYDOMAIN_DNS_IP:-172.28.0.53}
+
+  ## DNSViz analysis backend, used by the DNSSEC visualisation checker
+  dnsviz:
+    image: happydomain/checker-dnsviz
+    restart: unless-stopped
+
+  ## Zonemaster backend, used by the Zonemaster checker
+  zonemaster:
+    image: zonemaster/backend
+    command: full
+    restart: unless-stopped
+
+  ## Matrix federation tester, used by the Matrix checker
+  matrixfederationtester:
+    image: matrixdotorg/federation-tester-backend
+    environment:
+      BIND_ADDRESS: "0.0.0.0:8080"
+    restart: unless-stopped

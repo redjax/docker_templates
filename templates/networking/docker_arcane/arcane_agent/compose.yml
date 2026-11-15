@@ -1,0 +1,24 @@
+---
+##############################################################################
+# Run this compose.yml with one of the network layers in overlays/.          #
+#                                                                            #
+# You must use at most 1 layer, either direct.yml or edge.yml.               #
+# Add to the docker compose command with -f compose.yml -f [direct|edge].yml #
+##############################################################################
+
+name: arcane-agent
+
+volumes:
+  agent-data: {}
+
+services:
+  arcane-agent:
+    image: "ghcr.io/getarcaneapp/agent:${ARCANE_IMG_TAG:-latest}"
+    restart: unless-stopped
+    environment:
+      AGENT_TOKEN: "${ARCANE_AGENT_TOKEN:?Set ARCANE_AGENT_TOKEN in .env}"
+      MANAGER_API_URL: "${ARCANE_MANAGER_URL:?Set ARCANE_MANAGER_URL in .env}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ARCANE_AGENT_DATA_DIR:-agent-data}:/app/data
+      - "${ARCANE_PROJECTS_DIRECTORY:-/opt/docker}:${ARCANE_PROJECTS_DIRECTORY:-/opt/docker}"

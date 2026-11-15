@@ -1,0 +1,26 @@
+---
+name: samba
+
+services:
+  samba:
+    image: ghcr.io/servercontainers/samba:${SAMBA_IMG_TAG:-latest}
+    container_name: samba
+    restart: unless-stopped
+    network_mode: host
+
+    env_file:
+      - envs/smb.env
+
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      SAMBA_VOLUME_CONFIG_shared: |
+        [shared]
+          path = /shares/shared
+          browseable = yes
+          read only = ${SAMBA_SHARE_shared_READONLY:-no}
+          guest ok = ${SAMBA_SHARE_shared_GUESTOK:-no}
+          valid users = ${SAMBA_SHARED_shared_VALIDUSERS:-}
+          force user = root
+    volumes:
+      - ${SAMBA_SHARED_DIR:-/srv/shares}:/shares
+

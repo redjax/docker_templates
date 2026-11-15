@@ -12,23 +12,23 @@ BACKUP_CONTAINER="vrising_backup_container"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 ## Check if docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Docker is not installed, exiting..."
-    exit 1
+if ! command -v docker &>/dev/null; then
+  echo "Docker is not installed, exiting..."
+  exit 1
 fi
 
 ## Check if critical volumes exist (exit if missing)
 for volume in "$GAME_VOLUME" "$PERSISTENTDATA_VOLUME" "$CONFIG_VOLUME"; do
-    if ! docker volume inspect "$volume" &> /dev/null; then
-        echo "Error: Docker volume '$volume' does not exist."
-        exit 1
-    fi
+  if ! docker volume inspect "$volume" &>/dev/null; then
+    echo "Error: Docker volume '$volume' does not exist."
+    exit 1
+  fi
 done
 
 ## Check if backup volume exists; create it if missing (optional)
-if ! docker volume inspect "$BACKUP_VOLUME" &> /dev/null; then
-    echo "Warning: Backup volume '$BACKUP_VOLUME' does not exist. Creating it now..."
-    docker volume create "$BACKUP_VOLUME"
+if ! docker volume inspect "$BACKUP_VOLUME" &>/dev/null; then
+  echo "Warning: Backup volume '$BACKUP_VOLUME' does not exist. Creating it now..."
+  docker volume create "$BACKUP_VOLUME"
 fi
 
 ## Remove any existing backup container
@@ -38,12 +38,12 @@ docker rm -f "$BACKUP_CONTAINER" 2>/dev/null || true
 ## Start backup container with correct volume mounts
 echo "Starting backup container..."
 docker run -d --name "$BACKUP_CONTAINER" \
-    -v "${GAME_VOLUME}:/mnt/vrising/server:ro" \
-    -v "${CONFIG_VOLUME}:/mnt/vrising/server/VRisingServer_Data:ro" \
-    -v "${PERSISTENTDATA_VOLUME}:/mnt/vrising/persistentdata:ro" \
-    -v "${BACKUP_VOLUME}:/backup" \
-    -v "${LOCAL_BACKUP_PATH}:/local_backup" \
-    alpine sleep infinity
+  -v "${GAME_VOLUME}:/mnt/vrising/server:ro" \
+  -v "${CONFIG_VOLUME}:/mnt/vrising/server/VRisingServer_Data:ro" \
+  -v "${PERSISTENTDATA_VOLUME}:/mnt/vrising/persistentdata:ro" \
+  -v "${BACKUP_VOLUME}:/backup" \
+  -v "${LOCAL_BACKUP_PATH}:/local_backup" \
+  alpine sleep infinity
 
 ## Wait a few seconds to ensure container is up
 sleep 3

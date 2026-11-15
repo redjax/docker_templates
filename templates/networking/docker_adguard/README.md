@@ -1,4 +1,4 @@
-# Adguard Home <!-- omt in toc -->
+# Adguard Home <!-- omit in toc -->
 
 Adblocking & DNS server.
 
@@ -6,11 +6,68 @@ Adblocking & DNS server.
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Adguard Home ](#adguard-home-)
-  - [Troubleshooting](#troubleshooting)
-    - [Fix 'failed to bind port 0.0.0.0:53/tcp'](#fix-failed-to-bind-port-000053tcp)
-    - [Use AdGuard Home for DNS on the host running the container](#use-adguard-home-for-dns-on-the-host-running-the-container)
-      - [Additional notes and recommendations](#additional-notes-and-recommendations)
+- [Setup](#setup)
+  - [Adguard Home](#adguard-home)
+  - [Adguard + Unbound](#adguard--unbound)
+  - [AdGuard Encryption](#adguard-encryption)
+- [Troubleshooting](#troubleshooting)
+  - [Fix 'failed to bind port 0.0.0.0:53/tcp'](#fix-failed-to-bind-port-000053tcp)
+  - [Use AdGuard Home for DNS on the host running the container](#use-adguard-home-for-dns-on-the-host-running-the-container)
+    - [Additional notes and recommendations](#additional-notes-and-recommendations)
+- [Links](#links)
+
+## Setup
+
+### Adguard Home
+
+### Adguard + Unbound
+
+[Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) is "a validating, recursive, caching DNS resolver." It speeds up requests on your network by skipping your ISP's DNS resolver wherever possible, instead using its local DNS cache built up over time as you use your network. The cache can take some time to grow, but requests on your network will be faster after setting up Unbound.
+
+It also enhances privacy; when you search for a domain like `www.github.com`, Unbound performs the reverse DNS lookup before reaching out to the Internet, and if it's able to resolve the request, allows you to bypass your ISP's DNS provider, enhancing speed, privacy, and security.
+
+To use Unbound with this Adguard container, start the stack with:
+
+```shell
+docker compose -f compose.yml -f overlays/unbound.yml up -d
+```
+
+This will handle creating an internal network for AdGuard Home, Unbound DNS, and a Redis cache for Unbound to use. Once all the containers are online, log into AdGuard and go to Settings -> DNS Settings. Add this to the DNS upstream text box:
+
+```
+## This should match the unbound container's IP in the networks: declaration of the overlays/unbound.yml
+172.25.0.10:53:5335
+```
+
+[!NOTE]
+> If your unbound server is on another machine, use that machine's IP address instead.
+
+### AdGuard Encryption
+
+AdGuard supports DNS encryption, i.e. HTTPS/QUIC/TLS, for both DNS and the admin webUI. Navigate to Settings > Encryption to enable it.
+
+When enabling encryption, you must provide a `.crt` and `.key` file and expose additional ports. Generate a certificate using the [`generate-encryption-secrets.sh` script](./scripts/generate-encryption-secrets.sh), or with:
+
+```shell
+openssl req \
+  -x509 \
+  -nodes \
+  -newkey rsa:2048 \
+  -days 3650 \
+  -keyout "/path/to/keyfile.key" \
+  -out "/path/to/certfile.crt" \
+  -subj "/CN=example.com" \
+  -addext "subjectAltName=DNS:example.com"
+
+chmod 600 "/path/to/certfile.crt"
+chmod 644 "/path/to/keyfile.key"
+```
+
+Edit the [`.env` file](./.env.example) and set the paths to your `.crt` and `.key` file in `ADGUARD_CERT_FILE` and `ADGUARD_CERT_KEY`. Run the container with the [`encryption.yml` overlay](./overlays/encryption.yml) to mount the certificate and key and expose the required ports:
+
+```shell
+docker compose -f compose.yml -f overlays/encryption.yml up -d
+```
 
 ## Troubleshooting
 
@@ -78,3 +135,12 @@ DNSStubListener=no
 - Confirm that the AdGuard Home container is configured to listen on `127.0.0.1:53` or all interfaces so it can accept DNS queries from the host.
 - The fallback DNS `1.1.1.1` will be used only if AdGuard Home does not respond.
 - Using a drop-in config file is recommended for easier maintenance and rollback.
+
+## Links
+
+- [Docker Hub: Adguard Home](https://hub.docker.com/r/adguard/adguardhome)
+- [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/)
+- [Github: klutchell/unbound-docker](https://github.com/klutchell/unbound-docker)
+- [Blog: How to run AdGuard Home with Unbound (Docker)](https://deliberate.world/posts/docker-how-to-run-adguard-home-with-unbound/)
+- [Dev.to: How to use Unbound with AdGuard Home](https://dev.to/nullangst/how-to-use-unbound-with-adguard-home-1o5n)
+- 

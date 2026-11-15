@@ -1,0 +1,3 @@
+## Ignore rclone config & password
+[.]rclone.pass
+rclone.conf

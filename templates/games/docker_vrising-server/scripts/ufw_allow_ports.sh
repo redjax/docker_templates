@@ -7,14 +7,14 @@ set -eo pipefail
 GAME_PORT=9876
 QUERY_PORT=9877
 
-if [ "$EUID" -ne 0 ]
-  then echo "Script requires elevated permissions, please re-run with sudo"
+if [ "$EUID" -ne 0 ]; then
+  echo "Script requires elevated permissions, please re-run with sudo"
   exit 2
 fi
 
-if ! command -v ufw &> /dev/null; then
-    echo "ufw is not installed, exiting.."
-    exit 1
+if ! command -v ufw &>/dev/null; then
+  echo "ufw is not installed, exiting.."
+  exit 1
 fi
 
 echo "Allowing V Rising ports $GAME_PORT and $QUERY_PORT"

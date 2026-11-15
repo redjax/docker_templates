@@ -1,0 +1,38 @@
+---
+name: renovate-server
+
+volumes:
+  cache: {}
+
+services:
+  renovate:
+    image: mend/renovate-ce-ee:${MEND_RNV_IMG_TAG:-latest}
+    container_name: renovate-server
+    restart: unless-stopped
+    ports:
+      - "${MEND_RNV_HOST_PORT:-8080}:8080"
+    environment:
+      MEND_RNV_ACCEPT_TOS: ${MEND_RNV_ACCEPT_TOS:-y}
+      MEND_RNV_LICENSE_KEY: ${MEND_RNV_LICENSE_KEY}
+      MEND_RNV_PLATFORM: ${MEND_RNV_PLATFORM:-github}
+      MEND_RNV_SERVER_PORT: 8080
+      MEND_RNV_GITHUB_APP_ID: ${MEND_RNV_GITHUB_APP_ID}
+      MEND_RNV_GITHUB_APP_KEY: ${MEND_RNV_GITHUB_APP_KEY:-}
+      MEND_RNV_GITHUB_PEM_FILE_PATH: ${MEND_RNV_GITHUB_PEM_FILE_PATH:-/run/secrets/renovate.private-key.pem}
+      MEND_RNV_WEBHOOK_SECRET: ${MEND_RNV_WEBHOOK_SECRET:-renovate}
+      MEND_RNV_ADMIN_API_ENABLED: ${MEND_RNV_ADMIN_API_ENABLED:-false}
+      MEND_RNV_SERVER_API_SECRET: ${MEND_RNV_SERVER_API_SECRET:-}
+      GITHUB_COM_TOKEN: ${GITHUB_COM_TOKEN:-}
+      LOG_LEVEL: ${MEND_RNV_LOG_LEVEL:-info}
+      LOG_FORMAT: ${MEND_RNV_LOG_FORMAT:-json}
+    volumes:
+      - ${MEND_RNV_PEM_HOST_PATH:-./.secrets/renovate.private-key.pem}:/run/secrets/renovate.private-key.pem:ro
+      - ${MEND_RNV_CACHE_DIR:-cache}:/tmp/renovate
+    logging:
+      driver: json-file
+      options:
+        max-size: ${MEND_RNV_LOG_MAX_SIZE:-10m}
+        max-file: ${MEND_RNV_LOG_MAX_FILE:-3}
+        compress: ${MEND_RNV_LOG_COMPRESS:-true}
+    security_opt:
+      - no-new-privileges:true

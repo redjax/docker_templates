@@ -1,0 +1,18 @@
+---
+name: open-archiver
+
+volumes:
+  archiver_data: {}
+
+services:
+  open-archiver:
+    image: logiclabshq/open-archiver:${OA_IMG_TAG:-v0.5.2}
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - ${OA_ARCHIVER_WEBUI_PORT:-3000}:3000
+    volumes:
+      - ${OA_DATA_DIR:-archiver_data}:/var/data/open-archiver
+    cpus: ${OA_CPU_LIMIT:-2.0}
+    mem_limit: ${OA_MEM_LIMIT:-2g}

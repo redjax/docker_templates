@@ -1,0 +1,17 @@
+---
+#######################################################
+# Expose Baikal instance directly on configured port. #
+#                                                     #
+# Useful when exposing only over LAN/private network. #
+# You should use a proxied compose file instead.      #
+#                                                     #
+# You can also use this overlay when serving behind   #
+# a reverse proxy like Pangolin.                      #
+#######################################################
+
+name: baikal
+
+services:
+  baikal:
+    ports:
+      - ${BAIKAL_DIRECT_HTTP_PORT:-8080}:80

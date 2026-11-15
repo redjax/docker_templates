@@ -1,0 +1,28 @@
+---
+name: miniflux
+
+volumes:
+  miniflux-db: {}
+
+services:
+  db:
+    image: postgres:${PG_IMG_TAG:-18-alpine}
+    container_name: miniflux-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PG_USER:-miniflux}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-miniflux}
+      POSTGRES_DB: ${PG_DB:-miniflux}
+    volumes:
+      - miniflux-db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${PG_USER:-miniflux}"]
+      interval: 10s
+      start_period: 30s
+      timeout: 5s
+      retries: 5
+
+  miniflux:
+    depends_on:
+      db:
+        condition: service_healthy

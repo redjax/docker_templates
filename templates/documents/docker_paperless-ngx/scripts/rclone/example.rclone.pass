@@ -1,0 +1,2 @@
+## Generate a password with openssl rand -hex 32 > scripts/rclone/.rclone.pass
+26c802adda18b976800cd3d4339095b2f350d29b51ba5d5760dd71ffb1b11f8c

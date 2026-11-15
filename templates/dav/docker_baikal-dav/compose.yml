@@ -1,0 +1,29 @@
+---
+###############################################################
+# Baikal DAV server.                                          #
+#                                                             #
+# This compose file is not enough to run Baikal.              #
+# You must also run one of the stacks in overlays/.           #
+#                                                             #
+# If you are exposing on your LAN, or behind a                #
+# web proxy, use:                                             #
+#   docker compose -f compose.yml -f overlays/direct.yml ...  #
+#                                                             #
+# If you are pointing a domain name directly at this machine, #
+# you can proxy behind Caddy using:                           #
+#   docker compose -f compose.yml -f overlays/caddy.yml ...   #
+###############################################################
+
+name: baikal
+
+services:
+  baikal:
+    image: ghcr.io/aalmenar/baikal:${BAIKAL_IMG_TAG:-0.11.1}
+    restart: unless-stopped
+    volumes:
+      - ${BAIKAL_DATA_DIR:-./data}:/var/www/baikal/Specific
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

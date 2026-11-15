@@ -1,7 +1,5 @@
 ---
-
 services:
-
   vpn:
     image: ghcr.io/bubuntux/nordvpn
     container_name: vpn
@@ -31,5 +29,3 @@ services:
       ## qBittorrent/deluge
       # - 6881:6881
       # - 6881:6881/udp
-    networks:
-      - media-net

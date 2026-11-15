@@ -2,5 +2,10 @@
     "python.analysis.extraPaths": [
         "./templates/games/docker_palworld_server/rpc_mgr/src",
         "./scripts"
-    ]
+    ],
+    "[shellscript]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false
+    }
 }

@@ -35,7 +35,7 @@ services:
       MODE: ${MC_SERV_GAME_MODE:-survival}
       MOTD: ${MC_SERV_MOTD:-Welcome to the server!}
       DIFFICULTY: ${MC_SERV_DIFFICULTY:-peaceful}
-      
+
       ## Uncomment this to import a saved game from the defined WORLDS dir
       # WORLD: /worlds/${MC_SERV1_WORLD}
       ## Default: 20
@@ -83,28 +83,8 @@ services:
 
     networks:
       - mc_net
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     healthcheck:
       test: mc-health
       start_period: 1m
       interval: 5s
       retries: 20
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower
-    restart: unless-stopped
-    pull_policy: always
-    environment:
-      ## Remove old images after updating
-      WATCHTOWER_CLEANUP: "true"
-      ## Only update containers with the
-      #  "com.centurylinklabs.watchtower.enable=true" label
-      WATCHTOWER_LABEL_ENABLE: "true"
-      ## Check for updates every 300 seconds (5 minutes)
-      WATCHTOWER_POLL_INTERVAL: 300
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - mc_net

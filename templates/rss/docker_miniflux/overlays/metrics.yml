@@ -1,0 +1,16 @@
+---
+#################################################
+# Expose metrics for monitoring with Prometheus #
+#################################################
+
+name: miniflux
+
+services:
+  miniflux:
+    environment:
+      METRICS_COLLECTOR: 1
+      METRICS_USERNAME: ${METRICS_USERNAME:-prometheus}
+      METRICS_PASSWORD: ${METRICS_PASSWORD:-}
+      METRICS_ALLOWED_NETWORKS: ${METRICS_ALLOWED_NETWORKS:-172.16.0.0/12}
+    ports:
+      - "${METRICS_PORT:-9090}:8080"

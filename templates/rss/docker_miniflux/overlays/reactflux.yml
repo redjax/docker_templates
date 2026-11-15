@@ -1,0 +1,10 @@
+---
+name: miniflux
+
+services:
+  reactflux:
+    image: electh/reactflux
+    container_name: reactflux
+    restart: unless-stopped
+    ports:
+      - ${REACTFLUX_PORT:-2000}:2000

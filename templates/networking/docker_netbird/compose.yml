@@ -1,0 +1,60 @@
+---
+name: netbird
+
+networks:
+  netbird: {}
+
+volumes:
+  netbird_data: {}
+  caddy_data: {}
+  caddy_config: {}
+
+services:
+  netbird-server:
+    image: netbirdio/netbird-server:${NETBIRD_SERVER_IMG_TAG:-latest}
+    container_name: netbird-server
+    restart: unless-stopped
+    command:
+      - --config
+      - /etc/netbird/config.yaml
+    environment:
+      NETBIRD_DISABLE_ANONYMOUS_METRICS: ${NETBIRD_DISABLE_DATA_COLLECTION:-true}
+    volumes:
+      - ${NETBIRD_SERVER_CONFIG_FILE:-./config.yaml}:/etc/netbird/config.yaml:ro
+      - ${NETBIRD_DATA_DIR:-netbird_data}:/var/lib/netbird
+    ports:
+      - "127.0.0.1:${NETBIRD_SERVER_HTTP_PORT:-8081}:80"
+      - "3478:3478/udp"
+    networks:
+      - netbird
+
+  dashboard:
+    image: netbirdio/dashboard:${NETBIRD_DASHBOARD_IMG_TAG:-latest}
+    container_name: netbird-dashboard
+    restart: unless-stopped
+    depends_on:
+      - netbird-server
+    env_file:
+      - ./dashboard.env
+    ports:
+      - "127.0.0.1:${NETBIRD_DASHBOARD_WEBUI_PORT:-8080}:80"
+    networks:
+      - netbird
+
+  caddy:
+    image: caddy:${CADDY_IMG_TAG:-2}
+    container_name: netbird-caddy
+    restart: unless-stopped
+    depends_on:
+      - netbird-server
+      - dashboard
+    ports:
+      - ${CADDY_HTTP_PORT:-80}:80
+      - ${CADDY_HTTPS_PORT:-443}:443
+    volumes:
+      - ${CADDY_CADDYFILE:-./Caddyfile}:/etc/caddy/Caddyfile:ro
+      - ${CADDY_DATA_DIR:-caddy_data}:/data
+      - ${CADDY_CONFIG_DIR:-caddy_config}:/config
+    networks:
+      - netbird
+

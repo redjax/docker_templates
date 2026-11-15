@@ -1,0 +1,28 @@
+{
+  auto_https off
+  # debug
+}
+
+:80 {
+
+  encode gzip zstd
+
+  reverse_proxy immich_server:2283 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+
+    # Trust upstream proxy (Pangolin)
+    trusted_proxies private_ranges
+  }
+
+  request_body {
+    max_size 0
+  }
+
+  log {
+    output stdout
+    format console
+  }
+}

@@ -25,6 +25,8 @@ services:
       - ${GICKUP_GITHUB_PAT_FILE}:/root/.ssh/github_token:ro
       ## Mount a gitea/forgejo/codeberg PAT
       - ${GICKUP_CODEBERG_PAT_FILE}:/root/.ssh/codeberg_token:ro
+      ## Mount a onedev PAT
+      - ${GICKUP_ONEDEV_PAT_FILE}:/root/.ssh/onedev_token:ro
       ## If you get errors about the container not being able to find a known_hosts file,
       #  create a file called 'known_hosts' in the same path as the compose.yml file and
       #  uncomment this volume mount.

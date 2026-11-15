@@ -1,23 +1,23 @@
 #!/bin/bash
 
-declare -a DOCKER_FILES=( "docker-compose.yml" ".env" "docker-compose.env" )
+declare -a DOCKER_FILES=("docker-compose.yml" ".env" "docker-compose.env")
 
-function COPY_EXAMPLE_FILE () {
+function COPY_EXAMPLE_FILE() {
 
   if [[ ! -f $1 ]]; then
     echo ""
-    echo "Copying "$1.example" to "$1
+    echo "Copying $1.example to $1"
     echo ""
-    mv $1.example $1
+    mv "$1.example" "$1"
   elif [[ -f $1 ]]; then
     echo ""
-    echo $1" exists. Skipping."
+    echo "$1 exists. Skipping."
     echo ""
   fi
 
 }
 
-function GENERATE_SECRET_KEY () {
+function GENERATE_SECRET_KEY() {
 
   if [[ ! -f secret_key ]]; then
     echo ""
@@ -25,11 +25,12 @@ function GENERATE_SECRET_KEY () {
     echo "Add the secret to the docker-compose.env file"
     echo ""
 
-    openssl rand -base64 64 >> secret_key
+    openssl rand -base64 64 >>secret_key
   elif [[ -f secret_key ]]; then
     echo ""
     echo "Secret key file exists."
-    echo "Open the file and copy the key (getting rid of the newline) into docker-compose.env"
+    echo "Open the file and copy the key (getting rid of the newline) into your .env,"
+    echo "i.e. PAPERLESS_SECRET_KEY=<your new secret>"
     echo ""
   else
     echo ""
@@ -39,9 +40,8 @@ function GENERATE_SECRET_KEY () {
 
 }
 
-for FILE in "${DOCKER_FILES[@]}"
-do
-  COPY_EXAMPLE_FILE $FILE
+for FILE in "${DOCKER_FILES[@]}"; do
+  COPY_EXAMPLE_FILE "$FILE"
 done
 
 echo ""
@@ -49,7 +49,8 @@ echo "Pausing. Go edit the docker-compose.env, docker-compose.yml, and .env file
 echo ""
 echo "Secret key will be generated in the next step."
 echo ""
-read -p "Press a key to continue when ready: "
+read -r -n 1 -p "Press a key to continue when ready: "
+echo
 echo ""
 
 GENERATE_SECRET_KEY
@@ -63,7 +64,8 @@ echo ""
 cat secret_key
 
 echo ""
-read -p "Press a key to continue when ready: "
+read -r -n 1 -p "Press a key to continue when ready: "
+echo
 
 echo ""
 echo "Running docker-compose stack"

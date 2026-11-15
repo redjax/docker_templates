@@ -1,0 +1,19 @@
+---
+name: bentopdf
+
+volumes:
+  data: {}
+
+services:
+  bentopdf:
+    image: bentopdf/bentopdf:latest
+    container_name: bentopdf
+    restart: unless-stopped
+    ports:
+      - ${BENTOPDF_PORT:-8080}:8080
+    volumes:
+      - ${BENTOPDF_DATA_DIR:-data}:/data
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"

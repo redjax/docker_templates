@@ -1,0 +1,19 @@
+---
+name: homeassistant
+
+services:
+  nodered:
+    container_name: nodered
+    image: nodered/node-red
+    restart: unless-stopped
+    ports:
+      - ${NODERED_PORT:-1880}:1880
+    environment:
+      TZ: ${TZ:-America/New_York}
+      PUID: ${PUID:-1000}
+      GUID: ${GUID:-1000}
+    volumes:
+      - ${NODERED_DATA_DIR:-nodered_data}:/data
+    depends_on:
+      - homeassistant
+      - mosquitto
