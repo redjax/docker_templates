@@ -4,13 +4,17 @@ config/*
 config/rsyslog.d/*
 rsyslog/*
 rsyslog/logs/*
+config/loki/*
+loki/*
 
 !config/
 !config/rsyslog.d/
 !config/examples/
 !config/logrotate/
+!config/loki/
 !rsyslog/
 !rsyslog/logs/
+!loki/
 
 !*example*.*
 !*.*example*
