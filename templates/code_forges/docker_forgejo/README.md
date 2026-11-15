@@ -12,6 +12,8 @@
     - [With INSTALL\_LOCK=true and DISABLE\_REGISTRATION=false](#with-install_locktrue-and-disable_registrationfalse)
   - [Local Network](#local-network)
   - [Publicly Exposed](#publicly-exposed)
+  - [Caddy Server](#caddy-server)
+  - [Protect Site with Anubis](#protect-site-with-anubis)
   - [SSH Setup](#ssh-setup)
   - [Clone with SSH](#clone-with-ssh)
   - [OAuth2 Provider Setup](#oauth2-provider-setup)
@@ -19,6 +21,8 @@
 - [Setup Action Runner](#setup-action-runner)
 - [Troubleshooting](#troubleshooting)
   - [Init failed: mkdir /path/name](#init-failed-mkdir-pathname)
+  - [Fastmail SMTP Not Working](#fastmail-smtp-not-working)
+  - [Permission Errors](#permission-errors)
 - [Links](#links)
 
 ## Setup
