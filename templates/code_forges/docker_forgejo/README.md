@@ -248,7 +248,7 @@ This will make OAuth2 application settings available in the Forgejo UI, under `S
 
 #### Authentik OAuth2 setup
 
-If you are using Authentik as your IDP, you can create a Provider and Application for signing into Forgejo. 
+If you are using Authentik as your IDP, you can create a Provider and Application for signing into Forgejo.
 
 Authentik setup:
 
