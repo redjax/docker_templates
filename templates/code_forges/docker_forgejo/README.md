@@ -71,6 +71,95 @@ On your router, forward the following ports:
 - WAN: `443` -> LAN: `192.168.1.xxx:<your-traefik-https-port>`
 - WAN: `222` (or whatever SSH port you're using for the Forgejo container) -> LAN: `192.168.1.xxx:<your-forgejo-host-ip>`
 
+### Caddy Server
+
+You can (and should) put Caddy in front of Forgejo when serving it publicly. Caddy is not included in this configuration, but you can create your own using the instructions below.
+
+In a new directory, i.e. `~/docker_caddy`, create the following files:
+
+- `compose.yml`:
+
+  ```yaml
+  ---
+  name: caddy
+
+  volumes:
+    data: {}
+    config: {}
+
+  services:
+    caddy:
+      image: caddy:${CADDY_IMG_TAG:-2}
+      restart: unless-stopped
+      network_mode: host
+
+      environment:
+        DOMAIN: ${DOMAIN:-localhost}
+        ACME_EMAIL: ${ACME_EMAIL:-admin@localhost}
+        FORGEJO_DOMAIN: ${FORGEJO_DOMAIN:-${DOMAIN:-localhost}}
+        FORGEJO_UPSTREAM: ${FORGEJO_UPSTREAM:-127.0.0.1:3000}
+
+      volumes:
+        - ${CADDYFILE:-./Caddyfile}:/etc/caddy/Caddyfile:ro
+        - ${CADDY_DATA_DIR:-data}:/data
+        - ${CADDY_CONFIG_DIR:-config}:/config
+  ```
+
+- `Caddyfile`:
+
+  ```plaintext
+  {
+      email {$ACME_EMAIL}
+  }
+
+  {$FORGEJO_DOMAIN} {
+      log
+      reverse_proxy {$FORGEJO_UPSTREAM} {
+          header_up X-Real-IP {remote_host}
+          header_up X-Http-Version {http.request.proto}
+          header_up X-TLS-SNI-Name {tls_server_name}
+        }
+  }
+  ```
+
+- And create a `.env` files, using the values relevant to your configuration:
+
+  ```plaintext
+  ## Default: 2
+  CADDY_IMG_TAG=
+
+  ## Default: localhost
+  #  Use your domain with no protocol, i.e. my-git-domain.com
+  DOMAIN=my-git-domain.com
+  ## Default: admin@localhost
+  ACME_EMAIL=address@example.com
+
+  ## Default: localhost
+  #  Use your domain or subdomain, i.e. my-git-domain.com
+  #  or git.my-domain.com
+  FORGEJO_DOMAIN=my-git-domain.com
+  ## Default: 127.0.0.1:3000
+  #  When using Anubis, proxy to the Anubis port, i.e.
+  #  127.0.0.1:8923
+  FORGEJO_UPSTREAM=
+  ```
+
+When using Caddy, you should only bind Forgejo's ports to `127.0.0.1:<port>`. This forces traffic through the Caddy proxy and prevents exposing the port directly.
+
+### Protect Site with Anubis
+
+This stack includes an optional layer for [Anubis](https://anubis.techaro.lol/). You can protect your site from some automated scans/interactions (i.e. LLM agents and other bots) by running the stack with [`-f overlay/anubis.yml`](./overlay.anubis.yml), i.e.:
+
+```shell
+docker compose -f compose.yml -f overlay.anubis.yml up -d
+```
+
+First, edit your `.env` file. At minimum, you need to set a v alue for `ANUBIS_SIGNING_KEY`, which you can generate with `openssl rand -hex32` or the [`./scripts/generate-secrets.sh` script](./scripts/generate-secrets.sh).
+
+Next, update your [Caddy config](#caddy-server)'s `.env` file; set `FORGEJO_UPSTREAM=127.0.0.1:8923` (Anubis's port). When a request is made to your Forgejo instance, it hits Caddy, then Anubis, where a challenge must be passed to get to your site.
+
+Path filters in the `overlay.anubis.yml` control which requests are challenged. This allows for Git HTTPS and SSH traffic to continue working.
+
 ### SSH Setup
 
 **TL/DR**:
