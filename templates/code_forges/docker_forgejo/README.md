@@ -29,6 +29,9 @@
       - [Restore to a named Docker volume](#restore-to-a-named-docker-volume)
       - [Start and verify Forgejo](#start-and-verify-forgejo)
 - [Setup Action Runner](#setup-action-runner)
+- [Migrate Forgejo Repository to New Forgejo](#migrate-forgejo-repository-to-new-forgejo)
+  - [Source Forgejo Instance](#source-forgejo-instance)
+  - [Destination Forgejo Instance](#destination-forgejo-instance)
 - [Troubleshooting](#troubleshooting)
   - [Init failed: mkdir /path/name](#init-failed-mkdir-pathname)
   - [Fastmail SMTP Not Working](#fastmail-smtp-not-working)
@@ -600,6 +603,114 @@ Keep the original data directory or Docker volume until recovery has been verifi
 ## Setup Action Runner
 
 See the [Forgejo runner container](./forgejo_runner/) for setup instructions. You must enable Actions on the server by setting `FORGEJO__actions__ENABLED=true`.
+
+## Migrate Forgejo Repository to New Forgejo
+
+Export the repository and its metadata on the source instance, copy the export to the destination host, and restore it into a new repository.
+
+This example migrates `owner/ex-repo` into `owner/ex-repo-import`, including Git history, tags, releases, and uploaded release attachments.
+
+> [!NOTE]
+> Run commands from each instance’s Compose directory (wherever you run `docker compose up -d` for Forgejo). Add your usual Compose overlay arguments where necessary. Replace the example token, SSH username, hostname, and administrative SSH port if your configuration is different.
+
+### Source Forgejo Instance
+
+- Create a temporary personal access token in the source Forgejo with read access to the repository and its metadata.
+- Export the repository into a fresh directory. Omitting `--units` includes all supported migration units (releases, issues, wikis, etc):
+
+  ```shell
+  docker compose exec --user git forgejo \
+    forgejo dump-repo \
+      --git_service gitea \
+      --clone_addr "http://<forgejo-ip-and-port-or-fqdn>/owner/ex-repo" \
+      --auth_token "YOUR_SOURCE_ACCESS_TOKEN" \
+      --repo_dir /data/ex-repo-export \
+      --owner_name owner \
+      --repo_name ex-repo
+  ```
+
+  > [!CAUTION]
+  > Putting the token directly in the command can save it in shell history. Revoke the temporary token when the export is complete.
+
+- After the export finishes successfully, copy it out of the container:
+
+  ```shell
+  docker compose cp \
+    forgejo:/data/ex-repo-export \
+    ./ex-repo-export
+  ```
+
+- Package the export:
+
+  ```shell
+  tar -czf ex-repo-export.tar.gz \
+    -C ex-repo-export .
+  ```
+
+- Copy the archive to the destination (the "new" Forgejo instance's host):
+
+  ```shell
+  scp -P YOUR_ADMIN_SSH_PORT \
+    ex-repo-export.tar.gz \
+    YOUR_SSH_USER@YOUR_VPS:~/
+  ```
+
+### Destination Forgejo Instance
+
+- Ensure the destination owner exists (the `owner` user in this example). Do not create an empty `ex-repo-import` repository first. Importing this repository will create it.
+- Extract the transferred archive:
+
+  ```shell
+  mkdir -m 700 ~/ex-repo-export
+
+  tar -xzf ~/ex-repo-export.tar.gz \
+    -C ~/ex-repo-export
+  ```
+
+- Create an import directory inside the running destination Forgejo container:
+
+  ```shell
+  docker compose exec --user git forgejo \
+    mkdir -p /data/ex-repo-import
+  ```
+
+- Copy the extracted files into it and set ownership:
+
+  ```shell
+  docker compose cp \
+    ~/ex-repo-export/. \
+    forgejo:/data/ex-repo-import/
+
+  docker compose exec --user root forgejo \
+    chown -R git:git /data/ex-repo-import
+  ```
+
+- Inspect the directory layout:
+
+  ```shell
+  docker compose exec --user git forgejo \
+    find /data/ex-repo-import -maxdepth 3 -type f
+  ```
+
+  The restore command must point to the individual repository’s exported directory. The command below assumes it is `/data/ex-repo-import/owner/ex-repo`; adjust that path if the export has a different layout.
+
+- Restore under the temporary repository name:
+
+  ```shell
+  docker compose exec --user git forgejo \
+    forgejo restore-repo \
+      --config /data/gitea/conf/app.ini \
+      --repo_dir /data/ex-repo-import/owner/ex-repo \
+      --owner_name owner \
+      --repo_name ex-repo-import
+  ```
+
+  Replace the configuration path if your installation uses a different one.
+
+- Open `owner/ex-repo-import` in the destination web interface. Check repository visibility, branches, tags, releases, and uploaded attachments before replacing or renaming any existing repository.
+- Once verified, rename the imported repository through its settings if desired. Keep the source repository and export until the destination has been backed up.
+
+This process does not import repository settings like branch protection policies and Actions secrets/variables. You will need to manually recreate those.
 
 ## Troubleshooting
 
