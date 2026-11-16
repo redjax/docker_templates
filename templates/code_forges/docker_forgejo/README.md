@@ -29,6 +29,19 @@
       - [Restore to a named Docker volume](#restore-to-a-named-docker-volume)
       - [Start and verify Forgejo](#start-and-verify-forgejo)
 - [Setup Action Runner](#setup-action-runner)
+- [Migrate Forgejo Repository to Forgejo](#migrate-forgejo-repository-to-forgejo)
+  - [Prerequisites](#prerequisites)
+  - [Check the Installed Commands](#check-the-installed-commands)
+  - [Create a Source Access Token](#create-a-source-access-token)
+  - [Export the Repository on the Source Host](#export-the-repository-on-the-source-host)
+  - [Copy the Export Out of the Source Container](#copy-the-export-out-of-the-source-container)
+  - [Package and Transfer the Export](#package-and-transfer-the-export)
+  - [Extract the Export on the Remote Host](#extract-the-export-on-the-remote-host)
+  - [Copy the Export Into the Destination Container](#copy-the-export-into-the-destination-container)
+  - [Restore Into a New Repository](#restore-into-a-new-repository)
+  - [Verify the Restored Repository](#verify-the-restored-repository)
+  - [Switch to the Imported Repository](#switch-to-the-imported-repository)
+  - [Clean Up](#clean-up)
 - [Troubleshooting](#troubleshooting)
   - [Init failed: mkdir /path/name](#init-failed-mkdir-pathname)
   - [Fastmail SMTP Not Working](#fastmail-smtp-not-working)
@@ -600,6 +613,280 @@ Keep the original data directory or Docker volume until recovery has been verifi
 ## Setup Action Runner
 
 See the [Forgejo runner container](./forgejo_runner/) for setup instructions. You must enable Actions on the server by setting `FORGEJO__actions__ENABLED=true`.
+
+## Migrate Forgejo Repository to Forgejo
+
+Forgejo provides a CLI tool that you can use to migrate a repository (including tags, releases, issues, wikis, etc) from one Forgejo instance to a new one. This procedure does not require the destination server to connect to the source Forgejo instance. Only the exported files are transferred between machines.
+
+Restore into a new, unused repository name first.
+
+### Prerequisites
+
+- Shell access to both Forgejo hosts.
+- Permission to run Docker Compose on both hosts.
+- An existing destination user or organization to own the imported repository.
+- A temporary personal access token on the source Forgejo with permission to read the repository and its metadata.
+- Enough free space for the export and its release attachments.
+
+The examples assume:
+
+| Setting                                  | Example                    |
+| ---------------------------------------- | -------------------------- |
+| Compose service                          | `forgejo`                  |
+| Source owner                             | `owner`                    |
+| Source repository                        | `ex-repo`                  |
+| Source HTTP address inside its container | `http://192.168.1.10:3000` |
+| Destination owner                        | `owner`                    |
+| Temporary destination repository         | `ex-repo-import`           |
+| Container configuration file             | `/data/gitea/conf/app.ini` |
+
+Adjust these values for your installation. Run Compose commands from the directory where you launch Forgejo.
+
+### Check the Installed Commands
+
+Ensure the `forgejo` CLI commands are available on both hosts. Some older versions of Forgejo may not have it.
+
+On the source host:
+
+```shell
+docker compose exec --user git forgejo \
+  forgejo dump-repo --help
+```
+
+On the destination host:
+
+```shell
+docker compose exec --user git forgejo \
+  forgejo restore-repo --help
+```
+
+Confirm that the destination command supports:
+
+- `--repo_dir`
+- `--owner_name`
+- `--repo_name`
+
+If the installed help differs from this guide, follow that version's documented options before proceeding.
+
+> [!NOTE]
+> `dump-repo` exports one repository through the source service's HTTP API. It is different from `forgejo dump`, which backs up the entire instance.
+
+### Create a Source Access Token
+
+In the source Forgejo web interface, create a temporary personal access token. Give it read access to the source repository and the metadata you intend to migrate. If using granular token scopes, ensure they cover all requested migration units (issues, wikis, etc).
+
+Keep the token available for the next step. Revoke it after the export is complete.
+
+### Export the Repository on the Source Host
+
+Run these commands in Bash on the source host:
+
+```shell
+SOURCE_OWNER=owner
+SOURCE_REPO=ex-repo
+EXPORT_ID="$(date +%Y%m%d-%H%M%S)"
+EXPORT_CONTAINER_DIR="/data/repository-export-${EXPORT_ID}"
+EXPORT_HOST_DIR="$PWD/repository-export-${EXPORT_ID}"
+
+read -rsp "Source Forgejo access token: " SOURCE_TOKEN
+printf '\n'
+```
+
+Export the repository:
+
+```shell
+docker compose exec --user git forgejo \
+  forgejo dump-repo \
+    --git_service gitea \
+    --clone_addr "http://127.0.0.1:3000/${SOURCE_OWNER}/${SOURCE_REPO}" \
+    --auth_token "$SOURCE_TOKEN" \
+    --repo_dir "$EXPORT_CONTAINER_DIR" \
+    --owner_name "$SOURCE_OWNER" \
+    --repo_name "$SOURCE_REPO"
+
+EXPORT_STATUS=$?
+unset SOURCE_TOKEN
+
+if [ "$EXPORT_STATUS" -ne 0 ]; then
+  echo "Export failed. Do not continue with an incomplete export." >&2
+fi
+```
+
+The `gitea` service type selects the compatible importer for the Forgejo source. Omitting `--units` requests all supported migration units, including releases and release assets. To limit the additional metadata to releases and uploaded attachments, add:
+
+```shell
+--units "releases,release_assets"
+```
+
+The loopback URL is accessed from inside the source Forgejo container. This avoids the public reverse proxy and any Anubis browser challenge.
+
+> [!IMPORTANT]
+> Keep the source Forgejo running during the export. Avoid changing the repository or publishing releases until the export finishes.
+>
+> This export does not transfer instance configuration, account credentials, Actions secrets, package registries, or every repository setting.
+
+### Copy the Export Out of the Source Container
+
+On the source host:
+
+```shell
+mkdir -m 700 "$EXPORT_HOST_DIR"
+
+docker compose cp \
+  "forgejo:${EXPORT_CONTAINER_DIR}/." \
+  "$EXPORT_HOST_DIR/"
+```
+
+Inspect the exported layout:
+
+```shell
+find "$EXPORT_HOST_DIR" -maxdepth 4 -type f | head -n 60
+```
+
+Keep the entire export, including its directory structure and attachment files.
+
+### Package and Transfer the Export
+
+Create an archive on the source host:
+
+```shell
+EXPORT_ARCHIVE="${EXPORT_HOST_DIR}.tar.gz"
+
+tar -czf "$EXPORT_ARCHIVE" \
+  -C "$EXPORT_HOST_DIR" .
+
+sha256sum "$EXPORT_ARCHIVE"
+```
+
+Transfer it to the host running the destination Forgejo.
+
+Replace the example values with your real VPS IP/user/SSH port:
+
+```shell
+VPS_HOST=your-vps-hostname-or-ip
+VPS_USER=your-admin-user
+VPS_ADMIN_SSH_PORT=YOUR_ADMIN_SSH_PORT
+
+scp -P "$VPS_ADMIN_SSH_PORT" \
+  "$EXPORT_ARCHIVE" \
+  "${VPS_USER}@${VPS_HOST}:~/"
+```
+
+### Extract the Export on the Remote Host
+
+On the destination host, set the path to the archive you transferred:
+
+```shell
+EXPORT_ARCHIVE="$HOME/repository-export-YYYYMMDD-HHMMSS.tar.gz"
+
+sha256sum "$EXPORT_ARCHIVE"
+```
+
+Compare the checksum with the source host's output. Extract into a fresh directory:
+
+```shell
+IMPORT_HOST_DIR="$(mktemp -d "$HOME/forgejo-import.XXXXXX")"
+
+tar -xzf "$EXPORT_ARCHIVE" \
+  -C "$IMPORT_HOST_DIR"
+
+find "$IMPORT_HOST_DIR" -maxdepth 4 -type f | head -n 60
+```
+
+### Copy the Export Into the Destination Container
+
+From the destination Forgejo Compose directory:
+
+```shell
+IMPORT_CONTAINER_DIR="/data/repository-import-$(date +%Y%m%d-%H%M%S)"
+
+docker compose exec --user git forgejo \
+  mkdir -p "$IMPORT_CONTAINER_DIR"
+
+docker compose cp \
+  "$IMPORT_HOST_DIR/." \
+  "forgejo:${IMPORT_CONTAINER_DIR}/"
+
+docker compose exec --user root forgejo \
+  chown -R git:git "$IMPORT_CONTAINER_DIR"
+```
+
+Inspect the imported directory layout:
+
+```shell
+docker compose exec --user git forgejo \
+  find "$IMPORT_CONTAINER_DIR" -maxdepth 4 -type f
+```
+
+Identify the directory containing the individual repository's exported metadata and Git data. Depending on the export layout, this may be a nested owner/repository directory rather than the top-level import directory.
+
+Set `RESTORE_REPO_DIR` to that exact directory. For example:
+
+```shell
+RESTORE_REPO_DIR="${IMPORT_CONTAINER_DIR}/owner/ex-repo"
+```
+
+### Restore Into a New Repository
+
+Ensure the destination owner exists and that the temporary repository name is unused. Do not pre-create an empty repository for this step.
+
+```shell
+DEST_OWNER=owner
+DEST_REPO=ex-repo-import
+```
+
+Restore using the destination instance's configuration:
+
+```shell
+docker compose exec --user git forgejo \
+  forgejo restore-repo \
+    --config /data/gitea/conf/app.ini \
+    --repo_dir "$RESTORE_REPO_DIR" \
+    --owner_name "$DEST_OWNER" \
+    --repo_name "$DEST_REPO"
+```
+
+If your container uses a different configuration path, replace `/data/gitea/conf/app.ini`.
+
+### Verify the Restored Repository
+
+Open the imported repository on the destination Forgejo and check:
+
+- Branches and commit history.
+- Git tags.
+- Release titles and descriptions.
+- Draft and prerelease status.
+- Uploaded release attachments, including downloading sample files.
+- Issues, pull requests, wiki, and other metadata you requested.
+- Default branch, repository visibility, and access permissions.
+- Git cloning over your intended HTTPS or SSH endpoint.
+
+If the repository uses Git LFS, separately verify that actual LFS objects can be downloaded. If a migration unit failed, preserve the export and inspect the command output before retrying.
+
+### Switch to the Imported Repository
+
+Once verification is complete, decide which repository to retain.
+
+If the existing destination repository contains newer commits, issues, or other changes, reconcile those before replacing it. This restore does not merge the two repositories.
+
+If the imported repository should take the original name:
+
+1. Preserve or rename the existing destination repository.
+2. Rename the imported repository through its settings.
+3. Check the resulting clone URLs and any redirects.
+4. Update local Git remotes, integrations, webhooks, and automation as needed.
+
+Keep the source repository until you have confirmed that the new one contains everything required.
+
+### Clean Up
+
+After verification:
+
+- Revoke the temporary source access token.
+- Remove temporary export/import directories from the containers.
+- Remove unneeded archive and extraction copies from both hosts.
+- Retain a protected copy of the export until your normal destination backups have been tested.
+- Revert any temporary migration allowlist changes made during troubleshooting.
 
 ## Troubleshooting
 
