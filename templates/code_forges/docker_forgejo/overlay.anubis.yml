@@ -31,6 +31,21 @@ configs:
           path_regex: '^/twirp/'
           action: ALLOW
 
+        ## Release assets downloaded by curl, wget, and pipelines.
+        - name: forgejo-release-downloads
+          path_regex: '^/[^/]+/[^/]+/releases/download/'
+          action: ALLOW
+
+        ## Attachment URLs, including redirected release downloads.
+        - name: forgejo-attachments
+          path_regex: '^/attachments/'
+          action: ALLOW
+
+        ## Source archives downloaded from repository/tag pages.
+        - name: forgejo-source-archives
+          path_regex: '^/[^/]+/[^/]+/archive/'
+          action: ALLOW
+
         ## Challenge everything else, regardless of User-Agent.
         - name: challenge-web
           path_regex: '.*'
