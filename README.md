@@ -103,7 +103,7 @@ After doing a sparse checkout, you can work on this single path of the repositor
 All templates are stored in the [`./templates`](./templates) path in one of the categories below.
 
 | Template Type                                             | Description                                                                      |
-| --------------------------------------------------------  | -------------------------------------------------------------------------------- |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [automation](./templates/automation/)                     | Automations like CI/CD, web agents, no/low-code, etc.                            |
 | [backup](./templates/backup/)                             | Containers for setting up backup infrastructure.                                 |
 | [bookmarking](./templates/bookmarking/)                   | Containers for cataloguing/sharing bookmarks.                                    |
@@ -119,9 +119,9 @@ All templates are stored in the [`./templates`](./templates) path in one of the 
 | [messaging](./templates/messaging/)                       | Messaging services & event queues like MQTT, RabbitMQ, etc.                      |
 | [misc](./templates/misc/)                                 | Miscellaneous templates for specific environments.                               |
 | [monitoring & alerting](./templates/monitoring_alerting/) | Monitoring & alerting infrastructure.                                            |
-| [networking](./templates/networking)                     | Containers for setting up networking infrastructure like reverse proxies & VPNs.  |
+| [networking](./templates/networking)                      | Containers for setting up networking infrastructure like reverse proxies & VPNs. |
 | [notifications](./templates/notifications/)               | Notification infrastructure, i.e. Ntfy.                                          |
 | [rss](./templates/rss/)                                   | Containers for managing & reading RSS feeds.                                     |
 | [security](./templates/security/)                         | Security-related containers like Vaultwarden and Wazuh.                          |
 | [storage](./templates/storage/)                           | Storage containers like SeaFile and Minio S3 storage.                            |
-| [web scraping](./templates/web_scraping/)                | Containers for facilitating web scraping, like Selenium.                          |
+| [web scraping](./templates/web_scraping/)                 | Containers for facilitating web scraping, like Selenium.                         |
