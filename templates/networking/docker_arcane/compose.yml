@@ -6,7 +6,7 @@ volumes:
 
 services:
   arcane:
-    image: ghcr.io/getarcaneapp/manager:${ARCANE_IMG_TAG:-latest}
+    image: ghcr.io/getarcaneapp/manager:${ARCANE_IMG_TAG:-v3}
     restart: unless-stopped
     cgroup: host
     ports:
