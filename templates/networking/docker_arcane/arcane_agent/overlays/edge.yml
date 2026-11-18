@@ -10,5 +10,5 @@
 services:
   arcane-agent:
     environment:
-      EDGE_AGENT: "true"
-      EDGE_TRANSPORT: "${ARCANE_EDGE_TRANSPORT:-poll}"
+      ARCANE_AGENT: "true"
+      ARCANE_AGENT_TRANSPORT: "${ARCANE_EDGE_TRANSPORT:-auto}"

@@ -14,4 +14,4 @@ services:
     ports:
       - "${ARCANE_AGENT_PORT:-3553}:3553"
     environment:
-      AGENT_MODE: "true"
+      ARCANE_AGENT: "true"

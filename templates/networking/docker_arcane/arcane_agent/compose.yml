@@ -13,11 +13,11 @@ volumes:
 
 services:
   arcane-agent:
-    image: "ghcr.io/getarcaneapp/agent:${ARCANE_IMG_TAG:-latest}"
+    image: "ghcr.io/getarcaneapp/agent:${ARCANE_IMG_TAG:-v3}"
     restart: unless-stopped
     environment:
-      AGENT_TOKEN: "${ARCANE_AGENT_TOKEN:?Set ARCANE_AGENT_TOKEN in .env}"
-      MANAGER_API_URL: "${ARCANE_MANAGER_URL:?Set ARCANE_MANAGER_URL in .env}"
+      ARCANE_AGENT_TOKEN: "${ARCANE_AGENT_TOKEN:?Set ARCANE_AGENT_TOKEN in .env}"
+      ARCANE_MANAGER_API_URL: "${ARCANE_MANAGER_URL:?Set ARCANE_MANAGER_URL in .env}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${ARCANE_AGENT_DATA_DIR:-agent-data}:/app/data
