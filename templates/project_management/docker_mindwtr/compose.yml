@@ -1,10 +1,27 @@
 ---
+name: mindwtr
+
 # networks:
 #   unnamed_net: {}
 
-# volumes:
-#   volume_name: {}
+volumes:
+  cloud_data: {}
 
 services:
-
-  ...
+  mindwtr-cloud:
+    image: ghcr.io/dongdongbh/mindwtr-cloud:${MINDWTR_IMG_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "${MINDWTR_PORT:-8787}:8787"
+    environment:
+      MINDWTR_CLOUD_DATA_DIR: /app/cloud_data
+      MINDWTR_CLOUD_AUTH_TOKENS: ${MINDWTR_CLOUD_AUTH_TOKENS:?Set MINDWTR_CLOUD_AUTH_TOKENS env var}
+      MINDWTR_CLOUD_CORS_ORIGIN: ${MINDWTR_CLOUD_CORS_ORIGIN:-https://tasks.example.com}
+    volumes:
+      - ${MINDWTR_DATA_DIR:-cloud_data}:/app/cloud_data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8787/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
