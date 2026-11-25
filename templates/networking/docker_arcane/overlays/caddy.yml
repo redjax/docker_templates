@@ -18,6 +18,7 @@ services:
       - "${CADDY_HTTP_PORT:-80}:80/tcp"
       - "${CADDY_HTTPS_PORT:-443}:${CADDY_HTTPS_PORT:-443}/tcp"
       - "${CADDY_HTTPS_PORT:-443}:${CADDY_HTTPS_PORT:-443}/udp"
+      - "${CADDY_ARCANE_HTTP_PORT:-3080}:3080/tcp"
     volumes:
       - ${CADDY_CADDYFILE:-./caddy/Caddyfile}:/etc/caddy/Caddyfile:ro
       - ${CADDY_DATA_DIR:-caddy-data}:/data
