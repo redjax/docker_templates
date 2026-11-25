@@ -10,3 +10,7 @@
 
 	reverse_proxy arcane:3552
 }
+
+http://:3080 {
+    reverse_proxy arcane:3552
+}
