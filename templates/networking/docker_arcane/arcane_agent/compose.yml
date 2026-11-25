@@ -16,8 +16,10 @@ services:
     image: "ghcr.io/getarcaneapp/agent:${ARCANE_IMG_TAG:-v3}"
     restart: unless-stopped
     environment:
+      ARCANE_AGENT: "true"
       ARCANE_AGENT_TOKEN: "${ARCANE_AGENT_TOKEN:?Set ARCANE_AGENT_TOKEN in .env}"
       ARCANE_MANAGER_API_URL: "${ARCANE_MANAGER_URL:?Set ARCANE_MANAGER_URL in .env}"
+      ARCANE_AGENT_TRANSPORT: "${ARCANE_EDGE_TRANSPORT:-websocket}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${ARCANE_AGENT_DATA_DIR:-agent-data}:/app/data
