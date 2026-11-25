@@ -1,0 +1,8 @@
+---
+services:
+  wud:
+    environment:
+      WUD_TRIGGER_DOCKERCOMPOSE_LOCAL_PATHMAPPING_HOST: "${WUD_STACKS_LABEL_PATH:-Set WUD_STACKS_LABEL_PATH env var}"
+      WUD_TRIGGER_DOCKERCOMPOSE_LOCAL_PATHMAPPING_CONTAINER: "/stacks"
+    volumes:
+      - "${WUD_STACKS_DIR:?Set WUD_STACKS_DIR env var}:/stacks:rw"
