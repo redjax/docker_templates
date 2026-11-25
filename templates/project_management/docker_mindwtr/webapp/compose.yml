@@ -1,0 +1,11 @@
+---
+name: mindwtr-app
+
+services:
+  mindwtr-app:
+    image: ghcr.io/dongdongbh/mindwtr-app:${MINDWTR_APP_IMG_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "${MINDWTR_APP_PORT:-5173}:5173"
+    environment:
+      MINDWTR_DEFAULT_CLOUD_URL: ${MINDWTR_CLOUD_URL:-https://sync.example.com}
