@@ -11,9 +11,9 @@ Arcane [remote environment managent](https://getarcane.app/docs/remote/environme
 > - The [`edge.yml` layer](./overlays/edge.yml) sends outbound traffic to the server, and does not require a published port. It's good for devices on other networks, like a VPS.
 
 - Copy [example `.env`](./.env.example) to `.env`
-- Choose a [network layer](./overlays/)
-  - When using the [`edge.yml` layer](./overlays/edge.yml), you must set a transport value in `ARCANE_EDGE_TRANSPORT`. The options are:
-    - `poll`: Checks in periodically. The first action after an idle period may take a moment.
-    - `auto`: Maintains a continuous tunnel, preferring gRPC and falling back to WebSocket.
-    - `websocket`: Maintains a continuous WebSocket tunnel.
-    - `grpc`: Maintains a continuous gRPC tunnel with no WebSocket fallback.
+- Add an agent in the Arcane admin UI
+  - Generate a pairing token and paste it into `ARCANE_AGENT_TOKEN`
+- Set the URL to your Arcane server in `ARCANE_MANAGER_URL`
+  - Example URLs:
+    - `https://arcane.example.com`
+    - `http://192.168.1.7:3833`
