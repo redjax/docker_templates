@@ -723,7 +723,7 @@ forgejo  | 2025/07/31 01:26:57 routers/init.go:62:mustInit() [F] forgejo.org/mod
 forgejo  | Received signal 15; terminating.
 ```
 
-make sure the host path in the `FORGEJO_DATA_DIR` [env variable](./.env.example) is owned by the `USER_UID` and `USER_GID` vars in [the forgejo app env file](./env_files/forgejo/example.env). For example, if set to `USER_UID=1000` and `USER_GID=1000`, run `chmod -R 1000:1000 ./data/forgejo.
+make sure the host path in the `FORGEJO_DATA_DIR` [env variable](./.env.example) is owned by the `USER_UID` and `USER_GID` vars in [the forgejo app env file](./env_files/forgejo/example.env). For example, if set to `USER_UID=1000` and `USER_GID=1000`, run `chown -R 1000:1000 ./data/forgejo`.
 
 ### Fastmail SMTP Not Working
 
