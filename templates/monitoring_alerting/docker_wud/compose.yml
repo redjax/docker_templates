@@ -1,0 +1,50 @@
+---
+name: wud
+
+# networks:
+#   unnamed_net: {}
+
+volumes:
+  wud-data: {}
+
+services:
+  wud:
+    image: getwud/wud:${WUD_IMG_TAG:-latest}
+    container_name: wud
+    restart: unless-stopped
+    ports:
+      - "${WUD_PORT:-127.0.0.1:3000}:3000"
+    environment:
+      WUD_AUTH_ADMIN_USER: "${WUD_ADMIN_USERNAME:-admin}"
+      WUD_AUTH_ADMIN_PASSWORD: "${WUD_ADMIN_PASSWORD:?Set WUD_ADMIN_PASSWORD env var}"
+
+      WUD_WATCHER_LOCAL_SOCKET: /var/run/docker.sock
+      WUD_WATCHER_LOCAL_CRON: "${WUD_CRON:-0 * * * *}"
+      WUD_WATCHER_LOCAL_WATCHBYDEFAULT: "${WUD_WATCHBYDEFAULT:-true}"
+      WUD_WATCHER_LOCAL_WATCHATSTART: "${WUD_WATCHATSTART:-true}"
+      WUD_WATCHER_LOCAL_WATCHEVENTS: "${WUD_WATCHEVENTS:-true}"
+
+      ## Ntfy
+      WUD_TRIGGER_NTFY_UPDATES_URL: "${WUD_NTFY_URL:-}"
+      WUD_TRIGGER_NTFY_UPDATES_TOPIC: "${WUD_NTFY_TOPIC:-}"
+      WUD_TRIGGER_NTFY_UPDATES_AUTH_TOKEN: "${WUD_NTFY_TOKEN:-}"
+
+      ## Gotify
+      WUD_TRIGGER_GOTIFY_UPDATES_URL: "${WUD_GOTIFY_URL:-}"
+      WUD_TRIGGER_GOTIFY_UPDATES_TOKEN: "${WUD_GOTIFY_TOKEN:-}"
+
+      ## Apprise
+      WUD_TRIGGER_APPRISE_UPDATES_URL: "${WUD_APPRISE_URL:-}"
+
+      ## Docker compose update trigger
+      WUD_TRIGGER_DOCKERCOMPOSE_LOCAL_AUTO: "${WUD_COMPOSE_AUTO:-false}"
+      WUD_TRIGGER_DOCKERCOMPOSE_LOCAL_INCLUDEBYDEFAULT: "${WUD_COMPOSE_INCLUDEBYDEFAULT:-false}"
+      WUD_TRIGGER_DOCKERCOMPOSE_LOCAL_BACKUP: "${WUD_COMPOSE_BACKUP:-true}"
+      WUD_TRIGGER_DOCKERCOMPOSE_LOCAL_ROLLBACK: "${WUD_COMPOSE_ROLLBACK:-true}"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${WUD_DATA_DIR:-wud-data}:/store
+    labels:
+      ## Don't monitor WUD itself
+      - "wud.watch=false"
